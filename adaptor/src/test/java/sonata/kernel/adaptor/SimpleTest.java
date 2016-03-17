@@ -76,7 +76,7 @@ extends TestCase
 	 * @throws IOException 
 	 */
 	public void testCreateWrapper() throws InterruptedException, IOException{
-		String message="{\"UUID\":\"01\",\"target\":\"addVim\",\"body\":{\"wr_type\":\"compute\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
+		String message="{\"target\":\"addVim\",\"body\":{\"wr_type\":\"compute\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
 		String topic = "infrastructure.management.compute";
 		BlockingQueue<ServicePlatformMessage> muxQueue = new LinkedBlockingQueue<ServicePlatformMessage>();
 		BlockingQueue<ServicePlatformMessage> dispatcherQueue = new LinkedBlockingQueue<ServicePlatformMessage>();

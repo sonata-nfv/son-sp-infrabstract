@@ -26,15 +26,15 @@ public class ServicePlatformMessage {
 
 	String jsonMessage;
 	String topic;
-	String UUID;
+	String SID;
 	
 	/**
 	 * @param a JSON formatted String to wrap in the SP Message
 	 */
-	public ServicePlatformMessage(String message, String topic, String UUID) {
+	public ServicePlatformMessage(String message, String topic, String SID) {
 		jsonMessage=message;
 		this.topic=topic;
-		this.UUID=UUID;
+		this.SID=SID;
 	}
 
 	/**
@@ -53,11 +53,11 @@ public class ServicePlatformMessage {
 	}
 	
 	public String getUUID(){
-		return this.UUID;
+		return this.SID;
 	}
 	
 	public String toString(){
-		return "UUID: "+UUID+ " - message: "+jsonMessage+" - topic: " + topic;
+		return "SID: "+SID+ " - message: "+jsonMessage+" - topic: " + topic;
 	}
 
 }

@@ -38,7 +38,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 
 	/**
 	 * @param message
-	 * @param UUID
+	 * @param SID
 	 * @param mux
 	 */
 	public AddVimCallProcessor(ServicePlatformMessage message, String UUID, AdaptorMux mux) {

@@ -85,7 +85,7 @@ public class WrapperConfiguration {
 	public String toString(){
 		String out="";
 		
-		out+="UUID: "+UUID+"\n\r";
+		out+="SID: "+UUID+"\n\r";
 		out+="WrapperType: "+wrapperType+"\n\r";
 		out+="VimType: "+vimType+"\n\r";
 		out+="VimEndpount: "+vimEndpoint+"\n\r";

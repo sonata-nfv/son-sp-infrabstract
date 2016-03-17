@@ -62,7 +62,6 @@ public class AdaptorDispatcher implements Runnable{
 					JSONTokener tokener = new JSONTokener(message.getBody());
 					JSONObject json = (JSONObject) tokener.nextValue();
 					String target = json.getString("target");
-					String uuid = json.getString("UUID");
 					String body = json.getJSONObject("body").toString();
 					if(target.equals("addVim"))
 						myThreadPool.execute(new AddVimCallProcessor(new ServicePlatformMessage(body,message.getTopic(),message.getUUID()), message.getUUID(), mux));
