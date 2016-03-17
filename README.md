@@ -4,11 +4,15 @@ SONATA's Service Platform MANO Framework
 
 ## Folder structure
 
+* `plugins` contains MANO plugin implementations
+
+
 
 ## TODOs:
 * Design API and Develop API endpoint
 * Develop an OpenStack+Heat Wrapper
 * Write more tests 
+    * Tests
 
 
 ### Requirements
