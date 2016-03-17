@@ -28,7 +28,7 @@ SONATA's Service Platform MANO Framework
 ## Automated Tests
 
 * Run unit test using maven:
-* `maven test`
-** The very first test sends a puppet addVim request coming from a mock of the MsgBus through the Adaptor component. The adaptor parse it and create an empty VLSP Wrapper
+** `mvn test`
+*** The very first test sends a puppet addVim request coming from a mock of the MsgBus through the Adaptor component. The adaptor parse it and create an empty VLSP Wrapper
 
 
