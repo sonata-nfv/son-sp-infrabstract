@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: sonata.kernel.adaptor.SimpleTest
--------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 42.062 sec - in sonata.kernel.adaptor.SimpleTest
