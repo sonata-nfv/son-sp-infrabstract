@@ -26,6 +26,8 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
+import sonata.kernel.adaptor.AdaptorCore;
+
 /**
  * 
  */
@@ -48,7 +50,7 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
 			throws IOException {
 		String message = new String(body, "UTF-8");
 		System.out.println(" [nortbounf] Received " + message +" on "+envelope.getRoutingKey());
-		if(!properties.getAppId().equals("sonata.kernel.infrastructure_adaptor"))
+		if(!properties.getAppId().equals(AdaptorCore.APP_ID))
 			this.msgBusConsumer.processMessage(message,envelope.getRoutingKey(),properties.getCorrelationId());
 	}
 

@@ -37,6 +37,7 @@ import sonata.kernel.adaptor.wrapper.WrapperBay;
 
 public class AdaptorCore {
 
+	public static final String APP_ID = "sonata.kernel.InfrAdaptor";
 	private MsgBusConsumer northConsumer;
 	private MsgBusProducer northProducer;
 	private AdaptorDispatcher dispatcher;
@@ -50,7 +51,6 @@ public class AdaptorCore {
 	private String registrationUUID;
 
 
-	private final String name="sonata.kernel.adaptor";
 	private final String version="0.0.1";
 	private final String description="Service Platform Infrastructure Adaptor";
 
@@ -104,7 +104,7 @@ public class AdaptorCore {
 	}
 
 	private void register() {
-		String body = "{\"name\":\""+ this.name+"\",\"version\":\""+this.version+"\",\"description\":\""+this.description+"\"}";
+		String body = "{\"name\":\""+ AdaptorCore.APP_ID+"\",\"version\":\""+this.version+"\",\"description\":\""+this.description+"\"}";
 		String topic = "platform.management.plugin.register";
 		ServicePlatformMessage message= new ServicePlatformMessage(body,topic,java.util.UUID.randomUUID().toString());
 		mux.enqueue(message);
@@ -126,7 +126,7 @@ public class AdaptorCore {
 		this.registrationUUID=message.getUUID();
 		synchronized (writeLock) {
 			try {
-				writeLock.wait();
+				writeLock.wait(10000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}

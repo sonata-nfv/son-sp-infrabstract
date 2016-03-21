@@ -38,6 +38,8 @@ import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.ConnectionFactory;
 
+import sonata.kernel.adaptor.AdaptorCore;
+
 /**
  * 
  */
@@ -97,7 +99,8 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
 			channel.exchangeDeclare(exchangeName, "topic");
 			BasicProperties properties = new BasicProperties()
 					.builder()
-					.appId("sonata.kernel.infrastructure_adaptor")
+					.appId(AdaptorCore.APP_ID)
+					.contentType("application/json")
 					.replyTo(message.getTopic())
 					.correlationId(message.getUUID())
 					.build();
