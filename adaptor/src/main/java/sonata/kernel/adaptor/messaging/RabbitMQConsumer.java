@@ -53,7 +53,7 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
 	
 	public void connectToBus() {
 		Properties brokerConfig = parseConfigFile(); 
-		System.out.println("[nortbound] RabbitMQConsumer - connecting to broker...");
+		System.out.println("[northbound] RabbitMQConsumer - connecting to broker...");
 		ConnectionFactory cf = new ConnectionFactory();		
 		if(!brokerConfig.containsKey("broker_url")||!brokerConfig.containsKey("exchange")){
 			System.err.println("Missing broker url configuration.");
@@ -67,13 +67,13 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
 			channel = connection.createChannel();
 			channel.exchangeDeclare(brokerConfig.getProperty("exchange"), "topic");
 			queueName = channel.queueDeclare().getQueue();
-			System.out.println("[nortbound] RabbitMQConsumer - binding queue to topics...");
+			System.out.println("[northbound] RabbitMQConsumer - binding queue to topics...");
 			channel.queueBind(queueName, brokerConfig.getProperty("exchange"),"platform.management.plugin.register");			
-			System.out.println("[nortbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.register\"");
+			System.out.println("[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.register\"");
 			channel.queueBind(queueName, brokerConfig.getProperty("exchange"),"platform.management.plugin.deregister");			
-			System.out.println("[nortbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.deregister\"");
+			System.out.println("[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.deregister\"");
 			channel.queueBind(queueName, brokerConfig.getProperty("exchange"),"infrastructure.*");			
-			System.out.println("[nortbound] RabbitMQConsumer - bound to topic \"infrastructure.*\"");
+			System.out.println("[northbound] RabbitMQConsumer - bound to topic \"infrastructure.*\"");
 			consumer = new AdaptorDefaultConsumer(channel, this);			
 		} catch (IOException e) {
 			e.printStackTrace();

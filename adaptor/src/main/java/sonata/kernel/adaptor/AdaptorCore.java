@@ -135,11 +135,11 @@ public class AdaptorCore {
 	}
 
 	public void stop(){
+		this.deregister();
 		northProducer.stopProducing();
 		northConsumer.stopConsuming();
 		dispatcher.stop();
 		this.heartbeat.stop();
-		this.deregister();
 	}
 
 	MsgBusProducer getNorthProducer() {

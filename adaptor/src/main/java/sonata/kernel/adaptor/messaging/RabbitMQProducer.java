@@ -105,7 +105,7 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
 					.correlationId(message.getUUID())
 					.build();
 			channel.basicPublish(exchangeName, message.getTopic(), properties, message.getBody().getBytes("UTF-8"));
-			System.out.println("[northbound] - message: "+message+"\n\r - Properties:"+properties);
+			System.out.println("[northbound] - sending message: "+message+"\n\r - Properties:"+properties);
 		}catch(Exception e){e.printStackTrace();out=false;}
 		return out;
 	}
