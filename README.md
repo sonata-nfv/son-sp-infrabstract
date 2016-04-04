@@ -1,5 +1,6 @@
 # son-infrastructure-adaptor
-SONATA's Service Platform Infrastructure Adaptor
+[![Build Status](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract)
+SONATA's Service Platform Infrastructure Adaptor 
 
 
 ## Folder structure
