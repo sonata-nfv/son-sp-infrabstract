@@ -21,7 +21,6 @@ package sonata.kernel.adaptor;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.json.JSONObject;
@@ -58,13 +57,17 @@ public class AdaptorDispatcher implements Runnable{
 					this.core.handleRegistrationResponse(message);
 				if(isDeregistrationResponse(message))
 					this.core.handleDeregistrationResponse(message);
-				else if(isAddVimRequest(message)){
+				else if(isManagementMsg(message)){
 					JSONTokener tokener = new JSONTokener(message.getBody());
 					JSONObject json = (JSONObject) tokener.nextValue();
 					String target = json.getString("target");
 					String body = json.getJSONObject("body").toString();
+					
+					//TODO full API definition.
 					if(target.equals("addVim"))
-						myThreadPool.execute(new AddVimCallProcessor(new ServicePlatformMessage(body,message.getTopic(),message.getUUID()), message.getUUID(), mux));
+						myThreadPool.execute(new AddVimCallProcessor(new ServicePlatformMessage(body,message.getTopic(),message.getSID()), message.getSID(), mux));
+					else if(target.equals("startService"))
+						myThreadPool.execute(new StartServiceCallProcessor(new ServicePlatformMessage(body,message.getTopic(),message.getSID()), message.getSID(), mux));
 				}
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -72,16 +75,16 @@ public class AdaptorDispatcher implements Runnable{
 		}while(!stop);
 	}
 
-	private boolean isAddVimRequest(ServicePlatformMessage message) {
-		return message.getTopic().contains("infrastructure.management.compute");
+	private boolean isManagementMsg(ServicePlatformMessage message) {
+		return message.getTopic().contains("infrastructure.management");
 	}
 
 	private boolean isRegistrationResponse(ServicePlatformMessage message) {
-		return message.getTopic().equals("platform.management.plugin.register") && message.getUUID().equals(core.getRegistrationUUID());
+		return message.getTopic().equals("platform.management.plugin.register") && message.getSID().equals(core.getRegistrationUUID());
 	}
 
 	private boolean isDeregistrationResponse(ServicePlatformMessage message) {
-		return message.getTopic().equals("platform.management.plugin.deregister") && message.getUUID().equals(core.getRegistrationUUID());
+		return message.getTopic().equals("platform.management.plugin.deregister") && message.getSID().equals(core.getRegistrationUUID());
 	}
 
 	public void start(){

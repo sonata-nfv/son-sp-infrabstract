@@ -27,12 +27,12 @@ public class TestProducer extends AbstractMsgBusProducer{
 		}
 		if(message.getTopic().equals("platform.management.plugin.register")){
 			String registrationResponse= "{\"status\":\"OK\",\"uuid\":\""+UUID.randomUUID().toString()+"\",\"error\":\"none\"}";
-			ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse, "platform.management.plugin.register",message.getUUID());
+			ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse, "platform.management.plugin.register",message.getSID());
 			output.forwardToConsumer(response);
 		}
 		if(message.getTopic().equals("platform.management.plugin.deregister")){
 			String registrationResponse= "{\"status\":\"OK\"}";
-			ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse, "platform.management.plugin.deregister",message.getUUID());
+			ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse, "platform.management.plugin.deregister",message.getSID());
 			output.forwardToConsumer(response);
 		}
 		if(message.getTopic().contains("heartbeat")){

@@ -31,7 +31,7 @@ public class TestConsumer extends AbstractMsgBusConsumer {
 	
 	public void injectMessage(ServicePlatformMessage message) {
 		System.out.println("[TestConsumer] Topic: "+ message.getTopic()+" - Message:"+message.getBody());
-		processMessage(message.getBody(), message.getTopic(), message.getUUID());
+		processMessage(message.getBody(), message.getTopic(), message.getSID());
 	}
 
 }

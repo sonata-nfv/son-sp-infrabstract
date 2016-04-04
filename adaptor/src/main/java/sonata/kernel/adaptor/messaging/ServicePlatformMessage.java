@@ -52,7 +52,7 @@ public class ServicePlatformMessage {
 		return topic;
 	}
 	
-	public String getUUID(){
+	public String getSID(){
 		return this.SID;
 	}
 	

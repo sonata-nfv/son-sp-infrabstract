@@ -26,10 +26,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.adaptor.wrapper.Wrapper;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.adaptor.wrapper.WrapperFactory;
 
 /**
  * 
@@ -79,7 +77,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 			out=false;
 		}
 		
-		return false;
+		return out;
 	}
 
 	/**
@@ -89,12 +87,12 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 		
 		String jsonError = "{\"url\":\"son://sonata-sp/adaptor/registerVim/error?id="+this.getUUID()+"\";\"message\":\""+message+"\"}";
 		
-		ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError, this.getMessage().getTopic(),this.getMessage().getUUID());
+		ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError, this.getMessage().getTopic(),this.getMessage().getSID());
 		this.sendToMux(spMessage);
 	}
 
 	private void sendMessage(String message) {
-		ServicePlatformMessage spMessage = new ServicePlatformMessage(message,this.getMessage().getTopic(),this.getMessage().getUUID());
+		ServicePlatformMessage spMessage = new ServicePlatformMessage(message,this.getMessage().getTopic(),this.getMessage().getSID());
 		this.sendToMux(spMessage);
 	}
 }

@@ -65,7 +65,7 @@ extends TestCase
 			}
 		}catch(Exception e){assertTrue(false);}
 		
-		System.out.println("Heartbeatreceived");
+		System.out.println("Heartbeats received");
 		assertTrue(true);
 		
 		core.stop();

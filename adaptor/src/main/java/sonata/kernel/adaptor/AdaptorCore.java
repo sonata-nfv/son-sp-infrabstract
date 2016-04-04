@@ -107,11 +107,11 @@ public class AdaptorCore {
 		String body = "{\"name\":\""+ AdaptorCore.APP_ID+"\",\"version\":\""+this.version+"\",\"description\":\""+this.description+"\"}";
 		String topic = "platform.management.plugin.register";
 		ServicePlatformMessage message= new ServicePlatformMessage(body,topic,java.util.UUID.randomUUID().toString());
-		mux.enqueue(message);
-		this.registrationUUID=message.getUUID();
 		synchronized (writeLock) {
 			try {
-				writeLock.wait();
+				this.registrationUUID=message.getSID();
+				mux.enqueue(message);
+				writeLock.wait(10000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -122,10 +122,10 @@ public class AdaptorCore {
 		String body = "{\"uuid\":\""+ this.UUID+"\"}";
 		String topic = "platform.management.plugin.deregister";
 		ServicePlatformMessage message= new ServicePlatformMessage(body,topic, java.util.UUID.randomUUID().toString());
-		mux.enqueue(message);
-		this.registrationUUID=message.getUUID();
 		synchronized (writeLock) {
 			try {
+				this.registrationUUID=message.getSID();
+				mux.enqueue(message);
 				writeLock.wait(10000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
@@ -170,6 +170,7 @@ public class AdaptorCore {
 	}
 
 	public void handleRegistrationResponse(ServicePlatformMessage message) {
+		System.out.println("[AdaptorCore] Received the registration response from the pluginmanager");
 		JSONTokener tokener = new JSONTokener(message.getBody());
 		JSONObject object = (JSONObject) tokener.nextValue();
 		String status = object.getString("status");
@@ -188,6 +189,7 @@ public class AdaptorCore {
 	}
 	
 	public void handleDeregistrationResponse(ServicePlatformMessage message) {
+		System.out.println("[AdaptorCore] Received the deregistration response from the pluginmanager");
 		JSONTokener tokener = new JSONTokener(message.getBody());
 		JSONObject object = (JSONObject) tokener.nextValue();
 		String status = object.getString("status");

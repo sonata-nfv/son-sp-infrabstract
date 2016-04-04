@@ -102,7 +102,7 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
 					.appId(AdaptorCore.APP_ID)
 					.contentType("application/json")
 					.replyTo(message.getTopic())
-					.correlationId(message.getUUID())
+					.correlationId(message.getSID())
 					.build();
 			channel.basicPublish(exchangeName, message.getTopic(), properties, message.getBody().getBytes("UTF-8"));
 			System.out.println("[northbound] - sending message: "+message+"\n\r - Properties:"+properties);
