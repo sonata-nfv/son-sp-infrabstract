@@ -1,0 +1,7 @@
+# Eclipse files
+.project
+.launch
+.classpath
+.buildpath
+.target
+adaptor/.settings/
