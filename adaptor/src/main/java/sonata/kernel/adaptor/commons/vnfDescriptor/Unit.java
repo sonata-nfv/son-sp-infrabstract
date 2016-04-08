@@ -15,23 +15,23 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+public interface Unit {
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  public enum BandwidthUnit implements Unit {
+    bps, kbps, Mbps, Gbps, Tbps;
+  }
+  public enum MemoryUnit implements Unit {
+    kB, KiB, MB, MiB, GB, GiB, TB, TiB, PT, PiT;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public enum FrequencyUnit implements Unit {
+    Hz, kHz, MHz, GHz, THz;
   }
 
+  public enum GeneralUnit implements Unit {
+    percentage;
+  }
 }

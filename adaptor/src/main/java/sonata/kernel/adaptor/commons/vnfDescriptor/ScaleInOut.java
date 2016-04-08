@@ -15,23 +15,19 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class ScaleInOut {
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+  private int minimum;
+  private int maximum;
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  public int getMinimum() {
+    return minimum;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public int getMaximum() {
+    return maximum;
   }
 
 }

@@ -1,7 +1,6 @@
 package sonata.kernel.adaptor;
 
 import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -10,14 +9,13 @@ import java.nio.charset.Charset;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import sonata.kernel.adaptor.commons.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.VirtualLink.ConnectivityType;
+import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfDescriptor.VNFDescriptor;
 
 /**
  * Unit test for simple App.
@@ -45,12 +43,12 @@ public class ServiceDescriptorTest extends TestCase {
    * 
    * @throws IOException
    */
-  public void testParseDescriptor() throws IOException {
+  public void testParseServiceDescriptor() throws IOException {
 
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in =
-        new BufferedReader(new InputStreamReader(new FileInputStream(new File("./sonata-demo.yml")),
+        new BufferedReader(new InputStreamReader(new FileInputStream(new File("./YAML/sonata-demo.yml")),
           Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
@@ -70,4 +68,30 @@ public class ServiceDescriptorTest extends TestCase {
     assertTrue(sd.getVirtual_links().size()>0);
     assertTrue(sd.getForwarding_graphs().size()>0);
   }
+  
+  public void testParseVNFDescriptor() throws IOException {
+
+    VNFDescriptor vd;
+    StringBuilder bodyBuilder = new StringBuilder();
+    BufferedReader in =
+        new BufferedReader(new InputStreamReader(new FileInputStream(new File("./YAML/iperf-vnfd.yml")),
+          Charset.forName("UTF-8")));
+    String line;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line+"\n\r");
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    vd = mapper.readValue(bodyBuilder.toString(), VNFDescriptor.class);
+
+    assertNotNull(vd.getDescriptor_version());
+    assertNotNull(vd.getVendor());
+    assertNotNull(vd.getName());
+    assertNotNull(vd.getVersion());
+    assertNotNull(vd.getAuthor());
+    assertNotNull(vd.getDescription());
+    assertTrue(vd.getVirtual_deployment_units().size()>0);
+    assertTrue(vd.getVirtual_links().size()>0);
+    assertTrue(vd.getConnection_points().size()>0);
+  }  
+  
 }

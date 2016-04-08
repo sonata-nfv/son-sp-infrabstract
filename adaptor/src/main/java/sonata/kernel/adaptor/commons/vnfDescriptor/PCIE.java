@@ -15,23 +15,22 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+public class PCIE {
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  @JsonProperty("SR-IOV")
+  private boolean sr_iov;
+  private boolean device_pass_through;
+
+  public boolean isSr_iov() {
+    return sr_iov;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public boolean isDevice_pass_through() {
+    return device_pass_through;
   }
 
 }

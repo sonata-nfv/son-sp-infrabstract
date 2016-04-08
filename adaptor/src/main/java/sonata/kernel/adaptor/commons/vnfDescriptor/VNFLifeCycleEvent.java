@@ -15,23 +15,39 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class VNFLifeCycleEvent {
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+  private String authentication_username;
+  private String driver;
+  private String authentication_type;
+  private String authentication;
+  private String vnf_container;
+  private Events events;
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  public String getAuthentication_username() {
+    return authentication_username;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String getDriver() {
+    return driver;
+  }
+
+  public String getAuthentication_type() {
+    return authentication_type;
+  }
+
+  public String getAuthentication() {
+    return authentication;
+  }
+
+  public String getVnf_container() {
+    return vnf_container;
+  }
+
+  public Events getEvents() {
+    return events;
   }
 
 }

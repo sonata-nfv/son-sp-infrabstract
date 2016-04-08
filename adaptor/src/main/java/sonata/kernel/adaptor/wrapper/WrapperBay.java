@@ -53,12 +53,12 @@ public class WrapperBay {
   public String registerNewWrapper(WrapperConfiguration config) {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
-    if (newWrapper==null)
-      output="{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
+    if (newWrapper == null)
+      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
     else if (newWrapper.getType().equals("compute")) {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.computeRegistry.put(config.getUUID(), record);
-      output="{\"status\":\"COMPLETED\",\"message:\"Vim Added succesfully\"}";
+      output = "{\"status\":\"COMPLETED\",\"message:\"Vim Added succesfully\"}";
     }
 
     return output;
@@ -66,8 +66,9 @@ public class WrapperBay {
 
   public ComputeWrapper getBestComputeWrapper() {
     ComputeWrapper bestWrapper = null;
-    if (this.computeRegistry.size()!=0) {
-     bestWrapper= (ComputeWrapper) this.computeRegistry.values().iterator().next().getVimWrapper();
+    if (this.computeRegistry.size() != 0) {
+      bestWrapper =
+          (ComputeWrapper) this.computeRegistry.values().iterator().next().getVimWrapper();
     }
     return bestWrapper;
   }

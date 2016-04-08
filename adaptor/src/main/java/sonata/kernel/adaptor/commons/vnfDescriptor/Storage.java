@@ -15,23 +15,27 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfDescriptor.Unit.MemoryUnit;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+public class Storage {
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  private double size;
+  private MemoryUnit size_unit;
+  private boolean persistence;
+
+  public double getSize() {
+    return size;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public MemoryUnit getSize_unit() {
+    return size_unit;
   }
+
+  public boolean isPersistence() {
+    return persistence;
+  }
+
 
 }

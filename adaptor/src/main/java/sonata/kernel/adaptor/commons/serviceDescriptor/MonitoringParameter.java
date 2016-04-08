@@ -15,23 +15,25 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.serviceDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class MonitoringParameter {
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+  private String desc;
+  private String metric;
+  private String unit;
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  public String getDesc() {
+    return desc;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String getMetric() {
+    return metric;
   }
+
+  public String getUnit() {
+    return unit;
+  }
+
 
 }

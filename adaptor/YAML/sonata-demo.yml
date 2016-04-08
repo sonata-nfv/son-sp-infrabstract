@@ -13,9 +13,7 @@ vendor: "eu.sonata-nfv.service-descriptor"
 name: "sonata-demo"
 version: "0.2"
 author: "Michael Bredel, NEC Labs Europe"
-description: >
-  "The network service descriptor for the SONATA demo,
-   comprising iperf, a firewall, and tcpump."
+description: "The network service descriptor for the SONATA demo, comprising iperf, a firewall, and tcpump."
 
 ##
 ## The various network functions this service

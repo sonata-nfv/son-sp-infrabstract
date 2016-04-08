@@ -15,23 +15,30 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfDescriptor.Unit.FrequencyUnit;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+public class VDUMonitoringParameter {
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  private String description;
+  private Unit unit;
+  private double Frequency;
+  private FrequencyUnit frequency_unit;
+
+  public double getFrequency() {
+    return Frequency;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String getDescription() {
+    return description;
   }
 
+  public Unit getUnit() {
+    return unit;
+  }
+
+  public FrequencyUnit getFrequency_unit() {
+    return frequency_unit;
+  }
 }

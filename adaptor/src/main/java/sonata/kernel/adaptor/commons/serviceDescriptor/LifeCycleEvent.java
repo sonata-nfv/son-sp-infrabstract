@@ -15,23 +15,26 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.serviceDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+import java.util.ArrayList;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+public class LifeCycleEvent {
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  private ArrayList<Event> start;
+  private ArrayList<Event> stop;
+  private ArrayList<Event> scale_out;
+
+  public ArrayList<Event> getStart() {
+    return start;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public ArrayList<Event> getStop() {
+    return stop;
+  }
+
+  public ArrayList<Event> getScale_out() {
+    return scale_out;
   }
 
 }

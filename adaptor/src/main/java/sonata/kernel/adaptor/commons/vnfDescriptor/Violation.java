@@ -15,23 +15,18 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class Violation {
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+  private int interval;
+  private int breaches_count;
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  public int getInterval() {
+    return interval;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public int getBreaches_count() {
+    return breaches_count;
   }
-
 }

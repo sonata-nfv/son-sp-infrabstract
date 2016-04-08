@@ -15,23 +15,22 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class VSwitchCapabilities {
+  private String version;
+  private String type;
+  private String overlay_tunnel;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
-
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  public String getVersion() {
+    return version;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String getType() {
+    return type;
   }
 
+  public String getOverlay_tunnel() {
+    return overlay_tunnel;
+  }
 }

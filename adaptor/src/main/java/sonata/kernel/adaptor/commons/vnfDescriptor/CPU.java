@@ -15,23 +15,17 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class CPU {
+  private int vcpus;
+  private String cpu_support_accelerator;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
-
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  public int getVcpus() {
+    return vcpus;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String getCpu_support_accelerator() {
+    return cpu_support_accelerator;
   }
-
 }

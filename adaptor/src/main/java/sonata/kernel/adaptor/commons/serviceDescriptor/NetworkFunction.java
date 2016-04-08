@@ -15,23 +15,35 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.serviceDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+public class NetworkFunction {
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+  private String vnf_id;
+  private String vnf_vendor;
+  private String vnf_name;
+  private String vnf_version;
+  private String description;
+
+  public String getVnf_id() {
+    return vnf_id;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String getVnf_vendor() {
+    return vnf_vendor;
+  }
+
+  public String getVnf_name() {
+    return vnf_name;
+  }
+
+  public String getVnf_version() {
+    return vnf_version;
+  }
+
+  public String getDescription() {
+    return description;
   }
 
 }

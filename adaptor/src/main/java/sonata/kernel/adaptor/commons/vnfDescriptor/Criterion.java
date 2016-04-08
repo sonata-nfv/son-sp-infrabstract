@@ -15,23 +15,14 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class Criterion {
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+  private String e2ebandwidth;
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
-  }
-
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String getE2ebandwidth() {
+    return e2ebandwidth;
   }
 
 }

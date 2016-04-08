@@ -15,23 +15,36 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.serviceDescriptor;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+public class ConnectionPoint {
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+  public enum Interface {
+    INTERFACE("interface");
+    private final String name;
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
+    Interface(String name) {
+      this.name = name;
+    }
+
+    public String toString() {
+      return this.name;
+    }
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  private String id;
+  private Interface type;
+  private String virtual_link_reference;
+
+  public String getId() {
+    return id;
   }
 
+  public Interface getType() {
+    return type;
+  }
+
+  public String getVirtual_link_reference() {
+    return virtual_link_reference;
+  }
 }
