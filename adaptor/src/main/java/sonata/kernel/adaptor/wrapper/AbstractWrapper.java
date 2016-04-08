@@ -1,15 +1,16 @@
 package sonata.kernel.adaptor.wrapper;
 
-public abstract class AbstractWrapper {
+import java.util.Observable;
 
-	private String type;
-	
-	protected void setType(String type){
-		this.type=type;
-	}
+public abstract class AbstractWrapper extends Observable {
 
-	
-	public String getType() {
-		return type;
-	}
+  private String type;
+
+  protected void setType(String type) {
+    this.type = type;
+  }
+
+  public String getType() {
+    return type;
+  }
 }

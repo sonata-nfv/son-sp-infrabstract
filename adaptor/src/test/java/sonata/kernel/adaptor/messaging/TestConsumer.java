@@ -5,20 +5,18 @@ import java.util.concurrent.BlockingQueue;
 
 public class TestConsumer extends AbstractMsgBusConsumer {
 
-	
-	
-	public TestConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue){
+	public TestConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
 		super(dispatcherQueue);
 	}
-	
+
 	@Override
 	public void connectToBus() throws IOException {
-		//Do nothing
+		// Do nothing
 	}
 
 	@Override
 	public boolean startConsuming() {
-		//Do nothing
+		// Do nothing
 		return true;
 	}
 
@@ -28,9 +26,8 @@ public class TestConsumer extends AbstractMsgBusConsumer {
 		return false;
 	}
 
-	
 	public void injectMessage(ServicePlatformMessage message) {
-		System.out.println("[TestConsumer] Topic: "+ message.getTopic()+" - Message:"+message.getBody());
+		System.out.println("[TestConsumer] Topic: " + message.getTopic() + " - Message:" + message.getBody());
 		processMessage(message.getBody(), message.getTopic(), message.getSID());
 	}
 

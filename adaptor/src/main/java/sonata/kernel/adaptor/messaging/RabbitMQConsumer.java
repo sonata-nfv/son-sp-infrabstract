@@ -2,28 +2,27 @@
  * @author Dario Valocchi (Ph.D.)
  * @mail d.valocchi@ucl.ac.uk
  * 
- * Copyright 2016 [Dario Valocchi]
+ *       Copyright 2016 [Dario Valocchi]
  * 
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
+ *       Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ *       except in compliance with the License. You may obtain a copy of the License at
  * 
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *       http://www.apache.org/licenses/LICENSE-2.0
  * 
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
-
+ *       Unless required by applicable law or agreed to in writing, software distributed under the
+ *       License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ *       either express or implied. See the License for the specific language governing permissions
+ *       and limitations under the License.
+ * 
  */
 package sonata.kernel.adaptor.messaging;
 
-import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
@@ -38,115 +37,127 @@ import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 
+public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
-public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable{
+  private final String configFilePath = "/etc/son-mano/broker.config";
+  DefaultConsumer consumer;
+  private Connection connection;
+  private Channel channel;
+  private String queueName;
 
-	private final String configFilePath="/etc/son-mano/broker.config";
-	DefaultConsumer consumer;
-	private Connection connection;
-	private Channel channel;
-	private String queueName;
-	
-	public  RabbitMQConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue){
-		super(dispatcherQueue);
-	}
-	
-	public void connectToBus() {
-		Properties brokerConfig = parseConfigFile(); 
-		System.out.println("[northbound] RabbitMQConsumer - connecting to broker...");
-		ConnectionFactory cf = new ConnectionFactory();		
-		if(!brokerConfig.containsKey("broker_url")||!brokerConfig.containsKey("exchange")){
-			System.err.println("Missing broker url configuration.");
-			System.exit(1);
-		}
-		try {
-			
-			System.out.println("[nortbound] RabbitMQConsumer - connecting to: "+brokerConfig.getProperty("broker_url"));
-			cf.setUri(brokerConfig.getProperty("broker_url"));			
-			connection = cf.newConnection();
-			channel = connection.createChannel();
-			channel.exchangeDeclare(brokerConfig.getProperty("exchange"), "topic");
-			queueName = channel.queueDeclare().getQueue();
-			System.out.println("[northbound] RabbitMQConsumer - binding queue to topics...");
-			channel.queueBind(queueName, brokerConfig.getProperty("exchange"),"platform.management.plugin.register");			
-			System.out.println("[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.register\"");
-			channel.queueBind(queueName, brokerConfig.getProperty("exchange"),"platform.management.plugin.deregister");			
-			System.out.println("[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.deregister\"");
-			channel.queueBind(queueName, brokerConfig.getProperty("exchange"),"infrastructure.*");			
-			System.out.println("[northbound] RabbitMQConsumer - bound to topic \"infrastructure.*\"");
-			consumer = new AdaptorDefaultConsumer(channel, this);			
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (TimeoutException e) {
-			e.printStackTrace();
-		} catch (KeyManagementException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (NoSuchAlgorithmException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		} catch (URISyntaxException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
+  public RabbitMQConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
+    super(dispatcherQueue);
+  }
 
-	}
-	
-	public boolean startConsuming(){
-		boolean out = true;
-		Thread t;
-		try {
-			t = new Thread(this);
-			t.start();
-		} catch(Exception e){e.printStackTrace(); out=false;}
-		return out;
-	}
+  public void connectToBus() {
+    Properties brokerConfig = parseConfigFile();
+    System.out.println("[northbound] RabbitMQConsumer - connecting to broker...");
+    ConnectionFactory cf = new ConnectionFactory();
+    if (!brokerConfig.containsKey("broker_url") || !brokerConfig.containsKey("exchange")) {
+      System.err.println("Missing broker url configuration.");
+      System.exit(1);
+    }
+    try {
 
-	public boolean stopConsuming() {
-		boolean out=true;
-		try{
-			channel.close();
-			connection.close();
-		}catch(IOException e){e.printStackTrace();out=false;}
-		 catch (TimeoutException e) {e.printStackTrace();out=false;}
-		
-		return out;
-	}
-	
-	
-	public void run(){
-		try {
-			System.out.println("[nortbound] RabbitMQConsumer - Starting consumer thread");
-			channel.basicConsume(queueName,true , consumer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	/** Utility function to parse the broker configuration file
-	 *
-	 * @return a Java Properties object representing the json config as a Key-Value map
-	 */
-	private Properties parseConfigFile() {
-		Properties p = new Properties();
-		try{
-			FileReader in= new FileReader(new File(configFilePath));
+      System.out.println("[nortbound] RabbitMQConsumer - connecting to: "
+          + brokerConfig.getProperty("broker_url"));
+      cf.setUri(brokerConfig.getProperty("broker_url"));
+      connection = cf.newConnection();
+      channel = connection.createChannel();
+      channel.exchangeDeclare(brokerConfig.getProperty("exchange"), "topic");
+      queueName = channel.queueDeclare().getQueue();
+      System.out.println("[northbound] RabbitMQConsumer - binding queue to topics...");
+      channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
+          "platform.management.plugin.register");
+      System.out.println(
+          "[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.register\"");
+      channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
+          "platform.management.plugin.deregister");
+      System.out.println(
+          "[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.deregister\"");
+      channel.queueBind(queueName, brokerConfig.getProperty("exchange"), "infrastructure.*");
+      System.out.println("[northbound] RabbitMQConsumer - bound to topic \"infrastructure.*\"");
+      consumer = new AdaptorDefaultConsumer(channel, this);
+    } catch (IOException e) {
+      e.printStackTrace();
+    } catch (TimeoutException e) {
+      e.printStackTrace();
+    } catch (KeyManagementException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (NoSuchAlgorithmException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    } catch (URISyntaxException e1) {
+      // TODO Auto-generated catch block
+      e1.printStackTrace();
+    }
 
-			JSONTokener tokener = new JSONTokener(in);
+  }
 
-			JSONObject jsonObject = (JSONObject) tokener.nextValue();
+  public boolean startConsuming() {
+    boolean out = true;
+    Thread t;
+    try {
+      t = new Thread(this);
+      t.start();
+    } catch (Exception e) {
+      e.printStackTrace();
+      out = false;
+    }
+    return out;
+  }
 
-			String brokerURL = jsonObject.getString("broker_url");
-			String exchange = jsonObject.getString("exchange");
-			p.put("broker_url", brokerURL);
-			p.put("exchange", exchange);
-		}catch(FileNotFoundException e){
-			System.err.println("Unable to load Broker Config file");
-			System.exit(1);
-		}
+  public boolean stopConsuming() {
+    boolean out = true;
+    try {
+      channel.close();
+      connection.close();
+    } catch (IOException e) {
+      e.printStackTrace();
+      out = false;
+    } catch (TimeoutException e) {
+      e.printStackTrace();
+      out = false;
+    }
 
-		return p;
-	}
-	
-	
+    return out;
+  }
+
+  public void run() {
+    try {
+      System.out.println("[nortbound] RabbitMQConsumer - Starting consumer thread");
+      channel.basicConsume(queueName, true, consumer);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Utility function to parse the broker configuration file
+   *
+   * @return a Java Properties object representing the json config as a Key-Value map
+   */
+  private Properties parseConfigFile() {
+    Properties p = new Properties();
+    try {
+      InputStreamReader in =
+          new InputStreamReader(new FileInputStream(configFilePath), Charset.forName("UTF-8"));
+
+      JSONTokener tokener = new JSONTokener(in);
+
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+
+      String brokerURL = jsonObject.getString("broker_url");
+      String exchange = jsonObject.getString("exchange");
+      p.put("broker_url", brokerURL);
+      p.put("exchange", exchange);
+    } catch (FileNotFoundException e) {
+      System.err.println("Unable to load Broker Config file");
+      System.exit(1);
+    }
+
+    return p;
+  }
+
 }
