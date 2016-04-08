@@ -17,13 +17,94 @@
  */
 package sonata.kernel.adaptor.commons;
 
-/**
- * 
- */
+import java.util.ArrayList;
+
+
 public class ServiceDescriptor {
 
-  public ServiceDescriptor(String body) {
-    // TODO Auto-generated constructor stub
+
+  private String descriptor_version;
+  private String vendor;
+  private String name;
+  private String version;
+  private String author;
+  private String description;
+  private ArrayList<NetworkFunction> network_functions;
+  private ArrayList<String> network_services;
+  private ArrayList<ConnectionPoint> connection_points;
+  private ArrayList<VirtualLink> virtual_links;
+  private ArrayList<ForwardingGraph> forwarding_graphs;
+  private LifeCycleEvent lifecycle_events;
+  private ArrayList<String> vnf_depencency;
+  private ArrayList<String> services_dependency;
+  private ArrayList<MonitoringParameter> monitoring_parameters;
+  private AutoScalePolicy auto_scale_policy;
+
+
+  public String getDescriptor_version() {
+    return descriptor_version;
   }
+
+  public String getVendor() {
+    return vendor;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public String getAuthor() {
+    return author;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public ArrayList<NetworkFunction> getNetwork_functions() {
+    return network_functions;
+  }
+
+  public ArrayList<String> getNetwork_services() {
+    return network_services;
+  }
+
+  public ArrayList<ConnectionPoint> getConnection_points() {
+    return connection_points;
+  }
+
+  public ArrayList<VirtualLink> getVirtual_links() {
+    return virtual_links;
+  }
+
+  public ArrayList<ForwardingGraph> getForwarding_graphs() {
+    return forwarding_graphs;
+  }
+
+  public LifeCycleEvent getLifecycle_events() {
+    return lifecycle_events;
+  }
+
+  public ArrayList<String> getVnf_depencency() {
+    return vnf_depencency;
+  }
+
+  public ArrayList<String> getServices_dependency() {
+    return services_dependency;
+  }
+
+  public ArrayList<MonitoringParameter> getMonitoring_Parameters() {
+    return monitoring_parameters;
+  }
+
+  public AutoScalePolicy getAuto_scale_policy() {
+    return auto_scale_policy;
+  }
+
+
 
 }

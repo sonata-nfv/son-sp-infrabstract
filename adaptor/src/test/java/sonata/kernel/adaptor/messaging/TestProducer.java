@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 
-import sonata.kernel.adaptor.SimpleTest;
+import sonata.kernel.adaptor.AdaptorTest;
 
 public class TestProducer extends AbstractMsgBusProducer {
 
-	private SimpleTest output;
+	private AdaptorTest output;
 
-	public TestProducer(BlockingQueue<ServicePlatformMessage> muxQueue, SimpleTest output) {
+	public TestProducer(BlockingQueue<ServicePlatformMessage> muxQueue, AdaptorTest output) {
 		super(muxQueue);
 		this.output = output;
 	}

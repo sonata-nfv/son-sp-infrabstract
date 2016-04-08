@@ -27,14 +27,14 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
       return false;
     }
     // TODO parse the NSD/VNFD from the request body
-    ServiceDescriptor sd = new ServiceDescriptor(message.getBody());
+    ServiceDescriptor sd = new ServiceDescriptor();
     // TODO use wrapper interface to send the NSD/VNFD, along with meta-data
     // to the wrapper, triggering the service instantiation.
     try {
       wr.deployService(sd, this);
     } catch (Exception e) {
       ; // TODO handle possible exception from the wrapper and send report to the SLM;
-    } 
+    }
     return true;
   }
 
