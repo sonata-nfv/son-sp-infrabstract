@@ -85,7 +85,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
 
     for (VNFDescriptor vnf : data.getVNFDs()) {
       VNFRecord vnfr = new VNFRecord();
-      vnfr.setDescriptor_version(vnf.getDescriptor_version());
+      vnfr.setDescriptor_version("vnfr-schema-01");
       vnfr.setStatus(Status.normal_operation);
       vnfr.setVnf_address("0.0.0.0");
       vnfr.setId(UUID.randomUUID().toString());
