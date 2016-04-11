@@ -31,7 +31,6 @@ public class ConnectionPoint {
       return this.name;
     }
   }
-
   private String id;
   private Interface type;
   private String virtual_link_reference;

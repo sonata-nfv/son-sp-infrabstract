@@ -15,22 +15,43 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
+package sonata.kernel.adaptor.commons;
 
-public class VLSPWrapper extends ComputeWrapper {
+import java.util.ArrayList;
 
-  public VLSPWrapper(WrapperConfiguration config) {
-    super();
+public class DeployServiceResponse {
+
+  private Status request_status;
+  private ServiceRecord nsr;
+  private ArrayList<VNFRecord> vnfrs;
+
+  public DeployServiceResponse() {
+    this.vnfrs = new ArrayList<VNFRecord>();
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public void setStatus(Status status) {
+    this.request_status = status;
+  }
+
+  public void setNSR(ServiceRecord record) {
+    this.nsr = record;
+  }
+
+  public void addVNFRecord(VNFRecord vnfr) {
+    this.vnfrs.add(vnfr);
+  }
+
+  public ServiceRecord getNSR() {
+    return nsr;
+  }
+
+  public ArrayList<VNFRecord> getVNFRs() {
+    return vnfrs;
+  }
+
+  public Status getRequest_status() {
+    return request_status;
   }
 
 }

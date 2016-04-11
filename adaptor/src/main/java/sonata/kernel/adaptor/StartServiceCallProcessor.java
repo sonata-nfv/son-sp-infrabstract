@@ -22,10 +22,13 @@ import java.util.Observable;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfDescriptor.Unit;
+import sonata.kernel.adaptor.commons.vnfDescriptor.UnitDeserializer;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.wrapper.ComputeWrapper;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
@@ -42,6 +45,7 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
 
     // TODO implement wrapper selection based on request body
+    System.out.println("[DeployServiceCallProcessor] - Call received...");
     ComputeWrapper wr = WrapperBay.getInstance().getBestComputeWrapper();
     if (wr == null) {
       this.getMux()
@@ -50,8 +54,12 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
       return false;
     }
     // TODO parse the NSD/VNFD from the request body
+    System.out.println("[DeployServiceCallProcessor] - Parsing payload...");
     DeployServiceData data = new DeployServiceData();
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    SimpleModule module = new SimpleModule();
+    module.addDeserializer(Unit.class, new UnitDeserializer());
+    mapper.registerModule(module);
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     try {
       data = mapper.readValue(message.getBody(), DeployServiceData.class);
@@ -61,6 +69,7 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
     }
     // TODO use wrapper interface to send the NSD/VNFD, along with meta-data
     // to the wrapper, triggering the service instantiation.
+    System.out.println("[DeployServiceCallProcessor] - Calling wrapper...");
     try {
       wr.deployService(data, this);
     } catch (Exception e) {
@@ -72,9 +81,12 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
   @Override
   public void update(Observable arg0, Object arg1) {
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg1;
-
+    System.out.println("[DeployServiceCallProcessor] - Received and");
     if (update.getSID().equals(this.getSID())) {
+      System.out.println("[DeployServiceCallProcessor] - Received and update from the wrapper...");
       if (update.getStatus().equals("SUCCESS")) {
+        System.out.println("[DeployServiceCallProcessor] - Deploy "+ this.getSID() +" succed");
+        System.out.println("[DeployServiceCallProcessor] - Sending response...");
         ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
             "infrastructure.service.deploy", this.getSID());
         this.getMux().enqueue(response);

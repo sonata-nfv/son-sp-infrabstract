@@ -19,20 +19,34 @@ package sonata.kernel.adaptor.commons;
 
 import java.util.ArrayList;
 
+
 import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
 import sonata.kernel.adaptor.commons.vnfDescriptor.VNFDescriptor;
 
 public class DeployServiceData {
 
-  private ServiceDescriptor NSD;
-  private ArrayList<VNFDescriptor> VNFDs;
+  private ServiceDescriptor nsd;
+  private ArrayList<VNFDescriptor> vnfds;
+
+  public DeployServiceData() {
+    this.vnfds = new ArrayList<VNFDescriptor>();
+  }
+
+  public void setServiceDescriptor(ServiceDescriptor descriptor) {
+    this.nsd = descriptor;
+  }
+
+  public void addVNFDescriptor(VNFDescriptor descriptor) {
+    this.vnfds.add(descriptor);
+  }
 
   public ServiceDescriptor getNSD() {
-    return NSD;
+    return nsd;
   }
 
   public ArrayList<VNFDescriptor> getVNFDs() {
-    return VNFDs;
+    return vnfds;
   }
+
 
 }

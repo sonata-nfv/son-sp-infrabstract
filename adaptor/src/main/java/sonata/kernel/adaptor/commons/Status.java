@@ -15,22 +15,21 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
+package sonata.kernel.adaptor.commons;
 
-public class VLSPWrapper extends ComputeWrapper {
+public enum Status {
 
-  public VLSPWrapper(WrapperConfiguration config) {
-    super();
+  failed("failed"), normal_operation("normal_operation"), degraded_operation(
+      "degraded operation"), offline("offline");
+
+  private final String name;
+
+  Status(String name) {
+    this.name = name;
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
-    return false;
+  public String toString() {
+    return this.name;
   }
-
 }

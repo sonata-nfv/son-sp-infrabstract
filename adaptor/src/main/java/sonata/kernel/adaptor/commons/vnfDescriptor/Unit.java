@@ -24,7 +24,7 @@ public interface Unit {
     bps, kbps, Mbps, Gbps, Tbps;
   }
   public enum MemoryUnit implements Unit {
-    kB, KiB, MB, MiB, GB, GiB, TB, TiB, PT, PiT;
+    B, kB, KiB, MB, MiB, GB, GiB, TB, TiB, PB, PiB;
   }
 
   public enum FrequencyUnit implements Unit {

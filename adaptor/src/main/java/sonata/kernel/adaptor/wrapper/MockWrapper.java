@@ -17,21 +17,45 @@
  */
 package sonata.kernel.adaptor.wrapper;
 
+import java.util.UUID;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 import sonata.kernel.adaptor.StartServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.DeployServiceResponse;
+import sonata.kernel.adaptor.commons.ServiceRecord;
+import sonata.kernel.adaptor.commons.Status;
+import sonata.kernel.adaptor.commons.VDURecord;
+import sonata.kernel.adaptor.commons.VNFRecord;
+import sonata.kernel.adaptor.commons.vnfDescriptor.VNFDescriptor;
+import sonata.kernel.adaptor.commons.vnfDescriptor.VirtualDeploymentUnit;
 
-public class MockWrapper extends ComputeWrapper {
+public class MockWrapper extends ComputeWrapper implements Runnable {
+
+  /*
+   * Utility fields to implement the mock response creation. A real wrapper should instantiate a
+   * suitable object with these fields, able to handle the API call asynchronously, generate a
+   * response and update the observer
+   */
+  private DeployServiceData data;
+  private String SID;
 
   public MockWrapper(WrapperConfiguration config) {
     super();
   }
 
   @Override
-  public boolean deployService(DeployServiceData data, StartServiceCallProcessor callProcessor) {
+  public boolean deployService(DeployServiceData data,
+      final StartServiceCallProcessor callProcessor) {
     this.addObserver(callProcessor);
-
-    // TODO This is a mock compute wrapper.
+    this.data = data;
+    this.SID = callProcessor.getSID();
+    // This is a mock compute wrapper.
 
     /*
      * Just use the SD to forge the response message for the SLM with a success. In general Wrappers
@@ -39,12 +63,61 @@ public class MockWrapper extends ComputeWrapper {
      * if the request is acceptable, and if so start a new thread to deal with the perform the
      * needed actions.
      */
-
-    String body = "";
-    WrapperStatusUpdate update = new WrapperStatusUpdate(callProcessor.getSID(), "SUCCESS", body);
-    this.notifyObservers(update);
-
+    Thread t = new Thread(this);
+    t.start();
     return true;
+  }
+
+  @Override
+  public void run() {
+    System.out.println("[MockWrapperFSM] - Deploying Service...");
+    try {
+      Thread.sleep(1000);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println("[MockWrapperFSM] - Service Deployed. Creating response");
+    DeployServiceResponse response = new DeployServiceResponse();
+    response.setStatus(Status.normal_operation);
+    ServiceRecord sr = new ServiceRecord();
+    sr.setId(UUID.randomUUID().toString());
+    sr.setStatus(Status.normal_operation);
+
+    for (VNFDescriptor vnf : data.getVNFDs()) {
+      VNFRecord vnfr = new VNFRecord();
+      vnfr.setDescriptor_version(vnf.getDescriptor_version());
+      vnfr.setStatus(Status.normal_operation);
+      vnfr.setVnf_address("0.0.0.0");
+      vnfr.setId(UUID.randomUUID().toString());
+      for (VirtualDeploymentUnit vdu : vnf.getVirtual_deployment_units()) {
+        VDURecord vdur = new VDURecord();
+        vdur.setId(UUID.randomUUID().toString());
+        vdur.setNumber_of_instances(1);
+        vdur.setVdu_reference(vnf.getName() + ":" + vdu.getId() + ":" + vdur.getId());
+        vdur.setVm_image(vdu.getVm_image());
+        vnfr.addVDU(vdur);
+      }
+      response.addVNFRecord(vnfr);
+    }
+    response.setNSR(sr);
+    
+    System.out.println("[MockWrapperFSM] - Response created. Serializing...");
+
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    String body;
+    try {
+      body = mapper.writeValueAsString(response);
+      this.setChanged();
+      System.out.println("[MockWrapperFSM] - Serialized. notifying call processor");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(this.SID, "SUCCESS", body);
+      this.notifyObservers(update);
+    } catch (JsonProcessingException e) {
+      e.printStackTrace();
+    }
   }
 
 }

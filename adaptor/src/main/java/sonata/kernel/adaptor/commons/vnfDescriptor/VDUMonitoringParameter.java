@@ -21,13 +21,14 @@ import sonata.kernel.adaptor.commons.vnfDescriptor.Unit.FrequencyUnit;
 
 public class VDUMonitoringParameter {
 
+  private String name;
   private String description;
   private Unit unit;
-  private double Frequency;
+  private double frequency;
   private FrequencyUnit frequency_unit;
 
   public double getFrequency() {
-    return Frequency;
+    return frequency;
   }
 
   public String getDescription() {
@@ -40,5 +41,9 @@ public class VDUMonitoringParameter {
 
   public FrequencyUnit getFrequency_unit() {
     return frequency_unit;
+  }
+
+  public String getName() {
+    return name;
   }
 }

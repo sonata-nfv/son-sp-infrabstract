@@ -47,12 +47,11 @@ public class ServiceDescriptorTest extends TestCase {
 
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
-    BufferedReader in =
-        new BufferedReader(new InputStreamReader(new FileInputStream(new File("./YAML/sonata-demo.yml")),
-          Charset.forName("UTF-8")));
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
-      bodyBuilder.append(line+"\n\r");
+      bodyBuilder.append(line + "\n\r");
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
@@ -63,22 +62,21 @@ public class ServiceDescriptorTest extends TestCase {
     assertNotNull(sd.getVersion());
     assertNotNull(sd.getAuthor());
     assertNotNull(sd.getDescription());
-    assertTrue(sd.getNetwork_functions().size()>0);
-    assertTrue(sd.getConnection_points().size()>0);
-    assertTrue(sd.getVirtual_links().size()>0);
-    assertTrue(sd.getForwarding_graphs().size()>0);
+    assertTrue(sd.getNetwork_functions().size() > 0);
+    assertTrue(sd.getConnection_points().size() > 0);
+    assertTrue(sd.getVirtual_links().size() > 0);
+    assertTrue(sd.getForwarding_graphs().size() > 0);
   }
-  
+
   public void testParseVNFDescriptor() throws IOException {
 
     VNFDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();
-    BufferedReader in =
-        new BufferedReader(new InputStreamReader(new FileInputStream(new File("./YAML/iperf-vnfd.yml")),
-          Charset.forName("UTF-8")));
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
-      bodyBuilder.append(line+"\n\r");
+      bodyBuilder.append(line + "\n\r");
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     vd = mapper.readValue(bodyBuilder.toString(), VNFDescriptor.class);
@@ -89,9 +87,9 @@ public class ServiceDescriptorTest extends TestCase {
     assertNotNull(vd.getVersion());
     assertNotNull(vd.getAuthor());
     assertNotNull(vd.getDescription());
-    assertTrue(vd.getVirtual_deployment_units().size()>0);
-    assertTrue(vd.getVirtual_links().size()>0);
-    assertTrue(vd.getConnection_points().size()>0);
-  }  
-  
+    assertTrue(vd.getVirtual_deployment_units().size() > 0);
+    assertTrue(vd.getVirtual_links().size() > 0);
+    assertTrue(vd.getConnection_points().size() > 0);
+  }
+
 }

@@ -42,7 +42,7 @@ public class ServiceDescriptor {
   private ArrayList<MonitoringParameter> monitoring_parameters;
   private AutoScalePolicy auto_scale_policy;
 
-
+  
   public String getDescriptor_version() {
     return descriptor_version;
   }

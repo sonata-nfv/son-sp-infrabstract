@@ -19,7 +19,6 @@ package sonata.kernel.adaptor.wrapper;
 
 import sonata.kernel.adaptor.StartServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 

@@ -51,8 +51,9 @@ public class AdaptorDispatcher implements Runnable {
       try {
         message = myQueue.take();
 
-        if (isRegistrationResponse(message)) this.core.handleRegistrationResponse(message);
-        if (isDeregistrationResponse(message))
+        if (isRegistrationResponse(message))
+          this.core.handleRegistrationResponse(message);
+        else if (isDeregistrationResponse(message))
           this.core.handleDeregistrationResponse(message);
         else if (isManagementMsg(message)) {
           handleManagementMessage(message);

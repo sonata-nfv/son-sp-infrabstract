@@ -20,6 +20,8 @@ package sonata.kernel.adaptor.commons.vnfDescriptor;
 public class CPU {
   private int vcpus;
   private String cpu_support_accelerator;
+  private String cpu_model;
+  private String cpu_clock_speed;
 
   public int getVcpus() {
     return vcpus;
@@ -27,5 +29,13 @@ public class CPU {
 
   public String getCpu_support_accelerator() {
     return cpu_support_accelerator;
+  }
+
+  public String getCpu_model() {
+    return cpu_model;
+  }
+
+  public String getCpu_clock_speed() {
+    return cpu_clock_speed;
   }
 }
