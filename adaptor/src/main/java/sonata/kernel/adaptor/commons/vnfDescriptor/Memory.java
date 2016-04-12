@@ -15,7 +15,10 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.vnfDescriptor.Unit.MemoryUnit;
 
@@ -23,24 +26,27 @@ public class Memory {
 
 
   private double size;
-  private MemoryUnit size_unit;
-  private boolean large_pages_required;
-  private String numa_allocation_policy;
+  @JsonProperty("size_unit")
+  private MemoryUnit sizeUnit;
+  @JsonProperty("large_pages_required")
+  private boolean largePagesRequired;
+  @JsonProperty("numa_allocation_policy")
+  private String numaAllocationPolicy;
 
   public double getSize() {
     return size;
   }
 
   public MemoryUnit getSize_unit() {
-    return size_unit;
+    return sizeUnit;
   }
 
   public boolean isLarge_pages_required() {
-    return large_pages_required;
+    return largePagesRequired;
   }
 
   public String getNuma_allocation_policy() {
-    return numa_allocation_policy;
+    return numaAllocationPolicy;
   }
 
 }

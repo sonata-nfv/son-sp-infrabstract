@@ -15,11 +15,14 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.serviceDescriptor.ConnectionPoint;
+
+import java.util.ArrayList;
 
 public class VirtualDeploymentUnit {
 
@@ -41,13 +44,20 @@ public class VirtualDeploymentUnit {
 
   private String description;
   private String id;
-  private String vm_image;
-  private VmFormat vm_image_format;
-  private String vm_image_md5;
-  private ResourceRequirements resource_requirements;
-  private ArrayList<ConnectionPoint> connection_points;
-  private ArrayList<VDUMonitoringParameter> monitoring_parameters;
-  private ScaleInOut scale_in_out;
+  @JsonProperty("vm_image")
+  private String vmImage;
+  @JsonProperty("vm_image_format")
+  private VmFormat vmImageFormat;
+  @JsonProperty("vm_image_md5")
+  private String vmImageMd5;
+  @JsonProperty("resource_requirements")
+  private ResourceRequirements resourceRequirements;
+  @JsonProperty("connection_points")
+  private ArrayList<ConnectionPoint> connectionPoints;
+  @JsonProperty("monitoring_parameters")
+  private ArrayList<VduMonitoringParameter> monitoringParameters;
+  @JsonProperty("scale_in_out")
+  private ScaleInOut scaleInOut;
 
 
   public String getDescription() {
@@ -59,31 +69,31 @@ public class VirtualDeploymentUnit {
   }
 
   public String getVm_image() {
-    return vm_image;
+    return vmImage;
   }
 
   public VmFormat getVm_image_format() {
-    return vm_image_format;
+    return vmImageFormat;
   }
 
   public String getVm_image_md5() {
-    return vm_image_md5;
+    return vmImageMd5;
   }
 
   public ResourceRequirements getResource_requirements() {
-    return resource_requirements;
+    return resourceRequirements;
   }
 
   public ArrayList<ConnectionPoint> getConnection_points() {
-    return connection_points;
+    return connectionPoints;
   }
 
-  public ArrayList<VDUMonitoringParameter> getMonitoring_parameters() {
-    return monitoring_parameters;
+  public ArrayList<VduMonitoringParameter> getMonitoring_parameters() {
+    return monitoringParameters;
   }
 
   public ScaleInOut getScale_in_out() {
-    return scale_in_out;
+    return scaleInOut;
   }
 
 

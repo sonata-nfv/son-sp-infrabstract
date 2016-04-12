@@ -15,22 +15,23 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.messaging;
 
 import java.io.IOException;
 
 /**
- * This is the interface to implement for any implementation of a Message bus consumer
+ * This is the interface to implement for any implementation of a Message bus consumer.
  */
 public interface MsgBusConsumer {
 
   /**
-   * Connect to the Message Bus
+   * Connect to the Message Bus.
    */
   public void connectToBus() throws IOException;
 
   /**
-   * Start consuming messages from the bus and queuing them in the dispatcher queue
+   * Start consuming messages from the bus and queuing them in the dispatcher queue.
    */
   public boolean startConsuming();
 

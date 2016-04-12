@@ -15,20 +15,26 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.serviceDescriptor;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.vnfDescriptor.ConnectionPointReference;
 
+import java.util.ArrayList;
+
+
 public class NetworkForwardingPath {
 
-  private String fp_id;
+  @JsonProperty("fp_id")
+  private String fpId;
   private String policy;
-  private ArrayList<ConnectionPointReference> connection_points;
+  @JsonProperty("connection_points")
+  private ArrayList<ConnectionPointReference> connectionPoints;
 
   public String getFp_id() {
-    return fp_id;
+    return fpId;
   }
 
   public String getPolicy() {
@@ -36,7 +42,7 @@ public class NetworkForwardingPath {
   }
 
   public ArrayList<ConnectionPointReference> getConnection_points() {
-    return connection_points;
+    return connectionPoints;
   }
 
 }

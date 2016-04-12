@@ -15,7 +15,10 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.serviceDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
@@ -23,7 +26,8 @@ public class LifeCycleEvent {
 
   private ArrayList<Event> start;
   private ArrayList<Event> stop;
-  private ArrayList<Event> scale_out;
+  @JsonProperty("scale_out")
+  private ArrayList<Event> scaleOut;
 
   public ArrayList<Event> getStart() {
     return start;
@@ -34,7 +38,7 @@ public class LifeCycleEvent {
   }
 
   public ArrayList<Event> getScale_out() {
-    return scale_out;
+    return scaleOut;
   }
 
 }

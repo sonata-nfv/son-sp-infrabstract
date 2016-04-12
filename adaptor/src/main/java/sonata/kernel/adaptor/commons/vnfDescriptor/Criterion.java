@@ -15,6 +15,7 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
 public class Criterion {

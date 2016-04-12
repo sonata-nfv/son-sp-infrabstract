@@ -15,20 +15,19 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor;
 
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
+package sonata.kernel.adaptor;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 
-/**
- * 
- */
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+
+
 public class AdaptorDispatcher implements Runnable {
 
   private BlockingQueue<ServicePlatformMessage> myQueue;
@@ -37,6 +36,14 @@ public class AdaptorDispatcher implements Runnable {
   private AdaptorMux mux;
   private AdaptorCore core;
 
+  /**
+   * Create an AdaptorDispatcher attached to the queue. CallProcessor will be bind to the provided
+   * mux.
+   * 
+   * @param queue the queue the dispatcher is attached to
+   * 
+   * @param mux the AdaptorMux the CallProcessors will be attached to
+   */
   public AdaptorDispatcher(BlockingQueue<ServicePlatformMessage> queue, AdaptorMux mux,
       AdaptorCore core) {
     myQueue = queue;
@@ -45,17 +52,18 @@ public class AdaptorDispatcher implements Runnable {
     this.core = core;
   }
 
+  @Override
   public void run() {
     ServicePlatformMessage message;
     do {
       try {
         message = myQueue.take();
 
-        if (isRegistrationResponse(message))
+        if (isRegistrationResponse(message)) {
           this.core.handleRegistrationResponse(message);
-        else if (isDeregistrationResponse(message))
+        } else if (isDeregistrationResponse(message)) {
           this.core.handleDeregistrationResponse(message);
-        else if (isManagementMsg(message)) {
+        } else if (isManagementMsg(message)) {
           handleManagementMessage(message);
         } else if (isServiceMsg(message)) {
           this.handleServiceMsg(message);
@@ -67,8 +75,9 @@ public class AdaptorDispatcher implements Runnable {
   }
 
   private void handleServiceMsg(ServicePlatformMessage message) {
-    if (message.getTopic().endsWith("deploy"))
+    if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new StartServiceCallProcessor(message, message.getSID(), mux));
+    }
   }
 
   private void handleManagementMessage(ServicePlatformMessage message) {
@@ -78,9 +87,11 @@ public class AdaptorDispatcher implements Runnable {
     String body = json.getJSONObject("body").toString();
 
     // TODO full API definition.
-    if (target.equals("addVim")) myThreadPool.execute(new AddVimCallProcessor(
-        new ServicePlatformMessage(body, message.getTopic(), message.getSID()), message.getSID(),
-        mux));
+    if (target.equals("addVim")) {
+      myThreadPool.execute(new AddVimCallProcessor(
+          new ServicePlatformMessage(body, message.getTopic(), message.getSID()), message.getSID(),
+          mux));
+    }
   }
 
   private boolean isManagementMsg(ServicePlatformMessage message) {
@@ -93,17 +104,17 @@ public class AdaptorDispatcher implements Runnable {
 
   private boolean isRegistrationResponse(ServicePlatformMessage message) {
     return message.getTopic().equals("platform.management.plugin.register")
-        && message.getSID().equals(core.getRegistrationUUID());
+        && message.getSID().equals(core.getRegistrationSid());
   }
 
   private boolean isDeregistrationResponse(ServicePlatformMessage message) {
     return message.getTopic().equals("platform.management.plugin.deregister")
-        && message.getSID().equals(core.getRegistrationUUID());
+        && message.getSID().equals(core.getRegistrationSid());
   }
 
   public void start() {
-    Thread t = new Thread(this);
-    t.start();
+    Thread thread = new Thread(this);
+    thread.start();
   }
 
   public void stop() {

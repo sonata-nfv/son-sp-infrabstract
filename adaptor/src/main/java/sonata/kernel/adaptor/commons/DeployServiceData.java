@@ -15,36 +15,36 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons;
 
-import java.util.ArrayList;
-
-
 import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VNFDescriptor;
+import sonata.kernel.adaptor.commons.vnfDescriptor.VnfDescriptor;
+
+import java.util.ArrayList;
 
 public class DeployServiceData {
 
   private ServiceDescriptor nsd;
-  private ArrayList<VNFDescriptor> vnfds;
+  private ArrayList<VnfDescriptor> vnfds;
 
   public DeployServiceData() {
-    this.vnfds = new ArrayList<VNFDescriptor>();
+    this.vnfds = new ArrayList<VnfDescriptor>();
   }
 
   public void setServiceDescriptor(ServiceDescriptor descriptor) {
     this.nsd = descriptor;
   }
 
-  public void addVNFDescriptor(VNFDescriptor descriptor) {
+  public void addVnfDescriptor(VnfDescriptor descriptor) {
     this.vnfds.add(descriptor);
   }
 
-  public ServiceDescriptor getNSD() {
+  public ServiceDescriptor getNsd() {
     return nsd;
   }
 
-  public ArrayList<VNFDescriptor> getVNFDs() {
+  public ArrayList<VnfDescriptor> getVnfdList() {
     return vnfds;
   }
 

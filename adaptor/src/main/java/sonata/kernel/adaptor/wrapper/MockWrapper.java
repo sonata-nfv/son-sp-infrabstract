@@ -30,9 +30,9 @@ import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeployServiceResponse;
 import sonata.kernel.adaptor.commons.ServiceRecord;
 import sonata.kernel.adaptor.commons.Status;
-import sonata.kernel.adaptor.commons.VDURecord;
-import sonata.kernel.adaptor.commons.VNFRecord;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VNFDescriptor;
+import sonata.kernel.adaptor.commons.VduRecord;
+import sonata.kernel.adaptor.commons.VnfRecord;
+import sonata.kernel.adaptor.commons.vnfDescriptor.VnfDescriptor;
 import sonata.kernel.adaptor.commons.vnfDescriptor.VirtualDeploymentUnit;
 
 public class MockWrapper extends ComputeWrapper implements Runnable {
@@ -50,11 +50,16 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
   }
 
   @Override
+  public String toString() {
+    return "MockWrapper";
+  }
+  
+  @Override
   public boolean deployService(DeployServiceData data,
       final StartServiceCallProcessor callProcessor) {
     this.addObserver(callProcessor);
     this.data = data;
-    this.SID = callProcessor.getSID();
+    this.SID = callProcessor.getSid();
     // This is a mock compute wrapper.
 
     /*
@@ -83,23 +88,23 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     sr.setId(UUID.randomUUID().toString());
     sr.setStatus(Status.normal_operation);
 
-    for (VNFDescriptor vnf : data.getVNFDs()) {
-      VNFRecord vnfr = new VNFRecord();
+    for (VnfDescriptor vnf : data.getVnfdList()) {
+      VnfRecord vnfr = new VnfRecord();
       vnfr.setDescriptor_version("vnfr-schema-01");
       vnfr.setStatus(Status.normal_operation);
       vnfr.setVnf_address("0.0.0.0");
       vnfr.setId(UUID.randomUUID().toString());
       for (VirtualDeploymentUnit vdu : vnf.getVirtual_deployment_units()) {
-        VDURecord vdur = new VDURecord();
+        VduRecord vdur = new VduRecord();
         vdur.setId(UUID.randomUUID().toString());
         vdur.setNumber_of_instances(1);
         vdur.setVdu_reference(vnf.getName() + ":" + vdu.getId() + ":" + vdur.getId());
         vdur.setVm_image(vdu.getVm_image());
-        vnfr.addVDU(vdur);
+        vnfr.addVdu(vdur);
       }
-      response.addVNFRecord(vnfr);
+      response.addVnfRecord(vnfr);
     }
-    response.setNSR(sr);
+    response.setNsr(sr);
     
     System.out.println("[MockWrapperFSM] - Response created. Serializing...");
 

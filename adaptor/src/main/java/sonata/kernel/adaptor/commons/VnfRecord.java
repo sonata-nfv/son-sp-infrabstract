@@ -18,24 +18,30 @@
 
 package sonata.kernel.adaptor.commons;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
+public class VnfRecord {
 
-public class VNFRecord {
-
-  private String descriptor_version;
+  @JsonProperty("descriptor_version")
+  private String descriptorVersion;
   private String id;
   private Status status;
-  private String vnf_address;
-  private ArrayList<VDURecord> virtual_deployment_units;
+  
+  @JsonProperty("vnf_address")
+  private String vnfAddress;
+  
+  @JsonProperty("virtual_deployment_units")
+  private ArrayList<VduRecord> virtualDeploymentUnits;
 
 
-  public VNFRecord() {
-    this.virtual_deployment_units = new ArrayList<VDURecord>();
+  public VnfRecord() {
+    this.virtualDeploymentUnits = new ArrayList<VduRecord>();
   }
 
-  public void addVDU(VDURecord unit) {
-    this.virtual_deployment_units.add(unit);
+  public void addVdu(VduRecord unit) {
+    this.virtualDeploymentUnits.add(unit);
   }
 
   public String getId() {
@@ -47,15 +53,15 @@ public class VNFRecord {
   }
 
   public String getVnf_address() {
-    return vnf_address;
+    return vnfAddress;
   }
 
   public String getDescriptor_version() {
-    return descriptor_version;
+    return descriptorVersion;
   }
 
-  public void setDescriptor_version(String descriptor_version) {
-    this.descriptor_version = descriptor_version;
+  public void setDescriptor_version(String descriptorVersion) {
+    this.descriptorVersion = descriptorVersion;
   }
 
   public void setId(String id) {
@@ -66,12 +72,12 @@ public class VNFRecord {
     this.status = status;
   }
 
-  public void setVnf_address(String vnf_address) {
-    this.vnf_address = vnf_address;
+  public void setVnf_address(String address) {
+    this.vnfAddress = address;
   }
 
-  public ArrayList<VDURecord> getVirtual_deployment_units() {
-    return virtual_deployment_units;
+  public ArrayList<VduRecord> getVirtual_deployment_units() {
+    return virtualDeploymentUnits;
   }
 
 

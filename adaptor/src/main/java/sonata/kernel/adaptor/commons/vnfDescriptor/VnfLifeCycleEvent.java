@@ -15,19 +15,25 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-public class VNFLifeCycleEvent {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-  private String authentication_username;
+public class VnfLifeCycleEvent {
+
+  @JsonProperty("authentication_username")
+  private String authenticationUsername;
   private String driver;
-  private String authentication_type;
+  @JsonProperty("authentication_type")
+  private String authenticationType;
   private String authentication;
-  private String vnf_container;
+  @JsonProperty("vnf_container")
+  private String vnfContainer;
   private Events events;
 
   public String getAuthentication_username() {
-    return authentication_username;
+    return authenticationUsername;
   }
 
   public String getDriver() {
@@ -35,7 +41,7 @@ public class VNFLifeCycleEvent {
   }
 
   public String getAuthentication_type() {
-    return authentication_type;
+    return authenticationType;
   }
 
   public String getAuthentication() {
@@ -43,7 +49,7 @@ public class VNFLifeCycleEvent {
   }
 
   public String getVnf_container() {
-    return vnf_container;
+    return vnfContainer;
   }
 
   public Events getEvents() {

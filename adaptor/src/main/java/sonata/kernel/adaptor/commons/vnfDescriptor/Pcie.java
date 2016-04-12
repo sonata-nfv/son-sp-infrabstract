@@ -15,22 +15,25 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class PCIE {
+public class Pcie {
 
   @JsonProperty("SR-IOV")
-  private boolean sr_iov;
-  private boolean device_pass_through;
+  private boolean srIov;
+
+  @JsonProperty("device_pass_through")
+  private boolean devicePassThrough;
 
   public boolean isSr_iov() {
-    return sr_iov;
+    return srIov;
   }
 
   public boolean isDevice_pass_through() {
-    return device_pass_through;
+    return devicePassThrough;
   }
 
 }

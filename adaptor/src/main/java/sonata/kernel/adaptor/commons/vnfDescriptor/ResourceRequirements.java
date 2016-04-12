@@ -15,27 +15,32 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResourceRequirements {
 
-  private HypervisorParameters hyperviso_parameters;
-  private VSwitchCapabilities vswitch_capabilities;
-  private CPU cpu;
+  @JsonProperty("hypervisor_parameters")
+  private HypervisorParameters hypervisorParameters;
+  @JsonProperty("vswitch_capabilities")
+  private VSwitchCapabilities vswitchCapabilities;
+  private Cpu cpu;
   private Memory memory;
   private Storage storage;
   private Network network;
-  private PCIE pcie;
+  private Pcie pcie;
 
   public HypervisorParameters getHyperviso_parameters() {
-    return hyperviso_parameters;
+    return hypervisorParameters;
   }
 
   public VSwitchCapabilities getVswitch_capabilities() {
-    return vswitch_capabilities;
+    return vswitchCapabilities;
   }
 
-  public CPU getCpu() {
+  public Cpu getCpu() {
     return cpu;
   }
 
@@ -51,7 +56,7 @@ public class ResourceRequirements {
     return network;
   }
 
-  public PCIE getPcie() {
+  public Pcie getPcie() {
     return pcie;
   }
 

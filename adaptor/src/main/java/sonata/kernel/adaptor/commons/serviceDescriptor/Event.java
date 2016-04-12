@@ -15,19 +15,24 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.serviceDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Event {
 
-  private String vnf_id;
-  private String vnf_event;
+  @JsonProperty("vnf_id")
+  private String vnfId;
+  @JsonProperty("vnf_event")
+  private String vnfEvent;
 
   public String getVnf_id() {
-    return vnf_id;
+    return vnfId;
   }
 
   public String getVnf_event() {
-    return vnf_event;
+    return vnfEvent;
   }
 
 }

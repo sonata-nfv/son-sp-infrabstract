@@ -18,22 +18,29 @@
 
 package sonata.kernel.adaptor;
 
-import java.util.concurrent.BlockingQueue;
-
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 
+import java.util.concurrent.BlockingQueue;
 
 public class AdaptorMux {
 
   private BlockingQueue<ServicePlatformMessage> muxQueue;
 
   /**
-   * @param muxQueue
+   * Create a multiplexer for the outgoing messages bind to the provided queue.
+   * 
+   * @param the queue to en-queue outgoing messages
    */
   public AdaptorMux(BlockingQueue<ServicePlatformMessage> muxQueue) {
     this.muxQueue = muxQueue;
   }
 
+  /**
+   * enqueue the message in the queue.
+   * 
+   * @param message the message to enqueue
+   * @return true if the message is correctly enqueued, false otherwise.
+   */
   public boolean enqueue(ServicePlatformMessage message) {
     return this.muxQueue.add(message);
   }

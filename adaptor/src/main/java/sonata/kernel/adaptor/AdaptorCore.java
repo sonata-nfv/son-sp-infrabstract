@@ -15,11 +15,8 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor;
 
-import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+package sonata.kernel.adaptor;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -32,6 +29,12 @@ import sonata.kernel.adaptor.messaging.RabbitMQConsumer;
 import sonata.kernel.adaptor.messaging.RabbitMQProducer;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
+
+
 public class AdaptorCore {
 
   public static final String APP_ID = "sonata.kernel.InfrAdaptor";
@@ -43,12 +46,22 @@ public class AdaptorCore {
   private HeartBeat heartbeat;
   private double rate;
   private Object writeLock = new Object();
-  private String UUID;
-  private String registrationUUID;
+  private String uuid;
+  private String registrationSid;
 
-  private final static String version = "0.0.1";
-  private final static String description = "Service Platform Infrastructure Adaptor";
+  private static final String version = "0.0.1";
+  private static final String description = "Service Platform Infrastructure Adaptor";
 
+
+  /**
+   * utility constructor for Tests. Allows attaching mock MsgBus to the adaptor plug-in Manager.
+   * 
+   * @param muxQueue A Java BlockingQueue for the AdaptorMux
+   * @param dispatcherQueue A Java BlockingQueue for the AdaptorDispatcher
+   * @param consumer The consumer queuing messages in the dispatcher queue
+   * @param producer The producer de-queuing messages from the mux queue
+   * @param rate of the heart-beat in beat/s
+   */
   public AdaptorCore(BlockingQueue<ServicePlatformMessage> muxQueue,
       BlockingQueue<ServicePlatformMessage> dispatcherQueue, AbstractMsgBusConsumer consumer,
       AbstractMsgBusProducer producer, double rate) {
@@ -56,10 +69,15 @@ public class AdaptorCore {
     dispatcher = new AdaptorDispatcher(dispatcherQueue, mux, this);
     northConsumer = consumer;
     northProducer = producer;
-    status = "INIT";
+    status = "READY";
     this.rate = rate;
   }
 
+  /**
+   * Create an AdaptorCore ready to use. No services are started.
+   * 
+   * @param rate of the heart-beat in beat/s
+   */
   public AdaptorCore(double rate) {
     this.rate = rate;
     // instantiate the Adaptor:
@@ -82,6 +100,11 @@ public class AdaptorCore {
 
   }
 
+  /**
+   * Start the adaptor engines. Starts reading messages from the MsgBus
+   * 
+   * @throws IOException when something goes wrong in the MsgBus plug-in
+   */
   public void start() throws IOException {
     // Start the message plug-in
     northProducer.connectToBus();
@@ -106,7 +129,7 @@ public class AdaptorCore {
         new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString());
     synchronized (writeLock) {
       try {
-        this.registrationUUID = message.getSID();
+        this.registrationSid = message.getSID();
         mux.enqueue(message);
         writeLock.wait(10000);
       } catch (InterruptedException e) {
@@ -116,13 +139,13 @@ public class AdaptorCore {
   }
 
   private void deregister() {
-    String body = "{\"uuid\":\"" + this.UUID + "\"}";
+    String body = "{\"uuid\":\"" + this.uuid + "\"}";
     String topic = "platform.management.plugin.deregister";
     ServicePlatformMessage message =
         new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString());
     synchronized (writeLock) {
       try {
-        this.registrationUUID = message.getSID();
+        this.registrationSid = message.getSID();
         mux.enqueue(message);
         writeLock.wait(10000);
       } catch (InterruptedException e) {
@@ -132,20 +155,24 @@ public class AdaptorCore {
     this.status = "STOPPED";
   }
 
+  /**
+   * Stop the engines: Message production and consumption, heart-beat.
+   */
   public void stop() {
     this.deregister();
+    this.heartbeat.stop();
     northProducer.stopProducing();
     northConsumer.stopConsuming();
     dispatcher.stop();
-    this.heartbeat.stop();
   }
 
-  MsgBusProducer getNorthProducer() {
-    return northProducer;
-  }
+
 
   private static AdaptorCore core;
 
+  /**
+   * Main method. param args the adaptor take no args.
+   */
   public static void main(String[] args) throws IOException {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
@@ -158,14 +185,26 @@ public class AdaptorCore {
 
   }
 
-  public String getUUID() {
-    return this.UUID;
+  /**
+   * @return this plug-in UUID.
+   */
+  public String getUuid() {
+    return this.uuid;
   }
 
+
+  /**
+   * @return The status of this plug-in.
+   */
   public String getState() {
     return this.status;
   }
 
+  /**
+   * Handle the RegistrationResponse message from the MANO Plugin Manager.
+   * 
+   * @param message the response message
+   */
   public void handleRegistrationResponse(ServicePlatformMessage message) {
     System.out.println("[AdaptorCore] Received the registration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
@@ -174,7 +213,7 @@ public class AdaptorCore {
     String pid = object.getString("uuid");
     if (status.equals("OK")) {
       synchronized (writeLock) {
-        UUID = pid;
+        uuid = pid;
         writeLock.notifyAll();
       }
     } else {
@@ -185,6 +224,11 @@ public class AdaptorCore {
 
   }
 
+  /**
+   * Handle the DeregistrationResponse message from the MANO Plugin Manager.
+   * 
+   * @param message the response message
+   */
   public void handleDeregistrationResponse(ServicePlatformMessage message) {
     System.out.println("[AdaptorCore] Received the deregistration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
@@ -201,7 +245,13 @@ public class AdaptorCore {
 
   }
 
-  public String getRegistrationUUID() {
-    return registrationUUID;
+  /**
+   * return the session ID of the registration message used to register this plugin to the
+   * plugin-manager.
+   * 
+   * @return the session ID
+   */
+  public String getRegistrationSid() {
+    return registrationSid;
   }
 }

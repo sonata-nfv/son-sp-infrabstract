@@ -16,30 +16,17 @@
  * 
  */
 
-package sonata.kernel.adaptor.commons.vnfDescriptor;
+package sonata.kernel.adaptor;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 
-import sonata.kernel.adaptor.commons.vnfDescriptor.Unit.MemoryUnit;
+public interface MessageReceiver {
 
-public class Storage {
 
-  private double size;
-  @JsonProperty("size_unit")
-  private MemoryUnit sizeUnit;
-  private boolean persistence;
+  public void receiveHeartbeat(ServicePlatformMessage message);
 
-  public double getSize() {
-    return size;
-  }
+  public void receive(ServicePlatformMessage message);
 
-  public MemoryUnit getSize_unit() {
-    return sizeUnit;
-  }
-
-  public boolean isPersistence() {
-    return persistence;
-  }
-
+  public void forwardToConsumer(ServicePlatformMessage message);
 
 }

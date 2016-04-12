@@ -4,13 +4,13 @@ import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 
-import sonata.kernel.adaptor.AdaptorTest;
+import sonata.kernel.adaptor.MessageReceiver;
 
 public class TestProducer extends AbstractMsgBusProducer {
 
-  private AdaptorTest output;
+  private MessageReceiver output;
 
-  public TestProducer(BlockingQueue<ServicePlatformMessage> muxQueue, AdaptorTest output) {
+  public TestProducer(BlockingQueue<ServicePlatformMessage> muxQueue, MessageReceiver output) {
     super(muxQueue);
     this.output = output;
   }
@@ -44,7 +44,7 @@ public class TestProducer extends AbstractMsgBusProducer {
       output.forwardToConsumer(response);
     }
     if (message.getTopic().contains("heartbeat")) {
-      output.receive(message);
+      output.receiveHeartbeat(message);
     }
     return true;
   }

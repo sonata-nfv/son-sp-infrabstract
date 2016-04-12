@@ -15,15 +15,19 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ConnectionPointReference {
 
-  private String connection_point_ref;
+  @JsonProperty("connection_point_ref")
+  private String connectionPointRef;
   private int position;
 
   public String getConnection_point_ref() {
-    return connection_point_ref;
+    return connectionPointRef;
   }
 
   public int getPosition() {

@@ -15,9 +15,11 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
 public class HypervisorParameters {
+
   private String type;
   private String version;
 

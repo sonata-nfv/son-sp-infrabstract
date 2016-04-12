@@ -15,32 +15,38 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.vnfDescriptor.Unit.BandwidthUnit;
 
 public class Network {
 
 
-
-  private double network_interface_bandwidth;
-  private BandwidthUnit network_interface_bandwidth_unit;
-  private NICCapabilities network_interface_card_capabilities;
-  private String data_processing_acceleration_library;
+  @JsonProperty("network_interface_bandwidth")
+  private double networkInterfaceBandwidth;
+  @JsonProperty("network_interface_bandwidth_unit")
+  private BandwidthUnit networkInterfaceBandwidthUnit;
+  @JsonProperty("network_interface_card_capabilities")
+  private NicCapabilities networkInterfaceCardCapabilities;
+  @JsonProperty("data_processing_acceleration_library")
+  private String dataProcessingAccelerationLibrary;
 
   public double getNetwork_interface_bandwidth() {
-    return network_interface_bandwidth;
+    return networkInterfaceBandwidth;
   }
 
   public BandwidthUnit getNetwork_interface_bandwidth_unit() {
-    return network_interface_bandwidth_unit;
+    return networkInterfaceBandwidthUnit;
   }
 
-  public NICCapabilities getNetwork_interface_card_capabilities() {
-    return network_interface_card_capabilities;
+  public NicCapabilities getNetwork_interface_card_capabilities() {
+    return networkInterfaceCardCapabilities;
   }
 
   public String getData_processing_acceleration_library() {
-    return data_processing_acceleration_library;
+    return dataProcessingAccelerationLibrary;
   }
 }

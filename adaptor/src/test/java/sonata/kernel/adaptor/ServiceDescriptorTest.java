@@ -15,7 +15,7 @@ import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VNFDescriptor;
+import sonata.kernel.adaptor.commons.vnfDescriptor.VnfDescriptor;
 
 /**
  * Unit test for simple App.
@@ -52,6 +52,7 @@ public class ServiceDescriptorTest extends TestCase {
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
+    in.close();
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
@@ -70,16 +71,17 @@ public class ServiceDescriptorTest extends TestCase {
 
   public void testParseVNFDescriptor() throws IOException {
 
-    VNFDescriptor vd;
+    VnfDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
         new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
+    in.close();
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    vd = mapper.readValue(bodyBuilder.toString(), VNFDescriptor.class);
+    vd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
     assertNotNull(vd.getDescriptor_version());
     assertNotNull(vd.getVendor());

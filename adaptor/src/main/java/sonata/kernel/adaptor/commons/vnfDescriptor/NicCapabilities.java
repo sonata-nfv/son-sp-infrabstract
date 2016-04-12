@@ -15,23 +15,23 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class NICCapabilities {
+public class NicCapabilities {
 
   @JsonProperty("SR-IOV")
-  private boolean sr_iov;
+  private boolean srIov;
   private boolean mirroring;
 
   public boolean isSr_iov() {
-    return sr_iov;
+    return srIov;
   }
 
   public boolean isMirroring() {
     return mirroring;
   }
-
-
+  
 }

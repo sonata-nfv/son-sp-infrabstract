@@ -15,7 +15,10 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.serviceDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ConnectionPoint {
 
@@ -31,9 +34,11 @@ public class ConnectionPoint {
       return this.name;
     }
   }
+
   private String id;
   private Interface type;
-  private String virtual_link_reference;
+  @JsonProperty("virtua_link_reference")
+  private String virtualLinkReference;
 
   public String getId() {
     return id;
@@ -44,6 +49,6 @@ public class ConnectionPoint {
   }
 
   public String getVirtual_link_reference() {
-    return virtual_link_reference;
+    return virtualLinkReference;
   }
 }

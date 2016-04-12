@@ -15,31 +15,37 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.serviceDescriptor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NetworkFunction {
 
-  private String vnf_id;
-  private String vnf_vendor;
-  private String vnf_name;
-  private String vnf_version;
+  @JsonProperty("vnf_id")
+  private String vnfId;
+  @JsonProperty("vnf_vendor")
+  private String vnfVendor;
+  @JsonProperty("vnf_name")
+  private String vnfName;
+  @JsonProperty("vnf_version")
+  private String vnfVersion;
   private String description;
 
   public String getVnf_id() {
-    return vnf_id;
+    return vnfId;
   }
 
   public String getVnf_vendor() {
-    return vnf_vendor;
+    return vnfVendor;
   }
 
   public String getVnf_name() {
-    return vnf_name;
+    return vnfName;
   }
 
   public String getVnf_version() {
-    return vnf_version;
+    return vnfVersion;
   }
 
   public String getDescription() {

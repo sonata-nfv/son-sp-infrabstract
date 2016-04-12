@@ -15,11 +15,13 @@
  *       and limitations under the License.
  *
  */
+
 package sonata.kernel.adaptor;
 
-import java.util.Observer;
 
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
+
+import java.util.Observer;
 
 public abstract class AbstractCallProcessor implements Runnable, Observer {
 
@@ -27,8 +29,8 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
     return message;
   }
 
-  public String getSID() {
-    return SID;
+  public String getSid() {
+    return sid;
   }
 
   public AdaptorMux getMux() {
@@ -36,19 +38,27 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
   }
 
   private ServicePlatformMessage message;
-  private String SID;
+  private String sid;
   private AdaptorMux mux;
 
-  public AbstractCallProcessor(ServicePlatformMessage message, String SID, AdaptorMux mux) {
+  /** 
+   * Abtract class for an API call processor. The processo runs on a thread an
+   * processes a ServicePlatformMessage. 
+   * @param message The ServicePlatformMessage to process
+   * @param sid the Session Identifier for this API call
+   * @param mux the AdaptorMux where response messages are to be sent.
+   * */
+  public AbstractCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     this.message = message;
-    this.SID = SID;
+    this.sid = sid;
     this.mux = mux;
   }
 
   protected void sendToMux(ServicePlatformMessage message) {
     mux.enqueue(message);
   }
-
+  
+  @Override
   public void run() {
 
     this.process(message);

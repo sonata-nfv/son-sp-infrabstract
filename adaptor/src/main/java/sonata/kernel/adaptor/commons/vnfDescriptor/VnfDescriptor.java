@@ -15,30 +15,40 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import java.util.ArrayList;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.serviceDescriptor.ConnectionPoint;
 
-public class VNFDescriptor {
+import java.util.ArrayList;
+
+public class VnfDescriptor {
 
 
 
-  private String descriptor_version;
+  @JsonProperty("descriptor_version")
+  private String descriptorVersion;
   private String vendor;
   private String name;
   private String version;
   private String author;
   private String description;
-  private ArrayList<VirtualDeploymentUnit> virtual_deployment_units;
-  private ArrayList<ConnectionPoint> connection_points;
-  private ArrayList<VNFVirtualLink> virtual_links;
-  private ArrayList<DeploymentFlavor> deployment_flavors;
-  private ArrayList<VNFLifeCycleEvent> lifecycle_events;
+  @JsonProperty("virtual_deployment_units")
+  private ArrayList<VirtualDeploymentUnit> virtualDeploymentUnits;
+  @JsonProperty("connection_points")
+  private ArrayList<ConnectionPoint> connectionPoints;
+  @JsonProperty("virtual_links")
+  private ArrayList<VnfVirtualLink> virtualLinks;
+  @JsonProperty("deployment_flavors")
+  private ArrayList<DeploymentFlavor> deploymentFlavors;
+  @JsonProperty("lifecycle_events")
+  private ArrayList<VnfLifeCycleEvent> lifecycleEvents;
 
   public String getDescriptor_version() {
-    return descriptor_version;
+    return descriptorVersion;
   }
 
   public String getVendor() {
@@ -62,23 +72,23 @@ public class VNFDescriptor {
   }
 
   public ArrayList<VirtualDeploymentUnit> getVirtual_deployment_units() {
-    return virtual_deployment_units;
+    return virtualDeploymentUnits;
   }
 
   public ArrayList<ConnectionPoint> getConnection_points() {
-    return connection_points;
+    return connectionPoints;
   }
 
-  public ArrayList<VNFVirtualLink> getVirtual_links() {
-    return virtual_links;
+  public ArrayList<VnfVirtualLink> getVirtual_links() {
+    return virtualLinks;
   }
 
   public ArrayList<DeploymentFlavor> getDeployment_flavors() {
-    return deployment_flavors;
+    return deploymentFlavors;
   }
 
-  public ArrayList<VNFLifeCycleEvent> getLifecycle_events() {
-    return lifecycle_events;
+  public ArrayList<VnfLifeCycleEvent> getLifecycle_events() {
+    return lifecycleEvents;
   }
 
 }

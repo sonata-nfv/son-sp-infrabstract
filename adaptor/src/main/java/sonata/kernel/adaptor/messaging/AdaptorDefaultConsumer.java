@@ -15,25 +15,27 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.messaging;
 
 import java.io.IOException;
+
+import sonata.kernel.adaptor.AdaptorCore;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
-import sonata.kernel.adaptor.AdaptorCore;
 
-/**
- * 
- */
+
 public class AdaptorDefaultConsumer extends DefaultConsumer {
 
   private RabbitMQConsumer msgBusConsumer;
 
   /**
+   * Create a RabbitMq consumer for the MsgBus plug-in.
+   * 
    * @param channel the RabbitMQ channel for this consumer
    * @param msgBusConsumer the Adaptor consumer, responsible for msg processing and queuing.
    */
@@ -48,8 +50,10 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
     String message = new String(body, "UTF-8");
     System.out
         .println(" [northbound] Received message:" + message + " on " + envelope.getRoutingKey());
-    if (!properties.getAppId().equals(AdaptorCore.APP_ID)) this.msgBusConsumer
-        .processMessage(message, envelope.getRoutingKey(), properties.getCorrelationId());
+    if (!properties.getAppId().equals(AdaptorCore.APP_ID)) {
+      this.msgBusConsumer.processMessage(message, envelope.getRoutingKey(),
+          properties.getCorrelationId());
+    }
   }
 
 }

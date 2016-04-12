@@ -15,27 +15,33 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-public class CPU {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class Cpu {
   private int vcpus;
-  private String cpu_support_accelerator;
-  private String cpu_model;
-  private String cpu_clock_speed;
+  @JsonProperty("cpu_support_accelerator")
+  private String cpuSupportAccelerator;
+  @JsonProperty("cpu_model")
+  private String cpuModel;
+  @JsonProperty("cpu_clock_speed")
+  private String cpuClockSpeed;
 
   public int getVcpus() {
     return vcpus;
   }
 
   public String getCpu_support_accelerator() {
-    return cpu_support_accelerator;
+    return cpuSupportAccelerator;
   }
 
   public String getCpu_model() {
-    return cpu_model;
+    return cpuModel;
   }
 
   public String getCpu_clock_speed() {
-    return cpu_clock_speed;
+    return cpuClockSpeed;
   }
 }

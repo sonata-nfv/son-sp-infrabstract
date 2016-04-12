@@ -15,7 +15,10 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
@@ -25,7 +28,8 @@ public class AssuranceParameter {
   private int value;
   private Penalty penalty;
   private String formula;
-  private String rel_id;
+  @JsonProperty("rel_id")
+  private String relId;
   private String id;
   private String unit;
 
@@ -51,7 +55,7 @@ public class AssuranceParameter {
 
 
   public String getRel_id() {
-    return rel_id;
+    return relId;
   }
 
 

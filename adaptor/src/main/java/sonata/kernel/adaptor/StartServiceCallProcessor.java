@@ -15,10 +15,10 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor;
 
-import java.io.IOException;
-import java.util.Observable;
+
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,7 +26,6 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
 import sonata.kernel.adaptor.commons.vnfDescriptor.Unit;
 import sonata.kernel.adaptor.commons.vnfDescriptor.UnitDeserializer;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
@@ -34,10 +33,19 @@ import sonata.kernel.adaptor.wrapper.ComputeWrapper;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
-public class StartServiceCallProcessor extends AbstractCallProcessor {
+import java.io.IOException;
+import java.util.Observable;
 
-  public StartServiceCallProcessor(ServicePlatformMessage message, String SID, AdaptorMux mux) {
-    super(message, SID, mux);
+public class StartServiceCallProcessor extends AbstractCallProcessor {
+  
+  /**
+   * Create a CallProcessor to process a DeployService API call.
+   * @param message the message to the API call.
+   * @param sid the session ID of the API call.
+   * @param mux the AdaptorMux to which send back responses.
+   * */
+  public StartServiceCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
+    super(message, sid, mux);
     // TODO Auto-generated constructor stub
   }
 
@@ -69,7 +77,7 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
     }
     // TODO use wrapper interface to send the NSD/VNFD, along with meta-data
     // to the wrapper, triggering the service instantiation.
-    System.out.println("[DeployServiceCallProcessor] - Calling wrapper...");
+    System.out.println("[DeployServiceCallProcessor] - Calling wrapper: " + wr);
     try {
       wr.deployService(data, this);
     } catch (Exception e) {
@@ -81,14 +89,13 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
   @Override
   public void update(Observable arg0, Object arg1) {
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg1;
-    System.out.println("[DeployServiceCallProcessor] - Received and");
-    if (update.getSID().equals(this.getSID())) {
-      System.out.println("[DeployServiceCallProcessor] - Received and update from the wrapper...");
+    if (update.getSID().equals(this.getSid())) {
+      System.out.println("[DeployServiceCallProcessor] - Received an update from the wrapper...");
       if (update.getStatus().equals("SUCCESS")) {
-        System.out.println("[DeployServiceCallProcessor] - Deploy "+ this.getSID() +" succed");
+        System.out.println("[DeployServiceCallProcessor] - Deploy " + this.getSid() + " succed");
         System.out.println("[DeployServiceCallProcessor] - Sending response...");
         ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
-            "infrastructure.service.deploy", this.getSID());
+            "infrastructure.service.deploy", this.getSid());
         this.getMux().enqueue(response);
       }
       // TODO handle other update from the compute wrapper;

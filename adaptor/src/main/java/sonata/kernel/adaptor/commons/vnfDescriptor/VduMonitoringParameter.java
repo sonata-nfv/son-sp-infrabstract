@@ -15,17 +15,21 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.vnfDescriptor.Unit.FrequencyUnit;
 
-public class VDUMonitoringParameter {
+public class VduMonitoringParameter {
 
   private String name;
   private String description;
   private Unit unit;
   private double frequency;
-  private FrequencyUnit frequency_unit;
+  @JsonProperty("frequency_unit")
+  private FrequencyUnit frequencyUnit;
 
   public double getFrequency() {
     return frequency;
@@ -40,7 +44,7 @@ public class VDUMonitoringParameter {
   }
 
   public FrequencyUnit getFrequency_unit() {
-    return frequency_unit;
+    return frequencyUnit;
   }
 
   public String getName() {

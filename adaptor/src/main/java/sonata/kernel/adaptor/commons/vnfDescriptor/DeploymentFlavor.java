@@ -15,20 +15,26 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
 public class DeploymentFlavor {
 
-  private ArrayList<String> vdu_reference;
+  @JsonProperty("vdu_reference")
+  private ArrayList<String> vduReference;
   private String constraint;
-  private ArrayList<String> vlink_reference;
+  @JsonProperty("vlink_reference")
+  private ArrayList<String> vlinkReference;
   private String id;
-  private ArrayList<AssuranceParameter> assurance_parameters;
+  @JsonProperty("assurance_parameters")
+  private ArrayList<AssuranceParameter> assuranceParameters;
 
   public ArrayList<String> getVdu_reference() {
-    return vdu_reference;
+    return vduReference;
   }
 
   public String getConstraint() {
@@ -36,7 +42,7 @@ public class DeploymentFlavor {
   }
 
   public ArrayList<String> getVlink_reference() {
-    return vlink_reference;
+    return vlinkReference;
   }
 
   public String getId() {
@@ -44,7 +50,7 @@ public class DeploymentFlavor {
   }
 
   public ArrayList<AssuranceParameter> getAssurance_parameters() {
-    return assurance_parameters;
+    return assuranceParameters;
   }
 
 }

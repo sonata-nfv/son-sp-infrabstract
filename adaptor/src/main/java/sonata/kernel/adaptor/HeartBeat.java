@@ -15,11 +15,12 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor;
 
-import java.util.UUID;
-
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
+
+import java.util.UUID;
 
 public class HeartBeat implements Runnable {
 
@@ -28,6 +29,12 @@ public class HeartBeat implements Runnable {
   private double rate; // measured in beat/s
   private boolean stop;
 
+  /**
+   * Create the Heart-beat runnable.
+   * @param mux the mux to which send the outgoing messages.
+   * @param rate the rate of the heart-beat
+   * @param core the AdaptorCore which created this heart-beat
+   * */
   public HeartBeat(AdaptorMux mux, double rate, AdaptorCore core) {
     this.mux = mux;
     this.rate = rate;
@@ -36,14 +43,14 @@ public class HeartBeat implements Runnable {
 
   @Override
   public void run() {
-    String uuid = core.getUUID();
+    String uuid = core.getUuid();
     while (!stop) {
       try {
-        Thread.sleep((int) ((1 / rate) * 1000));
         String body = "{\"uuid\":\"" + uuid + "\",\"state\":\"" + core.getState() + "\"}";
         ServicePlatformMessage message = new ServicePlatformMessage(body,
             "platform.management.plugin." + uuid + ".heartbeat", UUID.randomUUID().toString());
         mux.enqueue(message);
+        Thread.sleep((int) ((1 / rate) * 1000));
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
@@ -53,6 +60,7 @@ public class HeartBeat implements Runnable {
 
   public void stop() {
     this.stop = true;
+    
   }
 
 }

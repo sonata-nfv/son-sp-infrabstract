@@ -15,11 +15,8 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Observable;
+package sonata.kernel.adaptor;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -28,25 +25,28 @@ import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
 
-/**
- * 
- */
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Observable;
+
 public class AddVimCallProcessor extends AbstractCallProcessor {
 
   /**
-   * @param message
-   * @param SID
-   * @param mux
+   * Generate a CallProcessor to process an API call to create a new VIM wrapper
+   * 
+   * @param message the API call message
+   * @param sid the session ID of thi API call
+   * @param mux the Adaptor Mux to which send responses.
    */
-  public AddVimCallProcessor(ServicePlatformMessage message, String UUID, AdaptorMux mux) {
-    super(message, UUID, mux);
+  public AddVimCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
+    super(message, sid, mux);
 
   }
 
   @Override
   public boolean process(ServicePlatformMessage message) {
     boolean out = true;
-    // TODO process json message to extract the new Wrapper configurations
+    // process json message to extract the new Wrapper configurations
     // and ask the bay to create and register it
 
     JSONTokener tokener = new JSONTokener(message.getBody());
@@ -60,11 +60,11 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
     try {
-      URL vimURL = new URL(vimEndpoint);
-      config.setUUID(this.getSID());
+      URL vimUrl = new URL(vimEndpoint);
+      config.setUUID(this.getSid());
       config.setWrapperType(wrapperType);
       config.setVimType(vimType);
-      config.setVimEndpoint(vimURL);
+      config.setVimEndpoint(vimUrl);
       config.setAuthUserName(authUser);
       config.setAuthPass(authPass);
 
@@ -72,7 +72,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
       this.sendMessage(output);
     } catch (MalformedURLException e) {
       e.printStackTrace();
-      // TODO Call mux to send a "malformed request" error
+      // Call mux to send a "malformed request" error
       this.sendError("Malformed Request");
       out = false;
     }
@@ -80,12 +80,9 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     return out;
   }
 
-  /**
-   * @param The error message to send back to the platform
-   */
   private void sendError(String message) {
 
-    String jsonError = "{\"url\":\"son://sonata-sp/adaptor/registerVim/error?id=" + this.getSID()
+    String jsonError = "{\"url\":\"son://sonata-sp/adaptor/registerVim/error?id=" + this.getSid()
         + "\";\"message\":\"" + message + "\"}";
 
     ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError,
@@ -100,7 +97,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
   }
 
   @Override
-  public void update(Observable o, Object arg) {
+  public void update(Observable observable, Object arg) {
     // This call does not need to be updated by the wrapper behaviour.
   }
 }

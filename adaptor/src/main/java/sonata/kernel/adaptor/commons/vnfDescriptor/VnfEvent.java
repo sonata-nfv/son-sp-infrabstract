@@ -15,22 +15,28 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-public class VNFEvent {
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+public class VnfEvent {
+  
   private String command;
-  private String template_file;
-  private String template_file_format;
+  @JsonProperty("template_file")
+  private String templateFile;
+  @JsonProperty("template_file_format")  
+  private String templateFileFormat;
 
   public String getCommand() {
     return command;
   }
 
   public String getTemplate_file() {
-    return template_file;
+    return templateFile;
   }
 
   public String getTemplate_file_format() {
-    return template_file_format;
+    return templateFileFormat;
   }
 }

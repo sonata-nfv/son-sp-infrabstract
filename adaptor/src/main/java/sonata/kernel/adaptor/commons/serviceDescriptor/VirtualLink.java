@@ -15,10 +15,12 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.serviceDescriptor;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
 
 public class VirtualLink {
 
@@ -39,37 +41,46 @@ public class VirtualLink {
 
 
   // Virtual Link reference case
-  private String vl_group;
-  private String vl_name;
-  private String vl_version;
-  private String vl_description;
+  @JsonProperty("vl_group")
+  private String vlGroup;
+  @JsonProperty("vl_name")
+  private String vlName;
+  @JsonProperty("vl_version")
+  private String vlVersion;
+  @JsonProperty("vl_description")
+  private String vlDescription;
 
   // Virtual Link description case;
 
   private String id;
-  private ConnectivityType connectivity_type;
-  private ArrayList<String> connection_points_reference;
+  @JsonProperty("connectivity_type")
+  private ConnectivityType connectivityType;
+  @JsonProperty("connection_points_reference")
+  private ArrayList<String> connectionPointsReference;
   private boolean access;
-  private boolean external_access;
-  private String root_requirement;
-  private String leaf_requirement;
+  @JsonProperty("external_access")  
+  private boolean externalAccess;
+  @JsonProperty("root_requirement")
+  private String rootRequirement;
+  @JsonProperty("leaf_requirement")
+  private String leafRequirement;
   private boolean dhcp;
   private String qos;
 
   public String getVl_group() {
-    return vl_group;
+    return vlGroup;
   }
 
   public String getVl_name() {
-    return vl_name;
+    return vlName;
   }
 
   public String getVl_version() {
-    return vl_version;
+    return vlVersion;
   }
 
   public String getVl_description() {
-    return vl_description;
+    return vlDescription;
   }
 
   public String getId() {
@@ -77,11 +88,11 @@ public class VirtualLink {
   }
 
   public ConnectivityType getConnectivity_type() {
-    return connectivity_type;
+    return connectivityType;
   }
 
   public ArrayList<String> getConnection_points_reference() {
-    return connection_points_reference;
+    return connectionPointsReference;
   }
 
   public boolean isAccess() {
@@ -89,15 +100,15 @@ public class VirtualLink {
   }
 
   public boolean isExternal_access() {
-    return external_access;
+    return externalAccess;
   }
 
   public String getRoot_requirement() {
-    return root_requirement;
+    return rootRequirement;
   }
 
   public String getLeaf_requirement() {
-    return leaf_requirement;
+    return leafRequirement;
   }
 
   public boolean isDhcp() {

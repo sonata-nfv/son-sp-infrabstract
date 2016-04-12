@@ -15,22 +15,31 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
-import java.util.ArrayList;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.serviceDescriptor.VirtualLink.ConnectivityType;
 
-public class VNFVirtualLink {
+import java.util.ArrayList;
+
+public class VnfVirtualLink {
 
 
   private String id;
-  private ConnectivityType connectivity_type;
-  private ArrayList<String> connection_points_reference;
+  @JsonProperty("connectivity_type")
+  private ConnectivityType connectivityType;
+  @JsonProperty("connection_points_reference")
+  private ArrayList<String> connectionPointsReference;
   private boolean access;
-  private boolean external_access;
-  private String root_requirement;
-  private String leaf_requirement;
+  @JsonProperty("external_access")
+  private boolean externalAccess;
+  @JsonProperty("root_requirement")
+  private String rootRequirement;
+  @JsonProperty("leaf_requirement")
+  private String leafRequirement;
   private boolean dhcp;
   private String qos;
 
@@ -39,11 +48,11 @@ public class VNFVirtualLink {
   }
 
   public ConnectivityType getConnectivity_type() {
-    return connectivity_type;
+    return connectivityType;
   }
 
   public ArrayList<String> getConnection_points_reference() {
-    return connection_points_reference;
+    return connectionPointsReference;
   }
 
   public boolean isAccess() {
@@ -51,15 +60,15 @@ public class VNFVirtualLink {
   }
 
   public boolean isExternal_access() {
-    return external_access;
+    return externalAccess;
   }
 
   public String getRoot_requirement() {
-    return root_requirement;
+    return rootRequirement;
   }
 
   public String getLeaf_requirement() {
-    return leaf_requirement;
+    return leafRequirement;
   }
 
   public boolean isDhcp() {

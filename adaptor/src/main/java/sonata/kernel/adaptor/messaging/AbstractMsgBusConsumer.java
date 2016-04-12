@@ -15,17 +15,19 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.messaging;
 
 import java.util.concurrent.BlockingQueue;
 
-/**
- * 
- */
 public abstract class AbstractMsgBusConsumer implements MsgBusConsumer {
 
   private BlockingQueue<ServicePlatformMessage> dispatcherQueue;
 
+  /**
+   * Create a MsgBusConsumer.
+   * @param dispatcherQueue the queue in which enqueue incoming messages
+   * */
   public AbstractMsgBusConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
     this.dispatcherQueue = dispatcherQueue;
   }
@@ -35,13 +37,14 @@ public abstract class AbstractMsgBusConsumer implements MsgBusConsumer {
   }
 
   /**
+   * process the message coming from the MsgBus and enqueue it towards the dispatcher.
    * 
    * @param A JSON formatted message from the SP and its Topic.
    */
-  void processMessage(String message, String topic, String SID) {
+  void processMessage(String message, String topic, String sid) {
     // TODO process the string (or not, leaving the pre-processing to the
     // dispatcher?)
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, topic, SID);
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, topic, sid);
     this.enqueue(spMessage);
   }
 

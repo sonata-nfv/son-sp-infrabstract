@@ -26,8 +26,10 @@ public class WrapperBay {
 
   private static WrapperBay myInstance = null;
 
+  @SuppressWarnings("unused")
   private Hashtable<String, WrapperRecord> storageRegistry;
   private Hashtable<String, WrapperRecord> computeRegistry;
+  @SuppressWarnings("unused")
   private Hashtable<String, WrapperRecord> networkingRegistry;
 
   private WrapperBay() {
@@ -71,6 +73,15 @@ public class WrapperBay {
           (ComputeWrapper) this.computeRegistry.values().iterator().next().getVimWrapper();
     }
     return bestWrapper;
+  }
+
+  /**
+   * Utility methods to clear registry tables.
+   */
+  public void clear() {
+    computeRegistry = new Hashtable<String, WrapperRecord>();
+    storageRegistry = new Hashtable<String, WrapperRecord>();
+    networkingRegistry = new Hashtable<String, WrapperRecord>();
   }
 
 }

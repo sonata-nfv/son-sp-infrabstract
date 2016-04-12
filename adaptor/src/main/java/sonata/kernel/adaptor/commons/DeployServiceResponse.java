@@ -18,40 +18,43 @@
 
 package sonata.kernel.adaptor.commons;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.ArrayList;
 
 public class DeployServiceResponse {
 
-  private Status request_status;
+  @JsonProperty("request_status")
+  private Status requestStatus;
   private ServiceRecord nsr;
-  private ArrayList<VNFRecord> vnfrs;
+  private ArrayList<VnfRecord> vnfrs;
 
   public DeployServiceResponse() {
-    this.vnfrs = new ArrayList<VNFRecord>();
+    this.vnfrs = new ArrayList<VnfRecord>();
   }
 
   public void setStatus(Status status) {
-    this.request_status = status;
+    this.requestStatus = status;
   }
 
-  public void setNSR(ServiceRecord record) {
+  public void setNsr(ServiceRecord record) {
     this.nsr = record;
   }
 
-  public void addVNFRecord(VNFRecord vnfr) {
+  public void addVnfRecord(VnfRecord vnfr) {
     this.vnfrs.add(vnfr);
   }
 
-  public ServiceRecord getNSR() {
+  public ServiceRecord getNsr() {
     return nsr;
   }
 
-  public ArrayList<VNFRecord> getVNFRs() {
+  public ArrayList<VnfRecord> getVnfrList() {
     return vnfrs;
   }
 
-  public Status getRequest_status() {
-    return request_status;
+  public Status getRequestStatus() {
+    return requestStatus;
   }
 
 }

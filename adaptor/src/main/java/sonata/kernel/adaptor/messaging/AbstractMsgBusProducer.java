@@ -15,13 +15,11 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.messaging;
 
 import java.util.concurrent.BlockingQueue;
 
-/**
- * 
- */
 public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable {
 
   private BlockingQueue<ServicePlatformMessage> muxQueue;
@@ -31,13 +29,21 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
     this.muxQueue = muxQueue;
   }
 
+  /**
+   * Send a message in the MsgBus.
+   * @param the SP message to send
+   * */
   public abstract boolean sendMessage(ServicePlatformMessage message);
 
+  
+  /**
+   * Start consuming SP messages from the mux queue.
+   * */
   public boolean startProducing() {
     boolean out = true;
-    Thread t = new Thread(this);
+    Thread thread = new Thread(this);
     try {
-      t.start();
+      thread.start();
     } catch (Exception e) {
       e.printStackTrace();
       out = false;
@@ -45,6 +51,9 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
     return out;
   }
 
+  /**
+   * Stop consuming SP messages from the mux queue.
+   * */
   public boolean stopProducing() {
     boolean out = true;
     while (!muxQueue.isEmpty()) {
@@ -58,6 +67,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
     return out;
   }
 
+  @Override
   public void run() {
     do {
       try {

@@ -15,18 +15,22 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Violation {
 
   private int interval;
-  private int breaches_count;
+  @JsonProperty("breaches_count")
+  private int breachesCount;
 
   public int getInterval() {
     return interval;
   }
 
   public int getBreaches_count() {
-    return breaches_count;
+    return breachesCount;
   }
 }

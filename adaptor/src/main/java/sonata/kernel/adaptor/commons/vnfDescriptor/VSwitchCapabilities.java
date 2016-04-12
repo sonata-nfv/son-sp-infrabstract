@@ -15,12 +15,17 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class VSwitchCapabilities {
+  
   private String version;
   private String type;
-  private String overlay_tunnel;
+  @JsonProperty("overlay_tunnel")
+  private String overlayTunnel;
 
   public String getVersion() {
     return version;
@@ -31,6 +36,6 @@ public class VSwitchCapabilities {
   }
 
   public String getOverlay_tunnel() {
-    return overlay_tunnel;
+    return overlayTunnel;
   }
 }

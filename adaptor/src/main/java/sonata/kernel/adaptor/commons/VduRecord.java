@@ -18,34 +18,43 @@
 
 package sonata.kernel.adaptor.commons;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import sonata.kernel.adaptor.commons.vnfDescriptor.ResourceRequirements;
 
-public class VDURecord {
+public class VduRecord {
 
   private String id;
-  private String vm_image;
-  private String vdu_reference;
-  private int number_of_instances;
-  private ResourceRequirements resource_requirements;
+  @JsonProperty("vm_image")
+  private String vmImage;
+
+  @JsonProperty("vdu_reference")
+  private String vduReference;
+
+  @JsonProperty("number_of_instances")
+  private int numberOfInstances;
+  
+  @JsonProperty("resource_requirements")
+  private ResourceRequirements resourceRequirements;
 
   public void setId(String id) {
     this.id = id;
   }
 
-  public void setVm_image(String vm_image) {
-    this.vm_image = vm_image;
+  public void setVm_image(String vmImage) {
+    this.vmImage = vmImage;
   }
 
-  public void setVdu_reference(String vdu_reference) {
-    this.vdu_reference = vdu_reference;
+  public void setVdu_reference(String vduReference) {
+    this.vduReference = vduReference;
   }
 
-  public void setNumber_of_instances(int number_of_instances) {
-    this.number_of_instances = number_of_instances;
+  public void setNumber_of_instances(int numberOfInstances) {
+    this.numberOfInstances = numberOfInstances;
   }
 
-  public void setResource_requirements(ResourceRequirements resource_requirements) {
-    this.resource_requirements = resource_requirements;
+  public void setResource_requirements(ResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
   }
 
   public String getId() {
@@ -53,19 +62,19 @@ public class VDURecord {
   }
 
   public String getVm_image() {
-    return vm_image;
+    return vmImage;
   }
 
   public String getVdu_reference() {
-    return vdu_reference;
+    return vduReference;
   }
 
   public int getNumber_of_instances() {
-    return number_of_instances;
+    return numberOfInstances;
   }
 
   public ResourceRequirements getResource_requirements() {
-    return resource_requirements;
+    return resourceRequirements;
   }
 
 }

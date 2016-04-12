@@ -15,6 +15,7 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.vnfDescriptor;
 
 
@@ -23,6 +24,7 @@ public interface Unit {
   public enum BandwidthUnit implements Unit {
     bps, kbps, Mbps, Gbps, Tbps;
   }
+  
   public enum MemoryUnit implements Unit {
     B, kB, KiB, MB, MiB, GB, GiB, TB, TiB, PB, PiB;
   }
