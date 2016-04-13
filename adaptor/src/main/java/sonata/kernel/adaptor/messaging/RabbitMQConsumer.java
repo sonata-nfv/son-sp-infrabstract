@@ -18,6 +18,14 @@
 
 package sonata.kernel.adaptor.messaging;
 
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DefaultConsumer;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -29,14 +37,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
-
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DefaultConsumer;
 
 public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
@@ -50,6 +50,7 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     super(dispatcherQueue);
   }
 
+  @Override
   public void connectToBus() {
     Properties brokerConfig = parseConfigFile();
     System.out.println("[northbound] RabbitMQConsumer - connecting to broker...");
@@ -71,11 +72,13 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
           "platform.management.plugin.register");
       System.out.println(
-          "[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.register\"");
+          "[northbound] RabbitMQConsumer - bound to topic "
+          + "\"platform.platform.management.plugin.register\"");
       channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
           "platform.management.plugin.deregister");
       System.out.println(
-          "[northbound] RabbitMQConsumer - bound to topic \"platform.platform.management.plugin.deregister\"");
+          "[northbound] RabbitMQConsumer - bound to topic "
+          + "\"platform.platform.management.plugin.deregister\"");
       channel.queueBind(queueName, brokerConfig.getProperty("exchange"), "infrastructure.*");
       System.out.println("[northbound] RabbitMQConsumer - bound to topic \"infrastructure.*\"");
       consumer = new AdaptorDefaultConsumer(channel, this);
@@ -84,24 +87,22 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     } catch (TimeoutException e) {
       e.printStackTrace();
     } catch (KeyManagementException e1) {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     } catch (NoSuchAlgorithmException e1) {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     } catch (URISyntaxException e1) {
-      // TODO Auto-generated catch block
       e1.printStackTrace();
     }
 
   }
 
+  @Override
   public boolean startConsuming() {
     boolean out = true;
-    Thread t;
+    Thread thread;
     try {
-      t = new Thread(this);
-      t.start();
+      thread = new Thread(this);
+      thread.start();
     } catch (Exception e) {
       e.printStackTrace();
       out = false;
@@ -109,6 +110,7 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     return out;
   }
 
+  @Override
   public boolean stopConsuming() {
     boolean out = true;
     try {
@@ -125,6 +127,7 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     return out;
   }
 
+  @Override
   public void run() {
     try {
       System.out.println("[nortbound] RabbitMQConsumer - Starting consumer thread");
@@ -135,12 +138,12 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
   }
 
   /**
-   * Utility function to parse the broker configuration file
+   * Utility function to parse the broker configuration file.
    *
    * @return a Java Properties object representing the json config as a Key-Value map
    */
   private Properties parseConfigFile() {
-    Properties p = new Properties();
+    Properties prop = new Properties();
     try {
       InputStreamReader in =
           new InputStreamReader(new FileInputStream(configFilePath), Charset.forName("UTF-8"));
@@ -149,16 +152,16 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
 
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
 
-      String brokerURL = jsonObject.getString("broker_url");
+      String brokerUrl = jsonObject.getString("broker_url");
       String exchange = jsonObject.getString("exchange");
-      p.put("broker_url", brokerURL);
-      p.put("exchange", exchange);
+      prop.put("broker_url", brokerUrl);
+      prop.put("exchange", exchange);
     } catch (FileNotFoundException e) {
       System.err.println("Unable to load Broker Config file");
       System.exit(1);
     }
 
-    return p;
+    return prop;
   }
 
 }

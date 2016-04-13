@@ -15,9 +15,8 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.adaptor.wrapper;
 
-import java.util.UUID;
+package sonata.kernel.adaptor.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -32,8 +31,10 @@ import sonata.kernel.adaptor.commons.ServiceRecord;
 import sonata.kernel.adaptor.commons.Status;
 import sonata.kernel.adaptor.commons.VduRecord;
 import sonata.kernel.adaptor.commons.VnfRecord;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VnfDescriptor;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VirtualDeploymentUnit;
+import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
+import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+
+import java.util.UUID;
 
 public class MockWrapper extends ComputeWrapper implements Runnable {
 
@@ -43,7 +44,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
    * response and update the observer
    */
   private DeployServiceData data;
-  private String SID;
+  private String sid;
 
   public MockWrapper(WrapperConfiguration config) {
     super();
@@ -53,13 +54,13 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
   public String toString() {
     return "MockWrapper";
   }
-  
+
   @Override
   public boolean deployService(DeployServiceData data,
       final StartServiceCallProcessor callProcessor) {
     this.addObserver(callProcessor);
     this.data = data;
-    this.SID = callProcessor.getSid();
+    this.sid = callProcessor.getSid();
     // This is a mock compute wrapper.
 
     /*
@@ -68,8 +69,8 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
      * if the request is acceptable, and if so start a new thread to deal with the perform the
      * needed actions.
      */
-    Thread t = new Thread(this);
-    t.start();
+    Thread thread = new Thread(this);
+    thread.start();
     return true;
   }
 
@@ -105,7 +106,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       response.addVnfRecord(vnfr);
     }
     response.setNsr(sr);
-    
+
     System.out.println("[MockWrapperFSM] - Response created. Serializing...");
 
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -118,7 +119,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       body = mapper.writeValueAsString(response);
       this.setChanged();
       System.out.println("[MockWrapperFSM] - Serialized. notifying call processor");
-      WrapperStatusUpdate update = new WrapperStatusUpdate(this.SID, "SUCCESS", body);
+      WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
       this.notifyObservers(update);
     } catch (JsonProcessingException e) {
       e.printStackTrace();

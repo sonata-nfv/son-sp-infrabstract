@@ -31,14 +31,15 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
 
   /**
    * Send a message in the MsgBus.
+   * 
    * @param the SP message to send
-   * */
+   */
   public abstract boolean sendMessage(ServicePlatformMessage message);
 
-  
+
   /**
    * Start consuming SP messages from the mux queue.
-   * */
+   */
   public boolean startProducing() {
     boolean out = true;
     Thread thread = new Thread(this);
@@ -53,7 +54,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
 
   /**
    * Stop consuming SP messages from the mux queue.
-   * */
+   */
   public boolean stopProducing() {
     boolean out = true;
     while (!muxQueue.isEmpty()) {

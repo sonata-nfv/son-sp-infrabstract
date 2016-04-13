@@ -41,13 +41,14 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
   private String sid;
   private AdaptorMux mux;
 
-  /** 
-   * Abtract class for an API call processor. The processo runs on a thread an
-   * processes a ServicePlatformMessage. 
+  /**
+   * Abtract class for an API call processor. The processo runs on a thread an processes a
+   * ServicePlatformMessage.
+   * 
    * @param message The ServicePlatformMessage to process
    * @param sid the Session Identifier for this API call
    * @param mux the AdaptorMux where response messages are to be sent.
-   * */
+   */
   public AbstractCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     this.message = message;
     this.sid = sid;
@@ -57,7 +58,7 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
   protected void sendToMux(ServicePlatformMessage message) {
     mux.enqueue(message);
   }
-  
+
   @Override
   public void run() {
 

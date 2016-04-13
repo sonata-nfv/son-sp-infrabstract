@@ -15,37 +15,43 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
-/**
- * 
- */
 public class WrapperFactory {
 
   /**
-   * @param config
+   * Uses the parser configuration to create the relevant Wrapper.
+   * 
+   * @param config the WrapperConfiguration object describing the wrapper to create.
    * @return the brand new wrapper
    */
   public static Wrapper createWrapper(WrapperConfiguration config) {
     Wrapper output = null;
     System.out.println("WrapperFactory - createWrapper");
     System.out.println("config:\n\r" + config);
-    if (config.getWrapperType().equals("compute")) output = createComputeWrapper(config);
-    if (config.getWrapperType().equals("networking")) output = createNetworkingWrapper(config);
-    if (config.getWrapperType().equals("storage")) output = createStorageWrapper(config);
+    if (config.getWrapperType().equals("compute")) {
+      output = createComputeWrapper(config);
+    }
+    if (config.getWrapperType().equals("networking")) {
+      output = createNetworkingWrapper(config);
+    }
+    if (config.getWrapperType().equals("storage")) {
+      output = createStorageWrapper(config);
+    }
     return output;
   }
 
   private static ComputeWrapper createComputeWrapper(WrapperConfiguration config) {
     ComputeWrapper output = null;
 
-    if (config.getVimType().equals(ComputeVimType.VLSP.getName()))
+    if (config.getVimType().equals(ComputeVimType.VLSP.toString())) {
       output = new VLSPWrapper(config);
-    else if (config.getVimType().equals(ComputeVimType.MOCK.getName()))
+    } else if (config.getVimType().equals(ComputeVimType.MOCK.toString())) {
       output = new MockWrapper(config);
-    else if (config.getVimType().equals(ComputeVimType.OPENSTACKHEAT.getName()))
+    } else if (config.getVimType().equals(ComputeVimType.OPENSTACKHEAT.toString())) {
       output = new OpenStackHeatWrapper(config);
-
+    }
     // TODO Extends with all wrappers or refactor with a more OO type
     // generation
 

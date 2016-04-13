@@ -15,7 +15,18 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.messaging;
+
+import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import sonata.kernel.adaptor.AdaptorCore;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -29,19 +40,6 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.AMQP.BasicProperties;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.ConnectionFactory;
-
-import sonata.kernel.adaptor.AdaptorCore;
-
-/**
- * 
- */
 public class RabbitMQProducer extends AbstractMsgBusProducer {
 
   public RabbitMQProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
@@ -53,6 +51,7 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
   private Connection connection;
   private Properties brokerConfig;
 
+  @Override
   public void connectToBus() {
     brokerConfig = parseConfigFile();
 
@@ -86,6 +85,7 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
     }
   }
 
+  @Override
   public boolean sendMessage(ServicePlatformMessage message) {
     boolean out = true;
 
@@ -97,7 +97,7 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
       channel.exchangeDeclare(exchangeName, "topic");
       BasicProperties properties =
           new BasicProperties().builder().appId(AdaptorCore.APP_ID).contentType("application/json")
-              .replyTo(message.getTopic()).correlationId(message.getSID()).build();
+              .replyTo(message.getTopic()).correlationId(message.getSid()).build();
       channel.basicPublish(exchangeName, message.getTopic(), properties,
           message.getBody().getBytes("UTF-8"));
       System.out.println(
@@ -110,12 +110,12 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
   }
 
   /**
-   * Utility function to parse the broker configuration file
+   * Utility function to parse the broker configuration file.
    *
    * @return a Java Properties object representing the json config as a Key-Value map
    */
   private Properties parseConfigFile() {
-    Properties p = new Properties();
+    Properties prop = new Properties();
     try {
       InputStreamReader in =
           new InputStreamReader(new FileInputStream(configFilePath), Charset.forName("UTF-8"));
@@ -124,16 +124,16 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
 
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
 
-      String brokerURL = jsonObject.getString("broker_url");
+      String brokerUrl = jsonObject.getString("broker_url");
       String exchange = jsonObject.getString("exchange");
-      p.put("broker_url", brokerURL);
-      p.put("exchange", exchange);
+      prop.put("broker_url", brokerUrl);
+      prop.put("exchange", exchange);
     } catch (FileNotFoundException e) {
       System.err.println("Unable to load Broker Config file");
       System.exit(1);
     }
 
-    return p;
+    return prop;
   }
 
 }

@@ -15,11 +15,9 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
-/**
- * 
- */
 public interface ResourceDescriptor {
 
   public String toJson();

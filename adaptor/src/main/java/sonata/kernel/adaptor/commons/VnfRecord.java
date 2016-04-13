@@ -28,10 +28,10 @@ public class VnfRecord {
   private String descriptorVersion;
   private String id;
   private Status status;
-  
+
   @JsonProperty("vnf_address")
   private String vnfAddress;
-  
+
   @JsonProperty("virtual_deployment_units")
   private ArrayList<VduRecord> virtualDeploymentUnits;
 

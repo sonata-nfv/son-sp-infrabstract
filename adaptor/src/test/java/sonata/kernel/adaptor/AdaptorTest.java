@@ -5,6 +5,8 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -12,7 +14,6 @@ import junit.framework.TestSuite;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.messaging.TestConsumer;
 import sonata.kernel.adaptor.messaging.TestProducer;
-import sonata.kernel.adaptor.wrapper.WrapperBay;
 
 /**
  * Unit test for simple App.
@@ -83,8 +84,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
    */
   public void testCreateVLSPWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"target\":\"addVim\",\"body\":{\"wr_type\":\"compute\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
-    String topic = "infrastructure.management.compute";
+        "{\"wr_type\":\"compute\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
+    String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -105,10 +106,30 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
         mon.wait();
       }
 
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String uuid = jsonObject.getString("uuid");
+    String status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
 
-    assertTrue(output.contains("COMPLETED"));
+    output = null;
+    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
     core.stop();
-    WrapperBay.getInstance().clear();
   }
 
   /**
@@ -118,8 +139,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
    */
   public void testCreateMOCKWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"target\":\"addVim\",\"body\":{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
-    String topic = "infrastructure.management.compute";
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
+    String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -135,15 +156,37 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
-    while (output == null)
+    while (output == null) {
       synchronized (mon) {
         mon.wait(1000);
       }
+    }
 
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String uuid = jsonObject.getString("uuid");
+    String status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
 
-    assertTrue(output.contains("COMPLETED"));
+    output = null;
+    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
+
     core.stop();
-    WrapperBay.getInstance().clear();
 
   }
 

@@ -15,6 +15,7 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
 import sonata.kernel.adaptor.StartServiceCallProcessor;
@@ -22,13 +23,16 @@ import sonata.kernel.adaptor.commons.DeployServiceData;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
+  /**
+   * general constructor for wrappers of type compute.
+   * */
   public ComputeWrapper() {
-
+    
     this.setType("compute");
 
   }
 
   public abstract boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor);
+      StartServiceCallProcessor startServiceCallProcessor) throws Exception;
 
 }

@@ -10,6 +10,9 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -22,12 +25,14 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeployServiceResponse;
+import sonata.kernel.adaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.adaptor.commons.Status;
 import sonata.kernel.adaptor.commons.VnfRecord;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.vnfDescriptor.Unit;
-import sonata.kernel.adaptor.commons.vnfDescriptor.UnitDeserializer;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VnfDescriptor;
+import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.Unit;
+import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.Unit.MemoryUnit;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.messaging.TestConsumer;
 import sonata.kernel.adaptor.messaging.TestProducer;
@@ -58,7 +63,84 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     return new TestSuite(DeployServiceTest.class);
   }
 
+  public void testCheckResources() throws IOException, InterruptedException {
 
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.1);
+
+    core.start();
+    int counter = 0;
+
+    try {
+      while (counter < 2) {
+        synchronized (mon) {
+          mon.wait();
+          if (lastHeartbeat.contains("RUNNING")) counter++;
+        }
+      }
+    } catch (Exception e) {
+      assertTrue(false);
+    }
+
+    String message =
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
+    String topic = "infrastructure.management.compute.add";
+    ServicePlatformMessage addVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String status = jsonObject.getString("status");
+    String wrUuid = jsonObject.getString("uuid");
+    assertTrue(status.equals("COMPLETED"));
+    System.out.println("Mock Wrapper added, with uuid: " + wrUuid);
+
+    ResourceAvailabilityData data = new ResourceAvailabilityData();
+
+    data.setCpu(4);
+    data.setMemory(10);
+    data.setMemoryUnit(MemoryUnit.GB);
+    data.setStorage(50);
+    data.setStorageUnit(MemoryUnit.GB);
+    topic = "infrastructure.management.compute.resourceAvailability";
+
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    SimpleModule module = new SimpleModule();
+    module.addDeserializer(Unit.class, new UnitDeserializer());
+    mapper.registerModule(module);
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+
+    message = mapper.writeValueAsString(data);
+
+    ServicePlatformMessage checkResourcesMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+
+    output = null;
+    consumer.injectMessage(checkResourcesMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    assertTrue(output.contains("OK"));
+  }
 
   public void testDeployService() throws IOException, InterruptedException {
 
@@ -70,7 +152,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     TestProducer producer = new TestProducer(muxQueue, this);
     consumer = new TestConsumer(dispatcherQueue);
-    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.1);
 
     core.start();
     int counter = 0;
@@ -88,8 +170,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
 
     String message =
-        "{\"target\":\"addVim\",\"body\":{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
-    String topic = "infrastructure.management.compute";
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
+    String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage =
         new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
     consumer.injectMessage(addVimMessage);
@@ -99,7 +181,12 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         mon.wait(1000);
       }
 
-    assertTrue(output.contains("COMPLETED"));
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String status = jsonObject.getString("status");
+    String wrUuid = jsonObject.getString("uuid");
+    assertTrue(status.equals("COMPLETED"));
+    System.out.println("Mock Wrapper added, with uuid: " + wrUuid);
 
     output = null;
     ServiceDescriptor sd;

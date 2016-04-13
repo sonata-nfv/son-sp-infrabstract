@@ -15,11 +15,9 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
-/**
- * 
- */
 public class WrapperRecord {
 
   public WrapperConfiguration getConfig() {
@@ -38,6 +36,14 @@ public class WrapperRecord {
   private Wrapper vimWrapper;
   private ResourceDescriptor resources;
 
+  /**
+   * Create a WrapperRecord to be store in the WrapperBay
+   * 
+   * @param wrapper The Wrapper object to be recorded.
+   * @param config The WrapperConfiguration object describing the wrapper to be recorded.
+   * @param resources The ResourceDescription object representing the resource availability of the
+   *        wrapper to be recorded.
+   */
   public WrapperRecord(Wrapper wrapper, WrapperConfiguration config, ResourceDescriptor resources) {
     this.config = config;
     this.vimWrapper = wrapper;

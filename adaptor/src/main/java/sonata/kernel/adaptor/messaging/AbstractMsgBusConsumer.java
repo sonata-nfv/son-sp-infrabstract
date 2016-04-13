@@ -26,8 +26,9 @@ public abstract class AbstractMsgBusConsumer implements MsgBusConsumer {
 
   /**
    * Create a MsgBusConsumer.
+   * 
    * @param dispatcherQueue the queue in which enqueue incoming messages
-   * */
+   */
   public AbstractMsgBusConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
     this.dispatcherQueue = dispatcherQueue;
   }

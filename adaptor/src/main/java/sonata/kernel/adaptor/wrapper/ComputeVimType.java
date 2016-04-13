@@ -15,11 +15,9 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
-/**
- * 
- */
 enum ComputeVimType {
   VLSP("VLSP"), OPENSTACK("OpenStack"), OPENSTACKHEAT("Heat"), OPENMANO("OpenMANO"), MOCK(
       "Mock"), OPENVIM("OpenVIM");
@@ -29,8 +27,9 @@ enum ComputeVimType {
   ComputeVimType(String name) {
     this.name = name;
   }
-
-  public String getName() {
+  
+  @Override
+  public String toString() {
     return this.name;
   }
 }

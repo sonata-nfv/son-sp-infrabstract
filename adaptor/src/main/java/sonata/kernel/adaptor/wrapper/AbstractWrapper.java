@@ -15,6 +15,7 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
 import java.util.Observable;
@@ -27,6 +28,11 @@ public abstract class AbstractWrapper extends Observable {
     this.type = type;
   }
 
+  /**
+   * return the type of this wrapper.
+   * 
+   * @return a String in {"compute","storage","network"}
+   * */
   public String getType() {
     return type;
   }

@@ -15,25 +15,31 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
-/**
- * 
- */
 public class WrapperStatusUpdate {
 
-  private String SID;
+  private String sid;
   private String status;
   private String body;
 
+  /**
+   * Standard constructor for a WrapperStatusUpdate object. To be used in the Observer pattern
+   * between AbstractCallProcessor and Wrapper.
+   * 
+   * @param sid The session ID of the API call.
+   * @param status a String representing the Wrapper status.
+   * @param body a String with the detailed description of the status update.
+   */
   public WrapperStatusUpdate(String sid, String status, String body) {
-    this.SID = sid;
+    this.sid = sid;
     this.status = status;
     this.body = body;
   }
 
-  public String getSID() {
-    return SID;
+  public String getSid() {
+    return sid;
   }
 
   public String getStatus() {

@@ -15,11 +15,9 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
-/**
- * 
- */
 public interface Wrapper {
 
   public String getType();

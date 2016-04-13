@@ -15,6 +15,7 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
 import sonata.kernel.adaptor.StartServiceCallProcessor;
@@ -29,7 +30,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   @Override
   public boolean deployService(DeployServiceData data,
       StartServiceCallProcessor startServiceCallProcessor) {
-    // TODO Auto-generated method stub
     return false;
   }
 

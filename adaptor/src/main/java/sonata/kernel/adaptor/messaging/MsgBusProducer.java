@@ -41,8 +41,8 @@ public interface MsgBusProducer {
   public boolean stopProducing();
 
   /**
-   * Send a message on the Message Bus
-   * */
+   * Send a message on the Message Bus.
+   */
   public boolean sendMessage(ServicePlatformMessage message);
 
 }

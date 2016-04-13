@@ -18,9 +18,6 @@
 
 package sonata.kernel.adaptor;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 
 import java.util.concurrent.BlockingQueue;
@@ -67,6 +64,8 @@ public class AdaptorDispatcher implements Runnable {
           handleManagementMessage(message);
         } else if (isServiceMsg(message)) {
           this.handleServiceMsg(message);
+        } else if (isMonitoringMessage(message)) {
+          this.handleMonitoringMessage(message);
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
@@ -74,24 +73,40 @@ public class AdaptorDispatcher implements Runnable {
     } while (!stop);
   }
 
+  private void handleMonitoringMessage(ServicePlatformMessage message) {
+    if (message.getTopic().contains("compute")) {
+    
+    } else if (message.getTopic().contains("storage")) {
+
+    } else if (message.getTopic().contains("network")) {
+
+    }
+  }
+
   private void handleServiceMsg(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("deploy")) {
-      myThreadPool.execute(new StartServiceCallProcessor(message, message.getSID(), mux));
+      myThreadPool.execute(new StartServiceCallProcessor(message, message.getSid(), mux));
     }
   }
 
   private void handleManagementMessage(ServicePlatformMessage message) {
-    JSONTokener tokener = new JSONTokener(message.getBody());
-    JSONObject json = (JSONObject) tokener.nextValue();
-    String target = json.getString("target");
-    String body = json.getJSONObject("body").toString();
 
-    // TODO full API definition.
-    if (target.equals("addVim")) {
-      myThreadPool.execute(new AddVimCallProcessor(
-          new ServicePlatformMessage(body, message.getTopic(), message.getSID()), message.getSID(),
-          mux));
+    if (message.getTopic().contains("compute")) { // compute menagement API
+      if (message.getTopic().endsWith("add")) {
+        myThreadPool.execute(new AddVimCallProcessor(message, message.getSid(), mux));
+      } else if (message.getTopic().endsWith("remove")) {
+        myThreadPool.execute(new RemoveVimCallProcessor(message, message.getSid(), mux));
+      } else if (message.getTopic().endsWith("resourceAvailability")) {
+        myThreadPool.execute(new ResourceAvailabilityCallProcessor(message, message.getSid(), mux));
+      }
+    } else if (message.getTopic().contains("storage")) {
+      // TODO Storage Management API
+    } else if (message.getTopic().contains("network")) {
+      // TODO Networking Management API
+    } else {
+
     }
+
   }
 
   private boolean isManagementMsg(ServicePlatformMessage message) {
@@ -102,14 +117,18 @@ public class AdaptorDispatcher implements Runnable {
     return message.getTopic().contains("infrastructure.service");
   }
 
+  private boolean isMonitoringMessage(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.monitoring");
+  }
+
   private boolean isRegistrationResponse(ServicePlatformMessage message) {
     return message.getTopic().equals("platform.management.plugin.register")
-        && message.getSID().equals(core.getRegistrationSid());
+        && message.getSid().equals(core.getRegistrationSid());
   }
 
   private boolean isDeregistrationResponse(ServicePlatformMessage message) {
     return message.getTopic().equals("platform.management.plugin.deregister")
-        && message.getSID().equals(core.getRegistrationSid());
+        && message.getSid().equals(core.getRegistrationSid());
   }
 
   public void start() {

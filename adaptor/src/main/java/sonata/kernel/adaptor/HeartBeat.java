@@ -31,10 +31,11 @@ public class HeartBeat implements Runnable {
 
   /**
    * Create the Heart-beat runnable.
+   * 
    * @param mux the mux to which send the outgoing messages.
    * @param rate the rate of the heart-beat
    * @param core the AdaptorCore which created this heart-beat
-   * */
+   */
   public HeartBeat(AdaptorMux mux, double rate, AdaptorCore core) {
     this.mux = mux;
     this.rate = rate;
@@ -60,7 +61,7 @@ public class HeartBeat implements Runnable {
 
   public void stop() {
     this.stop = true;
-    
+
   }
 
 }

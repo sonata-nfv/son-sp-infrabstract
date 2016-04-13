@@ -18,8 +18,8 @@
 
 package sonata.kernel.adaptor.commons;
 
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VnfDescriptor;
+import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 
 import java.util.ArrayList;
 

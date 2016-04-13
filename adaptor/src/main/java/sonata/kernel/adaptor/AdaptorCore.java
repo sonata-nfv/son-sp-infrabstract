@@ -129,7 +129,7 @@ public class AdaptorCore {
         new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString());
     synchronized (writeLock) {
       try {
-        this.registrationSid = message.getSID();
+        this.registrationSid = message.getSid();
         mux.enqueue(message);
         writeLock.wait(10000);
       } catch (InterruptedException e) {
@@ -145,7 +145,7 @@ public class AdaptorCore {
         new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString());
     synchronized (writeLock) {
       try {
-        this.registrationSid = message.getSID();
+        this.registrationSid = message.getSid();
         mux.enqueue(message);
         writeLock.wait(10000);
       } catch (InterruptedException e) {

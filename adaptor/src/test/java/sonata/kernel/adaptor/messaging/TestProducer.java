@@ -24,7 +24,7 @@ public class TestProducer extends AbstractMsgBusProducer {
   public boolean sendMessage(ServicePlatformMessage message) {
     System.out
         .println("[TestProducer] Topic: " + message.getTopic() + " - Message:" + message.getBody());
-    if (message.getTopic().equals("infrastructure.management.compute")) {
+    if (message.getTopic().contains("infrastructure.management.compute")) {
       output.receive(message);
     }
     if (message.getTopic().equals("infrastructure.service.deploy")) {
@@ -34,13 +34,13 @@ public class TestProducer extends AbstractMsgBusProducer {
       String registrationResponse = "{\"status\":\"OK\",\"uuid\":\"" + UUID.randomUUID().toString()
           + "\",\"error\":\"none\"}";
       ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,
-          "platform.management.plugin.register", message.getSID());
+          "platform.management.plugin.register", message.getSid());
       output.forwardToConsumer(response);
     }
     if (message.getTopic().equals("platform.management.plugin.deregister")) {
       String registrationResponse = "{\"status\":\"OK\"}";
       ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,
-          "platform.management.plugin.deregister", message.getSID());
+          "platform.management.plugin.deregister", message.getSid());
       output.forwardToConsumer(response);
     }
     if (message.getTopic().contains("heartbeat")) {

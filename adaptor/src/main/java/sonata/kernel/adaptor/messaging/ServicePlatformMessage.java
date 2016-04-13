@@ -15,47 +15,61 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.messaging;
 
-/**
- * 
- */
 public class ServicePlatformMessage {
 
-  String jsonMessage;
+  String messageBody;
   String topic;
-  String SID;
+  String sid;
 
   /**
-   * @param a JSON formatted String to wrap in the SP Message
+   * Create the Service Platform Message.
+   * 
+   * @param message a JSON or YAML formatted String to wrap in the SP Message
+   * @param topic the topic on which the message has been received
+   * @param sid the session ID of this message
    */
-  public ServicePlatformMessage(String message, String topic, String SID) {
-    jsonMessage = message;
+  public ServicePlatformMessage(String message, String topic, String sid) {
+    messageBody = message;
     this.topic = topic;
-    this.SID = SID;
+    this.sid = sid;
   }
 
   /**
-   * @return
+   * @return a String representing the message wrapped in this object.
    */
   public String getBody() {
-    return jsonMessage;
+    return messageBody;
   }
 
+  /**
+   * set the topic of this message.
+   * 
+   * @param topic a String representing the Topic to set
+   */
   public void setTopic(String topic) {
     this.topic = topic;
   }
 
+  /**
+   * @return a String representing the topic of this message.
+   */
   public String getTopic() {
     return topic;
   }
 
-  public String getSID() {
-    return this.SID;
+  /**
+   * @return a String representing the session ID of this message.
+   */
+  public String getSid() {
+    return this.sid;
   }
 
+  @Override
   public String toString() {
-    return "SID: " + SID + " - message: " + jsonMessage + " - topic: " + topic;
+    return "sid: " + sid + " - message: " + messageBody + " - topic: " + topic;
   }
 
 }

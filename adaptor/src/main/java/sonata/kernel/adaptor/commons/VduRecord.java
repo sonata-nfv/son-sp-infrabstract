@@ -20,7 +20,7 @@ package sonata.kernel.adaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.adaptor.commons.vnfDescriptor.ResourceRequirements;
+import sonata.kernel.adaptor.commons.vnfd.ResourceRequirements;
 
 public class VduRecord {
 
@@ -33,7 +33,7 @@ public class VduRecord {
 
   @JsonProperty("number_of_instances")
   private int numberOfInstances;
-  
+
   @JsonProperty("resource_requirements")
   private ResourceRequirements resourceRequirements;
 

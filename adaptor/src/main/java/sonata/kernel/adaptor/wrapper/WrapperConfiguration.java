@@ -15,13 +15,11 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
 import java.net.URL;
 
-/**
- * 
- */
 public class WrapperConfiguration {
 
   private URL vimEndpoint;
@@ -30,7 +28,7 @@ public class WrapperConfiguration {
   private String authUserName;
   private String authPass;
   private String authKey;
-  private String UUID;
+  private String uuid;
 
   public String getWrapperType() {
     return wrapperType;
@@ -80,18 +78,19 @@ public class WrapperConfiguration {
     this.authKey = authKey;
   }
 
-  public String getUUID() {
-    return this.UUID;
+  public String getUuid() {
+    return this.uuid;
   }
 
-  public void setUUID(String UUID) {
-    this.UUID = UUID;
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
+  @Override
   public String toString() {
     String out = "";
 
-    out += "SID: " + UUID + "\n\r";
+    out += "sid: " + uuid + "\n\r";
     out += "WrapperType: " + wrapperType + "\n\r";
     out += "VimType: " + vimType + "\n\r";
     out += "VimEndpount: " + vimEndpoint + "\n\r";

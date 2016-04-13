@@ -14,8 +14,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import sonata.kernel.adaptor.commons.serviceDescriptor.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.vnfDescriptor.VnfDescriptor;
+
+import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 
 /**
  * Unit test for simple App.

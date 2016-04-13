@@ -61,14 +61,22 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String authPass = jsonObject.getString("pass");
     try {
       URL vimUrl = new URL(vimEndpoint);
-      config.setUUID(this.getSid());
+      config.setUuid(this.getSid());
       config.setWrapperType(wrapperType);
       config.setVimType(vimType);
       config.setVimEndpoint(vimUrl);
       config.setAuthUserName(authUser);
       config.setAuthPass(authPass);
-
-      String output = WrapperBay.getInstance().registerNewWrapper(config);
+      String output = null;
+      if (wrapperType.equals("compute")) {
+        output = WrapperBay.getInstance().registerComputeWrapper(config);
+      } else if (wrapperType.equals("storage")) {
+        // TODO
+        output = "";
+      } else if (wrapperType.equals("network")) {
+        // TODO
+        output = "";
+      }
       this.sendMessage(output);
     } catch (MalformedURLException e) {
       e.printStackTrace();
@@ -82,22 +90,21 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 
   private void sendError(String message) {
 
-    String jsonError = "{\"url\":\"son://sonata-sp/adaptor/registerVim/error?id=" + this.getSid()
-        + "\";\"message\":\"" + message + "\"}";
-
+    String jsonError =
+        "{\"status\":\"error,\"sid\":\"" + this.getSid() + "\",\"message\":\"" + message + "\"}";
     ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError,
-        this.getMessage().getTopic(), this.getMessage().getSID());
+        this.getMessage().getTopic(), this.getMessage().getSid());
     this.sendToMux(spMessage);
   }
 
   private void sendMessage(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message,
-        this.getMessage().getTopic(), this.getMessage().getSID());
+        this.getMessage().getTopic(), this.getMessage().getSid());
     this.sendToMux(spMessage);
   }
 
   @Override
   public void update(Observable observable, Object arg) {
-    // This call does not need to be updated by the wrapper behaviour.
+    // This call does not need to be updated by any observable (wrapper).
   }
 }
