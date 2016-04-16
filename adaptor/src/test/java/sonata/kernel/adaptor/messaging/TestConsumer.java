@@ -5,33 +5,37 @@ import java.util.concurrent.BlockingQueue;
 
 public class TestConsumer extends AbstractMsgBusConsumer {
 
-	
-	
-	public TestConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue){
-		super(dispatcherQueue);
-	}
-	
-	@Override
-	public void connectToBus() throws IOException {
-		//Do nothing
-	}
+  public TestConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
+    super(dispatcherQueue);
+  }
 
-	@Override
-	public boolean startConsuming() {
-		//Do nothing
-		return true;
-	}
+  @Override
+  public void connectToBus() throws IOException {
+    // Do nothing
+  }
 
-	@Override
-	public boolean stopConsuming() {
-		// TODO Auto-generated method stub
-		return false;
-	}
+  @Override
+  public boolean startConsuming() {
+    // Do nothing
+    return true;
+  }
 
-	
-	public void injectMessage(ServicePlatformMessage message) {
-		System.out.println("[TestConsumer] Topic: "+ message.getTopic()+" - Message:"+message.getBody());
-		processMessage(message.getBody(), message.getTopic(), message.getSID());
-	}
+  @Override
+  public boolean stopConsuming() {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  public void injectMessage(ServicePlatformMessage message) {
+    int maxChars = 500;
+    if (message.getBody().length() <= maxChars)
+      System.out.println(
+          "[TestConsumer] Topic: " + message.getTopic() + " - Message:" + message.getBody());
+    else
+      System.out.println("[TestConsumer] Topic: " + message.getTopic() + " - Message:"
+          + message.getBody().substring(0, maxChars) + "\n\r ...TRUNCATED");
+
+    processMessage(message.getBody(), message.getTopic(), message.getSid());
+  }
 
 }
