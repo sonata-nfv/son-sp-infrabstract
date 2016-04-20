@@ -16,7 +16,7 @@ public class OpenStackHeatClient {
     public boolean createStack(String stackName, String stack) {
 
         try {
-              Process p = Runtime.getRuntime().exec("python test1.py "+stackName + stack);
+              Process p = Runtime.getRuntime().exec("python heat-api.py "+ stackName + stack);
 
         }catch(Exception e){
             return false;
