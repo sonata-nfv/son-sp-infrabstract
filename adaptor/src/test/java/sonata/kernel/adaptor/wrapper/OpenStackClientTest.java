@@ -38,7 +38,7 @@ public class OpenStackClientTest extends TestCase  {
    */
   public void testCreatStack() throws IOException {
 
-        String uuid = heatClient.createStack("test", "/workspace/sonata/son-sp-infrabstract/adaptor/YAML/simpe-heat-example");
+        String uuid = heatClient.createStack("test", "/YAML/simpe-heat-example");
         stackUuid = uuid;
         assertNotNull("Failed to create stack", uuid);
         assertNull("uuid of created stack: "+ uuid, uuid);
