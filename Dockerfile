@@ -9,6 +9,6 @@ ADD broker.config /etc/son-mano/broker.config
 
 
 WORKDIR /adaptor
-RUN mvn clean assembly:single;
+RUN add-apt-repository ppa:fkrull/deadsnakes-python2.7; apt-get update; apt-get install -y python2.7; mvn clean assembly:single;
 CMD java -jar target/adaptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar;
 
