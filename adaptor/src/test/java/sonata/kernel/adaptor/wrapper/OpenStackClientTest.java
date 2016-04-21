@@ -5,7 +5,8 @@ import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
 import java.io.IOException;
-
+import java.nio.file.Path;
+import java.nio.file.Paths;
 /**
  * Unit test for OpenStack Heat client
  */
@@ -37,7 +38,7 @@ public class OpenStackClientTest extends TestCase  {
    * @throws IOException
    */
   public void testCreatStack() throws IOException {
-
+        
         String uuid = heatClient.createStack("test", "/YAML/simpe-heat-example");
         stackUuid = uuid;
         assertNotNull("Failed to create stack", uuid);
@@ -50,7 +51,9 @@ public class OpenStackClientTest extends TestCase  {
      * @throws IOException
      */
     public void testGetCreateStackStatus() throws IOException {
-
+        Path currentRelativePath = Paths.get("");
+        String s = currentRelativePath.toAbsolutePath().toString();
+        System.out.println("Current relative path is: "+ s);
         if (stackUuid!=null) {
             String status = heatClient.getCreateStackStatus("test", stackUuid);
             assertNotNull("Failed to get stack status", status);
