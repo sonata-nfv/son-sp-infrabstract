@@ -23,12 +23,29 @@ public class OpenStackHeatClient {
     public String createStack(String stackName, String template) {
 
         String uuid = null;
-
+        String s = null;
         try {
             System.out.println("Creating stack: " + stackName);
-            Process p = Runtime.getRuntime().exec("python heat-api.py "+ stackName + " " + template);
-            BufferedReader in = new BufferedReader(new InputStreamReader ((p.getInputStream())));
-            uuid = in.readLine();
+            Process p = Runtime.getRuntime().exec("python heat-api.py "+stackName + " " + template);
+            BufferedReader stdInput = new BufferedReader(new
+                    InputStreamReader(p.getInputStream()));
+    
+               BufferedReader stdError = new BufferedReader(new
+                    InputStreamReader(p.getErrorStream()));
+    
+               // read the output from the command
+               System.out.println("Here is the standard output of the command:\n");
+               while ((s = stdInput.readLine()) != null) {
+                   System.out.println(s);
+                   uuid = s;
+               }
+                
+               // read any errors from the attempted command
+               System.out.println("Here is the standard error of the command (if any):\n");
+               while ((s = stdError.readLine()) != null) {
+                   System.out.println(s);
+               }
+            
             System.out.println("UUID of new stack: " +uuid);
         }catch(Exception e){
             System.out.println("Runtime error creating stack : " + stackName + " error message: "+ e.getMessage());
