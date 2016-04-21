@@ -26,7 +26,7 @@ public class OpenStackHeatClient {
 
         try {
             System.out.println("Creating stack: " + stackName);
-            Process p = Runtime.getRuntime().exec("python heat-api.py "+ stackName + template);
+            Process p = Runtime.getRuntime().exec("python heat-api.py "+ stackName + " " + template);
             BufferedReader in = new BufferedReader(new InputStreamReader ((p.getInputStream())));
             uuid = in.readLine();
             System.out.println("UUID of new stack: " +uuid);
