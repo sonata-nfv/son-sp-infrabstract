@@ -126,7 +126,7 @@ public class AdaptorCore {
         + "\",\"description\":\"" + AdaptorCore.description + "\"}";
     String topic = "platform.management.plugin.register";
     ServicePlatformMessage message =
-        new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString());
+        new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString(), topic);
     synchronized (writeLock) {
       try {
         this.registrationSid = message.getSid();
@@ -142,7 +142,7 @@ public class AdaptorCore {
     String body = "{\"uuid\":\"" + this.uuid + "\"}";
     String topic = "platform.management.plugin.deregister";
     ServicePlatformMessage message =
-        new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString());
+        new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString(), topic);
     synchronized (writeLock) {
       try {
         this.registrationSid = message.getSid();

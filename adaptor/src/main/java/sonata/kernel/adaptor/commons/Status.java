@@ -20,7 +20,7 @@ package sonata.kernel.adaptor.commons;
 
 public enum Status {
 
-  failed("failed"), normal_operation("normal_operation"), degraded_operation(
+  failed("failed"), normal_operation("normal operation"), degraded_operation(
       "degraded operation"), offline("offline");
 
   private final String name;

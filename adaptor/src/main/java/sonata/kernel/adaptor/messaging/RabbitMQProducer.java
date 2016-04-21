@@ -97,7 +97,7 @@ public class RabbitMQProducer extends AbstractMsgBusProducer {
       channel.exchangeDeclare(exchangeName, "topic");
       BasicProperties properties =
           new BasicProperties().builder().appId(AdaptorCore.APP_ID).contentType("application/json")
-              .replyTo(message.getTopic()).correlationId(message.getSid()).build();
+              .replyTo(message.getReplyTo()).correlationId(message.getSid()).build();
       channel.basicPublish(exchangeName, message.getTopic(), properties,
           message.getBody().getBytes("UTF-8"));
       System.out.println(

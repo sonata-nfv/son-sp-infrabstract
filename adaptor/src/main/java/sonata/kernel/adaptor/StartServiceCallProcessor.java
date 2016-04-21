@@ -91,7 +91,7 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
         System.out.println("[DeployServiceCallProcessor] - Deploy " + this.getSid() + " succed");
         System.out.println("[DeployServiceCallProcessor] - Sending response...");
         ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
-            "infrastructure.service.deploy", this.getSid());
+            "infrastructure.service.deploy", this.getSid(), null);
         this.getMux().enqueue(response);
       }
       // TODO handle other update from the compute wrapper;
