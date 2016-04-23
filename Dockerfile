@@ -9,6 +9,6 @@ ADD broker.config /etc/son-mano/broker.config
 
 
 WORKDIR /adaptor
-RUN mvn clean test assembly:single;
+RUN mvn clean compile assembly:single;
 CMD java -jar target/adaptor-0.0.1-SNAPSHOT-jar-with-dependencies.jar;
 
