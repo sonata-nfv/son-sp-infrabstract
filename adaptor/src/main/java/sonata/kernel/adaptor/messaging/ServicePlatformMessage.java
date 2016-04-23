@@ -22,6 +22,7 @@ public class ServicePlatformMessage {
 
   String messageBody;
   String topic;
+  String replyTo;
   String sid;
 
   /**
@@ -37,6 +38,21 @@ public class ServicePlatformMessage {
     this.sid = sid;
   }
 
+  public ServicePlatformMessage(String message, String topic, String sid, String reply) {
+    messageBody = message;
+    this.topic = topic;
+    this.sid = sid;
+    this.replyTo = reply;
+  }
+
+  public String getReplyTo() {
+    return replyTo;
+  }
+
+  public void setReplyTo(String reply) {
+    this.replyTo = reply;
+  }
+    
   /**
    * @return a String representing the message wrapped in this object.
    */

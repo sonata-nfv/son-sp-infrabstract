@@ -79,8 +79,8 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       System.out.println(
           "[northbound] RabbitMQConsumer - bound to topic "
           + "\"platform.platform.management.plugin.deregister\"");
-      channel.queueBind(queueName, brokerConfig.getProperty("exchange"), "infrastructure.*");
-      System.out.println("[northbound] RabbitMQConsumer - bound to topic \"infrastructure.*\"");
+      channel.queueBind(queueName, brokerConfig.getProperty("exchange"), "infrastructure.#");
+      System.out.println("[northbound] RabbitMQConsumer - bound to topic \"infrastructure.#\"");
       consumer = new AdaptorDefaultConsumer(channel, this);
     } catch (IOException e) {
       e.printStackTrace();
