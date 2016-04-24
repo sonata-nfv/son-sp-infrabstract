@@ -2,7 +2,7 @@ import time
 from keystoneclient.v2_0 import client
 from heatclient.client import Client
 from subprocess import call
-import pycurl
+#import pycurl
 import httplib2
 import json
 import yaml
