@@ -46,35 +46,35 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
    * @throws IOException
    */
   public void testHeartbeating() throws IOException {
-//    BlockingQueue<ServicePlatformMessage> muxQueue =
-//        new LinkedBlockingQueue<ServicePlatformMessage>();
-//  BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-//        new LinkedBlockingQueue<ServicePlatformMessage>();
-//
-//    TestProducer producer = new TestProducer(muxQueue, this);
-//    consumer = new TestConsumer(dispatcherQueue);
-//    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 2);
-//    int counter = 0;
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
-//    core.start();
-//    assertNotNull(core.getUuid());
+    TestProducer producer = new TestProducer(muxQueue, this);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 2);
+    int counter = 0;
 
-//    try {
-//      while (counter < 4) {
-//        synchronized (mon) {
-//          mon.wait();
-//          if (lastHeartbeat.contains("RUNNING")) counter++;
-//        }
-//      }
-//    } catch (Exception e) {
-//      assertTrue(false);
-//    }
+    core.start();
+    assertNotNull(core.getUuid());
 
-//    System.out.println("Heartbeats received");
-//    assertTrue(true);
+    try {
+      while (counter < 4) {
+        synchronized (mon) {
+          mon.wait();
+          if (lastHeartbeat.contains("RUNNING")) counter++;
+        }
+      }
+    } catch (Exception e) {
+      assertTrue(false);
+    }
 
-//    core.stop();
-//    assertTrue(core.getState().equals("STOPPED"));
+    System.out.println("Heartbeats received");
+    assertTrue(true);
+
+    core.stop();
+    assertTrue(core.getState().equals("STOPPED"));
   }
 
   /**
@@ -83,53 +83,53 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
    * @throws IOException
    */
   public void testCreateVLSPWrapper() throws InterruptedException, IOException {
-//    String message =
-//        "{\"wr_type\":\"compute\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
-//    String topic = "infrastructure.management.compute.add";
-//    BlockingQueue<ServicePlatformMessage> muxQueue =
-//        new LinkedBlockingQueue<ServicePlatformMessage>();
-//    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-//        new LinkedBlockingQueue<ServicePlatformMessage>();
+    String message =
+        "{\"wr_type\":\"compute\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
+    String topic = "infrastructure.management.compute.add";
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
-//    TestProducer producer = new TestProducer(muxQueue, this);
-//    ServicePlatformMessage addVimMessage =
-//        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
-//    consumer = new TestConsumer(dispatcherQueue);
-//    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+    TestProducer producer = new TestProducer(muxQueue, this);
+    ServicePlatformMessage addVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
-//    core.start();
+    core.start();
 
-//    consumer.injectMessage(addVimMessage);
-//    Thread.sleep(2000);
-//    while (output == null)
-//      synchronized (mon) {
-//        mon.wait();
-//      }
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait();
+      }
 
-//    JSONTokener tokener = new JSONTokener(output);
-//    JSONObject jsonObject = (JSONObject) tokener.nextValue();
-//    String uuid = jsonObject.getString("uuid");
-//    String status = jsonObject.getString("status");
-//    assertTrue(status.equals("COMPLETED"));
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String uuid = jsonObject.getString("uuid");
+    String status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
 
-//    output = null;
-//    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
-//    topic = "infrastructure.management.compute.remove";
-//    ServicePlatformMessage removeVimMessage =
-//        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
-//    consumer.injectMessage(removeVimMessage);
+    output = null;
+    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+    consumer.injectMessage(removeVimMessage);
 
-//    while (output == null) {
-//      synchronized (mon) {
-//        mon.wait(1000);
-//      }
-//    }
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
 
-//    tokener = new JSONTokener(output);
-//    jsonObject = (JSONObject) tokener.nextValue();
-//    status = jsonObject.getString("status");
-//    assertTrue(status.equals("COMPLETED"));
-//    core.stop();
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
+    core.stop();
   }
 
   /**
@@ -138,73 +138,74 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
    * @throws IOException
    */
   public void testCreateMOCKWrapper() throws InterruptedException, IOException {
-//    String message =
-//        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
-//    String topic = "infrastructure.management.compute.add";
-//    BlockingQueue<ServicePlatformMessage> muxQueue =
-//        new LinkedBlockingQueue<ServicePlatformMessage>();
-//    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-//        new LinkedBlockingQueue<ServicePlatformMessage>();
+    String message =
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
+    String topic = "infrastructure.management.compute.add";
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
-//    TestProducer producer = new TestProducer(muxQueue, this);
-//    ServicePlatformMessage addVimMessage =
-//        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
-//    consumer = new TestConsumer(dispatcherQueue);
-//    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+    TestProducer producer = new TestProducer(muxQueue, this);
+    ServicePlatformMessage addVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
-//    core.start();
+    core.start();
 
-//    consumer.injectMessage(addVimMessage);
-//    Thread.sleep(2000);
-//    while (output == null) {
-//      synchronized (mon) {
-//        mon.wait(1000);
-//      }
-//    }
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
 
-//    JSONTokener tokener = new JSONTokener(output);
-//    JSONObject jsonObject = (JSONObject) tokener.nextValue();
-//    String uuid = jsonObject.getString("uuid");
-//    String status = jsonObject.getString("status");
-//    assertTrue(status.equals("COMPLETED"));
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String uuid = jsonObject.getString("uuid");
+    String status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
 
-//    output = null;
-//    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
-//    topic = "infrastructure.management.compute.remove";
-//    ServicePlatformMessage removeVimMessage =
-//        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
-//    consumer.injectMessage(removeVimMessage);
+    output = null;
+    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+    consumer.injectMessage(removeVimMessage);
 
-//    while (output == null) {
-//      synchronized (mon) {
-//        mon.wait(1000);
-//      }
-//    }
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
 
-//    tokener = new JSONTokener(output);
-//    jsonObject = (JSONObject) tokener.nextValue();
-//    status = jsonObject.getString("status");
-//    assertTrue(status.equals("COMPLETED"));
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
 
-//    core.stop();
+    core.stop();
 
   }
 
   public void receiveHeartbeat(ServicePlatformMessage message) {
-//    synchronized (mon) {
-//      this.lastHeartbeat = message.getBody();
-//      mon.notifyAll();
-//    }
+    synchronized (mon) {
+      this.lastHeartbeat = message.getBody();
+      mon.notifyAll();
+    }
   }
 
   public void receive(ServicePlatformMessage message) {
-//    synchronized (mon) {
-//      this.output = message.getBody();
-//      mon.notifyAll();
-//    }
+    synchronized (mon) {
+      this.output = message.getBody();
+      mon.notifyAll();
+    }
   }
 
   public void forwardToConsumer(ServicePlatformMessage message) {
-//    consumer.injectMessage(message);
+    consumer.injectMessage(message);
   }
 }
+
