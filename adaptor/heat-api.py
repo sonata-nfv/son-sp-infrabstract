@@ -1,4 +1,4 @@
-from keystoneclient.v3 import client
+from keystoneclient.v2_0 import client
 from heatclient.client import Client
 import yaml
 import sys
