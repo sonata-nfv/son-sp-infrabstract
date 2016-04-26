@@ -1,0 +1,18 @@
+version: '2'
+services:
+  son-sp-infrabstract:
+    image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
+    links:
+     - broker
+    environment:
+     - broker_host broker
+     - broker_port 5672
+     - brokerr_exchange son-kernel
+     - broker_uri amqp://guest:guest@broker:5672/%2F
+    restart: always
+
+  broker:
+    image: rabbitmq:3
+    ports:
+     - "5672"
+
