@@ -1,13 +1,6 @@
-import time
-from keystoneclient.v2_0 import client
+from keystoneclient.v3 import client
 from heatclient.client import Client
-from subprocess import call
-#import pycurl
-import httplib2
-import json
 import yaml
-import os
-import json
 import sys
 
 def get_stack_list(heat):
@@ -70,7 +63,7 @@ if (total == 3):
 	print uid
 	stack = heat.stacks.get(stack_id=uid).to_dict()
 elif (total == 2):
-	stack = heat.stacks.get(stack_id=stackname).to_dict()	
+	stack = heat.stacks.get(stack_id=stackname).to_dict()
 	print "Stack in state: {}".format(stack['stack_status'])
 
 
