@@ -26,7 +26,7 @@ public class OpenStackHeatClient {
         String s = null;
         try {
             System.out.println("Creating stack: " + stackName);
-            Process p = Runtime.getRuntime().exec("python2.7 heat-api.py "+stackName + " " + template);
+            Process p = Runtime.getRuntime().exec("python heat-api.py "+stackName + " " + template);
             BufferedReader stdInput = new BufferedReader(new
                     InputStreamReader(p.getInputStream()));
     
@@ -62,7 +62,7 @@ public class OpenStackHeatClient {
         System.out.println("Getting status for stack: " + stackName);
 
         try {
-            Process p = Runtime.getRuntime().exec("python2.7 heat-api.py "+ uuid);
+            Process p = Runtime.getRuntime().exec("python heat-api.py "+ uuid);
             BufferedReader in = new BufferedReader(new InputStreamReader ((p.getInputStream())));
             status = in.readLine();
             System.out.println("The status of stack: " + stackName+ " with uuid: " + uuid +" : " + status );
