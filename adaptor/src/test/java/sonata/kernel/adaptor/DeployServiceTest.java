@@ -92,7 +92,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -129,7 +129,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     message = mapper.writeValueAsString(data);
 
     ServicePlatformMessage checkResourcesMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
 
     output = null;
     consumer.injectMessage(checkResourcesMessage);
@@ -173,7 +173,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -245,7 +245,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     topic = "infrastructure.service.deploy";
     ServicePlatformMessage deployServiceMessage =
-        new ServicePlatformMessage(body, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(body, topic, UUID.randomUUID().toString(),topic);
 
     consumer.injectMessage(deployServiceMessage);
 

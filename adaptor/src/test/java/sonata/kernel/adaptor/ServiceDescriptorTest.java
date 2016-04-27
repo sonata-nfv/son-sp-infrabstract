@@ -6,16 +6,21 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
 
+import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.Unit;
+import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 
 /**
@@ -39,6 +44,68 @@ public class ServiceDescriptorTest extends TestCase {
     return new TestSuite(ServiceDescriptorTest.class);
   }
 
+  
+  
+  /**
+   * Test the Service Descriptor parsing it from file and doing some basic check on the parsed data.
+   * 
+   * @throws IOException
+   */  
+  public void testParsePayload() throws IOException{
+    
+    ServiceDescriptor sd;
+    StringBuilder bodyBuilder = new StringBuilder();
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
+    String line;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    SimpleModule module = new SimpleModule();
+    module.addDeserializer(Unit.class, new UnitDeserializer());
+    mapper.registerModule(module);
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
+
+    VnfDescriptor vnfd1;
+    bodyBuilder = new StringBuilder();
+    in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
+    line = null;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    vnfd1 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+    VnfDescriptor vnfd2;
+    bodyBuilder = new StringBuilder();
+    in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/firewall-vnfd.yml")), Charset.forName("UTF-8")));
+    line = null;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+
+    VnfDescriptor vnfd3;
+    bodyBuilder = new StringBuilder();
+    in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/tcpdump-vnfd.yml")), Charset.forName("UTF-8")));
+    line = null;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    vnfd3 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+    DeployServiceData data = new DeployServiceData();
+    data.setServiceDescriptor(sd);
+    data.addVnfDescriptor(vnfd1);
+    data.addVnfDescriptor(vnfd2);
+    data.addVnfDescriptor(vnfd3);
+
+    @SuppressWarnings("unused")
+    ArrayList<VnfDescriptor> vnfds = data.getVnfdList();
+    
+  }
+  
   /**
    * Test the Service Descriptor parsing it from file and doing some basic check on the parsed data.
    * 

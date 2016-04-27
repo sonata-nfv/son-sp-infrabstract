@@ -93,7 +93,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     TestProducer producer = new TestProducer(muxQueue, this);
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -116,7 +116,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -148,7 +148,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     TestProducer producer = new TestProducer(muxQueue, this);
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -172,7 +172,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString());
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {

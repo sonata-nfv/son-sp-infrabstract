@@ -35,7 +35,7 @@ public class TestConsumer extends AbstractMsgBusConsumer {
       System.out.println("[TestConsumer] Topic: " + message.getTopic() + " - Message:"
           + message.getBody().substring(0, maxChars) + "\n\r ...TRUNCATED");
 
-    processMessage(message.getBody(), message.getTopic(), message.getSid());
+    processMessage(message.getBody(), message.getTopic(), message.getSid(),message.getReplyTo());
   }
 
 }
