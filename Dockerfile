@@ -7,8 +7,7 @@ RUN apt-get update && apt-get install -y python-pip \
   libcurl4-gnutls-dev \
   librtmp-dev \
   python-setuptools \
-  python-httplib2 \
-  netcat
+  python-httplib2
 
 RUN pip install --upgrade pip; \
   pip install --upgrade virtualenv; \
