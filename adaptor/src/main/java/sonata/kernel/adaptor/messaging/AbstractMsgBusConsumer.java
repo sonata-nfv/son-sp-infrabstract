@@ -40,12 +40,15 @@ public abstract class AbstractMsgBusConsumer implements MsgBusConsumer {
   /**
    * process the message coming from the MsgBus and enqueue it towards the dispatcher.
    * 
-   * @param A JSON formatted message from the SP and its Topic.
+   * @param message a string with the body of the message 
+   * @param topic from which the message has been received
+   * @param the session id of the message
+   * @param the topic to which reply
    */
-  void processMessage(String message, String topic, String sid) {
+  void processMessage(String message, String topic, String sid, String replyTo) {
     // TODO process the string (or not, leaving the pre-processing to the
     // dispatcher?)
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, topic, sid);
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, topic, sid, replyTo);
     this.enqueue(spMessage);
   }
 

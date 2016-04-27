@@ -77,7 +77,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
         // TODO
         output = "";
       }
-      this.sendMessage(output);
+      this.sendResponse(output);
     } catch (MalformedURLException e) {
       e.printStackTrace();
       // Call mux to send a "malformed request" error
@@ -93,13 +93,13 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String jsonError =
         "{\"status\":\"error,\"sid\":\"" + this.getSid() + "\",\"message\":\"" + message + "\"}";
     ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError,
-        this.getMessage().getTopic(), this.getMessage().getSid());
+        this.getMessage().getTopic(), this.getMessage().getSid(), this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
   }
 
-  private void sendMessage(String message) {
+  private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message,
-        this.getMessage().getTopic(), this.getMessage().getSid());
+        this.getMessage().getTopic(), this.getMessage().getSid(),this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
   }
 

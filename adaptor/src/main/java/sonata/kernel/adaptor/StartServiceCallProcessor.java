@@ -58,7 +58,7 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
     if (wr == null) {
       this.getMux()
           .enqueue(new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"no_wrapper\"}",
-              message.getTopic(), message.getSid()));
+              message.getTopic(), message.getSid(),message.getReplyTo()));
       return false;
     }
     // TODO parse the NSD/VNFD from the request body

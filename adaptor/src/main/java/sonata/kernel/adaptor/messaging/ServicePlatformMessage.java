@@ -31,13 +31,8 @@ public class ServicePlatformMessage {
    * @param message a JSON or YAML formatted String to wrap in the SP Message
    * @param topic the topic on which the message has been received
    * @param sid the session ID of this message
+   * @param reply the topic on which a response is expected. null if no response is expected.
    */
-  public ServicePlatformMessage(String message, String topic, String sid) {
-    messageBody = message;
-    this.topic = topic;
-    this.sid = sid;
-  }
-
   public ServicePlatformMessage(String message, String topic, String sid, String reply) {
     messageBody = message;
     this.topic = topic;

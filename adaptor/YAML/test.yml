@@ -1,0 +1,15 @@
+!sonata.kernel.adaptor.commons.heat.HeatTemplate
+resources: 
+   server_port: !sonata.kernel.adaptor.commons.heat.HeatResource
+      properties: 
+         network_id: 12345
+      type: OS::Neutron::Port
+   server1_hot: !sonata.kernel.adaptor.commons.heat.HeatResource
+      properties: 
+         flavor: m1.small
+         image: snappy
+         name: testServer
+         networks: 
+         -  port: 
+               get_resources: server_port
+      type: OS::Nova::Server
