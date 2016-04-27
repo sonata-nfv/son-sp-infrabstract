@@ -3,7 +3,6 @@
 .launch
 .classpath
 .buildpath
-.target
 adaptor/.settings/
 adaptor/target
 ./*.patch
