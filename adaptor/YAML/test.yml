@@ -1,15 +1,53 @@
 !sonata.kernel.adaptor.commons.heat.HeatTemplate
 resources: 
-   server_port: !sonata.kernel.adaptor.commons.heat.HeatResource
+   sonata-demo_mgmt: !sonata.kernel.adaptor.commons.heat.HeatResource
       properties: 
-         network_id: 12345
-      type: OS::Neutron::Port
-   server1_hot: !sonata.kernel.adaptor.commons.heat.HeatResource
+         name: mgmt
+      type: OS::Neutron::Net
+   iperf-vnf_vdu01: !sonata.kernel.adaptor.commons.heat.HeatResource
       properties: 
          flavor: m1.small
-         image: snappy
-         name: testServer
+         image: file:///docker_files/iperf/Dockerfile
+         name: sonata-demo_iperf-vnf_vdu01_5143
          networks: 
          -  port: 
-               get_resources: server_port
+               get_resources: vdu01:cp01
+         -  port: 
+               get_resources: vdu01:cp02
+         -  port: 
+               get_resources: vdu01:cp03
+      type: OS::Nova::Server
+   firewall-vnf_vdu01: !sonata.kernel.adaptor.commons.heat.HeatResource
+      properties: 
+         flavor: m1.small
+         image: file:///docker_files/firewall/Dockerfile
+         name: sonata-demo_firewall-vnf_vdu01_3648
+         networks: 
+         -  port: 
+               get_resources: vdu01:cp01
+         -  port: 
+               get_resources: vdu01:cp02
+         -  port: 
+               get_resources: vdu01:cp03
+      type: OS::Nova::Server
+   sonata-demo_input: !sonata.kernel.adaptor.commons.heat.HeatResource
+      properties: 
+         name: input
+      type: OS::Neutron::Net
+   sonata-demo_output: !sonata.kernel.adaptor.commons.heat.HeatResource
+      properties: 
+         name: output
+      type: OS::Neutron::Net
+   tcpdump-vnf_vdu01: !sonata.kernel.adaptor.commons.heat.HeatResource
+      properties: 
+         flavor: m1.small
+         image: file:///docker_files/tcpdump/Dockerfile
+         name: sonata-demo_tcpdump-vnf_vdu01_51a8
+         networks: 
+         -  port: 
+               get_resources: vdu01:cp01
+         -  port: 
+               get_resources: vdu01:cp02
+         -  port: 
+               get_resources: vdu01:cp03
       type: OS::Nova::Server
