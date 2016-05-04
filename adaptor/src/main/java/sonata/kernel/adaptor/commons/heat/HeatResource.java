@@ -24,7 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.HashMap;
 
 @JsonPropertyOrder({"type","properties"})
-public class HeatResource {
+public class HeatResource implements Comparable<HeatResource>{
  
   @JsonIgnore
   private String resourceName;
@@ -58,6 +58,11 @@ public class HeatResource {
 
   public String getResourceName() {
     return resourceName;
+  }
+
+  @Override
+  public int compareTo(HeatResource o) {
+    return this.type.compareTo(o.getType());
   }
   
 }

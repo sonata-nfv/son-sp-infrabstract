@@ -34,6 +34,11 @@ public class VnfDescriptor {
   private String vendor;
   private String name;
   private String version;
+  @JsonProperty("created_at")
+  private String createdAt;
+  @JsonProperty("updated_at")
+  private String updatedAt;
+  private String uuid;
   private String author;
   private String description;
   @JsonProperty("virtual_deployment_units")
@@ -46,6 +51,8 @@ public class VnfDescriptor {
   private ArrayList<DeploymentFlavor> deploymentFlavors;
   @JsonProperty("lifecycle_events")
   private ArrayList<VnfLifeCycleEvent> lifecycleEvents;
+  @JsonProperty("monitoring_rules")
+  private ArrayList<VduMonitoringRules> monitoringRules;
 
   public String getDescriptor_version() {
     return descriptorVersion;
@@ -89,6 +96,46 @@ public class VnfDescriptor {
 
   public ArrayList<VnfLifeCycleEvent> getLifecycle_events() {
     return lifecycleEvents;
+  }
+
+  public String getDescriptorVersion() {
+    return descriptorVersion;
+  }
+
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public ArrayList<VirtualDeploymentUnit> getVirtualDeploymentUnits() {
+    return virtualDeploymentUnits;
+  }
+
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public ArrayList<VnfVirtualLink> getVirtualLinks() {
+    return virtualLinks;
+  }
+
+  public ArrayList<DeploymentFlavor> getDeploymentFlavors() {
+    return deploymentFlavors;
+  }
+
+  public ArrayList<VnfLifeCycleEvent> getLifecycleEvents() {
+    return lifecycleEvents;
+  }
+
+  public ArrayList<VduMonitoringRules> getMonitoringRules() {
+    return monitoringRules;
   }
 
 }

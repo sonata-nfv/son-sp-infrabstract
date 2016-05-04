@@ -19,8 +19,11 @@
 package sonata.kernel.adaptor.commons.heat;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class HeatModel {
+
+  private ArrayList<HeatResource> resources;
 
   public HeatModel() {
     this.resources = new ArrayList<HeatResource>();
@@ -30,7 +33,10 @@ public class HeatModel {
     this.resources.add(res);
   }
 
-  private ArrayList<HeatResource> resources;
+  public void prepare() {
+    Collections.sort(resources);
+    return;
+  }
 
   public ArrayList<HeatResource> getResources() {
     return this.resources;
