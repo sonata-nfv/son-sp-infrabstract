@@ -36,4 +36,20 @@ public class Pcie {
     return devicePassThrough;
   }
 
+  public boolean isSrIov() {
+    return srIov;
+  }
+
+  public boolean isDevicePassThrough() {
+    return devicePassThrough;
+  }
+
+  public void setSrIov(boolean srIov) {
+    this.srIov = srIov;
+  }
+
+  public void setDevicePassThrough(boolean devicePassThrough) {
+    this.devicePassThrough = devicePassThrough;
+  }
+
 }

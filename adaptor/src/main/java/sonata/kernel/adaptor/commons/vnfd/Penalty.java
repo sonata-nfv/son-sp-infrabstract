@@ -40,4 +40,20 @@ public class Penalty {
   public String getUnit() {
     return unit;
   }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public void setExpression(int expression) {
+    this.expression = expression;
+  }
+
+  public void setValidity(String validity) {
+    this.validity = validity;
+  }
+
+  public void setUnit(String unit) {
+    this.unit = unit;
+  }
 }

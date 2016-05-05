@@ -138,4 +138,64 @@ public class VnfDescriptor {
     return monitoringRules;
   }
 
+  public void setDescriptorVersion(String descriptorVersion) {
+    this.descriptorVersion = descriptorVersion;
+  }
+
+  public void setVendor(String vendor) {
+    this.vendor = vendor;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public void setAuthor(String author) {
+    this.author = author;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setVirtualDeploymentUnits(ArrayList<VirtualDeploymentUnit> virtualDeploymentUnits) {
+    this.virtualDeploymentUnits = virtualDeploymentUnits;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
+  public void setVirtualLinks(ArrayList<VnfVirtualLink> virtualLinks) {
+    this.virtualLinks = virtualLinks;
+  }
+
+  public void setDeploymentFlavors(ArrayList<DeploymentFlavor> deploymentFlavors) {
+    this.deploymentFlavors = deploymentFlavors;
+  }
+
+  public void setLifecycleEvents(ArrayList<VnfLifeCycleEvent> lifecycleEvents) {
+    this.lifecycleEvents = lifecycleEvents;
+  }
+
+  public void setMonitoringRules(ArrayList<VduMonitoringRules> monitoringRules) {
+    this.monitoringRules = monitoringRules;
+  }
+
 }

@@ -96,5 +96,69 @@ public class VirtualDeploymentUnit {
     return scaleInOut;
   }
 
+  public String getVmImage() {
+    return vmImage;
+  }
+
+  public VmFormat getVmImageFormat() {
+    return vmImageFormat;
+  }
+
+  public String getVmImageMd5() {
+    return vmImageMd5;
+  }
+
+  public ResourceRequirements getResourceRequirements() {
+    return resourceRequirements;
+  }
+
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public ArrayList<VduMonitoringParameter> getMonitoringParameters() {
+    return monitoringParameters;
+  }
+
+  public ScaleInOut getScaleInOut() {
+    return scaleInOut;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setVmImage(String vmImage) {
+    this.vmImage = vmImage;
+  }
+
+  public void setVmImageFormat(VmFormat vmImageFormat) {
+    this.vmImageFormat = vmImageFormat;
+  }
+
+  public void setVmImageMd5(String vmImageMd5) {
+    this.vmImageMd5 = vmImageMd5;
+  }
+
+  public void setResourceRequirements(ResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
+  public void setMonitoringParameters(ArrayList<VduMonitoringParameter> monitoringParameters) {
+    this.monitoringParameters = monitoringParameters;
+  }
+
+  public void setScaleInOut(ScaleInOut scaleInOut) {
+    this.scaleInOut = scaleInOut;
+  }
+
 
 }

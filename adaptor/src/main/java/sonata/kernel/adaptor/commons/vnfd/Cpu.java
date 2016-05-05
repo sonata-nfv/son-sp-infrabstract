@@ -44,4 +44,32 @@ public class Cpu {
   public String getCpu_clock_speed() {
     return cpuClockSpeed;
   }
+
+  public String getCpuSupportAccelerator() {
+    return cpuSupportAccelerator;
+  }
+
+  public String getCpuModel() {
+    return cpuModel;
+  }
+
+  public String getCpuClockSpeed() {
+    return cpuClockSpeed;
+  }
+
+  public void setVcpus(int vcpus) {
+    this.vcpus = vcpus;
+  }
+
+  public void setCpuSupportAccelerator(String cpuSupportAccelerator) {
+    this.cpuSupportAccelerator = cpuSupportAccelerator;
+  }
+
+  public void setCpuModel(String cpuModel) {
+    this.cpuModel = cpuModel;
+  }
+
+  public void setCpuClockSpeed(String cpuClockSpeed) {
+    this.cpuClockSpeed = cpuClockSpeed;
+  }
 }

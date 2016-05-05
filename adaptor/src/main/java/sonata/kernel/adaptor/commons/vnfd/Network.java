@@ -49,4 +49,36 @@ public class Network {
   public String getData_processing_acceleration_library() {
     return dataProcessingAccelerationLibrary;
   }
+
+  public double getNetworkInterfaceBandwidth() {
+    return networkInterfaceBandwidth;
+  }
+
+  public BandwidthUnit getNetworkInterfaceBandwidthUnit() {
+    return networkInterfaceBandwidthUnit;
+  }
+
+  public NicCapabilities getNetworkInterfaceCardCapabilities() {
+    return networkInterfaceCardCapabilities;
+  }
+
+  public String getDataProcessingAccelerationLibrary() {
+    return dataProcessingAccelerationLibrary;
+  }
+
+  public void setNetworkInterfaceBandwidth(double networkInterfaceBandwidth) {
+    this.networkInterfaceBandwidth = networkInterfaceBandwidth;
+  }
+
+  public void setNetworkInterfaceBandwidthUnit(BandwidthUnit networkInterfaceBandwidthUnit) {
+    this.networkInterfaceBandwidthUnit = networkInterfaceBandwidthUnit;
+  }
+
+  public void setNetworkInterfaceCardCapabilities(NicCapabilities networkInterfaceCardCapabilities) {
+    this.networkInterfaceCardCapabilities = networkInterfaceCardCapabilities;
+  }
+
+  public void setDataProcessingAccelerationLibrary(String dataProcessingAccelerationLibrary) {
+    this.dataProcessingAccelerationLibrary = dataProcessingAccelerationLibrary;
+  }
 }

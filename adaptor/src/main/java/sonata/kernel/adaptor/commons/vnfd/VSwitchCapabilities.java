@@ -38,4 +38,20 @@ public class VSwitchCapabilities {
   public String getOverlay_tunnel() {
     return overlayTunnel;
   }
+
+  public String getOverlayTunnel() {
+    return overlayTunnel;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public void setOverlayTunnel(String overlayTunnel) {
+    this.overlayTunnel = overlayTunnel;
+  }
 }

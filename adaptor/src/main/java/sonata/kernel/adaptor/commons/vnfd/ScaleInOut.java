@@ -31,4 +31,12 @@ public class ScaleInOut {
     return maximum;
   }
 
+  public void setMinimum(int minimum) {
+    this.minimum = minimum;
+  }
+
+  public void setMaximum(int maximum) {
+    this.maximum = maximum;
+  }
+
 }

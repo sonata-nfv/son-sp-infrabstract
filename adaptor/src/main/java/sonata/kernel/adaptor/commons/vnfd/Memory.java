@@ -49,4 +49,32 @@ public class Memory {
     return numaAllocationPolicy;
   }
 
+  public MemoryUnit getSizeUnit() {
+    return sizeUnit;
+  }
+
+  public boolean isLargePagesRequired() {
+    return largePagesRequired;
+  }
+
+  public String getNumaAllocationPolicy() {
+    return numaAllocationPolicy;
+  }
+
+  public void setSize(double size) {
+    this.size = size;
+  }
+
+  public void setSizeUnit(MemoryUnit sizeUnit) {
+    this.sizeUnit = sizeUnit;
+  }
+
+  public void setLargePagesRequired(boolean largePagesRequired) {
+    this.largePagesRequired = largePagesRequired;
+  }
+
+  public void setNumaAllocationPolicy(String numaAllocationPolicy) {
+    this.numaAllocationPolicy = numaAllocationPolicy;
+  }
+
 }

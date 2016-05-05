@@ -41,5 +41,21 @@ public class Storage {
     return persistence;
   }
 
+  public MemoryUnit getSizeUnit() {
+    return sizeUnit;
+  }
+
+  public void setSize(double size) {
+    this.size = size;
+  }
+
+  public void setSizeUnit(MemoryUnit sizeUnit) {
+    this.sizeUnit = sizeUnit;
+  }
+
+  public void setPersistence(boolean persistence) {
+    this.persistence = persistence;
+  }
+
 
 }

@@ -95,4 +95,92 @@ public class ForwardingGraph {
     return networkForwardingPaths;
   }
 
+  public String getFgGroup() {
+    return fgGroup;
+  }
+
+  public String getFgName() {
+    return fgName;
+  }
+
+  public String getFgVersion() {
+    return fgVersion;
+  }
+
+  public String getFgDescription() {
+    return fgDescription;
+  }
+
+  public String getFgId() {
+    return fgId;
+  }
+
+  public int getNumberOfEndpoints() {
+    return numberOfEndpoints;
+  }
+
+  public int getNumberOfVirtualLinks() {
+    return numberOfVirtualLinks;
+  }
+
+  public ArrayList<String> getDependentVirtualLinks() {
+    return dependentVirtualLinks;
+  }
+
+  public ArrayList<String> getConstituentVnfs() {
+    return constituentVnfs;
+  }
+
+  public ArrayList<String> getConstituentServices() {
+    return constituentServices;
+  }
+
+  public ArrayList<NetworkForwardingPath> getNetworkForwardingPaths() {
+    return networkForwardingPaths;
+  }
+
+  public void setFgGroup(String fgGroup) {
+    this.fgGroup = fgGroup;
+  }
+
+  public void setFgName(String fgName) {
+    this.fgName = fgName;
+  }
+
+  public void setFgVersion(String fgVersion) {
+    this.fgVersion = fgVersion;
+  }
+
+  public void setFgDescription(String fgDescription) {
+    this.fgDescription = fgDescription;
+  }
+
+  public void setFgId(String fgId) {
+    this.fgId = fgId;
+  }
+
+  public void setNumberOfEndpoints(int numberOfEndpoints) {
+    this.numberOfEndpoints = numberOfEndpoints;
+  }
+
+  public void setNumberOfVirtualLinks(int numberOfVirtualLinks) {
+    this.numberOfVirtualLinks = numberOfVirtualLinks;
+  }
+
+  public void setDependentVirtualLinks(ArrayList<String> dependentVirtualLinks) {
+    this.dependentVirtualLinks = dependentVirtualLinks;
+  }
+
+  public void setConstituentVnfs(ArrayList<String> constituentVnfs) {
+    this.constituentVnfs = constituentVnfs;
+  }
+
+  public void setConstituentServices(ArrayList<String> constituentServices) {
+    this.constituentServices = constituentServices;
+  }
+
+  public void setNetworkForwardingPaths(ArrayList<NetworkForwardingPath> networkForwardingPaths) {
+    this.networkForwardingPaths = networkForwardingPaths;
+  }
+
 }

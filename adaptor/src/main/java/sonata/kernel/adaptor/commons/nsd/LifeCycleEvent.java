@@ -41,4 +41,20 @@ public class LifeCycleEvent {
     return scaleOut;
   }
 
+  public ArrayList<Event> getScaleOut() {
+    return scaleOut;
+  }
+
+  public void setStart(ArrayList<Event> start) {
+    this.start = start;
+  }
+
+  public void setStop(ArrayList<Event> stop) {
+    this.stop = stop;
+  }
+
+  public void setScaleOut(ArrayList<Event> scaleOut) {
+    this.scaleOut = scaleOut;
+  }
+
 }

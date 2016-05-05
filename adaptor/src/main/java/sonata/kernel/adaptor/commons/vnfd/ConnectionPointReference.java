@@ -34,4 +34,16 @@ public class ConnectionPointReference {
     return position;
   }
 
+  public String getConnectionPointRef() {
+    return connectionPointRef;
+  }
+
+  public void setConnectionPointRef(String connectionPointRef) {
+    this.connectionPointRef = connectionPointRef;
+  }
+
+  public void setPosition(int position) {
+    this.position = position;
+  }
+
 }

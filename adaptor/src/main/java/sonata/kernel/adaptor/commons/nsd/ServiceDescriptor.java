@@ -253,6 +253,18 @@ public class ServiceDescriptor {
     return uuid;
   }
 
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
 
 
 }

@@ -17,7 +17,7 @@ vendor: eu.sonata-nfv
 version: '0.2'
 virtual_deployment_units:
   - id: vdu01
-    vm_image: file:///docker_files/iperf/Dockerfile
+    vm_image: sonata_firewall_VM
     vm_image_format: docker
     resource_requirements:
       cpu:

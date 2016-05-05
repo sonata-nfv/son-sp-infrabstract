@@ -39,4 +39,24 @@ public class VnfEvent {
   public String getTemplate_file_format() {
     return templateFileFormat;
   }
+
+  public String getTemplateFile() {
+    return templateFile;
+  }
+
+  public String getTemplateFileFormat() {
+    return templateFileFormat;
+  }
+
+  public void setCommand(String command) {
+    this.command = command;
+  }
+
+  public void setTemplateFile(String templateFile) {
+    this.templateFile = templateFile;
+  }
+
+  public void setTemplateFileFormat(String templateFileFormat) {
+    this.templateFileFormat = templateFileFormat;
+  }
 }

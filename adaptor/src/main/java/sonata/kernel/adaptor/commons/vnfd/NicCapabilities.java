@@ -34,4 +34,16 @@ public class NicCapabilities {
     return mirroring;
   }
 
+  public boolean isSrIov() {
+    return srIov;
+  }
+
+  public void setSrIov(boolean srIov) {
+    this.srIov = srIov;
+  }
+
+  public void setMirroring(boolean mirroring) {
+    this.mirroring = mirroring;
+  }
+
 }

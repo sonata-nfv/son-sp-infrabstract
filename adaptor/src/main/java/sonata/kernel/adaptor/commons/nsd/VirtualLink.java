@@ -119,5 +119,93 @@ public class VirtualLink {
     return qos;
   }
 
+  public String getVlGroup() {
+    return vlGroup;
+  }
+
+  public String getVlName() {
+    return vlName;
+  }
+
+  public String getVlVersion() {
+    return vlVersion;
+  }
+
+  public String getVlDescription() {
+    return vlDescription;
+  }
+
+  public ConnectivityType getConnectivityType() {
+    return connectivityType;
+  }
+
+  public ArrayList<String> getConnectionPointsReference() {
+    return connectionPointsReference;
+  }
+
+  public boolean isExternalAccess() {
+    return externalAccess;
+  }
+
+  public String getRootRequirement() {
+    return rootRequirement;
+  }
+
+  public String getLeafRequirement() {
+    return leafRequirement;
+  }
+
+  public void setVlGroup(String vlGroup) {
+    this.vlGroup = vlGroup;
+  }
+
+  public void setVlName(String vlName) {
+    this.vlName = vlName;
+  }
+
+  public void setVlVersion(String vlVersion) {
+    this.vlVersion = vlVersion;
+  }
+
+  public void setVlDescription(String vlDescription) {
+    this.vlDescription = vlDescription;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setConnectivityType(ConnectivityType connectivityType) {
+    this.connectivityType = connectivityType;
+  }
+
+  public void setConnectionPointsReference(ArrayList<String> connectionPointsReference) {
+    this.connectionPointsReference = connectionPointsReference;
+  }
+
+  public void setAccess(boolean access) {
+    this.access = access;
+  }
+
+  public void setExternalAccess(boolean externalAccess) {
+    this.externalAccess = externalAccess;
+  }
+
+  public void setRootRequirement(String rootRequirement) {
+    this.rootRequirement = rootRequirement;
+  }
+
+  public void setLeafRequirement(String leafRequirement) {
+    this.leafRequirement = leafRequirement;
+  }
+
+  public void setDhcp(boolean dhcp) {
+    this.dhcp = dhcp;
+  }
+
+  public void setQos(String qos) {
+    this.qos = qos;
+  }
+
 
 }

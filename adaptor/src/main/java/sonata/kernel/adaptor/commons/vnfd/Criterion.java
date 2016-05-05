@@ -26,4 +26,8 @@ public class Criterion {
     return e2ebandwidth;
   }
 
+  public void setE2ebandwidth(String e2ebandwidth) {
+    this.e2ebandwidth = e2ebandwidth;
+  }
+
 }

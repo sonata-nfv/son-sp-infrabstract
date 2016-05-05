@@ -50,4 +50,28 @@ public class VduMonitoringParameter {
   public String getName() {
     return name;
   }
+
+  public FrequencyUnit getFrequencyUnit() {
+    return frequencyUnit;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setUnit(Unit unit) {
+    this.unit = unit;
+  }
+
+  public void setFrequency(double frequency) {
+    this.frequency = frequency;
+  }
+
+  public void setFrequencyUnit(FrequencyUnit frequencyUnit) {
+    this.frequencyUnit = frequencyUnit;
+  }
 }

@@ -35,4 +35,20 @@ public class Event {
     return vnfEvent;
   }
 
+  public String getVnfId() {
+    return vnfId;
+  }
+
+  public String getVnfEvent() {
+    return vnfEvent;
+  }
+
+  public void setVnfId(String vnfId) {
+    this.vnfId = vnfId;
+  }
+
+  public void setVnfEvent(String vnfEvent) {
+    this.vnfEvent = vnfEvent;
+  }
+
 }

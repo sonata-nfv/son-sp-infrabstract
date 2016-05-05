@@ -53,4 +53,36 @@ public class DeploymentFlavor {
     return assuranceParameters;
   }
 
+  public ArrayList<String> getVduReference() {
+    return vduReference;
+  }
+
+  public ArrayList<String> getVlinkReference() {
+    return vlinkReference;
+  }
+
+  public ArrayList<AssuranceParameter> getAssuranceParameters() {
+    return assuranceParameters;
+  }
+
+  public void setVduReference(ArrayList<String> vduReference) {
+    this.vduReference = vduReference;
+  }
+
+  public void setConstraint(String constraint) {
+    this.constraint = constraint;
+  }
+
+  public void setVlinkReference(ArrayList<String> vlinkReference) {
+    this.vlinkReference = vlinkReference;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setAssuranceParameters(ArrayList<AssuranceParameter> assuranceParameters) {
+    this.assuranceParameters = assuranceParameters;
+  }
+
 }

@@ -1,6 +1,5 @@
 package sonata.kernel.adaptor;
 
-import com.esotericsoftware.yamlbeans.YamlWriter;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -118,7 +117,7 @@ public class HeatTemplateTest extends TestCase {
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.disable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+    mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
     mapper.setSerializationInclusion(Include.NON_NULL);
     String body = mapper.writeValueAsString(template);
     System.out.println(body);
@@ -158,19 +157,19 @@ public class HeatTemplateTest extends TestCase {
       for (VnfVirtualLink link : links) {
         HeatResource network = new HeatResource();
         network.setType("OS::Neutron::Net");
-        network.setName(nsd.getName() + ":" + vnfd.getName() + ":" + link.getId() + ":net");
+        network.setName( vnfd.getName() + ":" + link.getId() + ":net");
         network.putProperty("name", link.getId());
         model.addResource(network);
         HeatResource subnet = new HeatResource();
         subnet.setType("OS::Neutron::Subnet");
-        subnet.setName(nsd.getName() + ":" + vnfd.getName() + ":" + link.getId() + ":subnet");
+        subnet.setName( vnfd.getName() + ":" + link.getId() + ":subnet");
         subnet.putProperty("name", link.getId());
         subnet.putProperty("cidr", "10.10."+subnetIndex+".0/24");
         subnet.putProperty("gateway_ip", "10.10."+subnetIndex+".1");
         subnetIndex++;
         HashMap<String, Object> netMap = new HashMap<String, Object>();
-        netMap.put("get_resources",
-            nsd.getName() + ":" + vnfd.getName() + ":" + link.getId() + ":net");
+        netMap.put("get_resource",
+             vnfd.getName() + ":" + link.getId() + ":net");
         subnet.putProperty("network", netMap);
         model.addResource(subnet);
       }
@@ -179,7 +178,7 @@ public class HeatTemplateTest extends TestCase {
         HeatResource server = new HeatResource();
         server.setType("OS::Nova::Server");
         server.setName(vnfd.getName() + ":" + vdu.getId());
-        server.putProperty("name", nsd.getName() + ":" + vnfd.getName() + ":" + vdu.getId() + ":"
+        server.putProperty("name",  vnfd.getName() + ":" + vdu.getId() + ":"
             + UUID.randomUUID().toString().substring(0, 4));
         server.putProperty("image", vdu.getVm_image());
         server.putProperty("flavor", "m1.small");
@@ -189,12 +188,12 @@ public class HeatTemplateTest extends TestCase {
           HeatResource port = new HeatResource();
           port.setType("OS::Neutron::Port");
           port.setName(vnfd.getName() + ":" + cp.getId());
-          port.putProperty("name", nsd.getName() + ":" + cp.getId());
+          port.putProperty("name",  cp.getId());
           for (VnfVirtualLink link : links) {
             if (link.getConnection_points_reference().contains(cp.getId())) {
               HashMap<String, Object> netMap = new HashMap<String, Object>();
-              netMap.put("get_resources",
-                  nsd.getName() + ":" + vnfd.getName() + ":" + link.getId() + ":net");
+              netMap.put("get_resource",
+                   vnfd.getName() + ":" + link.getId() + ":net");
               port.putProperty("network", netMap);
               break;
             }
@@ -203,7 +202,7 @@ public class HeatTemplateTest extends TestCase {
           // add the port to the server
           HashMap<String, Object> n1 = new HashMap<String, Object>();
           HashMap<String, Object> portMap = new HashMap<String, Object>();
-          portMap.put("get_resources", vnfd.getName() + ":" + cp.getId());
+          portMap.put("get_resource", vnfd.getName() + ":" + cp.getId());
           n1.put("port", portMap);
           net.add(n1);
         }
@@ -220,7 +219,7 @@ public class HeatTemplateTest extends TestCase {
           if (link.getConnection_points_reference().contains(cp.getId())) {
             HashMap<String, Object> subnetMap = new HashMap<String, Object>();
             subnetMap.put("get_resource",
-                nsd.getName() + ":" + vnfd.getName() + ":" + link.getId() + ":subnet");
+                 vnfd.getName() + ":" + link.getId() + ":subnet");
             routerInterface.putProperty("subnet", subnetMap);
             break;
           }
@@ -234,7 +233,7 @@ public class HeatTemplateTest extends TestCase {
         }
         // Attach to the virtual router
         for (VirtualLink link : nsd.getVirtual_links()) {
-          if (link.getConnection_points_reference().contains(vnfId+":"+cp.getId())) {
+          if (link.getConnection_points_reference().contains(cp.getId().replace("vnf", vnfId))) {
             HashMap<String, Object> routerMap = new HashMap<String, Object>();
             routerMap.put("get_resource", link.getId());
             routerInterface.putProperty("router", routerMap);
@@ -242,7 +241,6 @@ public class HeatTemplateTest extends TestCase {
           }
 
         }
-        routerInterface.putProperty("name", vnfd.getName() + ":" + cp.getId());
         model.addResource(routerInterface);
       }
 
@@ -266,7 +264,7 @@ public class HeatTemplateTest extends TestCase {
     ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
     HashMap<String, Object> n1 = new HashMap<String, Object>();
     HashMap<String, Object> portMap = new HashMap<String, Object>();
-    portMap.put("get_resources", "server_port");
+    portMap.put("get_resource", "server_port");
     n1.put("port", portMap);
     net.add(n1);
     server.putProperty("networks", net);

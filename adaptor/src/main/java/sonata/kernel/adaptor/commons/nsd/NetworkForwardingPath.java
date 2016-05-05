@@ -45,4 +45,24 @@ public class NetworkForwardingPath {
     return connectionPoints;
   }
 
+  public String getFpId() {
+    return fpId;
+  }
+
+  public ArrayList<ConnectionPointReference> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public void setFpId(String fpId) {
+    this.fpId = fpId;
+  }
+
+  public void setPolicy(String policy) {
+    this.policy = policy;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPointReference> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
 }

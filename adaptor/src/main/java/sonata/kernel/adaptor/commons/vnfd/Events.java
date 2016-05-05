@@ -50,4 +50,32 @@ public class Events {
     return scaleOut;
   }
 
+  public VnfEvent getScaleIn() {
+    return scaleIn;
+  }
+
+  public VnfEvent getScaleOut() {
+    return scaleOut;
+  }
+
+  public void setStart(VnfEvent start) {
+    this.start = start;
+  }
+
+  public void setStop(VnfEvent stop) {
+    this.stop = stop;
+  }
+
+  public void setRestart(VnfEvent restart) {
+    this.restart = restart;
+  }
+
+  public void setScaleIn(VnfEvent scaleIn) {
+    this.scaleIn = scaleIn;
+  }
+
+  public void setScaleOut(VnfEvent scaleOut) {
+    this.scaleOut = scaleOut;
+  }
+
 }

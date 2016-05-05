@@ -51,4 +51,20 @@ public class ConnectionPoint {
   public String getVirtual_link_reference() {
     return virtualLinkReference;
   }
+
+  public String getVirtualLinkReference() {
+    return virtualLinkReference;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setType(Interface type) {
+    this.type = type;
+  }
+
+  public void setVirtualLinkReference(String virtualLinkReference) {
+    this.virtualLinkReference = virtualLinkReference;
+  }
 }
