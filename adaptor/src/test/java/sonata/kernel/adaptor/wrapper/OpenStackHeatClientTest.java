@@ -24,7 +24,7 @@ public class OpenStackHeatClientTest extends TestCase {
     private void initClient() {
 
         //todo - this needs to be moved to configuration file
-        this.heatClient = new OpenStackHeatClient("10.43.90.5", "admin", "h0r1z0n", "admin");
+        this.heatClient = new OpenStackHeatClient("143.233.127.3", "sonata", "s0n@t@", "sonata");
     }
 
 

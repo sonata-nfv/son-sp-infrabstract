@@ -1,7 +1,5 @@
-# from keystoneclient.v2_0 import client
-# from heatclient.client import Client
 import argparse
-from keystoneclient.v3 import client
+from keystoneclient.v2_0 import client
 from heatclient.client import Client
 
 
@@ -17,9 +15,9 @@ def get_stack_list(heat):
 
 
 def autheticate(cip, username, password, tenant):
-    auth_url = 'http://'+ str(cip)+':5000/v3'
+    auth_url = 'http://'+ str(cip)+':5000/v2.0'
     keystone = client.Client(username=username, password=password, tenant_name=tenant, auth_url=auth_url)
-    auth_token = keystone.auth_ref['auth_token']
+    auth_token = keystone.auth_ref['token']['id']
     tenant_id = keystone.tenant_id
     heat_url = 'http://'+str(cip)+':8004/v1/%s' % tenant_id
     heat = Client('1', endpoint=heat_url, token=auth_token)
