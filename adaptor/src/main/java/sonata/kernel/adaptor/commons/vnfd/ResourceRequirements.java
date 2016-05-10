@@ -32,41 +32,7 @@ public class ResourceRequirements {
   private Network network;
   private Pcie pcie;
 
-  public HypervisorParameters getHyperviso_parameters() {
-    return hypervisorParameters;
-  }
-
-  public VSwitchCapabilities getVswitch_capabilities() {
-    return vswitchCapabilities;
-  }
-
-  public Cpu getCpu() {
-    return cpu;
-  }
-
-  public Memory getMemory() {
-    return memory;
-  }
-
-  public Storage getStorage() {
-    return storage;
-  }
-
-  public Network getNetwork() {
-    return network;
-  }
-
-  public Pcie getPcie() {
-    return pcie;
-  }
-
-  public HypervisorParameters getHypervisorParameters() {
-    return hypervisorParameters;
-  }
-
-  public VSwitchCapabilities getVswitchCapabilities() {
-    return vswitchCapabilities;
-  }
+  
 
   public void setHypervisorParameters(HypervisorParameters hypervisorParameters) {
     this.hypervisorParameters = hypervisorParameters;
@@ -94,6 +60,34 @@ public class ResourceRequirements {
 
   public void setPcie(Pcie pcie) {
     this.pcie = pcie;
+  }
+
+  public HypervisorParameters getHypervisorParameters() {
+    return hypervisorParameters;
+  }
+
+  public VSwitchCapabilities getVswitchCapabilities() {
+    return vswitchCapabilities;
+  }
+
+  public Cpu getCpu() {
+    return cpu;
+  }
+
+  public Memory getMemory() {
+    return memory;
+  }
+
+  public Storage getStorage() {
+    return storage;
+  }
+
+  public Network getNetwork() {
+    return network;
+  }
+
+  public Pcie getPcie() {
+    return pcie;
   }
 
 }

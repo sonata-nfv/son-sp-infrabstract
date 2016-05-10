@@ -61,118 +61,6 @@ public class ServiceDescriptor {
   private AutoScalePolicy autoScalePolicy;
 
 
-  public String getDescriptor_version() {
-    return descriptorVersion;
-  }
-
-  public String getVendor() {
-    return vendor;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public String getAuthor() {
-    return author;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public ArrayList<NetworkFunction> getNetwork_functions() {
-    return networkFunctions;
-  }
-
-  public ArrayList<String> getNetwork_services() {
-    return networkServices;
-  }
-
-  public ArrayList<ConnectionPoint> getConnection_points() {
-    return connectionPoints;
-  }
-
-  public ArrayList<VirtualLink> getVirtual_links() {
-    return virtualLinks;
-  }
-
-  public ArrayList<ForwardingGraph> getForwarding_graphs() {
-    return forwardingGraphs;
-  }
-
-  public LifeCycleEvent getLifecycle_events() {
-    return lifecycleEvents;
-  }
-
-  public ArrayList<String> getVnf_depencency() {
-    return vnfDepencency;
-  }
-
-  public ArrayList<String> getServices_dependency() {
-    return servicesDependency;
-  }
-
-  public ArrayList<MonitoringParameter> getMonitoring_Parameters() {
-    return monitoringParameters;
-  }
-
-  public AutoScalePolicy getAuto_scale_policy() {
-    return autoScalePolicy;
-  }
-
-  public String getDescriptorVersion() {
-    return descriptorVersion;
-  }
-
-  public String getCreatedAt() {
-    return createdAt;
-  }
-
-  public ArrayList<NetworkFunction> getNetworkFunctions() {
-    return networkFunctions;
-  }
-
-  public ArrayList<String> getNetworkServices() {
-    return networkServices;
-  }
-
-  public ArrayList<ConnectionPoint> getConnectionPoints() {
-    return connectionPoints;
-  }
-
-  public ArrayList<VirtualLink> getVirtualLinks() {
-    return virtualLinks;
-  }
-
-  public ArrayList<ForwardingGraph> getForwardingGraphs() {
-    return forwardingGraphs;
-  }
-
-  public LifeCycleEvent getLifecycleEvents() {
-    return lifecycleEvents;
-  }
-
-  public ArrayList<String> getVnfDepencency() {
-    return vnfDepencency;
-  }
-
-  public ArrayList<String> getServicesDependency() {
-    return servicesDependency;
-  }
-
-  public ArrayList<MonitoringParameter> getMonitoringParameters() {
-    return monitoringParameters;
-  }
-
-  public AutoScalePolicy getAutoScalePolicy() {
-    return autoScalePolicy;
-  }
-
   public void setDescriptorVersion(String descriptorVersion) {
     this.descriptorVersion = descriptorVersion;
   }
@@ -263,6 +151,74 @@ public class ServiceDescriptor {
 
   public void setStatus(String status) {
     this.status = status;
+  }
+
+  public String getDescriptorVersion() {
+    return descriptorVersion;
+  }
+
+  public String getVendor() {
+    return vendor;
+  }
+
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public String getAuthor() {
+    return author;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public ArrayList<NetworkFunction> getNetworkFunctions() {
+    return networkFunctions;
+  }
+
+  public ArrayList<String> getNetworkServices() {
+    return networkServices;
+  }
+
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public ArrayList<VirtualLink> getVirtualLinks() {
+    return virtualLinks;
+  }
+
+  public ArrayList<ForwardingGraph> getForwardingGraphs() {
+    return forwardingGraphs;
+  }
+
+  public LifeCycleEvent getLifecycleEvents() {
+    return lifecycleEvents;
+  }
+
+  public ArrayList<String> getVnfDepencency() {
+    return vnfDepencency;
+  }
+
+  public ArrayList<String> getServicesDependency() {
+    return servicesDependency;
+  }
+
+  public ArrayList<MonitoringParameter> getMonitoringParameters() {
+    return monitoringParameters;
+  }
+
+  public AutoScalePolicy getAutoScalePolicy() {
+    return autoScalePolicy;
   }
 
 

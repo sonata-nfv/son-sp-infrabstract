@@ -32,41 +32,7 @@ public class VnfLifeCycleEvent {
   private String vnfContainer;
   private Events events;
 
-  public String getAuthentication_username() {
-    return authenticationUsername;
-  }
 
-  public String getDriver() {
-    return driver;
-  }
-
-  public String getAuthentication_type() {
-    return authenticationType;
-  }
-
-  public String getAuthentication() {
-    return authentication;
-  }
-
-  public String getVnf_container() {
-    return vnfContainer;
-  }
-
-  public Events getEvents() {
-    return events;
-  }
-
-  public String getAuthenticationUsername() {
-    return authenticationUsername;
-  }
-
-  public String getAuthenticationType() {
-    return authenticationType;
-  }
-
-  public String getVnfContainer() {
-    return vnfContainer;
-  }
 
   public void setAuthenticationUsername(String authenticationUsername) {
     this.authenticationUsername = authenticationUsername;
@@ -90,6 +56,30 @@ public class VnfLifeCycleEvent {
 
   public void setEvents(Events events) {
     this.events = events;
+  }
+
+  public String getAuthenticationUsername() {
+    return authenticationUsername;
+  }
+
+  public String getDriver() {
+    return driver;
+  }
+
+  public String getAuthenticationType() {
+    return authenticationType;
+  }
+
+  public String getAuthentication() {
+    return authentication;
+  }
+
+  public String getVnfContainer() {
+    return vnfContainer;
+  }
+
+  public Events getEvents() {
+    return events;
   }
 
 }

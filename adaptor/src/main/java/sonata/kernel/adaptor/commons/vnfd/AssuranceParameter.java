@@ -34,44 +34,6 @@ public class AssuranceParameter {
   private String unit;
 
 
-  public ArrayList<Violation> getViolation() {
-    return violation;
-  }
-
-
-  public int getValue() {
-    return value;
-  }
-
-
-  public Penalty getPenalty() {
-    return penalty;
-  }
-
-
-  public String getFormula() {
-    return formula;
-  }
-
-
-  public String getRel_id() {
-    return relId;
-  }
-
-
-  public String getId() {
-    return id;
-  }
-
-
-  public String getUnit() {
-    return unit;
-  }
-
-
-  public String getRelId() {
-    return relId;
-  }
 
 
   public void setViolation(ArrayList<Violation> violation) {
@@ -106,5 +68,40 @@ public class AssuranceParameter {
 
   public void setUnit(String unit) {
     this.unit = unit;
+  }
+
+
+  public ArrayList<Violation> getViolation() {
+    return violation;
+  }
+
+
+  public int getValue() {
+    return value;
+  }
+
+
+  public Penalty getPenalty() {
+    return penalty;
+  }
+
+
+  public String getFormula() {
+    return formula;
+  }
+
+
+  public String getRelId() {
+    return relId;
+  }
+
+
+  public String getId() {
+    return id;
+  }
+
+
+  public String getUnit() {
+    return unit;
   }
 }

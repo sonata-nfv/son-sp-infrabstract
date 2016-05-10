@@ -35,10 +35,6 @@ public class VSwitchCapabilities {
     return type;
   }
 
-  public String getOverlay_tunnel() {
-    return overlayTunnel;
-  }
-
   public String getOverlayTunnel() {
     return overlayTunnel;
   }

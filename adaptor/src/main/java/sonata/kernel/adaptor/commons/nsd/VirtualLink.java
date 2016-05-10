@@ -67,94 +67,6 @@ public class VirtualLink {
   private boolean dhcp;
   private String qos;
 
-  public String getVl_group() {
-    return vlGroup;
-  }
-
-  public String getVl_name() {
-    return vlName;
-  }
-
-  public String getVl_version() {
-    return vlVersion;
-  }
-
-  public String getVl_description() {
-    return vlDescription;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public ConnectivityType getConnectivity_type() {
-    return connectivityType;
-  }
-
-  public ArrayList<String> getConnection_points_reference() {
-    return connectionPointsReference;
-  }
-
-  public boolean isAccess() {
-    return access;
-  }
-
-  public boolean isExternal_access() {
-    return externalAccess;
-  }
-
-  public String getRoot_requirement() {
-    return rootRequirement;
-  }
-
-  public String getLeaf_requirement() {
-    return leafRequirement;
-  }
-
-  public boolean isDhcp() {
-    return dhcp;
-  }
-
-  public String getQos() {
-    return qos;
-  }
-
-  public String getVlGroup() {
-    return vlGroup;
-  }
-
-  public String getVlName() {
-    return vlName;
-  }
-
-  public String getVlVersion() {
-    return vlVersion;
-  }
-
-  public String getVlDescription() {
-    return vlDescription;
-  }
-
-  public ConnectivityType getConnectivityType() {
-    return connectivityType;
-  }
-
-  public ArrayList<String> getConnectionPointsReference() {
-    return connectionPointsReference;
-  }
-
-  public boolean isExternalAccess() {
-    return externalAccess;
-  }
-
-  public String getRootRequirement() {
-    return rootRequirement;
-  }
-
-  public String getLeafRequirement() {
-    return leafRequirement;
-  }
-
   public void setVlGroup(String vlGroup) {
     this.vlGroup = vlGroup;
   }
@@ -205,6 +117,58 @@ public class VirtualLink {
 
   public void setQos(String qos) {
     this.qos = qos;
+  }
+
+  public String getVlGroup() {
+    return vlGroup;
+  }
+
+  public String getVlName() {
+    return vlName;
+  }
+
+  public String getVlVersion() {
+    return vlVersion;
+  }
+
+  public String getVlDescription() {
+    return vlDescription;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public ConnectivityType getConnectivityType() {
+    return connectivityType;
+  }
+
+  public ArrayList<String> getConnectionPointsReference() {
+    return connectionPointsReference;
+  }
+
+  public boolean isAccess() {
+    return access;
+  }
+
+  public boolean isExternalAccess() {
+    return externalAccess;
+  }
+
+  public String getRootRequirement() {
+    return rootRequirement;
+  }
+
+  public String getLeafRequirement() {
+    return leafRequirement;
+  }
+
+  public boolean isDhcp() {
+    return dhcp;
+  }
+
+  public String getQos() {
+    return qos;
   }
 
 

@@ -60,70 +60,6 @@ public class VirtualDeploymentUnit {
   private ScaleInOut scaleInOut;
 
 
-  public String getDescription() {
-    return description;
-  }
-
-  public String getId() {
-    return id;
-  }
-
-  public String getVm_image() {
-    return vmImage;
-  }
-
-  public VmFormat getVm_image_format() {
-    return vmImageFormat;
-  }
-
-  public String getVm_image_md5() {
-    return vmImageMd5;
-  }
-
-  public ResourceRequirements getResource_requirements() {
-    return resourceRequirements;
-  }
-
-  public ArrayList<ConnectionPoint> getConnection_points() {
-    return connectionPoints;
-  }
-
-  public ArrayList<VduMonitoringParameter> getMonitoring_parameters() {
-    return monitoringParameters;
-  }
-
-  public ScaleInOut getScale_in_out() {
-    return scaleInOut;
-  }
-
-  public String getVmImage() {
-    return vmImage;
-  }
-
-  public VmFormat getVmImageFormat() {
-    return vmImageFormat;
-  }
-
-  public String getVmImageMd5() {
-    return vmImageMd5;
-  }
-
-  public ResourceRequirements getResourceRequirements() {
-    return resourceRequirements;
-  }
-
-  public ArrayList<ConnectionPoint> getConnectionPoints() {
-    return connectionPoints;
-  }
-
-  public ArrayList<VduMonitoringParameter> getMonitoringParameters() {
-    return monitoringParameters;
-  }
-
-  public ScaleInOut getScaleInOut() {
-    return scaleInOut;
-  }
-
   public void setDescription(String description) {
     this.description = description;
   }
@@ -158,6 +94,42 @@ public class VirtualDeploymentUnit {
 
   public void setScaleInOut(ScaleInOut scaleInOut) {
     this.scaleInOut = scaleInOut;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public String getVmImage() {
+    return vmImage;
+  }
+
+  public VmFormat getVmImageFormat() {
+    return vmImageFormat;
+  }
+
+  public String getVmImageMd5() {
+    return vmImageMd5;
+  }
+
+  public ResourceRequirements getResourceRequirements() {
+    return resourceRequirements;
+  }
+
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public ArrayList<VduMonitoringParameter> getMonitoringParameters() {
+    return monitoringParameters;
+  }
+
+  public ScaleInOut getScaleInOut() {
+    return scaleInOut;
   }
 
 

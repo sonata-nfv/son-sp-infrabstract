@@ -27,13 +27,6 @@ public class Event {
   @JsonProperty("vnf_event")
   private String vnfEvent;
 
-  public String getVnf_id() {
-    return vnfId;
-  }
-
-  public String getVnf_event() {
-    return vnfEvent;
-  }
 
   public String getVnfId() {
     return vnfId;

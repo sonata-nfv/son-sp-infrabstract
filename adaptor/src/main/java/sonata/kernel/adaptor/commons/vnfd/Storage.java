@@ -29,22 +29,6 @@ public class Storage {
   private MemoryUnit sizeUnit;
   private boolean persistence;
 
-  public double getSize() {
-    return size;
-  }
-
-  public MemoryUnit getSize_unit() {
-    return sizeUnit;
-  }
-
-  public boolean isPersistence() {
-    return persistence;
-  }
-
-  public MemoryUnit getSizeUnit() {
-    return sizeUnit;
-  }
-
   public void setSize(double size) {
     this.size = size;
   }
@@ -55,6 +39,18 @@ public class Storage {
 
   public void setPersistence(boolean persistence) {
     this.persistence = persistence;
+  }
+
+  public double getSize() {
+    return size;
+  }
+
+  public MemoryUnit getSizeUnit() {
+    return sizeUnit;
+  }
+
+  public boolean isPersistence() {
+    return persistence;
   }
 
 

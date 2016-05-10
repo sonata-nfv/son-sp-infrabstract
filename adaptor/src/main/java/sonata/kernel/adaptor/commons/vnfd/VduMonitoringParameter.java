@@ -43,10 +43,6 @@ public class VduMonitoringParameter {
     return unit;
   }
 
-  public FrequencyUnit getFrequency_unit() {
-    return frequencyUnit;
-  }
-
   public String getName() {
     return name;
   }

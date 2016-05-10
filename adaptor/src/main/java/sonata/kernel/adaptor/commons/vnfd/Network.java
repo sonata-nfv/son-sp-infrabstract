@@ -34,20 +34,21 @@ public class Network {
   @JsonProperty("data_processing_acceleration_library")
   private String dataProcessingAccelerationLibrary;
 
-  public double getNetwork_interface_bandwidth() {
-    return networkInterfaceBandwidth;
+
+  public void setNetworkInterfaceBandwidth(double networkInterfaceBandwidth) {
+    this.networkInterfaceBandwidth = networkInterfaceBandwidth;
   }
 
-  public BandwidthUnit getNetwork_interface_bandwidth_unit() {
-    return networkInterfaceBandwidthUnit;
+  public void setNetworkInterfaceBandwidthUnit(BandwidthUnit networkInterfaceBandwidthUnit) {
+    this.networkInterfaceBandwidthUnit = networkInterfaceBandwidthUnit;
   }
 
-  public NicCapabilities getNetwork_interface_card_capabilities() {
-    return networkInterfaceCardCapabilities;
+  public void setNetworkInterfaceCardCapabilities(NicCapabilities networkInterfaceCardCapabilities) {
+    this.networkInterfaceCardCapabilities = networkInterfaceCardCapabilities;
   }
 
-  public String getData_processing_acceleration_library() {
-    return dataProcessingAccelerationLibrary;
+  public void setDataProcessingAccelerationLibrary(String dataProcessingAccelerationLibrary) {
+    this.dataProcessingAccelerationLibrary = dataProcessingAccelerationLibrary;
   }
 
   public double getNetworkInterfaceBandwidth() {
@@ -64,21 +65,5 @@ public class Network {
 
   public String getDataProcessingAccelerationLibrary() {
     return dataProcessingAccelerationLibrary;
-  }
-
-  public void setNetworkInterfaceBandwidth(double networkInterfaceBandwidth) {
-    this.networkInterfaceBandwidth = networkInterfaceBandwidth;
-  }
-
-  public void setNetworkInterfaceBandwidthUnit(BandwidthUnit networkInterfaceBandwidthUnit) {
-    this.networkInterfaceBandwidthUnit = networkInterfaceBandwidthUnit;
-  }
-
-  public void setNetworkInterfaceCardCapabilities(NicCapabilities networkInterfaceCardCapabilities) {
-    this.networkInterfaceCardCapabilities = networkInterfaceCardCapabilities;
-  }
-
-  public void setDataProcessingAccelerationLibrary(String dataProcessingAccelerationLibrary) {
-    this.dataProcessingAccelerationLibrary = dataProcessingAccelerationLibrary;
   }
 }

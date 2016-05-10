@@ -41,15 +41,7 @@ public class Events {
   public VnfEvent getRestart() {
     return restart;
   }
-
-  public VnfEvent getScale_in() {
-    return scaleIn;
-  }
-
-  public VnfEvent getScale_out() {
-    return scaleOut;
-  }
-
+  
   public VnfEvent getScaleIn() {
     return scaleIn;
   }

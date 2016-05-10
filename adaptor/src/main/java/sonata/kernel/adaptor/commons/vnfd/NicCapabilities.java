@@ -26,10 +26,6 @@ public class NicCapabilities {
   private boolean srIov;
   private boolean mirroring;
 
-  public boolean isSr_iov() {
-    return srIov;
-  }
-
   public boolean isMirroring() {
     return mirroring;
   }

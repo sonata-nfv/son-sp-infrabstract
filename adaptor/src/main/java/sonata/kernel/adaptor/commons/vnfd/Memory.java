@@ -33,33 +33,7 @@ public class Memory {
   @JsonProperty("numa_allocation_policy")
   private String numaAllocationPolicy;
 
-  public double getSize() {
-    return size;
-  }
-
-  public MemoryUnit getSize_unit() {
-    return sizeUnit;
-  }
-
-  public boolean isLarge_pages_required() {
-    return largePagesRequired;
-  }
-
-  public String getNuma_allocation_policy() {
-    return numaAllocationPolicy;
-  }
-
-  public MemoryUnit getSizeUnit() {
-    return sizeUnit;
-  }
-
-  public boolean isLargePagesRequired() {
-    return largePagesRequired;
-  }
-
-  public String getNumaAllocationPolicy() {
-    return numaAllocationPolicy;
-  }
+  
 
   public void setSize(double size) {
     this.size = size;
@@ -75,6 +49,22 @@ public class Memory {
 
   public void setNumaAllocationPolicy(String numaAllocationPolicy) {
     this.numaAllocationPolicy = numaAllocationPolicy;
+  }
+
+  public double getSize() {
+    return size;
+  }
+
+  public MemoryUnit getSizeUnit() {
+    return sizeUnit;
+  }
+
+  public boolean isLargePagesRequired() {
+    return largePagesRequired;
+  }
+
+  public String getNumaAllocationPolicy() {
+    return numaAllocationPolicy;
   }
 
 }

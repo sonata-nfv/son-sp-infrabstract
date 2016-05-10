@@ -33,16 +33,8 @@ public class NetworkForwardingPath {
   @JsonProperty("connection_points")
   private ArrayList<ConnectionPointReference> connectionPoints;
 
-  public String getFp_id() {
-    return fpId;
-  }
-
   public String getPolicy() {
     return policy;
-  }
-
-  public ArrayList<ConnectionPointReference> getConnection_points() {
-    return connectionPoints;
   }
 
   public String getFpId() {

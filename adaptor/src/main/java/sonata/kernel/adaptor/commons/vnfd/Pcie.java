@@ -28,14 +28,6 @@ public class Pcie {
   @JsonProperty("device_pass_through")
   private boolean devicePassThrough;
 
-  public boolean isSr_iov() {
-    return srIov;
-  }
-
-  public boolean isDevice_pass_through() {
-    return devicePassThrough;
-  }
-
   public boolean isSrIov() {
     return srIov;
   }

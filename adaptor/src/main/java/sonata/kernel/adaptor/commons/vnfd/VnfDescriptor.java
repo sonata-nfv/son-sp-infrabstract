@@ -54,89 +54,7 @@ public class VnfDescriptor {
   @JsonProperty("monitoring_rules")
   private ArrayList<VduMonitoringRules> monitoringRules;
 
-  public String getDescriptor_version() {
-    return descriptorVersion;
-  }
 
-  public String getVendor() {
-    return vendor;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public String getAuthor() {
-    return author;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public ArrayList<VirtualDeploymentUnit> getVirtual_deployment_units() {
-    return virtualDeploymentUnits;
-  }
-
-  public ArrayList<ConnectionPoint> getConnection_points() {
-    return connectionPoints;
-  }
-
-  public ArrayList<VnfVirtualLink> getVirtual_links() {
-    return virtualLinks;
-  }
-
-  public ArrayList<DeploymentFlavor> getDeployment_flavors() {
-    return deploymentFlavors;
-  }
-
-  public ArrayList<VnfLifeCycleEvent> getLifecycle_events() {
-    return lifecycleEvents;
-  }
-
-  public String getDescriptorVersion() {
-    return descriptorVersion;
-  }
-
-  public String getCreatedAt() {
-    return createdAt;
-  }
-
-  public String getUpdatedAt() {
-    return updatedAt;
-  }
-
-  public String getUuid() {
-    return uuid;
-  }
-
-  public ArrayList<VirtualDeploymentUnit> getVirtualDeploymentUnits() {
-    return virtualDeploymentUnits;
-  }
-
-  public ArrayList<ConnectionPoint> getConnectionPoints() {
-    return connectionPoints;
-  }
-
-  public ArrayList<VnfVirtualLink> getVirtualLinks() {
-    return virtualLinks;
-  }
-
-  public ArrayList<DeploymentFlavor> getDeploymentFlavors() {
-    return deploymentFlavors;
-  }
-
-  public ArrayList<VnfLifeCycleEvent> getLifecycleEvents() {
-    return lifecycleEvents;
-  }
-
-  public ArrayList<VduMonitoringRules> getMonitoringRules() {
-    return monitoringRules;
-  }
 
   public void setDescriptorVersion(String descriptorVersion) {
     this.descriptorVersion = descriptorVersion;
@@ -196,6 +114,66 @@ public class VnfDescriptor {
 
   public void setMonitoringRules(ArrayList<VduMonitoringRules> monitoringRules) {
     this.monitoringRules = monitoringRules;
+  }
+
+  public String getDescriptorVersion() {
+    return descriptorVersion;
+  }
+
+  public String getVendor() {
+    return vendor;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public String getAuthor() {
+    return author;
+  }
+
+  public String getDescription() {
+    return description;
+  }
+
+  public ArrayList<VirtualDeploymentUnit> getVirtualDeploymentUnits() {
+    return virtualDeploymentUnits;
+  }
+
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public ArrayList<VnfVirtualLink> getVirtualLinks() {
+    return virtualLinks;
+  }
+
+  public ArrayList<DeploymentFlavor> getDeploymentFlavors() {
+    return deploymentFlavors;
+  }
+
+  public ArrayList<VnfLifeCycleEvent> getLifecycleEvents() {
+    return lifecycleEvents;
+  }
+
+  public ArrayList<VduMonitoringRules> getMonitoringRules() {
+    return monitoringRules;
   }
 
 }

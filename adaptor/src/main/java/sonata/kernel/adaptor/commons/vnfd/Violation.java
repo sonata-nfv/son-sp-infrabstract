@@ -30,10 +30,6 @@ public class Violation {
     return interval;
   }
 
-  public int getBreaches_count() {
-    return breachesCount;
-  }
-
   public int getBreachesCount() {
     return breachesCount;
   }

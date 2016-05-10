@@ -32,14 +32,6 @@ public class VnfEvent {
     return command;
   }
 
-  public String getTemplate_file() {
-    return templateFile;
-  }
-
-  public String getTemplate_file_format() {
-    return templateFileFormat;
-  }
-
   public String getTemplateFile() {
     return templateFile;
   }

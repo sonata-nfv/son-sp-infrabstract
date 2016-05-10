@@ -65,7 +65,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     int subnetIndex=0;
     // One virtual router for NSD virtual links
     // TODO how we connect to the tenant network?
-    for (VirtualLink link : nsd.getVirtual_links()) {
+    for (VirtualLink link : nsd.getVirtualLinks()) {
       HeatResource router = new HeatResource();
       router.setName(link.getId());
       router.setType("OS::Neutron::Router");
@@ -75,7 +75,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     for (VnfDescriptor vnfd : vnfs) {
       // One network and subnet for vnf virtual link
-      ArrayList<VnfVirtualLink> links = vnfd.getVirtual_links();
+      ArrayList<VnfVirtualLink> links = vnfd.getVirtualLinks();
       for (VnfVirtualLink link : links) {
         HeatResource network = new HeatResource();
         network.setType("OS::Neutron::Net");
@@ -96,23 +96,23 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         model.addResource(subnet);
       }
       // One virtual machine for each VDU
-      for (VirtualDeploymentUnit vdu : vnfd.getVirtual_deployment_units()) {
+      for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
         HeatResource server = new HeatResource();
         server.setType("OS::Nova::Server");
         server.setName(vnfd.getName() + ":" + vdu.getId());
         server.putProperty("name",  vnfd.getName() + ":" + vdu.getId() + ":"
             + UUID.randomUUID().toString().substring(0, 4));
-        server.putProperty("image", vdu.getVm_image());
+        server.putProperty("image", vdu.getVmImage());
         server.putProperty("flavor", "m1.small");
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
-        for (ConnectionPoint cp : vdu.getConnection_points()) {
+        for (ConnectionPoint cp : vdu.getConnectionPoints()) {
           // create the port resource
           HeatResource port = new HeatResource();
           port.setType("OS::Neutron::Port");
           port.setName(vnfd.getName() + ":" + cp.getId());
           port.putProperty("name",  cp.getId());
           for (VnfVirtualLink link : links) {
-            if (link.getConnection_points_reference().contains(cp.getId())) {
+            if (link.getConnectionPointsReference().contains(cp.getId())) {
               HashMap<String, Object> netMap = new HashMap<String, Object>();
               netMap.put("get_resource",
                    vnfd.getName() + ":" + link.getId() + ":net");
@@ -133,12 +133,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
 
       // One Router interface per VNF cp
-      for (ConnectionPoint cp : vnfd.getConnection_points()) {
+      for (ConnectionPoint cp : vnfd.getConnectionPoints()) {
         HeatResource routerInterface = new HeatResource();
         routerInterface.setType("OS::Neutron::RouterInterface");
         routerInterface.setName(vnfd.getName() + ":" + cp.getId());
         for (VnfVirtualLink link : links) {
-          if (link.getConnection_points_reference().contains(cp.getId())) {
+          if (link.getConnectionPointsReference().contains(cp.getId())) {
             HashMap<String, Object> subnetMap = new HashMap<String, Object>();
             subnetMap.put("get_resource",
                  vnfd.getName() + ":" + link.getId() + ":subnet");
@@ -148,14 +148,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         }
         // Resolve vnf_id from vnf_name
         String vnfId = null;
-        for (NetworkFunction vnf : nsd.getNetwork_functions()) {
-          if (vnf.getVnf_name().equals(vnfd.getName())) {
-            vnfId = vnf.getVnf_id();
+        for (NetworkFunction vnf : nsd.getNetworkFunctions()) {
+          if (vnf.getVnfName().equals(vnfd.getName())) {
+            vnfId = vnf.getVnfId();
           }
         }
         // Attach to the virtual router
-        for (VirtualLink link : nsd.getVirtual_links()) {
-          if (link.getConnection_points_reference().contains(cp.getId().replace("vnf", vnfId))) {
+        for (VirtualLink link : nsd.getVirtualLinks()) {
+          if (link.getConnectionPointsReference().contains(cp.getId().replace("vnf", vnfId))) {
             HashMap<String, Object> routerMap = new HashMap<String, Object>();
             routerMap.put("get_resource", link.getId());
             routerInterface.putProperty("router", routerMap);

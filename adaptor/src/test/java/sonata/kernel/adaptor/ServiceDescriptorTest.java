@@ -6,10 +6,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
-import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
@@ -19,9 +20,12 @@ import junit.framework.TestSuite;
 
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.nsd.VirtualLink;
 import sonata.kernel.adaptor.commons.vnfd.Unit;
 import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
 
 /**
  * Unit test for simple App.
@@ -101,8 +105,11 @@ public class ServiceDescriptorTest extends TestCase {
     data.addVnfDescriptor(vnfd2);
     data.addVnfDescriptor(vnfd3);
 
-    @SuppressWarnings("unused")
-    ArrayList<VnfDescriptor> vnfds = data.getVnfdList();
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    System.out.println(mapper.writeValueAsString(data));
     
   }
   
@@ -125,16 +132,16 @@ public class ServiceDescriptorTest extends TestCase {
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
-    assertNotNull(sd.getDescriptor_version());
+    assertNotNull(sd.getDescriptorVersion());
     assertNotNull(sd.getVendor());
     assertNotNull(sd.getName());
     assertNotNull(sd.getVersion());
     assertNotNull(sd.getAuthor());
     assertNotNull(sd.getDescription());
-    assertTrue(sd.getNetwork_functions().size() > 0);
-    assertTrue(sd.getConnection_points().size() > 0);
-    assertTrue(sd.getVirtual_links().size() > 0);
-    assertTrue(sd.getForwarding_graphs().size() > 0);
+    assertTrue(sd.getNetworkFunctions().size() > 0);
+    assertTrue(sd.getConnectionPoints().size() > 0);
+    assertTrue(sd.getVirtualLinks().size() > 0);
+    assertTrue(sd.getForwardingGraphs().size() > 0);
   }
 
   public void testParseVNFDescriptor() throws IOException {
@@ -151,15 +158,16 @@ public class ServiceDescriptorTest extends TestCase {
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     vd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-    assertNotNull(vd.getDescriptor_version());
+    assertNotNull(vd.getDescriptorVersion());
     assertNotNull(vd.getVendor());
     assertNotNull(vd.getName());
     assertNotNull(vd.getVersion());
     assertNotNull(vd.getAuthor());
     assertNotNull(vd.getDescription());
-    assertTrue(vd.getVirtual_deployment_units().size() > 0);
-    assertTrue(vd.getVirtual_links().size() > 0);
-    assertTrue(vd.getConnection_points().size() > 0);
+    assertTrue(vd.getVirtualDeploymentUnits().size() > 0);
+    assertTrue(vd.getVirtualLinks().size() > 0);
+    assertTrue(vd.getConnectionPoints().size() > 0);
+
   }
 
 }

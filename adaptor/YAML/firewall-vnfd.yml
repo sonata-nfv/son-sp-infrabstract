@@ -17,7 +17,7 @@ version: '0.2'
 virtual_deployment_units:
   - id: vdu01
     vm_image: sonata_firewall_VM
-    vm_image_format: docker
+    vm_image_format: qcow2
     resource_requirements:
       cpu:
         vcpus: 1
