@@ -1,0 +1,13 @@
+heat_template_version: '2013-05-23'
+resources:
+  server1_hot:
+    properties:
+      flavor: SMALL_1
+      image: cirros
+      name: fe
+      networks:
+      - port: {get_resource: server_port_1}
+    type: OS::Nova::Server
+  server_port_1:
+    properties: {network_id: 5a0fcfe5-0d01-44fb-bbee-2a7821fa3bd8}
+    type: OS::Neutron::Port
