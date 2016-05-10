@@ -26,6 +26,7 @@ public class WrapperConfiguration {
   private String vimType;
   private String wrapperType;
   private String authUserName;
+  private String tenantName;
   private String authPass;
   private String authKey;
   private String uuid;
@@ -97,6 +98,14 @@ public class WrapperConfiguration {
     out += "User: " + authUserName + "\n\r";
     out += "pass: " + authPass + "\n\r";
     return out;
+  }
+
+  public String getTenantName() {
+    return tenantName;
+  }
+
+  public void setTenantName(String tenantName) {
+    this.tenantName = tenantName;
   }
 
 }

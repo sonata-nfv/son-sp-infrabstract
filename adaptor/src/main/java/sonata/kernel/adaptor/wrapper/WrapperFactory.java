@@ -18,6 +18,8 @@
 
 package sonata.kernel.adaptor.wrapper;
 
+import sonata.kernel.adaptor.wrapper.OpenStack.OpenStackHeatWrapper;
+
 public class WrapperFactory {
 
   /**

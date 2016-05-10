@@ -6,4 +6,4 @@
 adaptor/.settings/
 adaptor/target
 ./*.patch
-
+./reports/

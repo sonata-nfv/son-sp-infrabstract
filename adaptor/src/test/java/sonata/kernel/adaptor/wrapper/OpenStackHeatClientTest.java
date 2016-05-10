@@ -1,6 +1,8 @@
 package sonata.kernel.adaptor.wrapper;
 
 import junit.framework.TestCase;
+import sonata.kernel.adaptor.wrapper.OpenStack.OpenStackHeatClient;
+
 import org.apache.commons.io.IOUtils;
 
 import java.io.File;

@@ -59,6 +59,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String vimEndpoint = jsonObject.getString("vim_address");
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
+    String tenantName = jsonObject.getString("tenant");
     try {
       URL vimUrl = new URL(vimEndpoint);
       config.setUuid(this.getSid());
@@ -67,6 +68,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
       config.setVimEndpoint(vimUrl);
       config.setAuthUserName(authUser);
       config.setAuthPass(authPass);
+      config.setTenantName(tenantName);
       String output = null;
       if (wrapperType.equals("compute")) {
         output = WrapperBay.getInstance().registerComputeWrapper(config);

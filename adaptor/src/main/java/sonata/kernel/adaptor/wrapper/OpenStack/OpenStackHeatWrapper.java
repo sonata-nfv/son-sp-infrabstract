@@ -16,14 +16,21 @@
  * 
  */
 
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.wrapper.OpenStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 import sonata.kernel.adaptor.StartServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
+import sonata.kernel.adaptor.commons.DeploymentResponse;
 import sonata.kernel.adaptor.commons.heat.HeatModel;
 import sonata.kernel.adaptor.commons.heat.HeatResource;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
@@ -34,20 +41,39 @@ import sonata.kernel.adaptor.commons.nsd.VirtualLink;
 import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
+import sonata.kernel.adaptor.wrapper.ComputeWrapper;
+import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
+  private WrapperConfiguration config;
+ 
+  
   public OpenStackHeatWrapper(WrapperConfiguration config) {
     super();
+    this.config = config;
   }
 
   @Override
   public boolean deployService(DeployServiceData data,
       StartServiceCallProcessor startServiceCallProcessor) {
-    return false;
+
+    DeploymentResponse response = new DeploymentResponse();
+    
+    OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    
+    HeatModel stack = translate(data);
+    
+    DeployServiceFSM fsm =
+        new DeployServiceFSM(this, client, startServiceCallProcessor.getSid(), data, stack);
+    
+    return true;
+    
   }
 
-  public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data){
+  public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data) {
     HeatModel model = this.translate(data);
     HeatTemplate template = new HeatTemplate();
     for (HeatResource resource : model.getResources()) {
@@ -55,14 +81,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     return template;
   }
-  
+
   private HeatModel translate(DeployServiceData data) {
 
     ServiceDescriptor nsd = data.getNsd();
     ArrayList<VnfDescriptor> vnfs = data.getVnfdList();
 
     HeatModel model = new HeatModel();
-    int subnetIndex=0;
+    int subnetIndex = 0;
     // One virtual router for NSD virtual links
     // TODO how we connect to the tenant network?
     for (VirtualLink link : nsd.getVirtualLinks()) {
@@ -79,19 +105,18 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       for (VnfVirtualLink link : links) {
         HeatResource network = new HeatResource();
         network.setType("OS::Neutron::Net");
-        network.setName( vnfd.getName() + ":" + link.getId() + ":net");
+        network.setName(vnfd.getName() + ":" + link.getId() + ":net");
         network.putProperty("name", link.getId());
         model.addResource(network);
         HeatResource subnet = new HeatResource();
         subnet.setType("OS::Neutron::Subnet");
-        subnet.setName( vnfd.getName() + ":" + link.getId() + ":subnet");
+        subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet");
         subnet.putProperty("name", link.getId());
-        subnet.putProperty("cidr", "10.10."+subnetIndex+".0/24");
-        subnet.putProperty("gateway_ip", "10.10."+subnetIndex+".1");
+        subnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
+        subnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
         subnetIndex++;
         HashMap<String, Object> netMap = new HashMap<String, Object>();
-        netMap.put("get_resource",
-             vnfd.getName() + ":" + link.getId() + ":net");
+        netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
         subnet.putProperty("network", netMap);
         model.addResource(subnet);
       }
@@ -100,7 +125,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         HeatResource server = new HeatResource();
         server.setType("OS::Nova::Server");
         server.setName(vnfd.getName() + ":" + vdu.getId());
-        server.putProperty("name",  vnfd.getName() + ":" + vdu.getId() + ":"
+        server.putProperty("name", vnfd.getName() + ":" + vdu.getId() + ":"
             + UUID.randomUUID().toString().substring(0, 4));
         server.putProperty("image", vdu.getVmImage());
         server.putProperty("flavor", "m1.small");
@@ -110,12 +135,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           HeatResource port = new HeatResource();
           port.setType("OS::Neutron::Port");
           port.setName(vnfd.getName() + ":" + cp.getId());
-          port.putProperty("name",  cp.getId());
+          port.putProperty("name", cp.getId());
           for (VnfVirtualLink link : links) {
             if (link.getConnectionPointsReference().contains(cp.getId())) {
               HashMap<String, Object> netMap = new HashMap<String, Object>();
-              netMap.put("get_resource",
-                   vnfd.getName() + ":" + link.getId() + ":net");
+              netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
               port.putProperty("network", netMap);
               break;
             }
@@ -140,8 +164,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         for (VnfVirtualLink link : links) {
           if (link.getConnectionPointsReference().contains(cp.getId())) {
             HashMap<String, Object> subnetMap = new HashMap<String, Object>();
-            subnetMap.put("get_resource",
-                 vnfd.getName() + ":" + link.getId() + ":subnet");
+            subnetMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":subnet");
             routerInterface.putProperty("subnet", subnetMap);
             break;
           }
@@ -171,4 +194,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     model.prepare();
     return model;
   }
+
+
 }

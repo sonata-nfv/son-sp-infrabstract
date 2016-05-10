@@ -1,4 +1,4 @@
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.wrapper.OpenStack;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
