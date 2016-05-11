@@ -19,6 +19,8 @@ import junit.framework.TestSuite;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.messaging.TestConsumer;
 import sonata.kernel.adaptor.messaging.TestProducer;
+import sonata.kernel.adaptor.wrapper.WrapperBay;
+import sonata.kernel.adaptor.wrapper.WrapperRecord;
 
 /**
  * Unit test for simple App.
@@ -135,6 +137,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     status = jsonObject.getString("status");
     assertTrue(status.equals("COMPLETED"));
     core.stop();
+    WrapperBay.getInstance().clear();
   }
 
   /**
@@ -192,7 +195,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     assertTrue(status.equals("COMPLETED"));
 
     core.stop();
-
+    WrapperBay.getInstance().clear();
   }
 
 
@@ -259,7 +262,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     String[] vimList = mapper.readValue(output, String[].class);
     ArrayList<String> vimArrayList = new ArrayList<String>();
     Collections.addAll(vimArrayList, vimList);
-    
+
     for (String returnUiid : vimUuid) {
       assertTrue("VIMs List doesn't contain vim " + returnUiid, vimArrayList.contains(returnUiid));
     }
@@ -285,8 +288,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
       status = jsonObject.getString("status");
       assertTrue(status.equals("COMPLETED"));
     }
-    
-    output=null;
+
+    output = null;
     consumer.injectMessage(listVimMessage);
     while (output == null) {
       synchronized (mon) {
@@ -294,13 +297,14 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
       }
     }
 
-    vimList =  mapper.readValue(output, String[].class);
+    vimList = mapper.readValue(output, String[].class);
 
     assertTrue("VIMs List not empty", vimList.length == 0);
 
     output = null;
 
     core.stop();
+    WrapperBay.getInstance().clear();
   }
 
 

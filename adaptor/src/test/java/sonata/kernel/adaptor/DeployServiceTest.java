@@ -140,6 +140,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
       }
     }
     assertTrue(output.contains("OK"));
+    core.stop();
+    WrapperBay.getInstance().clear();
   }
 
   public void testDeployServiceMock() throws IOException, InterruptedException {
