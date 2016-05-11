@@ -1,4 +1,4 @@
-package sonata.kernel.adaptor.wrapper.OpenStack;
+package sonata.kernel.adaptor.wrapper.openstack;
 
 import java.util.UUID;
 
@@ -37,14 +37,18 @@ public class DeployServiceFSM implements Runnable {
   public void run() {
     DeploymentResponse response = new DeploymentResponse();
     try {
+      System.out.println("[OS-Deploy-FSM] Deploying new stack");
       ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
       mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
       mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
       mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
       mapper.setSerializationInclusion(Include.NON_NULL);
+      System.out.println("[OS-Deploy-FSM]   Serializing stack...");
+
       String stackString = mapper.writeValueAsString(stack);
 
       String stackName = data.getNsd().getName() + UUID.randomUUID().toString().substring(0, 8);
+      System.out.println("[OS-Deploy-FSM]   Pushing stack to Heat...");
       String instanceUuid = client.createStack(stackName, stackString);
 
       int counter = 0;

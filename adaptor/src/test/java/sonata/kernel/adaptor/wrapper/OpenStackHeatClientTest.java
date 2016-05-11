@@ -1,7 +1,7 @@
 package sonata.kernel.adaptor.wrapper;
 
 import junit.framework.TestCase;
-import sonata.kernel.adaptor.wrapper.OpenStack.OpenStackHeatClient;
+import sonata.kernel.adaptor.wrapper.openstack.OpenStackHeatClient;
 
 import org.apache.commons.io.IOUtils;
 
@@ -26,7 +26,7 @@ public class OpenStackHeatClientTest extends TestCase {
     private void initClient() {
 
         //todo - this needs to be moved to configuration file
-        this.heatClient = new OpenStackHeatClient("143.233.127.3", "sonata", "s0n@t@", "sonata");
+        this.heatClient = new OpenStackHeatClient("143.233.127.3", "operator", "0per@t0r", "operator");
     }
 
 

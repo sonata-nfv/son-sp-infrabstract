@@ -35,7 +35,7 @@ import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
 import java.util.Observable;
 
-public class StartServiceCallProcessor extends AbstractCallProcessor {
+public class DeployServiceCallProcessor extends AbstractCallProcessor {
 
   /**
    * Create a CallProcessor to process a DeployService API call.
@@ -44,24 +44,15 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
    * @param sid the session ID of the API call.
    * @param mux the AdaptorMux to which send back responses.
    */
-  public StartServiceCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
+  public DeployServiceCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
-    // TODO Auto-generated constructor stub
   }
 
   @Override
   public boolean process(ServicePlatformMessage message) {
-
-    // TODO implement wrapper selection based on request body
+    boolean out = true;
     System.out.println("[DeployServiceCallProcessor] - Call received...");
-    ComputeWrapper wr = WrapperBay.getInstance().getBestComputeWrapper();
-    if (wr == null) {
-      this.getMux()
-          .enqueue(new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"no_wrapper\"}",
-              message.getTopic(), message.getSid(),message.getReplyTo()));
-      return false;
-    }
-    // TODO parse the NSD/VNFD from the request body
+    // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
     System.out.println("[DeployServiceCallProcessor] - Parsing payload...");
     DeployServiceData data = null;
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -71,15 +62,24 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     try {
       data = mapper.readValue(message.getBody(), DeployServiceData.class);
-      // TODO use wrapper interface to send the NSD/VNFD, along with meta-data
-      // to the wrapper, triggering the service instantiation.
-      System.out.println("[DeployServiceCallProcessor] - Calling wrapper: " + wr);
-      wr.deployService(data, this);
+      ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(data.getVimUuid());
+      if (wr == null) {
+        this.sendToMux(
+            new ServicePlatformMessage("\"status\":\"error\",\"message\":\"VIM not found\"",
+                message.getReplyTo(), message.getSid(), null));
+        out = false;
+      } else {
+        // use wrapper interface to send the NSD/VNFD, along with meta-data
+        // to the wrapper, triggering the service instantiation.
+        System.out.println("[DeployServiceCallProcessor] - Calling wrapper: " + wr);
+        wr.deployService(data, this);
+      }
     } catch (Exception e) {
-      ; // TODO handle possible exception from the wrapper and from the de-serialization and send
-        // report to the SLM;
+      // TODO handle possible exception from the wrapper and from the de-serialization and send
+      // report to the SLM;
+      out = false;
     }
-    return true;
+    return out;
   }
 
   @Override
@@ -92,7 +92,7 @@ public class StartServiceCallProcessor extends AbstractCallProcessor {
         System.out.println("[DeployServiceCallProcessor] - Sending response...");
         ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
             "infrastructure.service.deploy", this.getSid(), null);
-        this.getMux().enqueue(response);
+        this.sendToMux(response);
       }
       // TODO handle other update from the compute wrapper;
     }

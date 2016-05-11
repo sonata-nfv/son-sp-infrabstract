@@ -1,12 +1,17 @@
 package sonata.kernel.adaptor;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -93,7 +98,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     TestProducer producer = new TestProducer(muxQueue, this);
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -148,7 +153,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     TestProducer producer = new TestProducer(muxQueue, this);
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -172,7 +177,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -189,6 +194,115 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     core.stop();
 
   }
+
+
+  /**
+   * Test list vim API call
+   * 
+   * @throws IOException
+   */
+  public void testListVimList() throws InterruptedException, IOException {
+
+    ArrayList<String> vimUuid = new ArrayList<String>();
+    JSONTokener tokener;
+    JSONObject jsonObject;
+    String uuid, status;
+
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+
+    core.start();
+    String topic = "infrastructure.management.compute.add";
+
+
+    for (int i = 0; i < 3; i++) {
+      String message = "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
+          + i + ":9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+      ServicePlatformMessage addVimMessage =
+          new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
+
+      consumer.injectMessage(addVimMessage);
+      Thread.sleep(2000);
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(1000);
+        }
+      }
+
+      tokener = new JSONTokener(output);
+      jsonObject = (JSONObject) tokener.nextValue();
+      uuid = jsonObject.getString("uuid");
+      status = jsonObject.getString("status");
+      assertTrue(status.equals("COMPLETED"));
+      vimUuid.add(uuid);
+      output = null;
+    }
+
+
+    topic = "infrastructure.management.compute.list";
+    ServicePlatformMessage listVimMessage =
+        new ServicePlatformMessage("", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(listVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    String[] vimList = mapper.readValue(output, String[].class);
+    ArrayList<String> vimArrayList = new ArrayList<String>();
+    Collections.addAll(vimArrayList, vimList);
+    
+    for (String returnUiid : vimUuid) {
+      assertTrue("VIMs List doesn't contain vim " + returnUiid, vimArrayList.contains(returnUiid));
+    }
+
+    output = null;
+
+    for (String regUuid : vimUuid) {
+      output = null;
+      String removeMessage = "{\"wr_type\":\"compute\",\"uuid\":\"" + regUuid + "\"}";
+      topic = "infrastructure.management.compute.remove";
+      ServicePlatformMessage removeVimMessage =
+          new ServicePlatformMessage(removeMessage, topic, UUID.randomUUID().toString(), topic);
+      consumer.injectMessage(removeVimMessage);
+
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(1000);
+        }
+      }
+
+      tokener = new JSONTokener(output);
+      jsonObject = (JSONObject) tokener.nextValue();
+      status = jsonObject.getString("status");
+      assertTrue(status.equals("COMPLETED"));
+    }
+    
+    output=null;
+    consumer.injectMessage(listVimMessage);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    vimList =  mapper.readValue(output, String[].class);
+
+    assertTrue("VIMs List not empty", vimList.length == 0);
+
+    output = null;
+
+    core.stop();
+  }
+
 
   public void receiveHeartbeat(ServicePlatformMessage message) {
     synchronized (mon) {

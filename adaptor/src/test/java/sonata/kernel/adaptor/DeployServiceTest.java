@@ -92,7 +92,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -129,7 +129,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     message = mapper.writeValueAsString(data);
 
     ServicePlatformMessage checkResourcesMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
 
     output = null;
     consumer.injectMessage(checkResourcesMessage);
@@ -142,7 +142,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     assertTrue(output.contains("OK"));
   }
 
-  public void testDeployService() throws IOException, InterruptedException {
+  public void testDeployServiceMock() throws IOException, InterruptedException {
 
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -173,7 +173,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(),topic);
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -232,6 +232,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     vnfd3 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
     DeployServiceData data = new DeployServiceData();
+    data.setVimUuid(wrUuid);
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);
@@ -245,7 +246,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     topic = "infrastructure.service.deploy";
     ServicePlatformMessage deployServiceMessage =
-        new ServicePlatformMessage(body, topic, UUID.randomUUID().toString(),topic);
+        new ServicePlatformMessage(body, topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(deployServiceMessage);
 
@@ -271,6 +272,137 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     WrapperBay.getInstance().clear();
 
   }
+
+  public void ignoreTestDeployServiceOpenStack() throws IOException, InterruptedException {
+
+
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.1);
+
+    core.start();
+    int counter = 0;
+
+    try {
+      while (counter < 2) {
+        synchronized (mon) {
+          mon.wait();
+          if (lastHeartbeat.contains("RUNNING")) counter++;
+        }
+      }
+    } catch (Exception e) {
+      assertTrue(false);
+    }
+
+
+    String message =
+        "{\"wr_type\":\"compute\",\"vim_type\":\"OpenStack\",\"vim_address\":\"http://143.233.127.3\",\"username\":\"operator\",\"pass\":\"0per@t0r\",\"tenant\":\"operator\"}";
+    String topic = "infrastructure.management.compute.add";
+    ServicePlatformMessage addVimMessage =
+        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String status = jsonObject.getString("status");
+    String wrUuid = jsonObject.getString("uuid");
+    assertTrue(status.equals("COMPLETED"));
+    System.out.println("Mock Wrapper added, with uuid: " + wrUuid);
+
+    output = null;
+    ServiceDescriptor sd;
+    StringBuilder bodyBuilder = new StringBuilder();
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
+    String line;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    SimpleModule module = new SimpleModule();
+    module.addDeserializer(Unit.class, new UnitDeserializer());
+    mapper.registerModule(module);
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
+
+    VnfDescriptor vnfd1;
+    bodyBuilder = new StringBuilder();
+    in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
+    line = null;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    vnfd1 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+    VnfDescriptor vnfd2;
+    bodyBuilder = new StringBuilder();
+    in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/firewall-vnfd.yml")), Charset.forName("UTF-8")));
+    line = null;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+
+    VnfDescriptor vnfd3;
+    bodyBuilder = new StringBuilder();
+    in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/tcpdump-vnfd.yml")), Charset.forName("UTF-8")));
+    line = null;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    vnfd3 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+    DeployServiceData data = new DeployServiceData();
+    data.setVimUuid(wrUuid);
+    data.setServiceDescriptor(sd);
+    data.addVnfDescriptor(vnfd1);
+    data.addVnfDescriptor(vnfd2);
+    data.addVnfDescriptor(vnfd3);
+
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    String body = mapper.writeValueAsString(data);
+
+    topic = "infrastructure.service.deploy";
+    ServicePlatformMessage deployServiceMessage =
+        new ServicePlatformMessage(body, topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(deployServiceMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    assertNotNull(output);
+    while (output.contains("heartbeat") || output.contains("Vim Added"))
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
+    assertTrue(response.getRequestStatus() == Status.normal_operation);
+    assertTrue(response.getNsr().getStatus() == Status.normal_operation);
+
+    for (VnfRecord vnfr : response.getVnfrList())
+      assertTrue(vnfr.getStatus() == Status.normal_operation);
+
+    core.stop();
+
+  }
+
 
 
   public void receiveHeartbeat(ServicePlatformMessage message) {

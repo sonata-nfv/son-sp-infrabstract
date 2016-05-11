@@ -16,7 +16,7 @@
  * 
  */
 
-package sonata.kernel.adaptor.wrapper.OpenStack;
+package sonata.kernel.adaptor.wrapper.openstack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +28,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
+import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeploymentResponse;
 import sonata.kernel.adaptor.commons.heat.HeatModel;
@@ -57,7 +57,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   @Override
   public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
+      DeployServiceCallProcessor startServiceCallProcessor) {
 
     DeploymentResponse response = new DeploymentResponse();
     

@@ -24,7 +24,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
+import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeployServiceResponse;
 import sonata.kernel.adaptor.commons.DeploymentResponse;
@@ -58,7 +58,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
 
   @Override
   public boolean deployService(DeployServiceData data,
-      final StartServiceCallProcessor callProcessor) {
+      final DeployServiceCallProcessor callProcessor) {
     this.addObserver(callProcessor);
     this.data = data;
     this.sid = callProcessor.getSid();

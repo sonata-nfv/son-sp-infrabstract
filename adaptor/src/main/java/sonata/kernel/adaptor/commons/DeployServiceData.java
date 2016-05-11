@@ -25,6 +25,7 @@ import java.util.ArrayList;
 
 public class DeployServiceData {
 
+  private String vimUuid;
   private ServiceDescriptor nsd;
   private ArrayList<VnfDescriptor> vnfds;
 
@@ -46,6 +47,22 @@ public class DeployServiceData {
 
   public ArrayList<VnfDescriptor> getVnfdList() {
     return vnfds;
+  }
+
+  public String getVimUuid() {
+    return vimUuid;
+  }
+
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
+  }
+
+  public void setNsd(ServiceDescriptor nsd) {
+    this.nsd = nsd;
+  }
+
+  public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
+    this.vnfds = vnfds;
   }
 
 

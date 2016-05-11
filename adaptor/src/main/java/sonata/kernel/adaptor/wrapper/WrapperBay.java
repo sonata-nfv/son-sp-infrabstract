@@ -18,6 +18,7 @@
 
 package sonata.kernel.adaptor.wrapper;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class WrapperBay {
@@ -94,6 +95,18 @@ public class WrapperBay {
   public String removeComputeWrapper(String uuid) {
     computeRegistry.remove(uuid);
     return "{\"status\":\"COMPLETED\"}";
+  }
+
+  public ArrayList<String> getComputeWrapperList() {
+    ArrayList<String> out = new ArrayList<String>();
+    for (String key : this.computeRegistry.keySet()) {
+      out.add(key);
+    }
+    return out;
+  }
+
+  public ComputeWrapper getComputeWrapper(String vimUuid) {
+    return (ComputeWrapper) this.computeRegistry.get(vimUuid).getVimWrapper();
   }
 
 }

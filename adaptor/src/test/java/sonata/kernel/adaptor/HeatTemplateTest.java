@@ -21,7 +21,7 @@ import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.adaptor.wrapper.OpenStack.OpenStackHeatWrapper;
+import sonata.kernel.adaptor.wrapper.openstack.OpenStackHeatWrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
