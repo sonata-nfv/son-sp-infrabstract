@@ -4,6 +4,7 @@
 .classpath
 .buildpath
 adaptor/.settings/
+adaptor/.pydevproject
 adaptor/target
 ./*.patch
-./reports/
+reports/
