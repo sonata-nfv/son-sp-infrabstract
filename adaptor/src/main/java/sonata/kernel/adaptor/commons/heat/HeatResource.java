@@ -23,37 +23,40 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.HashMap;
 
-@JsonPropertyOrder({"type","properties"})
-public class HeatResource implements Comparable<HeatResource>{
- 
+@JsonPropertyOrder({"type", "properties"})
+public class HeatResource implements Comparable<HeatResource> {
+
   @JsonIgnore
   private String resourceName;
   private String type;
   private HashMap<String, Object> properties;
-  
-  public HeatResource(){
-    this.properties = new HashMap<String,Object>();
+
+  public HeatResource() {
+    this.properties = new HashMap<String, Object>();
   }
-  
+
   public String getType() {
     return type;
   }
+
   public HashMap<String, Object> getProperties() {
     return properties;
   }
+
   public void setType(String type) {
     this.type = type;
   }
+
   public void setProperties(HashMap<String, Object> properties) {
     this.properties = properties;
   }
-  
-  public void putProperty(String key, Object value){
+
+  public void putProperty(String key, Object value) {
     this.properties.put(key, value);
   }
-  
-  public void setName(String name){
-    this.resourceName=name;
+
+  public void setName(String name) {
+    this.resourceName = name;
   }
 
   public String getResourceName() {
@@ -64,5 +67,14 @@ public class HeatResource implements Comparable<HeatResource>{
   public int compareTo(HeatResource o) {
     return this.type.compareTo(o.getType());
   }
-  
+
+  @Override
+  public boolean equals(Object o) {
+    if (o instanceof HeatResource) {
+      return this.type.equals(((HeatResource) o).getType());
+    } else {
+      return false;
+    }
+  }
+
 }

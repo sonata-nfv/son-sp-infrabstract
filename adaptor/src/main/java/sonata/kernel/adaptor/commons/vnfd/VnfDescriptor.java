@@ -39,6 +39,8 @@ public class VnfDescriptor {
   @JsonProperty("updated_at")
   private String updatedAt;
   private String uuid;
+  @JsonProperty("instance_uuid")
+  private String instanceUuid;
   private String author;
   private String description;
   @JsonProperty("virtual_deployment_units")
@@ -174,6 +176,14 @@ public class VnfDescriptor {
 
   public ArrayList<VduMonitoringRules> getMonitoringRules() {
     return monitoringRules;
+  }
+
+  public String getInstanceUuid() {
+    return instanceUuid;
+  }
+
+  public void setInstanceUuid(String instanceUuid) {
+    this.instanceUuid = instanceUuid;
   }
 
 }

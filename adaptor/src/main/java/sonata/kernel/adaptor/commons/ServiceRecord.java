@@ -18,25 +18,37 @@
 
 package sonata.kernel.adaptor.commons;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ServiceRecord {
 
-  private String id;
+  private String uuid;
   private Status status;
+  @JsonProperty("instance_uuid")
+  private String instanceUuid;
 
-  public String getId() {
-    return id;
+  public String getUuid() {
+    return uuid;
   }
 
   public Status getStatus() {
     return status;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public void setUuid(String id) {
+    this.uuid = id;
   }
 
   public void setStatus(Status status) {
     this.status = status;
+  }
+
+  public String getInstanceUuid() {
+    return instanceUuid;
+  }
+
+  public void setInstanceUuid(String instanceUuid) {
+    this.instanceUuid = instanceUuid;
   }
 
 

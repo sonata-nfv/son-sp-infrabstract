@@ -51,3 +51,4 @@ virtual_links:
       - vdu01:cp03
       - vnf:output
 uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f5b68
+instance_uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f0000

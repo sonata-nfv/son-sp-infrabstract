@@ -2,6 +2,7 @@ package sonata.kernel.adaptor.wrapper.openstack;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * Created by smendel on 4/20/16.
@@ -51,21 +52,22 @@ public class OpenStackHeatClient {
             Process p = processBuilder.start();
 
             //Read the errors of creating the stack
-            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream()));
+            BufferedReader stdError = new BufferedReader(new InputStreamReader(p.getErrorStream(),Charset.forName("UTF-8")));
             if (stdError.read() != -1) {
                 System.out.println("The errors of creating stack (if any):");
                 while ((s = stdError.readLine()) != null) {
                     System.out.println(s);
                 }
             }
+            stdError.close();
             //Read the results of creating the stack
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream(),Charset.forName("UTF-8")));
             System.out.println("The results of creating the stack:");
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
                 uuid = s;
             }
-
+            stdInput.close();
 
             if (uuid != null) {
                 System.out.println("UUID of new stack: " + uuid);
@@ -100,12 +102,12 @@ public class OpenStackHeatClient {
             Process p = processBuilder.start();
 
             //Read the status of the stack
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream(),Charset.forName("UTF-8")));
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
                 status = s;
             }
-
+            stdInput.close();
             System.out.println("The status of stack: " + stackName + " with uuid: " + uuid + " : " + status);
         } catch (Exception e) {
             System.out.println("Runtime error getting stack status for stack : " + stackName + " error message: " + e.getMessage());
@@ -135,12 +137,12 @@ public class OpenStackHeatClient {
             Process p = processBuilder.start();
 
             //Read the results
-            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream()));
+            BufferedReader stdInput = new BufferedReader(new InputStreamReader(p.getInputStream(),Charset.forName("UTF-8")));
             while ((s = stdInput.readLine()) != null) {
                 System.out.println(s);
                 isDeleted = s;
             }
-
+            stdInput.close();
             System.out.println("Request was sent for stack: " + stackName + " with uuid: " + uuid + " : " + isDeleted);
         } catch (Exception e) {
             System.out.println("Runtime error when deleting stack : " + stackName + " error message: " + e.getMessage());

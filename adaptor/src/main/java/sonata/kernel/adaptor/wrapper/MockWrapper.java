@@ -87,15 +87,16 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     DeployServiceResponse response = new DeployServiceResponse();
     response.setStatus(Status.normal_operation);
     ServiceRecord sr = new ServiceRecord();
-    sr.setId(UUID.randomUUID().toString());
+    sr.setUuid(data.getNsd().getUuid());
     sr.setStatus(Status.normal_operation);
-
+    sr.setInstanceUuid(data.getNsd().getInstanceUuid());
     for (VnfDescriptor vnf : data.getVnfdList()) {
       VnfRecord vnfr = new VnfRecord();
-      vnfr.setDescriptor_version("vnfr-schema-01");
+      vnfr.setDescriptorVersion("vnfr-schema-01");
       vnfr.setStatus(Status.normal_operation);
-      vnfr.setVnf_address("0.0.0.0");
-      vnfr.setId(UUID.randomUUID().toString());
+      vnfr.setVnfAddress("0.0.0.0");
+      vnfr.setUuid(vnf.getUuid());
+      vnfr.setInstanceUuid(vnf.getInstanceUuid());
       for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
         VduRecord vdur = new VduRecord();
         vdur.setId(UUID.randomUUID().toString());

@@ -11,7 +11,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeploymentResponse;
 import sonata.kernel.adaptor.commons.heat.HeatModel;
-import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
 public class DeployServiceFSM implements Runnable {
@@ -21,7 +20,7 @@ public class DeployServiceFSM implements Runnable {
   private OpenStackHeatWrapper wrapper;
   private OpenStackHeatClient client;
   private HeatModel stack;
-  final private int maxCounter = 5;
+  final static private int maxCounter = 5;
 
   public DeployServiceFSM(OpenStackHeatWrapper wrapper, OpenStackHeatClient client, String sid,
       DeployServiceData data, HeatModel stack) {
@@ -53,15 +52,17 @@ public class DeployServiceFSM implements Runnable {
 
       int counter = 0;
       int wait = 1000;
-      while (counter < maxCounter) {
-        String status = client.getStackStatus(stackName, instanceUuid);
-
+      String status = null;
+      while (counter < DeployServiceFSM.maxCounter && (status!=null && status !="COMPLETE")) {
+        status = client.getStackStatus(stackName, instanceUuid);
+        System.out.println("[OS-Deploy-FSM]   Status of stack "+instanceUuid+": "+status);
         try {
           Thread.sleep(wait);
         } catch (InterruptedException e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
         }
+        counter++;
         wait *= 2;
       }
       response.setInstanceName(stackName);

@@ -33,6 +33,8 @@ public class ServiceDescriptor {
   private String createdAt;
   @JsonProperty("updated_at")
   private String updatedAt;
+  @JsonProperty("instance_uuid")
+  private String instanceUuid;
   private String uuid;
   private String status;
   private String name;
@@ -219,6 +221,14 @@ public class ServiceDescriptor {
 
   public AutoScalePolicy getAutoScalePolicy() {
     return autoScalePolicy;
+  }
+
+  public String getInstanceUuid() {
+    return instanceUuid;
+  }
+
+  public void setInstanceUuid(String instanceUuid) {
+    this.instanceUuid = instanceUuid;
   }
 
 

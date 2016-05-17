@@ -69,6 +69,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     DeployServiceFSM fsm =
         new DeployServiceFSM(this, client, startServiceCallProcessor.getSid(), data, stack);
     
+    Thread t = new Thread(fsm);
+    t.start();
+    
     return true;
     
   }

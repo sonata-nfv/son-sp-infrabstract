@@ -1,8 +1,5 @@
 package sonata.kernel.adaptor;
 
-import java.util.ArrayList;
-import java.util.Observable;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -11,6 +8,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
+
+import java.util.ArrayList;
+import java.util.Observable;
 
 public class ListVimCallProcessor extends AbstractCallProcessor {
 

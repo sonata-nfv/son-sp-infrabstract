@@ -87,3 +87,4 @@ virtual_links:
   - vnf_tcpdump:output
   - ns:output
 uuid: 9df6a98f-9e11-4cb7-b3c0-b1375e7cb0b0
+instance_uuid: 9df6a98f-9e11-4cb7-b3c0-b1375e7c0000
