@@ -18,7 +18,7 @@
 
 package sonata.kernel.adaptor.wrapper;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
+import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 
 public class VLSPWrapper extends ComputeWrapper {
@@ -29,7 +29,7 @@ public class VLSPWrapper extends ComputeWrapper {
 
   @Override
   public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
+      DeployServiceCallProcessor startServiceCallProcessor) {
     // TODO Auto-generated method stub
     return false;
   }

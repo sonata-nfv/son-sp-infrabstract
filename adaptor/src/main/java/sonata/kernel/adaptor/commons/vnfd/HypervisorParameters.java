@@ -30,4 +30,12 @@ public class HypervisorParameters {
   public String getVersion() {
     return version;
   }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
 }

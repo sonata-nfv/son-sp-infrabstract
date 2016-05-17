@@ -27,12 +27,21 @@ public class Event {
   @JsonProperty("vnf_event")
   private String vnfEvent;
 
-  public String getVnf_id() {
+
+  public String getVnfId() {
     return vnfId;
   }
 
-  public String getVnf_event() {
+  public String getVnfEvent() {
     return vnfEvent;
+  }
+
+  public void setVnfId(String vnfId) {
+    this.vnfId = vnfId;
+  }
+
+  public void setVnfEvent(String vnfEvent) {
+    this.vnfEvent = vnfEvent;
   }
 
 }

@@ -59,6 +59,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String vimEndpoint = jsonObject.getString("vim_address");
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
+    String tenantName = jsonObject.getString("tenant");
     try {
       URL vimUrl = new URL(vimEndpoint);
       config.setUuid(this.getSid());
@@ -67,6 +68,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
       config.setVimEndpoint(vimUrl);
       config.setAuthUserName(authUser);
       config.setAuthPass(authPass);
+      config.setTenantName(tenantName);
       String output = null;
       if (wrapperType.equals("compute")) {
         output = WrapperBay.getInstance().registerComputeWrapper(config);
@@ -77,7 +79,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
         // TODO
         output = "";
       }
-      this.sendMessage(output);
+      this.sendResponse(output);
     } catch (MalformedURLException e) {
       e.printStackTrace();
       // Call mux to send a "malformed request" error
@@ -93,13 +95,13 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String jsonError =
         "{\"status\":\"error,\"sid\":\"" + this.getSid() + "\",\"message\":\"" + message + "\"}";
     ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError,
-        this.getMessage().getTopic(), this.getMessage().getSid());
+        this.getMessage().getTopic(), this.getMessage().getSid(), this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
   }
 
-  private void sendMessage(String message) {
+  private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message,
-        this.getMessage().getTopic(), this.getMessage().getSid());
+        this.getMessage().getTopic(), this.getMessage().getSid(),this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
   }
 

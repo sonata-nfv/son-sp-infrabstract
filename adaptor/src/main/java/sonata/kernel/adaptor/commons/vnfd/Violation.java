@@ -30,7 +30,15 @@ public class Violation {
     return interval;
   }
 
-  public int getBreaches_count() {
+  public int getBreachesCount() {
     return breachesCount;
+  }
+
+  public void setInterval(int interval) {
+    this.interval = interval;
+  }
+
+  public void setBreachesCount(int breachesCount) {
+    this.breachesCount = breachesCount;
   }
 }

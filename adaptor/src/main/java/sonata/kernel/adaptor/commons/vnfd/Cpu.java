@@ -33,15 +33,35 @@ public class Cpu {
     return vcpus;
   }
 
-  public String getCpu_support_accelerator() {
+
+  public void setVcpus(int vcpus) {
+    this.vcpus = vcpus;
+  }
+
+  public void setCpuSupportAccelerator(String cpuSupportAccelerator) {
+    this.cpuSupportAccelerator = cpuSupportAccelerator;
+  }
+
+  public void setCpuModel(String cpuModel) {
+    this.cpuModel = cpuModel;
+  }
+
+  public void setCpuClockSpeed(String cpuClockSpeed) {
+    this.cpuClockSpeed = cpuClockSpeed;
+  }
+
+
+  public String getCpuSupportAccelerator() {
     return cpuSupportAccelerator;
   }
 
-  public String getCpu_model() {
+
+  public String getCpuModel() {
     return cpuModel;
   }
 
-  public String getCpu_clock_speed() {
+
+  public String getCpuClockSpeed() {
     return cpuClockSpeed;
   }
 }

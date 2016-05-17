@@ -18,8 +18,9 @@
 
 package sonata.kernel.adaptor.wrapper;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
+import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
+import sonata.kernel.adaptor.commons.DeploymentResponse;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
@@ -33,6 +34,6 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   }
 
   public abstract boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) throws Exception;
+      DeployServiceCallProcessor startServiceCallProcessor) throws Exception;
 
 }

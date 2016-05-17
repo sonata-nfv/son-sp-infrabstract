@@ -51,47 +51,92 @@ public class ForwardingGraph {
   @JsonProperty("network_forwarding_paths")
   private ArrayList<NetworkForwardingPath> networkForwardingPaths;
 
-  public String getFg_group() {
+
+  public void setFgGroup(String fgGroup) {
+    this.fgGroup = fgGroup;
+  }
+
+  public void setFgName(String fgName) {
+    this.fgName = fgName;
+  }
+
+  public void setFgVersion(String fgVersion) {
+    this.fgVersion = fgVersion;
+  }
+
+  public void setFgDescription(String fgDescription) {
+    this.fgDescription = fgDescription;
+  }
+
+  public void setFgId(String fgId) {
+    this.fgId = fgId;
+  }
+
+  public void setNumberOfEndpoints(int numberOfEndpoints) {
+    this.numberOfEndpoints = numberOfEndpoints;
+  }
+
+  public void setNumberOfVirtualLinks(int numberOfVirtualLinks) {
+    this.numberOfVirtualLinks = numberOfVirtualLinks;
+  }
+
+  public void setDependentVirtualLinks(ArrayList<String> dependentVirtualLinks) {
+    this.dependentVirtualLinks = dependentVirtualLinks;
+  }
+
+  public void setConstituentVnfs(ArrayList<String> constituentVnfs) {
+    this.constituentVnfs = constituentVnfs;
+  }
+
+  public void setConstituentServices(ArrayList<String> constituentServices) {
+    this.constituentServices = constituentServices;
+  }
+
+  public void setNetworkForwardingPaths(ArrayList<NetworkForwardingPath> networkForwardingPaths) {
+    this.networkForwardingPaths = networkForwardingPaths;
+  }
+
+  public String getFgGroup() {
     return fgGroup;
   }
 
-  public String getFg_name() {
+  public String getFgName() {
     return fgName;
   }
 
-  public String getFg_version() {
+  public String getFgVersion() {
     return fgVersion;
   }
 
-  public String getFg_description() {
+  public String getFgDescription() {
     return fgDescription;
   }
 
-  public String getFg_id() {
+  public String getFgId() {
     return fgId;
   }
 
-  public int getNumber_of_endpoints() {
+  public int getNumberOfEndpoints() {
     return numberOfEndpoints;
   }
 
-  public int getNumber_of_virtual_links() {
+  public int getNumberOfVirtualLinks() {
     return numberOfVirtualLinks;
   }
 
-  public ArrayList<String> getDepedent_virtual_links() {
+  public ArrayList<String> getDependentVirtualLinks() {
     return dependentVirtualLinks;
   }
 
-  public ArrayList<String> getConstituent_vnfs() {
+  public ArrayList<String> getConstituentVnfs() {
     return constituentVnfs;
   }
 
-  public ArrayList<String> getConstituent_services() {
+  public ArrayList<String> getConstituentServices() {
     return constituentServices;
   }
 
-  public ArrayList<NetworkForwardingPath> getNetwork_forwarding_paths() {
+  public ArrayList<NetworkForwardingPath> getNetworkForwardingPaths() {
     return networkForwardingPaths;
   }
 

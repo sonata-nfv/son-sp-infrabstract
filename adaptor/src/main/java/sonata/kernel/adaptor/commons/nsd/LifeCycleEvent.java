@@ -29,6 +29,19 @@ public class LifeCycleEvent {
   @JsonProperty("scale_out")
   private ArrayList<Event> scaleOut;
 
+  
+  public void setStart(ArrayList<Event> start) {
+    this.start = start;
+  }
+
+  public void setStop(ArrayList<Event> stop) {
+    this.stop = stop;
+  }
+
+  public void setScaleOut(ArrayList<Event> scaleOut) {
+    this.scaleOut = scaleOut;
+  }
+
   public ArrayList<Event> getStart() {
     return start;
   }
@@ -37,7 +50,7 @@ public class LifeCycleEvent {
     return stop;
   }
 
-  public ArrayList<Event> getScale_out() {
+  public ArrayList<Event> getScaleOut() {
     return scaleOut;
   }
 

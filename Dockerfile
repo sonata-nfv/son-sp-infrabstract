@@ -25,7 +25,6 @@ RUN chmod +x /usr/local/bin/son-sp-infra-*
 RUN chmod +x /etc/init.d/son-sp-infra
 
 WORKDIR /adaptor
-RUN mvn clean assembly:single;
 
 ENV broker_host broker
 ENV broker_port 5672

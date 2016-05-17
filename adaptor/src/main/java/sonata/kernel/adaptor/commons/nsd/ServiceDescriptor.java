@@ -29,6 +29,12 @@ public class ServiceDescriptor {
   @JsonProperty("descriptor_version")
   private String descriptorVersion;
   private String vendor;
+  @JsonProperty("created_at")
+  private String createdAt;
+  @JsonProperty("updated_at")
+  private String updatedAt;
+  private String uuid;
+  private String status;
   private String name;
   private String version;
   private String author;
@@ -55,12 +61,108 @@ public class ServiceDescriptor {
   private AutoScalePolicy autoScalePolicy;
 
 
-  public String getDescriptor_version() {
+  public void setDescriptorVersion(String descriptorVersion) {
+    this.descriptorVersion = descriptorVersion;
+  }
+
+  public void setVendor(String vendor) {
+    this.vendor = vendor;
+  }
+
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public void setAuthor(String author) {
+    this.author = author;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setNetworkFunctions(ArrayList<NetworkFunction> networkFunctions) {
+    this.networkFunctions = networkFunctions;
+  }
+
+  public void setNetworkServices(ArrayList<String> networkServices) {
+    this.networkServices = networkServices;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
+  public void setVirtualLinks(ArrayList<VirtualLink> virtualLinks) {
+    this.virtualLinks = virtualLinks;
+  }
+
+  public void setForwardingGraphs(ArrayList<ForwardingGraph> forwardingGraphs) {
+    this.forwardingGraphs = forwardingGraphs;
+  }
+
+  public void setLifecycleEvents(LifeCycleEvent lifecycleEvents) {
+    this.lifecycleEvents = lifecycleEvents;
+  }
+
+  public void setVnfDepencency(ArrayList<String> vnfDepencency) {
+    this.vnfDepencency = vnfDepencency;
+  }
+
+  public void setServicesDependency(ArrayList<String> servicesDependency) {
+    this.servicesDependency = servicesDependency;
+  }
+
+  public void setMonitoringParameters(ArrayList<MonitoringParameter> monitoringParameters) {
+    this.monitoringParameters = monitoringParameters;
+  }
+
+  public void setAutoScalePolicy(AutoScalePolicy autoScalePolicy) {
+    this.autoScalePolicy = autoScalePolicy;
+  }
+
+  public String getStatus() {
+    return status;
+  }
+
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
+  public String getDescriptorVersion() {
     return descriptorVersion;
   }
 
   public String getVendor() {
     return vendor;
+  }
+
+  public String getCreatedAt() {
+    return createdAt;
   }
 
   public String getName() {
@@ -79,43 +181,43 @@ public class ServiceDescriptor {
     return description;
   }
 
-  public ArrayList<NetworkFunction> getNetwork_functions() {
+  public ArrayList<NetworkFunction> getNetworkFunctions() {
     return networkFunctions;
   }
 
-  public ArrayList<String> getNetwork_services() {
+  public ArrayList<String> getNetworkServices() {
     return networkServices;
   }
 
-  public ArrayList<ConnectionPoint> getConnection_points() {
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
     return connectionPoints;
   }
 
-  public ArrayList<VirtualLink> getVirtual_links() {
+  public ArrayList<VirtualLink> getVirtualLinks() {
     return virtualLinks;
   }
 
-  public ArrayList<ForwardingGraph> getForwarding_graphs() {
+  public ArrayList<ForwardingGraph> getForwardingGraphs() {
     return forwardingGraphs;
   }
 
-  public LifeCycleEvent getLifecycle_events() {
+  public LifeCycleEvent getLifecycleEvents() {
     return lifecycleEvents;
   }
 
-  public ArrayList<String> getVnf_depencency() {
+  public ArrayList<String> getVnfDepencency() {
     return vnfDepencency;
   }
 
-  public ArrayList<String> getServices_dependency() {
+  public ArrayList<String> getServicesDependency() {
     return servicesDependency;
   }
 
-  public ArrayList<MonitoringParameter> getMonitoring_Parameters() {
+  public ArrayList<MonitoringParameter> getMonitoringParameters() {
     return monitoringParameters;
   }
 
-  public AutoScalePolicy getAuto_scale_policy() {
+  public AutoScalePolicy getAutoScalePolicy() {
     return autoScalePolicy;
   }
 

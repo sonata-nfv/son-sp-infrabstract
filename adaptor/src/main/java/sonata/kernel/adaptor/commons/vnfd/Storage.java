@@ -29,11 +29,23 @@ public class Storage {
   private MemoryUnit sizeUnit;
   private boolean persistence;
 
+  public void setSize(double size) {
+    this.size = size;
+  }
+
+  public void setSizeUnit(MemoryUnit sizeUnit) {
+    this.sizeUnit = sizeUnit;
+  }
+
+  public void setPersistence(boolean persistence) {
+    this.persistence = persistence;
+  }
+
   public double getSize() {
     return size;
   }
 
-  public MemoryUnit getSize_unit() {
+  public MemoryUnit getSizeUnit() {
     return sizeUnit;
   }
 

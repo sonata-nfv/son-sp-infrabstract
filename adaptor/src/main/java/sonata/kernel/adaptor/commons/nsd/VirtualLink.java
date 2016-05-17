@@ -67,19 +67,71 @@ public class VirtualLink {
   private boolean dhcp;
   private String qos;
 
-  public String getVl_group() {
+  public void setVlGroup(String vlGroup) {
+    this.vlGroup = vlGroup;
+  }
+
+  public void setVlName(String vlName) {
+    this.vlName = vlName;
+  }
+
+  public void setVlVersion(String vlVersion) {
+    this.vlVersion = vlVersion;
+  }
+
+  public void setVlDescription(String vlDescription) {
+    this.vlDescription = vlDescription;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setConnectivityType(ConnectivityType connectivityType) {
+    this.connectivityType = connectivityType;
+  }
+
+  public void setConnectionPointsReference(ArrayList<String> connectionPointsReference) {
+    this.connectionPointsReference = connectionPointsReference;
+  }
+
+  public void setAccess(boolean access) {
+    this.access = access;
+  }
+
+  public void setExternalAccess(boolean externalAccess) {
+    this.externalAccess = externalAccess;
+  }
+
+  public void setRootRequirement(String rootRequirement) {
+    this.rootRequirement = rootRequirement;
+  }
+
+  public void setLeafRequirement(String leafRequirement) {
+    this.leafRequirement = leafRequirement;
+  }
+
+  public void setDhcp(boolean dhcp) {
+    this.dhcp = dhcp;
+  }
+
+  public void setQos(String qos) {
+    this.qos = qos;
+  }
+
+  public String getVlGroup() {
     return vlGroup;
   }
 
-  public String getVl_name() {
+  public String getVlName() {
     return vlName;
   }
 
-  public String getVl_version() {
+  public String getVlVersion() {
     return vlVersion;
   }
 
-  public String getVl_description() {
+  public String getVlDescription() {
     return vlDescription;
   }
 
@@ -87,11 +139,11 @@ public class VirtualLink {
     return id;
   }
 
-  public ConnectivityType getConnectivity_type() {
+  public ConnectivityType getConnectivityType() {
     return connectivityType;
   }
 
-  public ArrayList<String> getConnection_points_reference() {
+  public ArrayList<String> getConnectionPointsReference() {
     return connectionPointsReference;
   }
 
@@ -99,15 +151,15 @@ public class VirtualLink {
     return access;
   }
 
-  public boolean isExternal_access() {
+  public boolean isExternalAccess() {
     return externalAccess;
   }
 
-  public String getRoot_requirement() {
+  public String getRootRequirement() {
     return rootRequirement;
   }
 
-  public String getLeaf_requirement() {
+  public String getLeafRequirement() {
     return leafRequirement;
   }
 

@@ -28,12 +28,20 @@ public class Pcie {
   @JsonProperty("device_pass_through")
   private boolean devicePassThrough;
 
-  public boolean isSr_iov() {
+  public boolean isSrIov() {
     return srIov;
   }
 
-  public boolean isDevice_pass_through() {
+  public boolean isDevicePassThrough() {
     return devicePassThrough;
+  }
+
+  public void setSrIov(boolean srIov) {
+    this.srIov = srIov;
+  }
+
+  public void setDevicePassThrough(boolean devicePassThrough) {
+    this.devicePassThrough = devicePassThrough;
   }
 
 }

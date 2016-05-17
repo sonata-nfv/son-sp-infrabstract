@@ -36,5 +36,17 @@ public class MonitoringParameter {
     return unit;
   }
 
+  public void setDesc(String desc) {
+    this.desc = desc;
+  }
+
+  public void setMetric(String metric) {
+    this.metric = metric;
+  }
+
+  public void setUnit(String unit) {
+    this.unit = unit;
+  }
+
 
 }

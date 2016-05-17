@@ -41,13 +41,33 @@ public class Events {
   public VnfEvent getRestart() {
     return restart;
   }
-
-  public VnfEvent getScale_in() {
+  
+  public VnfEvent getScaleIn() {
     return scaleIn;
   }
 
-  public VnfEvent getScale_out() {
+  public VnfEvent getScaleOut() {
     return scaleOut;
+  }
+
+  public void setStart(VnfEvent start) {
+    this.start = start;
+  }
+
+  public void setStop(VnfEvent stop) {
+    this.stop = stop;
+  }
+
+  public void setRestart(VnfEvent restart) {
+    this.restart = restart;
+  }
+
+  public void setScaleIn(VnfEvent scaleIn) {
+    this.scaleIn = scaleIn;
+  }
+
+  public void setScaleOut(VnfEvent scaleOut) {
+    this.scaleOut = scaleOut;
   }
 
 }

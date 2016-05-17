@@ -3,5 +3,8 @@
 .launch
 .classpath
 .buildpath
-.target
 adaptor/.settings/
+adaptor/.pydevproject
+adaptor/target
+./*.patch
+reports/

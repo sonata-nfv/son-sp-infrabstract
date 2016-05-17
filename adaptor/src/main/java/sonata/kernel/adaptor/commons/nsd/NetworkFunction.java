@@ -32,19 +32,41 @@ public class NetworkFunction {
   private String vnfVersion;
   private String description;
 
-  public String getVnf_id() {
+  
+
+  public void setVnfId(String vnfId) {
+    this.vnfId = vnfId;
+  }
+
+  public void setVnfVendor(String vnfVendor) {
+    this.vnfVendor = vnfVendor;
+  }
+
+  public void setVnfName(String vnfName) {
+    this.vnfName = vnfName;
+  }
+
+  public void setVnfVersion(String vnfVersion) {
+    this.vnfVersion = vnfVersion;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public String getVnfId() {
     return vnfId;
   }
 
-  public String getVnf_vendor() {
+  public String getVnfVendor() {
     return vnfVendor;
   }
 
-  public String getVnf_name() {
+  public String getVnfName() {
     return vnfName;
   }
 
-  public String getVnf_version() {
+  public String getVnfVersion() {
     return vnfVersion;
   }
 

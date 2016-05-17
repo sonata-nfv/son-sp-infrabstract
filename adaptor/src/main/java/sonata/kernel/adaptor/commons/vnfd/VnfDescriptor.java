@@ -34,6 +34,11 @@ public class VnfDescriptor {
   private String vendor;
   private String name;
   private String version;
+  @JsonProperty("created_at")
+  private String createdAt;
+  @JsonProperty("updated_at")
+  private String updatedAt;
+  private String uuid;
   private String author;
   private String description;
   @JsonProperty("virtual_deployment_units")
@@ -46,8 +51,72 @@ public class VnfDescriptor {
   private ArrayList<DeploymentFlavor> deploymentFlavors;
   @JsonProperty("lifecycle_events")
   private ArrayList<VnfLifeCycleEvent> lifecycleEvents;
+  @JsonProperty("monitoring_rules")
+  private ArrayList<VduMonitoringRules> monitoringRules;
 
-  public String getDescriptor_version() {
+
+
+  public void setDescriptorVersion(String descriptorVersion) {
+    this.descriptorVersion = descriptorVersion;
+  }
+
+  public void setVendor(String vendor) {
+    this.vendor = vendor;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
+
+  public void setAuthor(String author) {
+    this.author = author;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setVirtualDeploymentUnits(ArrayList<VirtualDeploymentUnit> virtualDeploymentUnits) {
+    this.virtualDeploymentUnits = virtualDeploymentUnits;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
+  public void setVirtualLinks(ArrayList<VnfVirtualLink> virtualLinks) {
+    this.virtualLinks = virtualLinks;
+  }
+
+  public void setDeploymentFlavors(ArrayList<DeploymentFlavor> deploymentFlavors) {
+    this.deploymentFlavors = deploymentFlavors;
+  }
+
+  public void setLifecycleEvents(ArrayList<VnfLifeCycleEvent> lifecycleEvents) {
+    this.lifecycleEvents = lifecycleEvents;
+  }
+
+  public void setMonitoringRules(ArrayList<VduMonitoringRules> monitoringRules) {
+    this.monitoringRules = monitoringRules;
+  }
+
+  public String getDescriptorVersion() {
     return descriptorVersion;
   }
 
@@ -63,6 +132,18 @@ public class VnfDescriptor {
     return version;
   }
 
+  public String getCreatedAt() {
+    return createdAt;
+  }
+
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public String getUuid() {
+    return uuid;
+  }
+
   public String getAuthor() {
     return author;
   }
@@ -71,24 +152,28 @@ public class VnfDescriptor {
     return description;
   }
 
-  public ArrayList<VirtualDeploymentUnit> getVirtual_deployment_units() {
+  public ArrayList<VirtualDeploymentUnit> getVirtualDeploymentUnits() {
     return virtualDeploymentUnits;
   }
 
-  public ArrayList<ConnectionPoint> getConnection_points() {
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
     return connectionPoints;
   }
 
-  public ArrayList<VnfVirtualLink> getVirtual_links() {
+  public ArrayList<VnfVirtualLink> getVirtualLinks() {
     return virtualLinks;
   }
 
-  public ArrayList<DeploymentFlavor> getDeployment_flavors() {
+  public ArrayList<DeploymentFlavor> getDeploymentFlavors() {
     return deploymentFlavors;
   }
 
-  public ArrayList<VnfLifeCycleEvent> getLifecycle_events() {
+  public ArrayList<VnfLifeCycleEvent> getLifecycleEvents() {
     return lifecycleEvents;
+  }
+
+  public ArrayList<VduMonitoringRules> getMonitoringRules() {
+    return monitoringRules;
   }
 
 }

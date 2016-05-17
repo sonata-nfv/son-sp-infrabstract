@@ -34,19 +34,36 @@ public class Network {
   @JsonProperty("data_processing_acceleration_library")
   private String dataProcessingAccelerationLibrary;
 
-  public double getNetwork_interface_bandwidth() {
+
+  public void setNetworkInterfaceBandwidth(double networkInterfaceBandwidth) {
+    this.networkInterfaceBandwidth = networkInterfaceBandwidth;
+  }
+
+  public void setNetworkInterfaceBandwidthUnit(BandwidthUnit networkInterfaceBandwidthUnit) {
+    this.networkInterfaceBandwidthUnit = networkInterfaceBandwidthUnit;
+  }
+
+  public void setNetworkInterfaceCardCapabilities(NicCapabilities networkInterfaceCardCapabilities) {
+    this.networkInterfaceCardCapabilities = networkInterfaceCardCapabilities;
+  }
+
+  public void setDataProcessingAccelerationLibrary(String dataProcessingAccelerationLibrary) {
+    this.dataProcessingAccelerationLibrary = dataProcessingAccelerationLibrary;
+  }
+
+  public double getNetworkInterfaceBandwidth() {
     return networkInterfaceBandwidth;
   }
 
-  public BandwidthUnit getNetwork_interface_bandwidth_unit() {
+  public BandwidthUnit getNetworkInterfaceBandwidthUnit() {
     return networkInterfaceBandwidthUnit;
   }
 
-  public NicCapabilities getNetwork_interface_card_capabilities() {
+  public NicCapabilities getNetworkInterfaceCardCapabilities() {
     return networkInterfaceCardCapabilities;
   }
 
-  public String getData_processing_acceleration_library() {
+  public String getDataProcessingAccelerationLibrary() {
     return dataProcessingAccelerationLibrary;
   }
 }

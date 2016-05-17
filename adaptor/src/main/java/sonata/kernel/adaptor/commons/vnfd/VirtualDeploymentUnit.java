@@ -60,6 +60,42 @@ public class VirtualDeploymentUnit {
   private ScaleInOut scaleInOut;
 
 
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setVmImage(String vmImage) {
+    this.vmImage = vmImage;
+  }
+
+  public void setVmImageFormat(VmFormat vmImageFormat) {
+    this.vmImageFormat = vmImageFormat;
+  }
+
+  public void setVmImageMd5(String vmImageMd5) {
+    this.vmImageMd5 = vmImageMd5;
+  }
+
+  public void setResourceRequirements(ResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
+  public void setMonitoringParameters(ArrayList<VduMonitoringParameter> monitoringParameters) {
+    this.monitoringParameters = monitoringParameters;
+  }
+
+  public void setScaleInOut(ScaleInOut scaleInOut) {
+    this.scaleInOut = scaleInOut;
+  }
+
   public String getDescription() {
     return description;
   }
@@ -68,31 +104,31 @@ public class VirtualDeploymentUnit {
     return id;
   }
 
-  public String getVm_image() {
+  public String getVmImage() {
     return vmImage;
   }
 
-  public VmFormat getVm_image_format() {
+  public VmFormat getVmImageFormat() {
     return vmImageFormat;
   }
 
-  public String getVm_image_md5() {
+  public String getVmImageMd5() {
     return vmImageMd5;
   }
 
-  public ResourceRequirements getResource_requirements() {
+  public ResourceRequirements getResourceRequirements() {
     return resourceRequirements;
   }
 
-  public ArrayList<ConnectionPoint> getConnection_points() {
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
     return connectionPoints;
   }
 
-  public ArrayList<VduMonitoringParameter> getMonitoring_parameters() {
+  public ArrayList<VduMonitoringParameter> getMonitoringParameters() {
     return monitoringParameters;
   }
 
-  public ScaleInOut getScale_in_out() {
+  public ScaleInOut getScaleInOut() {
     return scaleInOut;
   }
 

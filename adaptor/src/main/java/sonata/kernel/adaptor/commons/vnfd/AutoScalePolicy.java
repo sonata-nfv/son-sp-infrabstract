@@ -15,4 +15,12 @@ public class AutoScalePolicy {
     return action;
   }
 
+  public void setCritaria(ArrayList<Criterion> critaria) {
+    this.critaria = critaria;
+  }
+
+  public void setAction(String action) {
+    this.action = action;
+  }
+
 }

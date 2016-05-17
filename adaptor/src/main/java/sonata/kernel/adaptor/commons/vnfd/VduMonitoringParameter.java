@@ -43,11 +43,31 @@ public class VduMonitoringParameter {
     return unit;
   }
 
-  public FrequencyUnit getFrequency_unit() {
+  public String getName() {
+    return name;
+  }
+
+  public FrequencyUnit getFrequencyUnit() {
     return frequencyUnit;
   }
 
-  public String getName() {
-    return name;
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setUnit(Unit unit) {
+    this.unit = unit;
+  }
+
+  public void setFrequency(double frequency) {
+    this.frequency = frequency;
+  }
+
+  public void setFrequencyUnit(FrequencyUnit frequencyUnit) {
+    this.frequencyUnit = frequencyUnit;
   }
 }

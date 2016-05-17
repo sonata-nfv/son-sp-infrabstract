@@ -33,7 +33,28 @@ public class DeploymentFlavor {
   @JsonProperty("assurance_parameters")
   private ArrayList<AssuranceParameter> assuranceParameters;
 
-  public ArrayList<String> getVdu_reference() {
+
+  public void setVduReference(ArrayList<String> vduReference) {
+    this.vduReference = vduReference;
+  }
+
+  public void setConstraint(String constraint) {
+    this.constraint = constraint;
+  }
+
+  public void setVlinkReference(ArrayList<String> vlinkReference) {
+    this.vlinkReference = vlinkReference;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setAssuranceParameters(ArrayList<AssuranceParameter> assuranceParameters) {
+    this.assuranceParameters = assuranceParameters;
+  }
+
+  public ArrayList<String> getVduReference() {
     return vduReference;
   }
 
@@ -41,7 +62,7 @@ public class DeploymentFlavor {
     return constraint;
   }
 
-  public ArrayList<String> getVlink_reference() {
+  public ArrayList<String> getVlinkReference() {
     return vlinkReference;
   }
 
@@ -49,7 +70,7 @@ public class DeploymentFlavor {
     return id;
   }
 
-  public ArrayList<AssuranceParameter> getAssurance_parameters() {
+  public ArrayList<AssuranceParameter> getAssuranceParameters() {
     return assuranceParameters;
   }
 

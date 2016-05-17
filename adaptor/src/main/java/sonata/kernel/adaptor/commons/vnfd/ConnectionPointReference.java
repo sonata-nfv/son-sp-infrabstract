@@ -26,12 +26,21 @@ public class ConnectionPointReference {
   private String connectionPointRef;
   private int position;
 
-  public String getConnection_point_ref() {
-    return connectionPointRef;
-  }
 
   public int getPosition() {
     return position;
+  }
+
+  public String getConnectionPointRef() {
+    return connectionPointRef;
+  }
+
+  public void setConnectionPointRef(String connectionPointRef) {
+    this.connectionPointRef = connectionPointRef;
+  }
+
+  public void setPosition(int position) {
+    this.position = position;
   }
 
 }

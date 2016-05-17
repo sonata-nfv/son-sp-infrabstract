@@ -61,13 +61,13 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
       // TODO
       output = "";
     }
-    this.sendMessage(output);
+    this.sendResponse(output);
     return out;
   }
 
-  private void sendMessage(String message) {
+  private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message,
-        this.getMessage().getTopic(), this.getMessage().getSid());
+        this.getMessage().getTopic(), this.getMessage().getSid(), this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
   }
 

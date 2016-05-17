@@ -24,9 +24,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
+import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeployServiceResponse;
+import sonata.kernel.adaptor.commons.DeploymentResponse;
 import sonata.kernel.adaptor.commons.ServiceRecord;
 import sonata.kernel.adaptor.commons.Status;
 import sonata.kernel.adaptor.commons.VduRecord;
@@ -57,7 +58,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
 
   @Override
   public boolean deployService(DeployServiceData data,
-      final StartServiceCallProcessor callProcessor) {
+      final DeployServiceCallProcessor callProcessor) {
     this.addObserver(callProcessor);
     this.data = data;
     this.sid = callProcessor.getSid();
@@ -95,12 +96,12 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       vnfr.setStatus(Status.normal_operation);
       vnfr.setVnf_address("0.0.0.0");
       vnfr.setId(UUID.randomUUID().toString());
-      for (VirtualDeploymentUnit vdu : vnf.getVirtual_deployment_units()) {
+      for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
         VduRecord vdur = new VduRecord();
         vdur.setId(UUID.randomUUID().toString());
         vdur.setNumber_of_instances(1);
         vdur.setVdu_reference(vnf.getName() + ":" + vdu.getId() + ":" + vdur.getId());
-        vdur.setVm_image(vdu.getVm_image());
+        vdur.setVm_image(vdu.getVmImage());
         vnfr.addVdu(vdur);
       }
       response.addVnfRecord(vnfr);

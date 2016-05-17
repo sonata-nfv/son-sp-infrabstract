@@ -16,21 +16,11 @@
  * 
  */
 
-package sonata.kernel.adaptor.wrapper;
+package sonata.kernel.adaptor.commons.heat;
 
-import sonata.kernel.adaptor.StartServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
+import java.util.ArrayList;
 
-public class OpenStackHeatWrapper extends ComputeWrapper {
+public class ServerProperties {
 
-  public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
-  }
-
-  @Override
-  public boolean deployService(DeployServiceData data,
-      StartServiceCallProcessor startServiceCallProcessor) {
-    return false;
-  }
-
+  
 }

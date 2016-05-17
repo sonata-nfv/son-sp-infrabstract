@@ -85,7 +85,7 @@ public class AdaptorDispatcher implements Runnable {
 
   private void handleServiceMsg(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("deploy")) {
-      myThreadPool.execute(new StartServiceCallProcessor(message, message.getSid(), mux));
+      myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
     }
   }
 
@@ -98,6 +98,8 @@ public class AdaptorDispatcher implements Runnable {
         myThreadPool.execute(new RemoveVimCallProcessor(message, message.getSid(), mux));
       } else if (message.getTopic().endsWith("resourceAvailability")) {
         myThreadPool.execute(new ResourceAvailabilityCallProcessor(message, message.getSid(), mux));
+      } else if (message.getTopic().endsWith("list")) {
+        myThreadPool.execute(new ListVimCallProcessor(message, message.getBody(), mux));
       }
     } else if (message.getTopic().contains("storage")) {
       // TODO Storage Management API

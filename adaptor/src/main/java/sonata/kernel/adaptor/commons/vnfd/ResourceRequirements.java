@@ -32,11 +32,41 @@ public class ResourceRequirements {
   private Network network;
   private Pcie pcie;
 
-  public HypervisorParameters getHyperviso_parameters() {
+  
+
+  public void setHypervisorParameters(HypervisorParameters hypervisorParameters) {
+    this.hypervisorParameters = hypervisorParameters;
+  }
+
+  public void setVswitchCapabilities(VSwitchCapabilities vswitchCapabilities) {
+    this.vswitchCapabilities = vswitchCapabilities;
+  }
+
+  public void setCpu(Cpu cpu) {
+    this.cpu = cpu;
+  }
+
+  public void setMemory(Memory memory) {
+    this.memory = memory;
+  }
+
+  public void setStorage(Storage storage) {
+    this.storage = storage;
+  }
+
+  public void setNetwork(Network network) {
+    this.network = network;
+  }
+
+  public void setPcie(Pcie pcie) {
+    this.pcie = pcie;
+  }
+
+  public HypervisorParameters getHypervisorParameters() {
     return hypervisorParameters;
   }
 
-  public VSwitchCapabilities getVswitch_capabilities() {
+  public VSwitchCapabilities getVswitchCapabilities() {
     return vswitchCapabilities;
   }
 

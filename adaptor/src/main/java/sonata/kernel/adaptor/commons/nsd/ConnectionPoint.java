@@ -40,6 +40,19 @@ public class ConnectionPoint {
   @JsonProperty("virtua_link_reference")
   private String virtualLinkReference;
 
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setType(Interface type) {
+    this.type = type;
+  }
+
+  public void setVirtualLinkReference(String virtualLinkReference) {
+    this.virtualLinkReference = virtualLinkReference;
+  }
+
   public String getId() {
     return id;
   }
@@ -48,7 +61,7 @@ public class ConnectionPoint {
     return type;
   }
 
-  public String getVirtual_link_reference() {
+  public String getVirtualLinkReference() {
     return virtualLinkReference;
   }
 }

@@ -21,51 +21,102 @@ package sonata.kernel.adaptor.commons.vnfd;
 
 public interface Unit {
 
-  public enum BandwidthUnit implements Unit {
-    bps, kbps, Mbps, Gbps, Tbps;
-  }
+  public double getMultiplier();
 
-  public enum MemoryUnit implements Unit {
-    B, kB, KiB, MB, MiB, GB, GiB, TB, TiB, PB, PiB;
+  public enum BandwidthUnit implements Unit {
+    bps(Math.pow(10, -6)), kbps(Math.pow(10, -3)), Mbps(1), Gbps(Math.pow(10, 3)), Tbps(
+        Math.pow(10, 6));
+
+    double multiplier;
+
+    BandwidthUnit(double multiplier) {
+      this.multiplier = multiplier;
+    }
 
     /**
-     * Utility method to retrieve the multiplicative factor associated with this Memory Unit.
-     * Warning: some factors are out of the long capabilities to represents them.
+     * Utility method to retrieve the multiplicative factor associated with this Bandwidth Unit (in
+     * multiple or sub-multiple of the Megabit/s).
      * 
-     * @return a long integer with the multiplicative factor.
+     * 
+     * @return a double with the multiplicative factor.
      */
-    public long getMultiplier() {
-      if (this.equals(kB)) {
-        return (long) Math.pow(10, 3);
-      } else if (this.equals(MB)) {
-        return (long) Math.pow(10, 6);
-      } else if (this.equals(GB)) {
-        return (long) Math.pow(10, 9);
-      } else if (this.equals(TB)) {
-        return (long) Math.pow(10, 12);
-      } else if (this.equals(PB)) {
-        return (long) Math.pow(10, 15);
-      } else if (this.equals(KiB)) {
-        return (long) Math.pow(2, 10);
-      } else if (this.equals(MiB)) {
-        return (long) Math.pow(2, 20);
-      } else if (this.equals(GiB)) {
-        return (long) Math.pow(2, 30);
-      } else if (this.equals(TiB)) {
-        return (long) Math.pow(2, 40);
-      } else if (this.equals(PiB)) {
-        return (long) Math.pow(2, 50);
-      } else {
-        return 1;
-      }
+    public double getMultiplier() {
+      return this.multiplier;
+    }
+  }
+
+  public enum TimeUnit implements Unit {
+    ns(0.000001), ms(0.001), s(1), m(60), h(3600), d(3600 * 24);
+
+    double multiplier;
+
+    TimeUnit(double multiplier) {
+      this.multiplier = multiplier;
+    }
+
+    /**
+     * Utility method to retrieve the multiplicative factor associated with this Time Unit (in
+     * multiple or sub-multiple of the second).
+     * 
+     * 
+     * @return a double with the multiplicative factor.
+     */
+    public double getMultiplier() {
+      return this.multiplier;
+    }
+
+  }
+  
+  public enum MemoryUnit implements Unit {
+    B(Math.pow(10, -9)), kB(Math.pow(10, -6)), KiB(Math.pow(2, 10)), MB(Math.pow(10, -3)), MiB(
+        Math.pow(2, 20)), GB(1), GiB(1.074), TB(Math.pow(10, 3)), TiB(1.074 * Math.pow(2, 10)), PB(
+            Math.pow(10, 3)), PiB(1.074 * Math.pow(2, 20));
+
+    double multiplier;
+
+    MemoryUnit(double multiplier) {
+      this.multiplier = multiplier;
+    }
+
+    /**
+     * Utility method to retrieve the multiplicative factor associated with this Memory Unit (in
+     * multiple or sub-multiple of the GigaByte).
+     * 
+     * 
+     * @return a double with the multiplicative factor.
+     */
+    public double getMultiplier() {
+      return this.multiplier;
     }
   }
 
   public enum FrequencyUnit implements Unit {
-    Hz, kHz, MHz, GHz, THz;
+    Hz(Math.pow(10, -6)), kHz(Math.pow(10, -3)), MHz(1), GHz(Math.pow(10, 3)), THz(Math.pow(10, 6));
+
+    double multiplier;
+
+    FrequencyUnit(double multiplier) {
+      this.multiplier = multiplier;
+    }
+
+    /**
+     * Utility method to retrieve the multiplicative factor associated with this Memory Unit (in
+     * multiple or sub-multiple of the MegaHertz).
+     * 
+     * 
+     * @return a double with the multiplicative factor.
+     */
+    public double getMultiplier() {
+      return this.multiplier;
+    }
   }
 
   public enum GeneralUnit implements Unit {
     percentage;
+
+    public double getMultiplier() {
+      return 0.01;
+    }
   }
 }
+

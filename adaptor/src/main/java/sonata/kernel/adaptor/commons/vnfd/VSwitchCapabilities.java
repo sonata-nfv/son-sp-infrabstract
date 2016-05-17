@@ -35,7 +35,19 @@ public class VSwitchCapabilities {
     return type;
   }
 
-  public String getOverlay_tunnel() {
+  public String getOverlayTunnel() {
     return overlayTunnel;
+  }
+
+  public void setVersion(String version) {
+    this.version = version;
+  }
+
+  public void setType(String type) {
+    this.type = type;
+  }
+
+  public void setOverlayTunnel(String overlayTunnel) {
+    this.overlayTunnel = overlayTunnel;
   }
 }
