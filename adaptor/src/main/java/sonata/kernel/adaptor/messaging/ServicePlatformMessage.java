@@ -20,10 +20,11 @@ package sonata.kernel.adaptor.messaging;
 
 public class ServicePlatformMessage {
 
-  String messageBody;
+  String body;
   String topic;
   String replyTo;
   String sid;
+  String contentType;
 
   /**
    * Create the Service Platform Message.
@@ -33,11 +34,12 @@ public class ServicePlatformMessage {
    * @param sid the session ID of this message
    * @param reply the topic on which a response is expected. null if no response is expected.
    */
-  public ServicePlatformMessage(String message, String topic, String sid, String reply) {
-    messageBody = message;
+  public ServicePlatformMessage(String message, String contentType, String topic, String sid, String reply) {
+    body = message;
     this.topic = topic;
     this.sid = sid;
     this.replyTo = reply;
+    this.contentType=contentType;
   }
 
   public String getReplyTo() {
@@ -52,7 +54,7 @@ public class ServicePlatformMessage {
    * @return a String representing the message wrapped in this object.
    */
   public String getBody() {
-    return messageBody;
+    return body;
   }
 
   /**
@@ -80,7 +82,12 @@ public class ServicePlatformMessage {
 
   @Override
   public String toString() {
-    return "sid: " + sid + " - message: " + messageBody + " - topic: " + topic;
+    return "sid: " + sid + " - message: " + body + " - topic: " + topic;
+  }
+
+
+  public String getContentType() {
+    return contentType;
   }
 
 }

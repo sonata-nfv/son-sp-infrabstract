@@ -38,13 +38,13 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
 
 
       ServicePlatformMessage response =
-          new ServicePlatformMessage(body, this.getMessage().getReplyTo(), this.getSid(), null);
+          new ServicePlatformMessage(body,"application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
 
       this.getMux().enqueue(response);
       return true;
     } catch (JsonProcessingException e) {
       ServicePlatformMessage response =
-          new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"Internal Server Error\"}",
+          new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"Internal Server Error\"}","application/json",
               this.getMessage().getReplyTo(), this.getSid(), null);
       this.getMux().enqueue(response);
       return false;

@@ -48,7 +48,7 @@ public class HeartBeat implements Runnable {
     while (!stop) {
       try {
         String body = "{\"uuid\":\"" + uuid + "\",\"state\":\"" + core.getState() + "\"}";
-        ServicePlatformMessage message = new ServicePlatformMessage(body,
+        ServicePlatformMessage message = new ServicePlatformMessage(body,"application/json",
             "platform.management.plugin." + uuid + ".heartbeat", UUID.randomUUID().toString(),null);
         mux.enqueue(message);
         Thread.sleep((int) ((1 / rate) * 1000));

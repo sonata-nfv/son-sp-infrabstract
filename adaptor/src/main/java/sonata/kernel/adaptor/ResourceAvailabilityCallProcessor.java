@@ -69,7 +69,7 @@ public class ResourceAvailabilityCallProcessor extends AbstractCallProcessor {
       // By now we just answer OK, for resource available.
       String responseMessage = "status: \"OK\"";
       ServicePlatformMessage response =
-          new ServicePlatformMessage(responseMessage, message.getTopic(), message.getSid(),message.getReplyTo());
+          new ServicePlatformMessage(responseMessage,"application/x-yaml", message.getTopic(), message.getSid(),null);
 
       this.sendToMux(response);
     } catch (IOException e1) {

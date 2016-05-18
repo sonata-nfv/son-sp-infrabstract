@@ -20,7 +20,6 @@ import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.messaging.TestConsumer;
 import sonata.kernel.adaptor.messaging.TestProducer;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
-import sonata.kernel.adaptor.wrapper.WrapperRecord;
 
 /**
  * Unit test for simple App.
@@ -100,7 +99,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     TestProducer producer = new TestProducer(muxQueue, this);
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
+        new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -123,7 +122,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
+        new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -156,7 +155,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     TestProducer producer = new TestProducer(muxQueue, this);
     ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
+        new ServicePlatformMessage(message, "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -180,7 +179,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage =
-        new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
+        new ServicePlatformMessage(message, "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -228,7 +227,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
       String message = "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
           + i + ":9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
       ServicePlatformMessage addVimMessage =
-          new ServicePlatformMessage(message, topic, UUID.randomUUID().toString(), topic);
+          new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
 
       consumer.injectMessage(addVimMessage);
       Thread.sleep(2000);
@@ -250,7 +249,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
     topic = "infrastructure.management.compute.list";
     ServicePlatformMessage listVimMessage =
-        new ServicePlatformMessage("", topic, UUID.randomUUID().toString(), topic);
+        new ServicePlatformMessage(null, null, topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(listVimMessage);
 
     while (output == null) {
@@ -274,7 +273,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
       String removeMessage = "{\"wr_type\":\"compute\",\"uuid\":\"" + regUuid + "\"}";
       topic = "infrastructure.management.compute.remove";
       ServicePlatformMessage removeVimMessage =
-          new ServicePlatformMessage(removeMessage, topic, UUID.randomUUID().toString(), topic);
+          new ServicePlatformMessage(removeMessage,"application/json", topic, UUID.randomUUID().toString(), topic);
       consumer.injectMessage(removeVimMessage);
 
       while (output == null) {

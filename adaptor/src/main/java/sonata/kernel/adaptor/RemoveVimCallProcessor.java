@@ -66,7 +66,7 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
   }
 
   private void sendResponse(String message) {
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message,
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message,"application/json",
         this.getMessage().getTopic(), this.getMessage().getSid(), this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
   }

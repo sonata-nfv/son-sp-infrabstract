@@ -33,13 +33,13 @@ public class TestProducer extends AbstractMsgBusProducer {
     if (message.getTopic().equals("platform.management.plugin.register")) {
       String registrationResponse = "{\"status\":\"OK\",\"uuid\":\"" + UUID.randomUUID().toString()
           + "\",\"error\":\"none\"}";
-      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,
+      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,"application/json",
           "platform.management.plugin.register", message.getSid(), null);
       output.forwardToConsumer(response);
     }
     if (message.getTopic().equals("platform.management.plugin.deregister")) {
       String registrationResponse = "{\"status\":\"OK\"}";
-      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,
+      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,"application/json",
           "platform.management.plugin.deregister", message.getSid(),null);
       output.forwardToConsumer(response);
     }

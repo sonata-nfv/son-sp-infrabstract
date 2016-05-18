@@ -23,8 +23,11 @@ import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 
 import java.util.ArrayList;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class DeployServiceData {
 
+  @JsonProperty("vim_uuid")
   private String vimUuid;
   private ServiceDescriptor nsd;
   private ArrayList<VnfDescriptor> vnfds;

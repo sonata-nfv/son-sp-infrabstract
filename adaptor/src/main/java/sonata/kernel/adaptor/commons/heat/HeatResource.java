@@ -69,9 +69,9 @@ public class HeatResource implements Comparable<HeatResource> {
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (o instanceof HeatResource) {
-      return this.type.equals(((HeatResource) o).getType());
+  public boolean equals(Object object) {
+    if (object instanceof HeatResource) {
+      return this.type.equals(((HeatResource) object).getType());
     } else {
       return false;
     }

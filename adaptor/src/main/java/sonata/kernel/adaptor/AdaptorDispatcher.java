@@ -99,7 +99,7 @@ public class AdaptorDispatcher implements Runnable {
       } else if (message.getTopic().endsWith("resourceAvailability")) {
         myThreadPool.execute(new ResourceAvailabilityCallProcessor(message, message.getSid(), mux));
       } else if (message.getTopic().endsWith("list")) {
-        myThreadPool.execute(new ListVimCallProcessor(message, message.getBody(), mux));
+        myThreadPool.execute(new ListVimCallProcessor(message, message.getSid(), mux));
       }
     } else if (message.getTopic().contains("storage")) {
       // TODO Storage Management API

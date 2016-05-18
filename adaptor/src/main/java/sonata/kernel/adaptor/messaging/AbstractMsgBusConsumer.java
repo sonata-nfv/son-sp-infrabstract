@@ -45,10 +45,10 @@ public abstract class AbstractMsgBusConsumer implements MsgBusConsumer {
    * @param the session id of the message
    * @param the topic to which reply
    */
-  void processMessage(String message, String topic, String sid, String replyTo) {
+  void processMessage(String message,String contentType, String topic, String sid, String replyTo) {
     // TODO process the string (or not, leaving the pre-processing to the
     // dispatcher?)
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, topic, sid, replyTo);
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message,contentType, topic, sid, replyTo);
     this.enqueue(spMessage);
   }
 

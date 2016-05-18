@@ -125,8 +125,8 @@ public class AdaptorCore {
     String body = "{\"name\":\"" + AdaptorCore.APP_ID + "\",\"version\":\"" + AdaptorCore.version
         + "\",\"description\":\"" + AdaptorCore.description + "\"}";
     String topic = "platform.management.plugin.register";
-    ServicePlatformMessage message =
-        new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage message = new ServicePlatformMessage(body, "application/json", topic,
+        java.util.UUID.randomUUID().toString(), topic);
     synchronized (writeLock) {
       try {
         this.registrationSid = message.getSid();
@@ -141,8 +141,8 @@ public class AdaptorCore {
   private void deregister() {
     String body = "{\"uuid\":\"" + this.uuid + "\"}";
     String topic = "platform.management.plugin.deregister";
-    ServicePlatformMessage message =
-        new ServicePlatformMessage(body, topic, java.util.UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage message = new ServicePlatformMessage(body, "application/json", topic,
+        java.util.UUID.randomUUID().toString(), topic);
     synchronized (writeLock) {
       try {
         this.registrationSid = message.getSid();
