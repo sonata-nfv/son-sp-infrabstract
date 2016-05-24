@@ -1,10 +1,10 @@
 package sonata.kernel.adaptor.messaging;
 
+import sonata.kernel.adaptor.MessageReceiver;
+
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
-
-import sonata.kernel.adaptor.MessageReceiver;
 
 public class TestProducer extends AbstractMsgBusProducer {
 
@@ -33,14 +33,14 @@ public class TestProducer extends AbstractMsgBusProducer {
     if (message.getTopic().equals("platform.management.plugin.register")) {
       String registrationResponse = "{\"status\":\"OK\",\"uuid\":\"" + UUID.randomUUID().toString()
           + "\",\"error\":\"none\"}";
-      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,"application/json",
-          "platform.management.plugin.register", message.getSid(), null);
+      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,
+          "application/json", "platform.management.plugin.register", message.getSid(), null);
       output.forwardToConsumer(response);
     }
     if (message.getTopic().equals("platform.management.plugin.deregister")) {
       String registrationResponse = "{\"status\":\"OK\"}";
-      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,"application/json",
-          "platform.management.plugin.deregister", message.getSid(),null);
+      ServicePlatformMessage response = new ServicePlatformMessage(registrationResponse,
+          "application/json", "platform.management.plugin.deregister", message.getSid(), null);
       output.forwardToConsumer(response);
     }
     if (message.getTopic().contains("heartbeat")) {

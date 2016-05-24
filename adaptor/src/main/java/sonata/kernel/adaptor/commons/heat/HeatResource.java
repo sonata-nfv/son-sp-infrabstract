@@ -64,8 +64,8 @@ public class HeatResource implements Comparable<HeatResource> {
   }
 
   @Override
-  public int compareTo(HeatResource o) {
-    return this.type.compareTo(o.getType());
+  public int compareTo(HeatResource object) {
+    return this.type.compareTo(object.getType());
   }
 
   @Override

@@ -7,7 +7,7 @@ public class DeploymentResponse {
   private String instanceName;
   private String instanceVimUuid;
   private ArrayList<VimInstanceInfo> instanceInfo;
-  private String errorCode=null;
+  private String errorCode = null;
 
   public String getInstanceName() {
     return instanceName;

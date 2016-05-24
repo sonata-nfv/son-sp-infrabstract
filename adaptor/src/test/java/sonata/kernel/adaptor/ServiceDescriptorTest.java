@@ -1,12 +1,5 @@
 package sonata.kernel.adaptor;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -14,18 +7,22 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import sonata.kernel.adaptor.commons.DeployServiceData;
+import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.Unit;
+import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.nsd.VirtualLink;
-import sonata.kernel.adaptor.commons.vnfd.Unit;
-import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
-import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
-import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
 
 /**
  * Unit test for simple App.
@@ -48,15 +45,15 @@ public class ServiceDescriptorTest extends TestCase {
     return new TestSuite(ServiceDescriptorTest.class);
   }
 
-  
-  
+
+
   /**
    * Test the Service Descriptor parsing it from file and doing some basic check on the parsed data.
    * 
    * @throws IOException
-   */  
-  public void testParsePayload() throws IOException{
-    
+   */
+  public void testParsePayload() throws IOException {
+
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -110,9 +107,9 @@ public class ServiceDescriptorTest extends TestCase {
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
     System.out.println(mapper.writeValueAsString(data));
-    
+
   }
-  
+
   /**
    * Test the Service Descriptor parsing it from file and doing some basic check on the parsed data.
    * 

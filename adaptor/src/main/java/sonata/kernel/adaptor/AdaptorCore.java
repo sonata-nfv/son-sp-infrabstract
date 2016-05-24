@@ -28,6 +28,8 @@ import sonata.kernel.adaptor.messaging.MsgBusProducer;
 import sonata.kernel.adaptor.messaging.RabbitMQConsumer;
 import sonata.kernel.adaptor.messaging.RabbitMQProducer;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.adaptor.wrapper.VimRepo;
+import sonata.kernel.adaptor.wrapper.WrapperBay;
 
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
@@ -69,6 +71,8 @@ public class AdaptorCore {
     dispatcher = new AdaptorDispatcher(dispatcherQueue, mux, this);
     northConsumer = consumer;
     northProducer = producer;
+    VimRepo repo = new VimRepo();
+    WrapperBay.getInstance().setRepo(repo);
     status = "READY";
     this.rate = rate;
   }
@@ -90,6 +94,10 @@ public class AdaptorCore {
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     dispatcher = new AdaptorDispatcher(dispatcherQueue, mux, this);
+
+    // - Wrapper bay connection with the Database.
+    VimRepo repo = new VimRepo();
+    WrapperBay.getInstance().setRepo(repo);
 
     // - Northbound interface
 

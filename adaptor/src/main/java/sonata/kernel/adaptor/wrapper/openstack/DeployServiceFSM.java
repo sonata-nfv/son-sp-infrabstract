@@ -1,7 +1,5 @@
 package sonata.kernel.adaptor.wrapper.openstack;
 
-import java.util.UUID;
-
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -13,6 +11,8 @@ import sonata.kernel.adaptor.commons.DeploymentResponse;
 import sonata.kernel.adaptor.commons.heat.HeatModel;
 import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
+import java.util.UUID;
+
 public class DeployServiceFSM implements Runnable {
 
   private String sid;
@@ -20,8 +20,18 @@ public class DeployServiceFSM implements Runnable {
   private OpenStackHeatWrapper wrapper;
   private OpenStackHeatClient client;
   private HeatModel stack;
-  final static private int maxCounter = 5;
+  private static final int maxCounter = 5;
 
+  
+  /**
+   * Return an object that handles the FSM needed to deploy a service in OpenStackHeat.
+   * 
+   * @param wrapper the Compute wrapper issuing this FSM
+   * @param client the OpenStack client to use for the deployment
+   * @param sid the session ID of the service platform call
+   * @param data the payload of the service platform call
+   * @param stack the HeatStack result of the translation
+   */
   public DeployServiceFSM(OpenStackHeatWrapper wrapper, OpenStackHeatClient client, String sid,
       DeployServiceData data, HeatModel stack) {
 
@@ -53,9 +63,9 @@ public class DeployServiceFSM implements Runnable {
       int counter = 0;
       int wait = 1000;
       String status = null;
-      while (counter < DeployServiceFSM.maxCounter && (status!=null && status !="COMPLETE")) {
+      while (counter < DeployServiceFSM.maxCounter && (status != null && status != "COMPLETE")) {
         status = client.getStackStatus(stackName, instanceUuid);
-        System.out.println("[OS-Deploy-FSM]   Status of stack "+instanceUuid+": "+status);
+        System.out.println("[OS-Deploy-FSM]   Status of stack " + instanceUuid + ": " + status);
         try {
           Thread.sleep(wait);
         } catch (InterruptedException e) {

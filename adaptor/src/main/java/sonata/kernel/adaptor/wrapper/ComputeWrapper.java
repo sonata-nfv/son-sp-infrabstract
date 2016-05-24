@@ -20,15 +20,14 @@ package sonata.kernel.adaptor.wrapper;
 
 import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.DeploymentResponse;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
   /**
    * general constructor for wrappers of type compute.
-   * */
+   */
   public ComputeWrapper() {
-    
+
     this.setType("compute");
 
   }

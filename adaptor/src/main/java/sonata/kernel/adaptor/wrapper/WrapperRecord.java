@@ -20,6 +20,10 @@ package sonata.kernel.adaptor.wrapper;
 
 public class WrapperRecord {
 
+  private WrapperConfiguration config;
+  private Wrapper vimWrapper;
+  private ResourceDescriptor resources;
+
   public WrapperConfiguration getConfig() {
     return config;
   }
@@ -31,10 +35,6 @@ public class WrapperRecord {
   public ResourceDescriptor getResources() {
     return resources;
   }
-
-  private WrapperConfiguration config;
-  private Wrapper vimWrapper;
-  private ResourceDescriptor resources;
 
   /**
    * Create a WrapperRecord to be store in the WrapperBay

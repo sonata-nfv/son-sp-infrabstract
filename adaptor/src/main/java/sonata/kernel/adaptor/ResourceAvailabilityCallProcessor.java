@@ -61,15 +61,16 @@ public class ResourceAvailabilityCallProcessor extends AbstractCallProcessor {
     try {
       ResourceAvailabilityData data = null;
       data = mapper.readValue(message.getBody(), ResourceAvailabilityData.class);
-      
-      System.out.println("[ResourceAvailabilityCallProcessor] - Checking availability of resource. Minimum:");
+
+      System.out.println(
+          "[ResourceAvailabilityCallProcessor] - Checking availability of resource. Minimum:");
       System.out.println(mapper.writeValueAsString(data));
       // TODO get resource availability
 
       // By now we just answer OK, for resource available.
       String responseMessage = "status: \"OK\"";
-      ServicePlatformMessage response =
-          new ServicePlatformMessage(responseMessage,"application/x-yaml", message.getTopic(), message.getSid(),null);
+      ServicePlatformMessage response = new ServicePlatformMessage(responseMessage,
+          "application/x-yaml", message.getTopic(), message.getSid(), null);
 
       this.sendToMux(response);
     } catch (IOException e1) {

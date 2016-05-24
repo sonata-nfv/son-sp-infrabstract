@@ -33,7 +33,7 @@ public class Memory {
   @JsonProperty("numa_allocation_policy")
   private String numaAllocationPolicy;
 
-  
+
 
   public void setSize(double size) {
     this.size = size;

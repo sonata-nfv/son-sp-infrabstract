@@ -35,7 +35,6 @@ public class AssuranceParameter {
 
 
 
-
   public void setViolation(ArrayList<Violation> violation) {
     this.violation = violation;
   }

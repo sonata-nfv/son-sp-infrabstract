@@ -18,12 +18,12 @@
 
 package sonata.kernel.adaptor.commons;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 
 import java.util.ArrayList;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class DeployServiceData {
 

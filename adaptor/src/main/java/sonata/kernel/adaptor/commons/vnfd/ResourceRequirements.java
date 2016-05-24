@@ -32,7 +32,7 @@ public class ResourceRequirements {
   private Network network;
   private Pcie pcie;
 
-  
+
 
   public void setHypervisorParameters(HypervisorParameters hypervisorParameters) {
     this.hypervisorParameters = hypervisorParameters;

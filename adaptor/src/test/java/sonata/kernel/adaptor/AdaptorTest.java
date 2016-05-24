@@ -1,5 +1,16 @@
 package sonata.kernel.adaptor;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.adaptor.messaging.TestConsumer;
+import sonata.kernel.adaptor.messaging.TestProducer;
+import sonata.kernel.adaptor.wrapper.WrapperBay;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -7,19 +18,9 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.adaptor.messaging.TestConsumer;
-import sonata.kernel.adaptor.messaging.TestProducer;
-import sonata.kernel.adaptor.wrapper.WrapperBay;
 
 /**
  * Unit test for simple App.
@@ -98,8 +99,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
         new LinkedBlockingQueue<ServicePlatformMessage>();
 
     TestProducer producer = new TestProducer(muxQueue, this);
-    ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -121,8 +122,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     output = null;
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
-    ServicePlatformMessage removeVimMessage =
-        new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -154,8 +155,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
         new LinkedBlockingQueue<ServicePlatformMessage>();
 
     TestProducer producer = new TestProducer(muxQueue, this);
-    ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message, "application/json", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
     consumer = new TestConsumer(dispatcherQueue);
     AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
 
@@ -178,8 +179,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     output = null;
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
-    ServicePlatformMessage removeVimMessage =
-        new ServicePlatformMessage(message, "application/json", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -226,8 +227,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     for (int i = 0; i < 3; i++) {
       String message = "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
           + i + ":9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
-      ServicePlatformMessage addVimMessage =
-          new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
+      ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+          topic, UUID.randomUUID().toString(), topic);
 
       consumer.injectMessage(addVimMessage);
       Thread.sleep(2000);
@@ -272,8 +273,8 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
       output = null;
       String removeMessage = "{\"wr_type\":\"compute\",\"uuid\":\"" + regUuid + "\"}";
       topic = "infrastructure.management.compute.remove";
-      ServicePlatformMessage removeVimMessage =
-          new ServicePlatformMessage(removeMessage,"application/json", topic, UUID.randomUUID().toString(), topic);
+      ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(removeMessage,
+          "application/json", topic, UUID.randomUUID().toString(), topic);
       consumer.injectMessage(removeVimMessage);
 
       while (output == null) {

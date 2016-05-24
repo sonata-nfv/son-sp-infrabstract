@@ -8,31 +8,23 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.heat.HeatModel;
 import sonata.kernel.adaptor.commons.heat.HeatResource;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
-import sonata.kernel.adaptor.commons.nsd.ConnectionPoint;
-import sonata.kernel.adaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.nsd.VirtualLink;
 import sonata.kernel.adaptor.commons.vnfd.Unit;
 import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
-import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.adaptor.wrapper.openstack.OpenStackHeatWrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -110,10 +102,10 @@ public class HeatTemplateTest extends TestCase {
     data.addVnfDescriptor(vnfd3);
 
     OpenStackHeatWrapper wrapper = new OpenStackHeatWrapper(new WrapperConfiguration());
-    
+
     HeatTemplate template = wrapper.getHeatTemplateFromSonataDescriptor(data);
 
-    
+
 
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
@@ -122,7 +114,7 @@ public class HeatTemplateTest extends TestCase {
     mapper.setSerializationInclusion(Include.NON_NULL);
     String body = mapper.writeValueAsString(template);
     System.out.println(body);
-    
+
     assertNotNull(body);
     return;
   }

@@ -43,7 +43,8 @@ public class Network {
     this.networkInterfaceBandwidthUnit = networkInterfaceBandwidthUnit;
   }
 
-  public void setNetworkInterfaceCardCapabilities(NicCapabilities networkInterfaceCardCapabilities) {
+  public void setNetworkInterfaceCardCapabilities(
+      NicCapabilities networkInterfaceCardCapabilities) {
     this.networkInterfaceCardCapabilities = networkInterfaceCardCapabilities;
   }
 

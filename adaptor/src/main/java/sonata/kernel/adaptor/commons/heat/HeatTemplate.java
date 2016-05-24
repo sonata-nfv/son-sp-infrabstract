@@ -23,18 +23,18 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.HashMap;
 
-@JsonPropertyOrder({"templateVersion","resources"})
+@JsonPropertyOrder({"templateVersion", "resources"})
 public class HeatTemplate {
 
   @JsonProperty("heat_template_version")
-  private String templateVersion="2013-05-23";
-  
+  private String templateVersion = "2013-05-23";
+
   private HashMap<String, Object> resources;
 
-  public HeatTemplate(){
-    resources = new HashMap<String,Object>();
+  public HeatTemplate() {
+    resources = new HashMap<String, Object>();
   }
-  
+
   public String getTemplateVersion() {
     return templateVersion;
   }
@@ -50,8 +50,8 @@ public class HeatTemplate {
   public void setResources(HashMap<String, Object> resources) {
     this.resources = resources;
   }
-  
-  public void putResource(String key, Object value){
-    this.resources.put(key,value);
+
+  public void putResource(String key, Object value) {
+    this.resources.put(key, value);
   }
 }

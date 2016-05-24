@@ -19,27 +19,35 @@
 package sonata.kernel.adaptor.wrapper;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 public class WrapperBay {
 
   private static WrapperBay myInstance = null;
 
-  @SuppressWarnings("unused")
-  private Hashtable<String, WrapperRecord> storageRegistry;
-  private Hashtable<String, WrapperRecord> computeRegistry;
-  @SuppressWarnings("unused")
-  private Hashtable<String, WrapperRecord> networkingRegistry;
+  private VimRepo repository = null;
 
-  private WrapperBay() {
-    computeRegistry = new Hashtable<String, WrapperRecord>();
-    storageRegistry = new Hashtable<String, WrapperRecord>();
-    networkingRegistry = new Hashtable<String, WrapperRecord>();
+  private WrapperBay() {}
+
+  /**
+   * Singleton method to get the instance of the wrapperbay.
+   * 
+   * @return the instance of the wrapperbay
+   */
+  public static WrapperBay getInstance() {
+    if (myInstance == null) {
+      myInstance = new WrapperBay();
+    }
+    return myInstance;
   }
 
-  public static WrapperBay getInstance() {
-    if (myInstance == null) myInstance = new WrapperBay();
-    return myInstance;
+
+  /**
+   * Set the Database reader/writer to use as a repository for VIMs.
+   * 
+   * @param repo the Database reader/writer to store the wrappers
+   */
+  public void setRepo(VimRepo repo) {
+    this.repository = repo;
   }
 
 
@@ -56,7 +64,7 @@ public class WrapperBay {
       output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
     } else if (newWrapper.getType().equals("compute")) {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
-      this.computeRegistry.put(config.getUuid(), record);
+      this.repository.writeVimEntry(config.getUuid(), record);
       output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
     }
 
@@ -70,21 +78,14 @@ public class WrapperBay {
    */
   public ComputeWrapper getBestComputeWrapper() {
     ComputeWrapper bestWrapper = null;
-    if (this.computeRegistry.size() != 0) {
-      bestWrapper =
-          (ComputeWrapper) this.computeRegistry.values().iterator().next().getVimWrapper();
-    }
+
     return bestWrapper;
   }
 
   /**
    * Utility methods to clear registry tables.
    */
-  public void clear() {
-    computeRegistry = new Hashtable<String, WrapperRecord>();
-    storageRegistry = new Hashtable<String, WrapperRecord>();
-    networkingRegistry = new Hashtable<String, WrapperRecord>();
-  }
+  public void clear() {}
 
   /**
    * Remove a registered compute wrapper from the IA.
@@ -93,20 +94,30 @@ public class WrapperBay {
    * @return a JSON representing the output of the API call
    */
   public String removeComputeWrapper(String uuid) {
-    computeRegistry.remove(uuid);
+    repository.removeVimEntry(uuid);
     return "{\"status\":\"COMPLETED\"}";
   }
 
+
+  /**
+   * Return the list of the registered compute VIMs.
+   * 
+   * @return an arraylist of String representing the UUIDs of the registered VIMs
+   */
   public ArrayList<String> getComputeWrapperList() {
-    ArrayList<String> out = new ArrayList<String>();
-    for (String key : this.computeRegistry.keySet()) {
-      out.add(key);
-    }
-    return out;
+    return repository.getComputeVim();
   }
 
+  /**
+   * Return the wrapper of the compute VIM identified by the given UUID.
+   * 
+   * @param vimUuid the UUID of the compute VIM
+   * 
+   * @return the wrapper of the requested VIM or null if the UUID does not correspond to a
+   *         registered VIM
+   */
   public ComputeWrapper getComputeWrapper(String vimUuid) {
-    return (ComputeWrapper) this.computeRegistry.get(vimUuid).getVimWrapper();
+    return (ComputeWrapper) this.repository.readVimEntry(vimUuid).getVimWrapper();
   }
 
 }

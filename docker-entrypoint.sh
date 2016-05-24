@@ -1,11 +1,17 @@
 #!/bin/bash
-echo "Waiting for rabbitmq on port" $broker_port
 
-sed "s#BROKERURL#$broker_uri#" -i /etc/son-mano/broker.config
-sed -i "s/BROKEREXCHANGE/$broker_exchange/" /etc/son-mano/broker.config
+/setenv.sh
+
+echo "Waiting for rabbitmq on port" $broker_port
 
 while ! nc -z $broker_host $broker_port; do
   sleep 1 && echo -n .; # waiting for rabbitmq
+done;
+
+echo "Waiting for postgresql on port" $repo_port
+
+while ! nc -z $repo_host $repo_port; do
+  sleep 1 && echo -n .; # waiting for postgresql
 done;
 
 service son-sp-infra start

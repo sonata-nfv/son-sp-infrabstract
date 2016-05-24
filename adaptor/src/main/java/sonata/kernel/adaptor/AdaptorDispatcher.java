@@ -75,11 +75,11 @@ public class AdaptorDispatcher implements Runnable {
 
   private void handleMonitoringMessage(ServicePlatformMessage message) {
     if (message.getTopic().contains("compute")) {
-    
+      System.out.println("Received a monitoring message on topic: " + message.getTopic());
     } else if (message.getTopic().contains("storage")) {
-
+      System.out.println("Received a monitoring message on topic: " + message.getTopic());
     } else if (message.getTopic().contains("network")) {
-
+      System.out.println("Received a monitoring message on topic: " + message.getTopic());
     }
   }
 
@@ -106,7 +106,7 @@ public class AdaptorDispatcher implements Runnable {
     } else if (message.getTopic().contains("network")) {
       // TODO Networking Management API
     } else {
-
+      System.out.println("Received an unknown menagement message on topic: " + message.getTopic());
     }
 
   }

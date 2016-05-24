@@ -32,7 +32,7 @@ public abstract class AbstractWrapper extends Observable {
    * return the type of this wrapper.
    * 
    * @return a String in {"compute","storage","network"}
-   * */
+   */
   public String getType() {
     return type;
   }

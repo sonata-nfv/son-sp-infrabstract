@@ -44,7 +44,6 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
     // process json message to get the wrapper type and UUID
     // and de-register it
-    boolean out = true;
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String uuid = jsonObject.getString("uuid");
@@ -62,11 +61,12 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
       output = "";
     }
     this.sendResponse(output);
+    boolean out = true;
     return out;
   }
 
   private void sendResponse(String message) {
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message,"application/json",
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
         this.getMessage().getTopic(), this.getMessage().getSid(), this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
   }

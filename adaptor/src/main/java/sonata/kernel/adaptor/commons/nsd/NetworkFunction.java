@@ -32,7 +32,7 @@ public class NetworkFunction {
   private String vnfVersion;
   private String description;
 
-  
+
 
   public void setVnfId(String vnfId) {
     this.vnfId = vnfId;

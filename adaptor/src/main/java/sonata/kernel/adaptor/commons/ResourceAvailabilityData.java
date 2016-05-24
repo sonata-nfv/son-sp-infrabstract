@@ -72,5 +72,5 @@ public class ResourceAvailabilityData {
     this.storageUnit = storageUnit;
   }
 
- 
+
 }

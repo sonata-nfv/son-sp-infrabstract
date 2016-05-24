@@ -34,12 +34,13 @@ public class ServicePlatformMessage {
    * @param sid the session ID of this message
    * @param reply the topic on which a response is expected. null if no response is expected.
    */
-  public ServicePlatformMessage(String message, String contentType, String topic, String sid, String reply) {
+  public ServicePlatformMessage(String message, String contentType, String topic, String sid,
+      String reply) {
     body = message;
     this.topic = topic;
     this.sid = sid;
     this.replyTo = reply;
-    this.contentType=contentType;
+    this.contentType = contentType;
   }
 
   public String getReplyTo() {
@@ -49,7 +50,7 @@ public class ServicePlatformMessage {
   public void setReplyTo(String reply) {
     this.replyTo = reply;
   }
-    
+
   /**
    * @return a String representing the message wrapped in this object.
    */

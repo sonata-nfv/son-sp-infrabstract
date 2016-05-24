@@ -32,7 +32,7 @@ public class VnfRecord {
   private String instanceUuid;
   @JsonProperty("vnf_address")
   private String vnfAddress;
-  
+
   @JsonProperty("virtual_deployment_units")
   private ArrayList<VduRecord> virtualDeploymentUnits;
 

@@ -19,7 +19,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
   }
 
   @Override
-  public void update(Observable o, Object arg) {
+  public void update(Observable obs, Object arg) {
     // This call does not need to be updated by any observable (wrapper).
   }
 
@@ -37,15 +37,15 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
       body = mapper.writeValueAsString(vimList);
 
 
-      ServicePlatformMessage response =
-          new ServicePlatformMessage(body,"application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
+      ServicePlatformMessage response = new ServicePlatformMessage(body, "application/x-yaml",
+          this.getMessage().getReplyTo(), this.getSid(), null);
 
       this.getMux().enqueue(response);
       return true;
     } catch (JsonProcessingException e) {
       ServicePlatformMessage response =
-          new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"Internal Server Error\"}","application/json",
-              this.getMessage().getReplyTo(), this.getSid(), null);
+          new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"Internal Server Error\"}",
+              "application/json", this.getMessage().getReplyTo(), this.getSid(), null);
       this.getMux().enqueue(response);
       return false;
     }

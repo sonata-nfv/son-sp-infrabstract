@@ -50,8 +50,8 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
     System.out
         .println(" [northbound] Received message:" + message + " on " + envelope.getRoutingKey());
     if (!properties.getAppId().equals(AdaptorCore.APP_ID)) {
-      this.msgBusConsumer.processMessage(message,properties.getContentType(), envelope.getRoutingKey(),
-          properties.getCorrelationId(), properties.getReplyTo());
+      this.msgBusConsumer.processMessage(message, properties.getContentType(),
+          envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
     }
   }
 

@@ -1,4 +1,29 @@
+
 package sonata.kernel.adaptor;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+
+import sonata.kernel.adaptor.commons.DeployServiceData;
+import sonata.kernel.adaptor.commons.DeployServiceResponse;
+import sonata.kernel.adaptor.commons.ResourceAvailabilityData;
+import sonata.kernel.adaptor.commons.Status;
+import sonata.kernel.adaptor.commons.VnfRecord;
+import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.adaptor.commons.vnfd.Unit;
+import sonata.kernel.adaptor.commons.vnfd.Unit.MemoryUnit;
+import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.adaptor.messaging.TestConsumer;
+import sonata.kernel.adaptor.messaging.TestProducer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,33 +35,9 @@ import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.DeployServiceResponse;
-import sonata.kernel.adaptor.commons.ResourceAvailabilityData;
-import sonata.kernel.adaptor.commons.Status;
-import sonata.kernel.adaptor.commons.VnfRecord;
-import sonata.kernel.adaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.adaptor.commons.vnfd.Unit;
-import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
-import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.adaptor.commons.vnfd.Unit.MemoryUnit;
-import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.adaptor.messaging.TestConsumer;
-import sonata.kernel.adaptor.messaging.TestProducer;
-import sonata.kernel.adaptor.wrapper.WrapperBay;
 
 /**
  * Unit test for simple App.
@@ -91,8 +92,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     String message =
         "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
-    ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -128,8 +129,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     message = mapper.writeValueAsString(data);
 
-    ServicePlatformMessage checkResourcesMessage =
-        new ServicePlatformMessage(message,"application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage checkResourcesMessage = new ServicePlatformMessage(message,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     output = null;
     consumer.injectMessage(checkResourcesMessage);
@@ -140,8 +141,25 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
       }
     }
     assertTrue(output.contains("OK"));
+    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+    output = null;
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
     core.stop();
-    WrapperBay.getInstance().clear();
+
   }
 
   public void testDeployServiceMock() throws IOException, InterruptedException {
@@ -174,8 +192,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     String message =
         "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
-    ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -247,8 +265,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     String body = mapper.writeValueAsString(data);
 
     topic = "infrastructure.service.deploy";
-    ServicePlatformMessage deployServiceMessage =
-        new ServicePlatformMessage(body,"application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage deployServiceMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(deployServiceMessage);
 
@@ -269,9 +287,24 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     for (VnfRecord vnfr : response.getVnfrList())
       assertTrue(vnfr.getStatus() == Status.normal_operation);
+    output = null;
+    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
 
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
     core.stop();
-    WrapperBay.getInstance().clear();
 
   }
 
@@ -305,8 +338,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     String message =
         "{\"wr_type\":\"compute\",\"vim_type\":\"OpenStack\",\"vim_address\":\"http://143.233.127.3\",\"username\":\"operator\",\"pass\":\"0per@t0r\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
-    ServicePlatformMessage addVimMessage =
-        new ServicePlatformMessage(message,"application/json", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -378,8 +411,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     String body = mapper.writeValueAsString(data);
 
     topic = "infrastructure.service.deploy";
-    ServicePlatformMessage deployServiceMessage =
-        new ServicePlatformMessage(body,"application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage deployServiceMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(deployServiceMessage);
 
@@ -401,6 +434,22 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     for (VnfRecord vnfr : response.getVnfrList())
       assertTrue(vnfr.getStatus() == Status.normal_operation);
 
+    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue(status.equals("COMPLETED"));
     core.stop();
 
   }

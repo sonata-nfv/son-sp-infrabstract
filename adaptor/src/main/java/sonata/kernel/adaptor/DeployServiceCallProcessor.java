@@ -65,8 +65,8 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(data.getVimUuid());
       if (wr == null) {
         this.sendToMux(
-            new ServicePlatformMessage("\"status\":\"error\",\"message\":\"VIM not found\"", "application/json",
-                message.getReplyTo(), message.getSid(), null));
+            new ServicePlatformMessage("\"status\":\"error\",\"message\":\"VIM not found\"",
+                "application/json", message.getReplyTo(), message.getSid(), null));
         out = false;
       } else {
         // use wrapper interface to send the NSD/VNFD, along with meta-data
@@ -90,8 +90,8 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
       if (update.getStatus().equals("SUCCESS")) {
         System.out.println("[DeployServiceCallProcessor] - Deploy " + this.getSid() + " succed");
         System.out.println("[DeployServiceCallProcessor] - Sending response...");
-        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),"application/x-yaml",
-            "infrastructure.service.deploy", this.getSid(), null);
+        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
+            "application/x-yaml", "infrastructure.service.deploy", this.getSid(), null);
         this.sendToMux(response);
       }
       // TODO handle other update from the compute wrapper;

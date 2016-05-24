@@ -18,19 +18,8 @@
 
 package sonata.kernel.adaptor.wrapper.openstack;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.UUID;
-
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
-import sonata.kernel.adaptor.commons.DeploymentResponse;
 import sonata.kernel.adaptor.commons.heat.HeatModel;
 import sonata.kernel.adaptor.commons.heat.HeatResource;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
@@ -43,13 +32,16 @@ import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.adaptor.wrapper.ComputeWrapper;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.UUID;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private WrapperConfiguration config;
- 
-  
+
+
   public OpenStackHeatWrapper(WrapperConfiguration config) {
     super();
     this.config = config;
@@ -59,23 +51,27 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public boolean deployService(DeployServiceData data,
       DeployServiceCallProcessor startServiceCallProcessor) {
 
-    DeploymentResponse response = new DeploymentResponse();
-    
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
-    
+
     HeatModel stack = translate(data);
-    
+
     DeployServiceFSM fsm =
         new DeployServiceFSM(this, client, startServiceCallProcessor.getSid(), data, stack);
-    
-    Thread t = new Thread(fsm);
-    t.start();
-    
+
+    Thread thread = new Thread(fsm);
+    thread.start();
+
     return true;
-    
+
   }
 
+  /**
+   * Returns a heat template translated from the given descriptors.
+   * 
+   * @param data the service descriptors to translate
+   * @return an HeatTemplate object translated from the given descriptors
+   */
   public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data) {
     HeatModel model = this.translate(data);
     HeatTemplate template = new HeatTemplate();

@@ -8,3 +8,5 @@ adaptor/.pydevproject
 adaptor/target
 ./*.patch
 reports/
+docker-compose-test.yml
+test.sh
