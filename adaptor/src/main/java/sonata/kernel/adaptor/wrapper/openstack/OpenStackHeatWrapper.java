@@ -88,38 +88,73 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     HeatModel model = new HeatModel();
     int subnetIndex = 0;
-    // One virtual router for NSD virtual links
+
+    // Create the management Net and subnet for all the VNFCs and VNFs
+    HeatResource mgmtNetwork = new HeatResource();
+    mgmtNetwork.setType("OS::Neutron::Net");
+    mgmtNetwork.setName(nsd.getName() + ":mgmt:net");
+    mgmtNetwork.putProperty("name", "mgmt");
+    model.addResource(mgmtNetwork);
+    HeatResource mgmtSubnet = new HeatResource();
+    mgmtSubnet.setType("OS::Neutron::Subnet");
+    mgmtSubnet.setName(nsd.getName() + ":mgmt:subnet");
+    mgmtSubnet.putProperty("name", "mgmt");
+    mgmtSubnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
+    mgmtSubnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
+    subnetIndex++;
+    HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
+    mgmtNetMap.put("get_resource", nsd.getName() + ":mgmt:net");
+    mgmtSubnet.putProperty("network", mgmtNetMap);
+    model.addResource(mgmtSubnet);
+
+
+    // One virtual router for NSD virtual links connecting VNFS (no router for external virtual
+    // links and management links)
     // TODO how we connect to the tenant network?
     for (VirtualLink link : nsd.getVirtualLinks()) {
-      HeatResource router = new HeatResource();
-      router.setName(link.getId());
-      router.setType("OS::Neutron::Router");
-      router.putProperty("name", link.getId());
-      model.addResource(router);
+      ArrayList<String> connectionPointReference = link.getConnectionPointsReference();
+      boolean isInterVnf = true;
+      boolean isMgmt = link.getId().equals("mgmt");
+      for (String cpRef : connectionPointReference) {
+        if (cpRef.startsWith("ns:")) {
+          isInterVnf = false;
+          break;
+        }
+      }
+      if (isInterVnf && !isMgmt) {
+        HeatResource router = new HeatResource();
+        router.setName(link.getId());
+        router.setType("OS::Neutron::Router");
+        router.putProperty("name", link.getId());
+        model.addResource(router);
+      }
     }
 
     for (VnfDescriptor vnfd : vnfs) {
-      // One network and subnet for vnf virtual link
+      // One network and subnet for vnf virtual link (mgmt links handled later)
       ArrayList<VnfVirtualLink> links = vnfd.getVirtualLinks();
       for (VnfVirtualLink link : links) {
-        HeatResource network = new HeatResource();
-        network.setType("OS::Neutron::Net");
-        network.setName(vnfd.getName() + ":" + link.getId() + ":net");
-        network.putProperty("name", link.getId());
-        model.addResource(network);
-        HeatResource subnet = new HeatResource();
-        subnet.setType("OS::Neutron::Subnet");
-        subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet");
-        subnet.putProperty("name", link.getId());
-        subnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
-        subnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
-        subnetIndex++;
-        HashMap<String, Object> netMap = new HashMap<String, Object>();
-        netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
-        subnet.putProperty("network", netMap);
-        model.addResource(subnet);
+        if (!link.getId().equals("mgmt")) {
+          HeatResource network = new HeatResource();
+          network.setType("OS::Neutron::Net");
+          network.setName(vnfd.getName() + ":" + link.getId() + ":net");
+          network.putProperty("name", vnfd.getName() + ":" + link.getId());
+          model.addResource(network);
+          HeatResource subnet = new HeatResource();
+          subnet.setType("OS::Neutron::Subnet");
+          subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet");
+          subnet.putProperty("name", vnfd.getName() + ":" + link.getId());
+          subnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
+          subnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
+          subnetIndex++;
+          HashMap<String, Object> netMap = new HashMap<String, Object>();
+          netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
+          subnet.putProperty("network", netMap);
+          model.addResource(subnet);
+        }
       }
       // One virtual machine for each VDU
+      // TODO revise after seeing flavour definition in SON-SCHEMA
       for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
         HeatResource server = new HeatResource();
         server.setType("OS::Nova::Server");
@@ -131,61 +166,112 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
         for (ConnectionPoint cp : vdu.getConnectionPoints()) {
           // create the port resource
-          HeatResource port = new HeatResource();
-          port.setType("OS::Neutron::Port");
-          port.setName(vnfd.getName() + ":" + cp.getId());
-          port.putProperty("name", cp.getId());
-          for (VnfVirtualLink link : links) {
+          boolean isMgmtPort = false;
+          String linkIdReference = null;
+          for (VnfVirtualLink link : vnfd.getVirtualLinks()) {
             if (link.getConnectionPointsReference().contains(cp.getId())) {
-              HashMap<String, Object> netMap = new HashMap<String, Object>();
-              netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
-              port.putProperty("network", netMap);
+              if (link.getId().equals("mgmt")) {
+                isMgmtPort = true;
+              } else {
+                linkIdReference = link.getId();
+              }
               break;
             }
           }
-          model.addResource(port);
-          // add the port to the server
-          HashMap<String, Object> n1 = new HashMap<String, Object>();
-          HashMap<String, Object> portMap = new HashMap<String, Object>();
-          portMap.put("get_resource", vnfd.getName() + ":" + cp.getId());
-          n1.put("port", portMap);
-          net.add(n1);
+          if (isMgmtPort) {
+            // connect this VNFC CP to the mgmt network
+            HeatResource port = new HeatResource();
+            port.setType("OS::Neutron::Port");
+            port.setName(vnfd.getName() + ":" + cp.getId());
+            port.putProperty("name", cp.getId());
+            HashMap<String, Object> netMap = new HashMap<String, Object>();
+            netMap.put("get_resource", nsd.getName() + ":mgmt:net");
+            port.putProperty("network", netMap);
+
+            model.addResource(port);
+            // add the port to the server
+            HashMap<String, Object> n1 = new HashMap<String, Object>();
+            HashMap<String, Object> portMap = new HashMap<String, Object>();
+            portMap.put("get_resource", vnfd.getName() + ":" + cp.getId());
+            n1.put("port", portMap);
+            net.add(n1);
+          } else if (linkIdReference != null) {
+            HeatResource port = new HeatResource();
+            port.setType("OS::Neutron::Port");
+            port.setName(vnfd.getName() + ":" + cp.getId());
+            port.putProperty("name", cp.getId());
+            HashMap<String, Object> netMap = new HashMap<String, Object>();
+            netMap.put("get_resource", vnfd.getName() + ":" + linkIdReference + ":net");
+            port.putProperty("network", netMap);
+
+            model.addResource(port);
+            // add the port to the server
+            HashMap<String, Object> n1 = new HashMap<String, Object>();
+            HashMap<String, Object> portMap = new HashMap<String, Object>();
+            portMap.put("get_resource", vnfd.getName() + ":" + cp.getId());
+            n1.put("port", portMap);
+            net.add(n1);
+          }
         }
         server.putProperty("networks", net);
         model.addResource(server);
       }
 
-      // One Router interface per VNF cp
+      // One Router interface per VNF cp connected to a inter-VNF link of the NSD
       for (ConnectionPoint cp : vnfd.getConnectionPoints()) {
-        HeatResource routerInterface = new HeatResource();
-        routerInterface.setType("OS::Neutron::RouterInterface");
-        routerInterface.setName(vnfd.getName() + ":" + cp.getId());
-        for (VnfVirtualLink link : links) {
-          if (link.getConnectionPointsReference().contains(cp.getId())) {
-            HashMap<String, Object> subnetMap = new HashMap<String, Object>();
-            subnetMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":subnet");
-            routerInterface.putProperty("subnet", subnetMap);
-            break;
-          }
-        }
-        // Resolve vnf_id from vnf_name
-        String vnfId = null;
-        for (NetworkFunction vnf : nsd.getNetworkFunctions()) {
-          if (vnf.getVnfName().equals(vnfd.getName())) {
-            vnfId = vnf.getVnfId();
-          }
-        }
-        // Attach to the virtual router
-        for (VirtualLink link : nsd.getVirtualLinks()) {
-          if (link.getConnectionPointsReference().contains(cp.getId().replace("vnf", vnfId))) {
-            HashMap<String, Object> routerMap = new HashMap<String, Object>();
-            routerMap.put("get_resource", link.getId());
-            routerInterface.putProperty("router", routerMap);
-            break;
+        boolean isMgmtPort = cp.getId().contains("mgmt");
+
+
+
+        if (!isMgmtPort) {
+
+          // Resolve vnf_id from vnf_name
+          String vnfId = null;
+          for (NetworkFunction vnf : nsd.getNetworkFunctions()) {
+            if (vnf.getVnfName().equals(vnfd.getName())) {
+              vnfId = vnf.getVnfId();
+            }
           }
 
+          boolean isInOut = false;
+          String nsVirtualLink = null;
+          for (VirtualLink link : nsd.getVirtualLinks()) {
+            if (link.getConnectionPointsReference().contains(cp.getId().replace("vnf", vnfId))) {
+
+              for (String cpRef : link.getConnectionPointsReference()) {
+                if (cpRef.startsWith("ns:")) {
+                  isInOut = true;
+                  break;
+                }
+              }
+              if (!isInOut) {
+                nsVirtualLink = link.getId();
+              }
+              break;
+            }
+          }
+
+
+          if (!isInOut) {
+            HeatResource routerInterface = new HeatResource();
+            routerInterface.setType("OS::Neutron::RouterInterface");
+            routerInterface.setName(vnfd.getName() + ":" + cp.getId());
+            for (VnfVirtualLink link : links) {
+              if (link.getConnectionPointsReference().contains(cp.getId())) {
+                HashMap<String, Object> subnetMap = new HashMap<String, Object>();
+                subnetMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":subnet");
+                routerInterface.putProperty("subnet", subnetMap);
+                break;
+              }
+            }
+
+            // Attach to the virtual router
+            HashMap<String, Object> routerMap = new HashMap<String, Object>();
+            routerMap.put("get_resource", nsVirtualLink);
+            routerInterface.putProperty("router", routerMap);
+            model.addResource(routerInterface);
+          }
         }
-        model.addResource(routerInterface);
       }
 
     }

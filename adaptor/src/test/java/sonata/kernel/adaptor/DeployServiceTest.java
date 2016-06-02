@@ -336,7 +336,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
 
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"OpenStack\",\"vim_address\":\"http://143.233.127.3\",\"username\":\"operator\",\"pass\":\"0per@t0r\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\",\"vim_address\":\"http://143.233.127.3\",\"username\":\"operator\",\"pass\":\"0per@t0r\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);

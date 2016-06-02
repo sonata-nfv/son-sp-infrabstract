@@ -1,13 +1,13 @@
-
 # Eclipse files
 .project
 .launch
 .classpath
 .buildpath
 adaptor/.settings/
+adaptor/bin
+adaptor/doc
 adaptor/.pydevproject
 adaptor/target
-adaptor/bin
 ./*.patch
 reports/
 docker-compose-test.yml
