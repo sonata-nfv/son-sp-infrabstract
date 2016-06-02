@@ -40,9 +40,9 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-public class RabbitMQProducer extends AbstractMsgBusProducer {
+public class RabbitMqProducer extends AbstractMsgBusProducer {
 
-  public RabbitMQProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
+  public RabbitMqProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
     super(muxQueue);
   }
 

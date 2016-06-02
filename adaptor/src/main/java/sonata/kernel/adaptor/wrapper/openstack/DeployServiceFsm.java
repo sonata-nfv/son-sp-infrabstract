@@ -13,7 +13,7 @@ import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
 import java.util.UUID;
 
-public class DeployServiceFSM implements Runnable {
+public class DeployServiceFsm implements Runnable {
 
   private String sid;
   private DeployServiceData data;
@@ -22,7 +22,7 @@ public class DeployServiceFSM implements Runnable {
   private HeatModel stack;
   private static final int maxCounter = 5;
 
-  
+
   /**
    * Return an object that handles the FSM needed to deploy a service in OpenStackHeat.
    * 
@@ -32,7 +32,7 @@ public class DeployServiceFSM implements Runnable {
    * @param data the payload of the service platform call
    * @param stack the HeatStack result of the translation
    */
-  public DeployServiceFSM(OpenStackHeatWrapper wrapper, OpenStackHeatClient client, String sid,
+  public DeployServiceFsm(OpenStackHeatWrapper wrapper, OpenStackHeatClient client, String sid,
       DeployServiceData data, HeatModel stack) {
 
     this.wrapper = wrapper;
@@ -63,7 +63,7 @@ public class DeployServiceFSM implements Runnable {
       int counter = 0;
       int wait = 1000;
       String status = null;
-      while (counter < DeployServiceFSM.maxCounter && (status != null && status != "COMPLETE")) {
+      while (counter < DeployServiceFsm.maxCounter && (status != null && status != "COMPLETE")) {
         status = client.getStackStatus(stackName, instanceUuid);
         System.out.println("[OS-Deploy-FSM]   Status of stack " + instanceUuid + ": " + status);
         try {

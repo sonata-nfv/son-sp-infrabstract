@@ -77,4 +77,9 @@ public class HeatResource implements Comparable<HeatResource> {
     }
   }
 
+  @Override
+  public int hashCode() {
+    return this.getType().hashCode();
+  }
+
 }

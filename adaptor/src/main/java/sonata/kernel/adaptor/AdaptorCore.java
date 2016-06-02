@@ -25,8 +25,8 @@ import sonata.kernel.adaptor.messaging.AbstractMsgBusConsumer;
 import sonata.kernel.adaptor.messaging.AbstractMsgBusProducer;
 import sonata.kernel.adaptor.messaging.MsgBusConsumer;
 import sonata.kernel.adaptor.messaging.MsgBusProducer;
-import sonata.kernel.adaptor.messaging.RabbitMQConsumer;
-import sonata.kernel.adaptor.messaging.RabbitMQProducer;
+import sonata.kernel.adaptor.messaging.RabbitMqConsumer;
+import sonata.kernel.adaptor.messaging.RabbitMqProducer;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.wrapper.VimRepo;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
@@ -101,8 +101,8 @@ public class AdaptorCore {
 
     // - Northbound interface
 
-    northConsumer = new RabbitMQConsumer(dispatcherQueue);
-    northProducer = new RabbitMQProducer(muxQueue);
+    northConsumer = new RabbitMqConsumer(dispatcherQueue);
+    northProducer = new RabbitMqProducer(muxQueue);
 
     status = "READY";
 

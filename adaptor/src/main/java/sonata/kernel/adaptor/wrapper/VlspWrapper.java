@@ -21,9 +21,9 @@ package sonata.kernel.adaptor.wrapper;
 import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 
-public class VLSPWrapper extends ComputeWrapper {
+public class VlspWrapper extends ComputeWrapper {
 
-  public VLSPWrapper(WrapperConfiguration config) {
+  public VlspWrapper(WrapperConfiguration config) {
     super();
   }
 

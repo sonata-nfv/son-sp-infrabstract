@@ -1,8 +1,8 @@
 version: '2'
 services:
   son-sp-infrabstract:
+    entrypoint: /test.sh
     image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
-    entrypoint: /docker-entrypoint.sh
     links:
      - broker
      - postgres 
@@ -16,7 +16,6 @@ services:
      - repo_user adaptor
      - repo_pass repotestadaptor 
      - repo_database vimregistry
-    restart: always
 
   broker:
     image: rabbitmq:3

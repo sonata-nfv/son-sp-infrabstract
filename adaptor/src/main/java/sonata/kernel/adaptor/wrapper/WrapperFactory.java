@@ -48,7 +48,7 @@ public class WrapperFactory {
     ComputeWrapper output = null;
 
     if (config.getVimType().equals(ComputeVimType.VLSP.toString())) {
-      output = new VLSPWrapper(config);
+      output = new VlspWrapper(config);
     } else if (config.getVimType().equals(ComputeVimType.MOCK.toString())) {
       output = new MockWrapper(config);
     } else if (config.getVimType().equals(ComputeVimType.OPENSTACKHEAT.toString())) {

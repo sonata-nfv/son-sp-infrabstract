@@ -29,6 +29,7 @@ import java.net.URL;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -50,6 +51,7 @@ public class VimRepo {
     this.prop = this.parseConfigFile();
 
     Connection connection = null;
+    PreparedStatement findTablesStmt = null;
     Statement stmt = null;
     ResultSet rs = null;
     String dbUrl = "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
@@ -64,10 +66,11 @@ public class VimRepo {
 
       System.out.println("[VimRepo] Opened database successfully. Creating environment...");
       boolean isEnvironmentSet = false;
-      stmt = connection.createStatement();
       String sql;
-      sql = "SELECT * FROM pg_catalog.pg_tables WHERE tableowner='" + user + "';";
-      rs = stmt.executeQuery(sql);
+      sql = "SELECT * FROM pg_catalog.pg_tables WHERE tableowner=?;";
+      findTablesStmt = connection.prepareStatement(sql);
+      findTablesStmt.setString(1, user);
+      rs = findTablesStmt.executeQuery();
       while (rs.next()) {
         String tablename = rs.getString("tablename");
         if (tablename.equals("vim") || tablename.equals("VIM")) {
@@ -76,6 +79,7 @@ public class VimRepo {
       }
 
       if (!isEnvironmentSet) {
+        stmt = connection.createStatement();
         sql = "CREATE TABLE VIM " + "(UUID TEXT PRIMARY KEY NOT NULL," + " TYPE TEXT NOT NULL,"
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
             + " TENANT TEXT NOT NULL," + " PASS TEXT," + " AUTHKEY TEXT);";
@@ -119,7 +123,7 @@ public class VimRepo {
     boolean out = true;
 
     Connection connection = null;
-    Statement stmt = null;
+    PreparedStatement stmt = null;
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(
@@ -128,15 +132,19 @@ public class VimRepo {
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      stmt = connection.createStatement();
       String sql =
           "INSERT INTO VIM (UUID, TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, PASS, AUTHKEY) "
-              + "VALUES ('" + uuid + "', '" + record.getConfig().getWrapperType() + "', '"
-              + record.getConfig().getVimType() + "', '" + record.getConfig().getVimEndpoint()
-              + "', '" + record.getConfig().getAuthUserName() + "', '"
-              + record.getConfig().getTenantName() + "', '" + record.getConfig().getAuthPass()
-              + "', '" + record.getConfig().getAuthKey() + "');";
-      stmt.executeUpdate(sql);
+              + "VALUES (?, ?, ?, ?, ?, ?, ?, ?);";
+      stmt = connection.prepareStatement(sql);
+      stmt.setString(1, uuid);
+      stmt.setString(2, record.getConfig().getWrapperType());
+      stmt.setString(3, record.getConfig().getVimType());
+      stmt.setString(4, record.getConfig().getVimEndpoint().toString());
+      stmt.setString(5, record.getConfig().getAuthUserName());
+      stmt.setString(6, record.getConfig().getTenantName());
+      stmt.setString(7, record.getConfig().getAuthPass());
+      stmt.setString(8, record.getConfig().getAuthKey());
+      stmt.executeUpdate();
       connection.commit();
     } catch (SQLException e) {
       System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -172,7 +180,7 @@ public class VimRepo {
   public boolean removeVimEntry(String uuid) {
     boolean out = true;
     Connection connection = null;
-    Statement stmt = null;
+    PreparedStatement stmt = null;
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(
@@ -181,9 +189,10 @@ public class VimRepo {
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      stmt = connection.createStatement();
-      String sql = "DELETE from VIM where UUID='" + uuid + "';";
-      stmt.executeUpdate(sql);
+      String sql = "DELETE from VIM where UUID=?;";
+      stmt = connection.prepareStatement(sql);
+      stmt.setString(1, uuid);
+      stmt.executeUpdate();
       connection.commit();
     } catch (SQLException e) {
       System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -222,7 +231,7 @@ public class VimRepo {
     boolean out = true;
 
     Connection connection = null;
-    Statement stmt = null;
+    PreparedStatement stmt = null;
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(
@@ -231,13 +240,21 @@ public class VimRepo {
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      stmt = connection.createStatement();
+
       String sql = "UPDATE VIM set (TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, PASS, AUTHKEY) "
-          + "VALUES ('" + record.getConfig().getWrapperType() + "', '"
-          + record.getConfig().getVimType() + "', '" + record.getConfig().getVimEndpoint() + "', '"
-          + record.getConfig().getAuthUserName() + "', '" + record.getConfig().getTenantName()
-          + "', '" + record.getConfig().getAuthPass() + "', '" + record.getConfig().getAuthKey()
-          + "') WHERE UUID='" + uuid + "';";
+          + "VALUES (?,?,?,?,?,?,?) WHERE UUID=?;";
+
+      stmt = connection.prepareStatement(sql);
+      stmt.setString(1, record.getConfig().getWrapperType());
+      stmt.setString(2, record.getConfig().getVimType());
+      stmt.setString(3, record.getConfig().getVimEndpoint().toString());
+      stmt.setString(4, record.getConfig().getAuthUserName());
+      stmt.setString(5, record.getConfig().getTenantName());
+      stmt.setString(6, record.getConfig().getAuthPass());
+      stmt.setString(7, record.getConfig().getAuthKey());
+      stmt.setString(8, uuid);
+
+
       stmt.executeUpdate(sql);
       connection.commit();
     } catch (SQLException e) {
@@ -278,7 +295,7 @@ public class VimRepo {
     WrapperRecord output = null;
 
     Connection connection = null;
-    Statement stmt = null;
+    PreparedStatement stmt = null;
     ResultSet rs = null;
     try {
       Class.forName("org.postgresql.Driver");
@@ -288,8 +305,10 @@ public class VimRepo {
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      stmt = connection.createStatement();
-      rs = stmt.executeQuery("SELECT * FROM VIM WHERE UUID='" + uuid + "';");
+      stmt = connection.prepareStatement("SELECT * FROM VIM WHERE UUID=?;");
+      stmt.setString(1, uuid);
+      rs = stmt.executeQuery();
+
       if (rs.next()) {
         String wrapperType = rs.getString("TYPE");
         String vendor = rs.getString("VENDOR");

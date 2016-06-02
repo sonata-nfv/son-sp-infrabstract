@@ -38,7 +38,7 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
+public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
   private final String configFilePath = "/etc/son-mano/broker.config";
   DefaultConsumer consumer;
@@ -46,14 +46,14 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
   private Channel channel;
   private String queueName;
 
-  public RabbitMQConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
+  public RabbitMqConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
     super(dispatcherQueue);
   }
 
   @Override
   public void connectToBus() {
     Properties brokerConfig = parseConfigFile();
-    System.out.println("[northbound] RabbitMQConsumer - connecting to broker...");
+    System.out.println("[northbound] RabbitMqConsumer - connecting to broker...");
     ConnectionFactory cf = new ConnectionFactory();
     if (!brokerConfig.containsKey("broker_url") || !brokerConfig.containsKey("exchange")) {
       System.err.println("Missing broker url configuration.");
@@ -61,24 +61,24 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     }
     try {
 
-      System.out.println("[nortbound] RabbitMQConsumer - connecting to: "
+      System.out.println("[nortbound] RabbitMqConsumer - connecting to: "
           + brokerConfig.getProperty("broker_url"));
       cf.setUri(brokerConfig.getProperty("broker_url"));
       connection = cf.newConnection();
       channel = connection.createChannel();
       channel.exchangeDeclare(brokerConfig.getProperty("exchange"), "topic");
       queueName = channel.queueDeclare().getQueue();
-      System.out.println("[northbound] RabbitMQConsumer - binding queue to topics...");
+      System.out.println("[northbound] RabbitMqConsumer - binding queue to topics...");
       channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
           "platform.management.plugin.register");
-      System.out.println("[northbound] RabbitMQConsumer - bound to topic "
+      System.out.println("[northbound] RabbitMqConsumer - bound to topic "
           + "\"platform.platform.management.plugin.register\"");
       channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
           "platform.management.plugin.deregister");
-      System.out.println("[northbound] RabbitMQConsumer - bound to topic "
+      System.out.println("[northbound] RabbitMqConsumer - bound to topic "
           + "\"platform.platform.management.plugin.deregister\"");
       channel.queueBind(queueName, brokerConfig.getProperty("exchange"), "infrastructure.#");
-      System.out.println("[northbound] RabbitMQConsumer - bound to topic \"infrastructure.#\"");
+      System.out.println("[northbound] RabbitMqConsumer - bound to topic \"infrastructure.#\"");
       consumer = new AdaptorDefaultConsumer(channel, this);
     } catch (IOException e) {
       e.printStackTrace();
@@ -128,7 +128,7 @@ public class RabbitMQConsumer extends AbstractMsgBusConsumer implements MsgBusCo
   @Override
   public void run() {
     try {
-      System.out.println("[nortbound] RabbitMQConsumer - Starting consumer thread");
+      System.out.println("[nortbound] RabbitMqConsumer - Starting consumer thread");
       channel.basicConsume(queueName, true, consumer);
     } catch (IOException e) {
       e.printStackTrace();

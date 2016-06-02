@@ -30,7 +30,7 @@ import java.io.IOException;
 
 public class AdaptorDefaultConsumer extends DefaultConsumer {
 
-  private RabbitMQConsumer msgBusConsumer;
+  private RabbitMqConsumer msgBusConsumer;
 
   /**
    * Create a RabbitMq consumer for the MsgBus plug-in.
@@ -38,7 +38,7 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
    * @param channel the RabbitMQ channel for this consumer
    * @param msgBusConsumer the Adaptor consumer, responsible for msg processing and queuing.
    */
-  public AdaptorDefaultConsumer(Channel channel, RabbitMQConsumer msgBusConsumer) {
+  public AdaptorDefaultConsumer(Channel channel, RabbitMqConsumer msgBusConsumer) {
     super(channel);
     this.msgBusConsumer = msgBusConsumer;
   }

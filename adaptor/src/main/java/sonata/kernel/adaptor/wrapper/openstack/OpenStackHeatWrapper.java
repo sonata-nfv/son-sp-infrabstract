@@ -56,8 +56,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     HeatModel stack = translate(data);
 
-    DeployServiceFSM fsm =
-        new DeployServiceFSM(this, client, startServiceCallProcessor.getSid(), data, stack);
+    DeployServiceFsm fsm =
+        new DeployServiceFsm(this, client, startServiceCallProcessor.getSid(), data, stack);
 
     Thread thread = new Thread(fsm);
     thread.start();
@@ -84,18 +84,20 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   private HeatModel translate(DeployServiceData data) {
 
     ServiceDescriptor nsd = data.getNsd();
-    ArrayList<VnfDescriptor> vnfs = data.getVnfdList();
 
-    HeatModel model = new HeatModel();
-    int subnetIndex = 0;
 
     // Create the management Net and subnet for all the VNFCs and VNFs
     HeatResource mgmtNetwork = new HeatResource();
     mgmtNetwork.setType("OS::Neutron::Net");
     mgmtNetwork.setName(nsd.getName() + ":mgmt:net");
     mgmtNetwork.putProperty("name", "mgmt");
+
+    HeatModel model = new HeatModel();
     model.addResource(mgmtNetwork);
+
     HeatResource mgmtSubnet = new HeatResource();
+    int subnetIndex = 0;
+
     mgmtSubnet.setType("OS::Neutron::Subnet");
     mgmtSubnet.setName(nsd.getName() + ":mgmt:subnet");
     mgmtSubnet.putProperty("name", "mgmt");
@@ -111,6 +113,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // One virtual router for NSD virtual links connecting VNFS (no router for external virtual
     // links and management links)
     // TODO how we connect to the tenant network?
+    ArrayList<VnfDescriptor> vnfs = data.getVnfdList();
     for (VirtualLink link : nsd.getVirtualLinks()) {
       ArrayList<String> connectionPointReference = link.getConnectionPointsReference();
       boolean isInterVnf = true;

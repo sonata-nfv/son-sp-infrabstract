@@ -21,9 +21,11 @@ ADD broker.config /etc/son-mano/broker.config
 ADD postgres.config /etc/son-mano/postgres.config
 ADD son-sp-infra-* /usr/local/bin/
 ADD son-sp-infra /etc/init.d/
-COPY ./setenv.sh /
-COPY ./test.sh /
-COPY ./docker-entrypoint.sh /
+ADD ./setenv.sh /
+ADD ./test.sh /
+ADD ./docker-entrypoint.sh /
+RUN chmod +x /setenv.sh
+RUN chmod +x /test.sh
 RUN chmod +x /usr/local/bin/son-sp-infra-*
 RUN chmod +x /etc/init.d/son-sp-infra
 
@@ -42,5 +44,5 @@ ENV repo_pass repotestadaptor
 
 RUN mvn -q compile assembly:single;
 
-CMD ["/docker-entrypoint.sh"]
+CMD ["/docker-entrypoint.sh","/test.sh"]
 
