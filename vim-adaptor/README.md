@@ -1,13 +1,13 @@
-# son-infrastructure-abstraction
+# VIM Adaptor
+
 [![Build Status](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract)
 SONATA's Service Platform Infrastructure Abstraction
 
 
 ## Folder structure
   
- * `VIM adaptor` contains the sonata Virtual Infrastructure Manager adaptor files.
- * `wIM adaptor` contains the sonata WAN Infrastructure Manager adaptor files.
-
+ * `.` contains docker support scripts and configuration files.
+ * `adaptor` contains the source and test directory of the mvn project + pyton source.
 
 ### Requirements
  * A running SP Broker and MANO-pluginmanager
