@@ -165,6 +165,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         server.putProperty("name", vnfd.getName() + ":" + vdu.getId() + ":"
             + UUID.randomUUID().toString().substring(0, 4));
         server.putProperty("image", vdu.getVmImage());
+        int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
+        double memory = vdu.getResourceRequirements().getMemory().getSize();
+        double storage = vdu.getResourceRequirements().getStorage().getSize();
+        String flavorName = this.selectFlavor(vcpu, memory, storage);
         server.putProperty("flavor", "m1.small");
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
         for (ConnectionPoint cp : vdu.getConnectionPoints()) {
@@ -281,6 +285,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     model.prepare();
     return model;
+  }
+
+  private String selectFlavor(int vcpu, double memory, double storage) {
+    // TODO Implement a method to select the best flavor respecting the resource constraints.
+    return null;
   }
 
 
