@@ -18,6 +18,8 @@
 
 package sonata.kernel.adaptor.commons;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.vnfd.ResourceRequirements;
@@ -37,44 +39,65 @@ public class VduRecord {
   @JsonProperty("resource_requirements")
   private ResourceRequirements resourceRequirements;
 
+  @JsonProperty("vnfc_instance")
+  private ArrayList<VnfcInstance> vnfcInstance;
+
+
+  public VduRecord() {
+    vnfcInstance = new ArrayList<VnfcInstance>();
+  }
+
+  public void addVnfcInstance(VnfcInstance instance){
+    vnfcInstance.add(instance);
+  }
+  
   public void setId(String id) {
     this.id = id;
   }
 
-  public void setVm_image(String vmImage) {
-    this.vmImage = vmImage;
-  }
-
-  public void setVdu_reference(String vduReference) {
-    this.vduReference = vduReference;
-  }
-
-  public void setNumber_of_instances(int numberOfInstances) {
-    this.numberOfInstances = numberOfInstances;
-  }
-
-  public void setResource_requirements(ResourceRequirements resourceRequirements) {
-    this.resourceRequirements = resourceRequirements;
-  }
 
   public String getId() {
     return id;
   }
 
-  public String getVm_image() {
+  public String getVmImage() {
     return vmImage;
   }
 
-  public String getVdu_reference() {
+  public String getVduReference() {
     return vduReference;
   }
 
-  public int getNumber_of_instances() {
+  public int getNumberOfInstances() {
     return numberOfInstances;
   }
 
-  public ResourceRequirements getResource_requirements() {
+  public ResourceRequirements getResourceRequirements() {
     return resourceRequirements;
+  }
+
+  public ArrayList<VnfcInstance> getVnfcInstance() {
+    return vnfcInstance;
+  }
+
+  public void setVmImage(String vmImage) {
+    this.vmImage = vmImage;
+  }
+
+  public void setVduReference(String vduReference) {
+    this.vduReference = vduReference;
+  }
+
+  public void setNumberOfInstances(int numberOfInstances) {
+    this.numberOfInstances = numberOfInstances;
+  }
+
+  public void setResourceRequirements(ResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
+  }
+
+  public void setVnfcInstance(ArrayList<VnfcInstance> vnfcInstance) {
+    this.vnfcInstance = vnfcInstance;
   }
 
 }

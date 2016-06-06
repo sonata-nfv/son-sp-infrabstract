@@ -90,7 +90,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatResource mgmtNetwork = new HeatResource();
     mgmtNetwork.setType("OS::Neutron::Net");
     mgmtNetwork.setName(nsd.getName() + ":mgmt:net");
-    mgmtNetwork.putProperty("name", "mgmt");
+    mgmtNetwork.putProperty("name", nsd.getName() + ":mgmt:net");
 
     HeatModel model = new HeatModel();
     model.addResource(mgmtNetwork);
@@ -100,7 +100,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     mgmtSubnet.setType("OS::Neutron::Subnet");
     mgmtSubnet.setName(nsd.getName() + ":mgmt:subnet");
-    mgmtSubnet.putProperty("name", "mgmt");
+    mgmtSubnet.putProperty("name", nsd.getName() + ":mgmt:subnet");
     mgmtSubnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
     mgmtSubnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
     subnetIndex++;
@@ -126,9 +126,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
       if (isInterVnf && !isMgmt) {
         HeatResource router = new HeatResource();
-        router.setName(link.getId());
+        router.setName(nsd.getName()+":"+link.getId());
         router.setType("OS::Neutron::Router");
-        router.putProperty("name", link.getId());
+        router.putProperty("name", nsd.getName()+":"+link.getId());
         model.addResource(router);
       }
     }
@@ -141,12 +141,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           HeatResource network = new HeatResource();
           network.setType("OS::Neutron::Net");
           network.setName(vnfd.getName() + ":" + link.getId() + ":net");
-          network.putProperty("name", vnfd.getName() + ":" + link.getId());
+          network.putProperty("name", vnfd.getName() + ":" + link.getId() + ":net");
           model.addResource(network);
           HeatResource subnet = new HeatResource();
           subnet.setType("OS::Neutron::Subnet");
           subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet");
-          subnet.putProperty("name", vnfd.getName() + ":" + link.getId());
+          subnet.putProperty("name", vnfd.getName() + ":" + link.getId() + ":subnet");
           subnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
           subnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
           subnetIndex++;
@@ -169,7 +169,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         double memory = vdu.getResourceRequirements().getMemory().getSize();
         double storage = vdu.getResourceRequirements().getStorage().getSize();
         String flavorName = this.selectFlavor(vcpu, memory, storage);
-        server.putProperty("flavor", "m1.small");
+        server.putProperty("flavor", flavorName);
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
         for (ConnectionPoint cp : vdu.getConnectionPoints()) {
           // create the port resource
@@ -190,7 +190,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             HeatResource port = new HeatResource();
             port.setType("OS::Neutron::Port");
             port.setName(vnfd.getName() + ":" + cp.getId());
-            port.putProperty("name", cp.getId());
+            port.putProperty("name", vnfd.getName() + ":" + cp.getId());
             HashMap<String, Object> netMap = new HashMap<String, Object>();
             netMap.put("get_resource", nsd.getName() + ":mgmt:net");
             port.putProperty("network", netMap);
@@ -206,7 +206,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             HeatResource port = new HeatResource();
             port.setType("OS::Neutron::Port");
             port.setName(vnfd.getName() + ":" + cp.getId());
-            port.putProperty("name", cp.getId());
+            port.putProperty("name", vnfd.getName() + ":" + cp.getId());
             HashMap<String, Object> netMap = new HashMap<String, Object>();
             netMap.put("get_resource", vnfd.getName() + ":" + linkIdReference + ":net");
             port.putProperty("network", netMap);
@@ -228,10 +228,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       for (ConnectionPoint cp : vnfd.getConnectionPoints()) {
         boolean isMgmtPort = cp.getId().contains("mgmt");
 
-
-
         if (!isMgmtPort) {
-
           // Resolve vnf_id from vnf_name
           String vnfId = null;
           for (NetworkFunction vnf : nsd.getNetworkFunctions()) {
@@ -257,7 +254,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
               break;
             }
           }
-
 
           if (!isInOut) {
             HeatResource routerInterface = new HeatResource();
@@ -289,7 +285,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private String selectFlavor(int vcpu, double memory, double storage) {
     // TODO Implement a method to select the best flavor respecting the resource constraints.
-    return null;
+    return "m1.small";
   }
 
 

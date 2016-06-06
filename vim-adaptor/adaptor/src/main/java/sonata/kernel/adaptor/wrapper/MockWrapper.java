@@ -99,9 +99,9 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
         VduRecord vdur = new VduRecord();
         vdur.setId(UUID.randomUUID().toString());
-        vdur.setNumber_of_instances(1);
-        vdur.setVdu_reference(vnf.getName() + ":" + vdu.getId() + ":" + vdur.getId());
-        vdur.setVm_image(vdu.getVmImage());
+        vdur.setNumberOfInstances(1);
+        vdur.setVduReference(vnf.getName() + ":" + vdu.getId() + ":" + vdur.getId());
+        vdur.setVmImage(vdu.getVmImage());
         vnfr.addVdu(vdur);
       }
       response.addVnfRecord(vnfr);

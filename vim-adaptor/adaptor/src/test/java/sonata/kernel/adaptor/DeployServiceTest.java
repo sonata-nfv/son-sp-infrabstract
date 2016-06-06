@@ -24,6 +24,7 @@ import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.messaging.TestConsumer;
 import sonata.kernel.adaptor.messaging.TestProducer;
+import sonata.kernel.adaptor.wrapper.openstack.OpenStackHeatClient;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -285,7 +286,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     assertTrue(response.getRequestStatus() == Status.normal_operation);
     assertTrue(response.getNsr().getStatus() == Status.normal_operation);
 
-    for (VnfRecord vnfr : response.getVnfrList())
+    for (VnfRecord vnfr : response.getVnfrs())
       assertTrue(vnfr.getStatus() == Status.normal_operation);
     output = null;
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
@@ -336,7 +337,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
 
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\",\"vim_address\":\"http://143.233.127.3\",\"username\":\"operator\",\"pass\":\"0per@t0r\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\",\"vim_address\":\"http://143.233.127.3\",\"username\":\"operator\",\"pass\":\"0perat0r\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -352,7 +353,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     String status = jsonObject.getString("status");
     String wrUuid = jsonObject.getString("uuid");
     assertTrue(status.equals("COMPLETED"));
-    System.out.println("Mock Wrapper added, with uuid: " + wrUuid);
+    System.out.println("OenStack Wrapper added, with uuid: " + wrUuid);
 
     output = null;
     ServiceDescriptor sd;
@@ -428,12 +429,24 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
       }
 
     DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
-    assertTrue(response.getRequestStatus() == Status.normal_operation);
-    assertTrue(response.getNsr().getStatus() == Status.normal_operation);
+    assertTrue(response.getRequestStatus() == Status.offline);
+    assertTrue(response.getNsr().getStatus() == Status.offline);
+    
+    for (VnfRecord vnfr : response.getVnfrs())
+      assertTrue(vnfr.getStatus() == Status.offline);
 
-    for (VnfRecord vnfr : response.getVnfrList())
-      assertTrue(vnfr.getStatus() == Status.normal_operation);
+    //Clean the OpenStack tenant from the stack
+    OpenStackHeatClient client = new OpenStackHeatClient("143.233.127.3", "operator", "0perat0r", "operator");
+    String stackName = response.getInstanceName();
 
+    String deleteStatus = client.deleteStack(stackName, response.getInstanceVimUuid());
+    assertNotNull("Failed to delete stack", deleteStatus);
+    
+    if (deleteStatus!= null) {
+      System.out.println("status of deleted stack " + stackName + " is " + deleteStatus);
+      assertEquals("DELETED", deleteStatus);
+    }
+    
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,

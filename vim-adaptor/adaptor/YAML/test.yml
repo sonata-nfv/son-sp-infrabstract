@@ -1,44 +1,28 @@
 ---
 heat_template_version: "2013-05-23"
 resources:
-  firewall-2-tcpdump:
-    type: "OS::Neutron::Router"
-    properties:
-      name: "firewall-2-tcpdump"
   firewall-vnf:input:net:
     type: "OS::Neutron::Net"
     properties:
-      name: "input"
+      name: "firewall-vnf:input:net"
   firewall-vnf:input:subnet:
-    type: "OS::Neutron::Subnet"
-    properties:
-      cidr: "10.10.4.0/24"
-      gateway_ip: "10.10.4.1"
-      name: "input"
-      network:
-        get_resource: "firewall-vnf:input:net"
-  firewall-vnf:mgmt:net:
-    type: "OS::Neutron::Net"
-    properties:
-      name: "mgmt"
-  firewall-vnf:mgmt:subnet:
     type: "OS::Neutron::Subnet"
     properties:
       cidr: "10.10.3.0/24"
       gateway_ip: "10.10.3.1"
-      name: "mgmt"
+      name: "firewall-vnf:input:subnet"
       network:
-        get_resource: "firewall-vnf:mgmt:net"
+        get_resource: "firewall-vnf:input:net"
   firewall-vnf:output:net:
     type: "OS::Neutron::Net"
     properties:
-      name: "output"
+      name: "firewall-vnf:output:net"
   firewall-vnf:output:subnet:
     type: "OS::Neutron::Subnet"
     properties:
-      cidr: "10.10.5.0/24"
-      gateway_ip: "10.10.5.1"
-      name: "output"
+      cidr: "10.10.4.0/24"
+      gateway_ip: "10.10.4.1"
+      name: "firewall-vnf:output:subnet"
       network:
         get_resource: "firewall-vnf:output:net"
   firewall-vnf:vdu01:
@@ -46,7 +30,7 @@ resources:
     properties:
       flavor: "m1.small"
       image: "sonata_firewall_VM"
-      name: "firewall-vnf:vdu01:46da"
+      name: "firewall-vnf:vdu01:a40d"
       networks:
       - port:
           get_resource: "firewall-vnf:vdu01:cp01"
@@ -57,19 +41,19 @@ resources:
   firewall-vnf:vdu01:cp01:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp01"
+      name: "firewall-vnf:vdu01:cp01"
       network:
-        get_resource: "firewall-vnf:mgmt:net"
+        get_resource: "sonata-demo:mgmt:net"
   firewall-vnf:vdu01:cp02:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp02"
+      name: "firewall-vnf:vdu01:cp02"
       network:
         get_resource: "firewall-vnf:input:net"
   firewall-vnf:vdu01:cp03:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp03"
+      name: "firewall-vnf:vdu01:cp03"
       network:
         get_resource: "firewall-vnf:output:net"
   firewall-vnf:vnf:input:
@@ -79,13 +63,6 @@ resources:
         get_resource: "iperf-2-firewall"
       subnet:
         get_resource: "firewall-vnf:input:subnet"
-  firewall-vnf:vnf:mgmt:
-    type: "OS::Neutron::RouterInterface"
-    properties:
-      router:
-        get_resource: "mgmt"
-      subnet:
-        get_resource: "firewall-vnf:mgmt:subnet"
   firewall-vnf:vnf:output:
     type: "OS::Neutron::RouterInterface"
     properties:
@@ -93,48 +70,28 @@ resources:
         get_resource: "firewall-2-tcpdump"
       subnet:
         get_resource: "firewall-vnf:output:subnet"
-  input-2-iperf:
-    type: "OS::Neutron::Router"
-    properties:
-      name: "input-2-iperf"
-  iperf-2-firewall:
-    type: "OS::Neutron::Router"
-    properties:
-      name: "iperf-2-firewall"
   iperf-vnf:input:net:
     type: "OS::Neutron::Net"
     properties:
-      name: "input"
+      name: "iperf-vnf:input:net"
   iperf-vnf:input:subnet:
     type: "OS::Neutron::Subnet"
     properties:
       cidr: "10.10.1.0/24"
       gateway_ip: "10.10.1.1"
-      name: "input"
+      name: "iperf-vnf:input:subnet"
       network:
         get_resource: "iperf-vnf:input:net"
-  iperf-vnf:mgmt:net:
-    type: "OS::Neutron::Net"
-    properties:
-      name: "mgmt"
-  iperf-vnf:mgmt:subnet:
-    type: "OS::Neutron::Subnet"
-    properties:
-      cidr: "10.10.0.0/24"
-      gateway_ip: "10.10.0.1"
-      name: "mgmt"
-      network:
-        get_resource: "iperf-vnf:mgmt:net"
   iperf-vnf:output:net:
     type: "OS::Neutron::Net"
     properties:
-      name: "output"
+      name: "iperf-vnf:output:net"
   iperf-vnf:output:subnet:
     type: "OS::Neutron::Subnet"
     properties:
       cidr: "10.10.2.0/24"
       gateway_ip: "10.10.2.1"
-      name: "output"
+      name: "iperf-vnf:output:subnet"
       network:
         get_resource: "iperf-vnf:output:net"
   iperf-vnf:vdu01:
@@ -142,7 +99,7 @@ resources:
     properties:
       flavor: "m1.small"
       image: "sonata_firewall_VM"
-      name: "iperf-vnf:vdu01:3eb1"
+      name: "iperf-vnf:vdu01:6b4e"
       networks:
       - port:
           get_resource: "iperf-vnf:vdu01:cp01"
@@ -153,35 +110,21 @@ resources:
   iperf-vnf:vdu01:cp01:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp01"
+      name: "iperf-vnf:vdu01:cp01"
       network:
-        get_resource: "iperf-vnf:mgmt:net"
+        get_resource: "sonata-demo:mgmt:net"
   iperf-vnf:vdu01:cp02:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp02"
+      name: "iperf-vnf:vdu01:cp02"
       network:
         get_resource: "iperf-vnf:input:net"
   iperf-vnf:vdu01:cp03:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp03"
+      name: "iperf-vnf:vdu01:cp03"
       network:
         get_resource: "iperf-vnf:output:net"
-  iperf-vnf:vnf:input:
-    type: "OS::Neutron::RouterInterface"
-    properties:
-      router:
-        get_resource: "input-2-iperf"
-      subnet:
-        get_resource: "iperf-vnf:input:subnet"
-  iperf-vnf:vnf:mgmt:
-    type: "OS::Neutron::RouterInterface"
-    properties:
-      router:
-        get_resource: "mgmt"
-      subnet:
-        get_resource: "iperf-vnf:mgmt:subnet"
   iperf-vnf:vnf:output:
     type: "OS::Neutron::RouterInterface"
     properties:
@@ -189,48 +132,48 @@ resources:
         get_resource: "iperf-2-firewall"
       subnet:
         get_resource: "iperf-vnf:output:subnet"
-  mgmt:
+  sonata-demo:firewall-2-tcpdump:
     type: "OS::Neutron::Router"
     properties:
-      name: "mgmt"
-  tcpdump-2-output:
+      name: "sonata-demo:firewall-2-tcpdump"
+  sonata-demo:iperf-2-firewall:
     type: "OS::Neutron::Router"
     properties:
-      name: "tcpdump-2-output"
+      name: "sonata-demo:iperf-2-firewall"
+  sonata-demo:mgmt:net:
+    type: "OS::Neutron::Net"
+    properties:
+      name: "sonata-demo:mgmt:net"
+  sonata-demo:mgmt:subnet:
+    type: "OS::Neutron::Subnet"
+    properties:
+      cidr: "10.10.0.0/24"
+      gateway_ip: "10.10.0.1"
+      name: "sonata-demo:mgmt:subnet"
+      network:
+        get_resource: "sonata-demo:mgmt:net"
   tcpdump-vnf:input:net:
     type: "OS::Neutron::Net"
     properties:
-      name: "input"
+      name: "tcpdump-vnf:input:net"
   tcpdump-vnf:input:subnet:
     type: "OS::Neutron::Subnet"
     properties:
-      cidr: "10.10.7.0/24"
-      gateway_ip: "10.10.7.1"
-      name: "input"
+      cidr: "10.10.5.0/24"
+      gateway_ip: "10.10.5.1"
+      name: "tcpdump-vnf:input:subnet"
       network:
         get_resource: "tcpdump-vnf:input:net"
-  tcpdump-vnf:mgmt:net:
+  tcpdump-vnf:output:net:
     type: "OS::Neutron::Net"
     properties:
-      name: "mgmt"
-  tcpdump-vnf:mgmt:subnet:
+      name: "tcpdump-vnf:output:net"
+  tcpdump-vnf:output:subnet:
     type: "OS::Neutron::Subnet"
     properties:
       cidr: "10.10.6.0/24"
       gateway_ip: "10.10.6.1"
-      name: "mgmt"
-      network:
-        get_resource: "tcpdump-vnf:mgmt:net"
-  tcpdump-vnf:output:net:
-    type: "OS::Neutron::Net"
-    properties:
-      name: "output"
-  tcpdump-vnf:output:subnet:
-    type: "OS::Neutron::Subnet"
-    properties:
-      cidr: "10.10.8.0/24"
-      gateway_ip: "10.10.8.1"
-      name: "output"
+      name: "tcpdump-vnf:output:subnet"
       network:
         get_resource: "tcpdump-vnf:output:net"
   tcpdump-vnf:vdu01:
@@ -238,7 +181,7 @@ resources:
     properties:
       flavor: "m1.small"
       image: "sonata_firewall_VM"
-      name: "tcpdump-vnf:vdu01:eab9"
+      name: "tcpdump-vnf:vdu01:7972"
       networks:
       - port:
           get_resource: "tcpdump-vnf:vdu01:cp01"
@@ -249,19 +192,19 @@ resources:
   tcpdump-vnf:vdu01:cp01:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp01"
+      name: "tcpdump-vnf:vdu01:cp01"
       network:
-        get_resource: "tcpdump-vnf:mgmt:net"
+        get_resource: "sonata-demo:mgmt:net"
   tcpdump-vnf:vdu01:cp02:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp02"
+      name: "tcpdump-vnf:vdu01:cp02"
       network:
         get_resource: "tcpdump-vnf:input:net"
   tcpdump-vnf:vdu01:cp03:
     type: "OS::Neutron::Port"
     properties:
-      name: "vdu01:cp03"
+      name: "tcpdump-vnf:vdu01:cp03"
       network:
         get_resource: "tcpdump-vnf:output:net"
   tcpdump-vnf:vnf:input:
@@ -271,17 +214,3 @@ resources:
         get_resource: "firewall-2-tcpdump"
       subnet:
         get_resource: "tcpdump-vnf:input:subnet"
-  tcpdump-vnf:vnf:mgmt:
-    type: "OS::Neutron::RouterInterface"
-    properties:
-      router:
-        get_resource: "mgmt"
-      subnet:
-        get_resource: "tcpdump-vnf:mgmt:subnet"
-  tcpdump-vnf:vnf:output:
-    type: "OS::Neutron::RouterInterface"
-    properties:
-      router:
-        get_resource: "tcpdump-2-output"
-      subnet:
-        get_resource: "tcpdump-vnf:output:subnet"

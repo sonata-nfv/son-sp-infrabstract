@@ -24,10 +24,13 @@ import java.util.ArrayList;
 
 public class DeployServiceResponse {
 
+  private String instanceName;
+  private String instanceVimUuid;
   @JsonProperty("request_status")
   private Status requestStatus;
   private ServiceRecord nsr;
   private ArrayList<VnfRecord> vnfrs;
+  private String errorCode;
 
   public DeployServiceResponse() {
     this.vnfrs = new ArrayList<VnfRecord>();
@@ -49,12 +52,44 @@ public class DeployServiceResponse {
     return nsr;
   }
 
-  public ArrayList<VnfRecord> getVnfrList() {
+  public Status getRequestStatus() {
+    return requestStatus;
+  }
+
+  public String getInstanceName() {
+    return instanceName;
+  }
+
+  public String getInstanceVimUuid() {
+    return instanceVimUuid;
+  }
+
+  public ArrayList<VnfRecord> getVnfrs() {
     return vnfrs;
   }
 
-  public Status getRequestStatus() {
-    return requestStatus;
+  public void setInstanceName(String instanceName) {
+    this.instanceName = instanceName;
+  }
+
+  public void setInstanceVimUuid(String instanceVimUuid) {
+    this.instanceVimUuid = instanceVimUuid;
+  }
+
+  public void setRequestStatus(Status requestStatus) {
+    this.requestStatus = requestStatus;
+  }
+
+  public void setVnfrs(ArrayList<VnfRecord> vnfrs) {
+    this.vnfrs = vnfrs;
+  }
+
+  public String getErrorCode() {
+    return errorCode;
+  }
+
+  public void setErrorCode(String errorCode) {
+    this.errorCode = errorCode;
   }
 
 }

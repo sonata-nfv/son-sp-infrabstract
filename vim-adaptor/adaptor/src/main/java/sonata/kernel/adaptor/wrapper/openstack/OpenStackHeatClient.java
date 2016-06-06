@@ -4,6 +4,14 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
+import sonata.kernel.adaptor.commons.heat.StackComposition;
+import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+
 /**
  * Created by smendel on 4/20/16.
  * <p/>
@@ -173,5 +181,44 @@ public class OpenStackHeatClient {
   public String toString() {
     return "OpenStackHeatClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
         + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
+  }
+
+  /**
+   * Get stack composition
+   * 
+   * @param stackName - used for logging, usually service tenant
+   * @param instanceUuid - OpenStack UUID of the stack
+   * @return a StackComposition object representing the stack resources
+   */
+  public StackComposition getStackComposition(String stackName, String uuid) {
+
+    StackComposition composition = null;
+    StringBuilder builder = new StringBuilder();
+    String line = null;
+    try {
+      ProcessBuilder processBuilder = new ProcessBuilder("python2.7", "heat-api.py",
+          "--configuration", url, userName, password, tenantName, "--composition", uuid);
+      Process process = processBuilder.start();
+
+      // Read the status of the stack
+      BufferedReader stdInput = new BufferedReader(
+          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
+      while ((line = stdInput.readLine()) != null) {
+        System.out.println(line);
+        builder.append(line);
+      }
+      stdInput.close();
+      System.out.println("The composition of stack: " + stackName + " with uuid: " + uuid
+          + " :\n\r " + builder.toString());
+      ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+      mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+      composition = mapper.readValue(builder.toString(), StackComposition.class);
+
+    } catch (Exception e) {
+      System.out.println("Runtime error getting stack status for stack : " + stackName
+          + " error message: " + e.getMessage());
+    }
+
+    return composition;
   }
 }
