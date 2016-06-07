@@ -47,8 +47,6 @@ def write_net(in_rec,stackname):
     net_id = in_rec['attributes']['id']
     sub_id = in_rec['attributes']['subnets']
     sub_name = net_name.replace(':net',':subnet')
-    obj = open ('tested.json', 'a+')
-    json.dump(in_rec, obj,indent=4, sort_keys=True)
     net_dict = {'segmentation_id': seg_id, 'net_name': net_name, 'net_id' : net_id, 'subnet_id': sub_id[0], 'subnet_name': sub_name}
     return net_dict
 
