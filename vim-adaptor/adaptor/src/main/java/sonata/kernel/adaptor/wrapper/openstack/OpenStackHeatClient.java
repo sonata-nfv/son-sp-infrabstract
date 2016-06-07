@@ -208,11 +208,15 @@ public class OpenStackHeatClient {
         builder.append(line);
       }
       stdInput.close();
+      String compositionString = builder.toString();
+      compositionString = compositionString.replace("'", "\"");
+      compositionString = compositionString.replace(": u", " : ");
+      
       System.out.println("The composition of stack: " + stackName + " with uuid: " + uuid
-          + " :\n\r " + builder.toString());
+          + " :\n\r " + compositionString);
       ObjectMapper mapper = new ObjectMapper(new JsonFactory());
       mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-      composition = mapper.readValue(builder.toString(), StackComposition.class);
+      composition = mapper.readValue(compositionString, StackComposition.class);
 
     } catch (Exception e) {
       System.out.println("Runtime error getting stack status for stack : " + stackName

@@ -283,7 +283,7 @@ public class VimRepo {
   }
 
   /**
-   * Retrieve the wrapper revord with the specified UUID from the repository.
+   * Retrieve the wrapper record with the specified UUID from the repository.
    * 
    * @param uuid the UUID of the wrapper to retrieve
    * 
@@ -322,7 +322,7 @@ public class VimRepo {
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
         config.setVimType(vendor);
-        config.setVimEndpoint(new URL(urlString));
+        config.setVimEndpoint(urlString);
         config.setTenantName(tenant);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
@@ -335,9 +335,6 @@ public class VimRepo {
       } else {
         output = null;
       }
-    } catch (MalformedURLException e) {
-      System.err.println(e.getClass().getName() + ": " + e.getMessage());
-      output = null;
     } catch (SQLException e) {
       System.err.println(e.getClass().getName() + ": " + e.getMessage());
       output = null;

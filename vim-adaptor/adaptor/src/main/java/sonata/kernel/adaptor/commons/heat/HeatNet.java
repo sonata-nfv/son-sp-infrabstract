@@ -25,16 +25,16 @@ public class HeatNet {
   @JsonProperty("net_name")
   private String netName;
   
-  @JsonProperty("net_ID")
+  @JsonProperty("net_id")
   private String netId;
   
   @JsonProperty("subnet_name")
   private String subnetName;
   
-  @JsonProperty("subnet_ID")
+  @JsonProperty("subnet_id")
   private String subnetId;
   
-  @JsonProperty("segmentation_ID")
+  @JsonProperty("segmentation_id")
   private int segmentationId;
   
   

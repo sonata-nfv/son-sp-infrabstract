@@ -277,10 +277,15 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         mon.wait(1000);
       }
     assertNotNull(output);
-    while (output.contains("heartbeat") || output.contains("Vim Added"))
+    int retry=0;
+    int maxRetry=60;
+    while (output.contains("heartbeat") || output.contains("Vim Added")&& retry<maxRetry)
       synchronized (mon) {
         mon.wait(1000);
+        retry++;
       }
+
+    assertTrue("No Deploy service response received",retry<maxRetry);
 
     DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
     assertTrue(response.getRequestStatus() == Status.normal_operation);
@@ -309,7 +314,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
   }
 
-  public void ignoreTestDeployServiceOpenStack() throws IOException, InterruptedException {
+  public void testDeployServiceOpenStack() throws IOException, InterruptedException {
 
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -337,7 +342,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
 
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\",\"vim_address\":\"http://143.233.127.3\",\"username\":\"operator\",\"pass\":\"0perat0r\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\",\"vim_address\":\"143.233.127.3\",\"username\":\"operator\",\"pass\":\"0perat0r\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -423,11 +428,15 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         mon.wait(1000);
       }
     assertNotNull(output);
-    while (output.contains("heartbeat") || output.contains("Vim Added"))
+    int retry=0;
+    int maxRetry=60;
+    while (output.contains("heartbeat") || output.contains("Vim Added")&& retry<maxRetry)
       synchronized (mon) {
         mon.wait(1000);
+        retry++;
       }
 
+    assertTrue("No Deploy service response received",retry<maxRetry);
     DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
     assertTrue(response.getRequestStatus() == Status.offline);
     assertTrue(response.getNsr().getStatus() == Status.offline);
@@ -447,6 +456,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
       assertEquals("DELETED", deleteStatus);
     }
     
+    output=null;
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
@@ -458,7 +468,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         mon.wait(1000);
       }
     }
-
+    System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("status");

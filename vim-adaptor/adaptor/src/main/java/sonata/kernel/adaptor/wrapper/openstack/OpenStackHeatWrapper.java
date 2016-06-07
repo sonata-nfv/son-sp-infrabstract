@@ -51,16 +51,24 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public boolean deployService(DeployServiceData data,
       DeployServiceCallProcessor startServiceCallProcessor) {
 
+    
+    
+    this.addObserver(startServiceCallProcessor);
+    
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
 
     HeatModel stack = translate(data);
-
+    HeatTemplate template = new HeatTemplate();
+    for (HeatResource resource : stack.getResources()) {
+      template.putResource(resource.getResourceName(), resource);
+    }
     DeployServiceFsm fsm =
-        new DeployServiceFsm(this, client, startServiceCallProcessor.getSid(), data, stack);
+        new DeployServiceFsm(this, client, startServiceCallProcessor.getSid(), data, template);
 
     Thread thread = new Thread(fsm);
     thread.start();
+    
 
     return true;
 
@@ -249,7 +257,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
                 }
               }
               if (!isInOut) {
-                nsVirtualLink = link.getId();
+                nsVirtualLink = nsd.getName()+":"+link.getId();
               }
               break;
             }
@@ -287,6 +295,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // TODO Implement a method to select the best flavor respecting the resource constraints.
     return "m1.small";
   }
+
 
 
 }

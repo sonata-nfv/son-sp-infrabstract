@@ -22,7 +22,7 @@ import java.net.URL;
 
 public class WrapperConfiguration {
 
-  private URL vimEndpoint;
+  private String vimEndpoint;
   private String vimType;
   private String wrapperType;
   private String authUserName;
@@ -39,12 +39,12 @@ public class WrapperConfiguration {
     this.wrapperType = wrapperType;
   }
 
-  public URL getVimEndpoint() {
+  public String getVimEndpoint() {
     return vimEndpoint;
   }
 
-  public void setVimEndpoint(URL vimEndpoint) {
-    this.vimEndpoint = vimEndpoint;
+  public void setVimEndpoint(String vimEndpoint2) {
+    this.vimEndpoint = vimEndpoint2;
   }
 
   public String getVimType() {

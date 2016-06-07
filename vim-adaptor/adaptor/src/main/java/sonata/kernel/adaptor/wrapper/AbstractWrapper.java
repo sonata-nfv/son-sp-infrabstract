@@ -36,4 +36,19 @@ public abstract class AbstractWrapper extends Observable {
   public String getType() {
     return type;
   }
+
+  /**
+   * expose this observable object's method setChanged().
+   * 
+   */
+  public void markAsChanged() {
+    this.setChanged();
+  }
+
+
+
 }
+
+
+
+

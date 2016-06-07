@@ -60,32 +60,25 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
     String tenantName = jsonObject.getString("tenant");
-    try {
-      URL vimUrl = new URL(vimEndpoint);
-      config.setUuid(this.getSid());
-      config.setWrapperType(wrapperType);
-      config.setVimType(vimType);
-      config.setVimEndpoint(vimUrl);
-      config.setAuthUserName(authUser);
-      config.setAuthPass(authPass);
-      config.setTenantName(tenantName);
-      String output = null;
-      if (wrapperType.equals("compute")) {
-        output = WrapperBay.getInstance().registerComputeWrapper(config);
-      } else if (wrapperType.equals("storage")) {
-        // TODO
-        output = "";
-      } else if (wrapperType.equals("network")) {
-        // TODO
-        output = "";
-      }
-      this.sendResponse(output);
-    } catch (MalformedURLException e) {
-      e.printStackTrace();
-      // Call mux to send a "malformed request" error
-      this.sendError("Malformed Request");
-      out = false;
+
+    config.setUuid(this.getSid());
+    config.setWrapperType(wrapperType);
+    config.setVimType(vimType);
+    config.setVimEndpoint(vimEndpoint);
+    config.setAuthUserName(authUser);
+    config.setAuthPass(authPass);
+    config.setTenantName(tenantName);
+    String output = null;
+    if (wrapperType.equals("compute")) {
+      output = WrapperBay.getInstance().registerComputeWrapper(config);
+    } else if (wrapperType.equals("storage")) {
+      // TODO
+      output = "";
+    } else if (wrapperType.equals("network")) {
+      // TODO
+      output = "";
     }
+    this.sendResponse(output);
 
     return out;
   }

@@ -37,7 +37,7 @@ def write_port(in_rec,stackname):
     in_rec = heat.resources.get(stackname, in_rec['resource_name']).to_dict()
     ip1 = in_rec['attributes']['fixed_ips']
     ip = ip1[0]['ip_address']
-    port_dict = {'name': in_rec['attributes']['name'], 'MAC_address' : in_rec['attributes']['mac_address'], 'IP_address' : ip }
+    port_dict = {'port_name': in_rec['attributes']['name'], 'MAC_address' : in_rec['attributes']['mac_address'], 'IP_address' : ip }
     return port_dict
 
 def write_net(in_rec,stackname):

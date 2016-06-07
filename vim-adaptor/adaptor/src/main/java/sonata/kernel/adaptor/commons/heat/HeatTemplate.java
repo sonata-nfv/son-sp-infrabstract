@@ -27,7 +27,7 @@ import java.util.HashMap;
 public class HeatTemplate {
 
   @JsonProperty("heat_template_version")
-  private String templateVersion = "2013-05-23";
+  private String templateVersion = "2015-04-30";
 
   private HashMap<String, Object> resources;
 

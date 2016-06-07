@@ -16,6 +16,7 @@ import sonata.kernel.adaptor.commons.VnfRecord;
 import sonata.kernel.adaptor.commons.VnfcInstance;
 import sonata.kernel.adaptor.commons.heat.HeatModel;
 import sonata.kernel.adaptor.commons.heat.HeatServer;
+import sonata.kernel.adaptor.commons.heat.HeatTemplate;
 import sonata.kernel.adaptor.commons.heat.StackComposition;
 import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
@@ -30,8 +31,8 @@ public class DeployServiceFsm implements Runnable {
   private DeployServiceData data;
   private OpenStackHeatWrapper wrapper;
   private OpenStackHeatClient client;
-  private HeatModel stack;
-  private static final int maxCounter = 5;
+  private HeatTemplate stack;
+  private static final int maxCounter = 10;
 
 
   /**
@@ -44,7 +45,7 @@ public class DeployServiceFsm implements Runnable {
    * @param stack the HeatStack result of the translation
    */
   public DeployServiceFsm(OpenStackHeatWrapper wrapper, OpenStackHeatClient client, String sid,
-      DeployServiceData data, HeatModel stack) {
+      DeployServiceData data, HeatTemplate stack) {
 
     this.wrapper = wrapper;
     this.client = client;
@@ -66,6 +67,8 @@ public class DeployServiceFsm implements Runnable {
       System.out.println("[OS-Deploy-FSM]   Serializing stack...");
 
       String stackString = mapper.writeValueAsString(stack);
+      System.out.println("[OS-Deploy-FSM]   stack:");
+      System.out.println(stackString);
 
       String stackName = data.getNsd().getName() + data.getNsd().getInstanceUuid();
       System.out.println("[OS-Deploy-FSM]   Pushing stack to Heat...");
@@ -74,10 +77,13 @@ public class DeployServiceFsm implements Runnable {
       int counter = 0;
       int wait = 1000;
       String status = null;
-      while (counter < DeployServiceFsm.maxCounter
-          && (status != null && !status.equals("COMPLETE"))) {
+      while ((status == null || !status.equals("CREATE_COMPLETE"))
+          && counter < DeployServiceFsm.maxCounter) {
         status = client.getStackStatus(stackName, instanceUuid);
         System.out.println("[OS-Deploy-FSM]   Status of stack " + instanceUuid + ": " + status);
+        if (status != null && status.equals("CREATE_COMPLETE")) {
+          break;
+        }
         try {
           Thread.sleep(wait);
         } catch (InterruptedException e) {
@@ -87,15 +93,13 @@ public class DeployServiceFsm implements Runnable {
         counter++;
         wait *= 2;
       }
-
 
       counter = 0;
       wait = 1000;
       StackComposition composition = null;
-      while (counter < DeployServiceFsm.maxCounter && composition != null) {
+      while (composition == null && counter < DeployServiceFsm.maxCounter) {
+        System.out.println("[OS-Deploy-FSM]   getting composition of stack " + instanceUuid);
         composition = client.getStackComposition(stackName, instanceUuid);
-        System.out.println("[OS-Deploy-FSM]   composition of stack " + instanceUuid + ": "
-            + composition.toString());
         try {
           Thread.sleep(wait);
         } catch (InterruptedException e) {
@@ -106,16 +110,23 @@ public class DeployServiceFsm implements Runnable {
         wait *= 2;
       }
 
+      if (composition != null) {
+        System.out.println("[OS-Deploy-FSM]   composition of stack " + instanceUuid + ":\n\r"
+            + mapper.writeValueAsString(composition));
+      } else {
+        // TODO report error to coordination
+        System.out.println("[OS-Deploy-FSM]   unable to retrieve stack composition");
+        return;
+      }
 
-      // Aux data structures for efficent search
-
+      // Aux data structures for efficent mapping
       Hashtable<String, VnfDescriptor> vnfTable = new Hashtable<String, VnfDescriptor>();
       Hashtable<String, VirtualDeploymentUnit> vduTable =
           new Hashtable<String, VirtualDeploymentUnit>();
       Hashtable<String, VduRecord> vdurTable = new Hashtable<String, VduRecord>();
 
       // Create the response
-      
+      System.out.println("[OS-Deploy-FSM]   creating deploy response");
       ServiceRecord sr = new ServiceRecord();
       sr.setUuid(data.getNsd().getUuid());
       sr.setStatus(Status.offline);
@@ -166,17 +177,17 @@ public class DeployServiceFsm implements Runnable {
         referenceVdur.addVnfcInstance(vnfc);
       }
 
-      // TODO add each composition.ports information in the response. The IP (and maybe MAC address) fields in the NSR are still to be defined
-
-
+      // TODO add each composition.ports information in the response. The IP (and maybe MAC address)
+      // fields in the NSR are still to be defined
 
       response.setInstanceName(stackName);
       response.setInstanceVimUuid(instanceUuid);
-      
+      response.setStatus(Status.offline);
       String body = mapper.writeValueAsString(response);
+      System.out.println("[OS-Deploy-FSM]   response created:\n" + body);
 
-      WrapperStatusUpdate update =
-          new WrapperStatusUpdate(this.sid, "SUCCESS", response.toString());
+      WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+      wrapper.markAsChanged();
       wrapper.notifyObservers(update);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
