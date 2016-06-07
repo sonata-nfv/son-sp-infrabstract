@@ -100,11 +100,8 @@ if args.composition:  # action from the status option
             net_dic = write_net(stack_res,stackname)
             net_list.append(net_dic)
 
-    servers_dict = {'servers' : server_list }
-    ports_dict = { 'ports' : port_list }
-    net_dict = { 'nets': net_list}
-    routers_dict = { 'routers' : router_list }
-    print servers_dict,ports_dict,net_dict,routers_dict
+    final_dict = {'servers' : server_list, 'ports' : port_list, 'nets': net_list, 'routers': router_list }
+    print final_dict
 
 if args.delete:  # Actions to do if given argument --delete
     stackname = args.delete
