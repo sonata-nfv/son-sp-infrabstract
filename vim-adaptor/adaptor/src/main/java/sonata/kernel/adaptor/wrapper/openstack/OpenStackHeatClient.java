@@ -1,16 +1,14 @@
 package sonata.kernel.adaptor.wrapper.openstack;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
-
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.adaptor.commons.heat.StackComposition;
-import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 
 /**
  * Created by smendel on 4/20/16.
@@ -184,10 +182,10 @@ public class OpenStackHeatClient {
   }
 
   /**
-   * Get stack composition
+   * Get stack composition.
    * 
    * @param stackName - used for logging, usually service tenant
-   * @param instanceUuid - OpenStack UUID of the stack
+   * @param uuid - OpenStack UUID of the stack
    * @return a StackComposition object representing the stack resources
    */
   public StackComposition getStackComposition(String stackName, String uuid) {
@@ -211,7 +209,7 @@ public class OpenStackHeatClient {
       String compositionString = builder.toString();
       compositionString = compositionString.replace("'", "\"");
       compositionString = compositionString.replace(": u", " : ");
-      
+
       System.out.println("The composition of stack: " + stackName + " with uuid: " + uuid
           + " :\n\r " + compositionString);
       ObjectMapper mapper = new ObjectMapper(new JsonFactory());

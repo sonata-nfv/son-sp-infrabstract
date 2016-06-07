@@ -15,27 +15,28 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class HeatNet {
 
-  
+
   @JsonProperty("net_name")
   private String netName;
-  
+
   @JsonProperty("net_id")
   private String netId;
-  
+
   @JsonProperty("subnet_name")
   private String subnetName;
-  
+
   @JsonProperty("subnet_id")
   private String subnetId;
-  
+
   @JsonProperty("segmentation_id")
   private int segmentationId;
-  
-  
+
+
 }

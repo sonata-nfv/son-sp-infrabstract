@@ -18,11 +18,11 @@
 
 package sonata.kernel.adaptor.commons;
 
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.vnfd.ResourceRequirements;
+
+import java.util.ArrayList;
 
 public class VduRecord {
 
@@ -47,10 +47,10 @@ public class VduRecord {
     vnfcInstance = new ArrayList<VnfcInstance>();
   }
 
-  public void addVnfcInstance(VnfcInstance instance){
+  public void addVnfcInstance(VnfcInstance instance) {
     vnfcInstance.add(instance);
   }
-  
+
   public void setId(String id) {
     this.id = id;
   }

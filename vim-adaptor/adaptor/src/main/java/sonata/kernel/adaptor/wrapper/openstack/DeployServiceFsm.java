@@ -8,13 +8,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeployServiceResponse;
-import sonata.kernel.adaptor.commons.DeploymentResponse;
 import sonata.kernel.adaptor.commons.ServiceRecord;
 import sonata.kernel.adaptor.commons.Status;
 import sonata.kernel.adaptor.commons.VduRecord;
 import sonata.kernel.adaptor.commons.VnfRecord;
 import sonata.kernel.adaptor.commons.VnfcInstance;
-import sonata.kernel.adaptor.commons.heat.HeatModel;
 import sonata.kernel.adaptor.commons.heat.HeatServer;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
 import sonata.kernel.adaptor.commons.heat.StackComposition;

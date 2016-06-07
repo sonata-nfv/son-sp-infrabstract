@@ -50,5 +50,3 @@ public abstract class AbstractWrapper extends Observable {
 }
 
 
-
-

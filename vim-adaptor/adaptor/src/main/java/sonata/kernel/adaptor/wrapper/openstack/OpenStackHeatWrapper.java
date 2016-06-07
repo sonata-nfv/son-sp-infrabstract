@@ -51,10 +51,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public boolean deployService(DeployServiceData data,
       DeployServiceCallProcessor startServiceCallProcessor) {
 
-    
-    
+
+
     this.addObserver(startServiceCallProcessor);
-    
+
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
 
@@ -68,7 +68,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     Thread thread = new Thread(fsm);
     thread.start();
-    
+
 
     return true;
 
@@ -134,9 +134,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
       if (isInterVnf && !isMgmt) {
         HeatResource router = new HeatResource();
-        router.setName(nsd.getName()+":"+link.getId());
+        router.setName(nsd.getName() + ":" + link.getId());
         router.setType("OS::Neutron::Router");
-        router.putProperty("name", nsd.getName()+":"+link.getId());
+        router.putProperty("name", nsd.getName() + ":" + link.getId());
         model.addResource(router);
       }
     }
@@ -257,7 +257,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
                 }
               }
               if (!isInOut) {
-                nsVirtualLink = nsd.getName()+":"+link.getId();
+                nsVirtualLink = nsd.getName() + ":" + link.getId();
               }
               break;
             }

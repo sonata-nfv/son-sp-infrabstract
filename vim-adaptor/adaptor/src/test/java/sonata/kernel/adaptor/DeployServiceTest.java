@@ -277,15 +277,15 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         mon.wait(1000);
       }
     assertNotNull(output);
-    int retry=0;
-    int maxRetry=60;
-    while (output.contains("heartbeat") || output.contains("Vim Added")&& retry<maxRetry)
+    int retry = 0;
+    int maxRetry = 60;
+    while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry)
       synchronized (mon) {
         mon.wait(1000);
         retry++;
       }
 
-    assertTrue("No Deploy service response received",retry<maxRetry);
+    assertTrue("No Deploy service response received", retry < maxRetry);
 
     DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
     assertTrue(response.getRequestStatus() == Status.normal_operation);
@@ -428,35 +428,36 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         mon.wait(1000);
       }
     assertNotNull(output);
-    int retry=0;
-    int maxRetry=60;
-    while (output.contains("heartbeat") || output.contains("Vim Added")&& retry<maxRetry)
+    int retry = 0;
+    int maxRetry = 60;
+    while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry)
       synchronized (mon) {
         mon.wait(1000);
         retry++;
       }
 
-    assertTrue("No Deploy service response received",retry<maxRetry);
+    assertTrue("No Deploy service response received", retry < maxRetry);
     DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
     assertTrue(response.getRequestStatus() == Status.offline);
     assertTrue(response.getNsr().getStatus() == Status.offline);
-    
+
     for (VnfRecord vnfr : response.getVnfrs())
       assertTrue(vnfr.getStatus() == Status.offline);
 
-    //Clean the OpenStack tenant from the stack
-    OpenStackHeatClient client = new OpenStackHeatClient("143.233.127.3", "operator", "0perat0r", "operator");
+    // Clean the OpenStack tenant from the stack
+    OpenStackHeatClient client =
+        new OpenStackHeatClient("143.233.127.3", "operator", "0perat0r", "operator");
     String stackName = response.getInstanceName();
 
     String deleteStatus = client.deleteStack(stackName, response.getInstanceVimUuid());
     assertNotNull("Failed to delete stack", deleteStatus);
-    
-    if (deleteStatus!= null) {
+
+    if (deleteStatus != null) {
       System.out.println("status of deleted stack " + stackName + " is " + deleteStatus);
       assertEquals("DELETED", deleteStatus);
     }
-    
-    output=null;
+
+    output = null;
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,

@@ -18,22 +18,22 @@
 
 package sonata.kernel.adaptor.commons;
 
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.nsd.ConnectionPoint;
 
+import java.util.ArrayList;
+
 public class VnfcInstance {
 
   private String id;
-  
+
   @JsonProperty("vim_id")
   private String vimId;
-  
+
   @JsonProperty("vc_id")
   private String vcId;
-  
+
   @JsonProperty("connection_points")
   private ArrayList<ConnectionPoint> connectionPoints;
 
@@ -68,6 +68,6 @@ public class VnfcInstance {
   public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
     this.connectionPoints = connectionPoints;
   }
-  
-  
+
+
 }

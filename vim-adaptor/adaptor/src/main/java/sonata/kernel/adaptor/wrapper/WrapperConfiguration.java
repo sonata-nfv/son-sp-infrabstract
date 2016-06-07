@@ -18,8 +18,6 @@
 
 package sonata.kernel.adaptor.wrapper;
 
-import java.net.URL;
-
 public class WrapperConfiguration {
 
   private String vimEndpoint;

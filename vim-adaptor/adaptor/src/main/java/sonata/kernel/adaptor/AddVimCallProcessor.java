@@ -25,8 +25,6 @@ import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
 
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.Observable;
 
 public class AddVimCallProcessor extends AbstractCallProcessor {
@@ -45,7 +43,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 
   @Override
   public boolean process(ServicePlatformMessage message) {
-    boolean out = true;
+    
     // process json message to extract the new Wrapper configurations
     // and ask the bay to create and register it
 
@@ -69,6 +67,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     config.setAuthPass(authPass);
     config.setTenantName(tenantName);
     String output = null;
+    boolean out = true;
     if (wrapperType.equals("compute")) {
       output = WrapperBay.getInstance().registerComputeWrapper(config);
     } else if (wrapperType.equals("storage")) {
@@ -79,7 +78,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
       output = "";
     }
     this.sendResponse(output);
-
+   
     return out;
   }
 

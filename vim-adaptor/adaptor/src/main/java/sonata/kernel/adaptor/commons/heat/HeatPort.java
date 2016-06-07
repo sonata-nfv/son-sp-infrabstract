@@ -15,6 +15,7 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -23,23 +24,23 @@ public class HeatPort {
 
   @JsonProperty("port_name")
   private String portName;
-  
+
   @JsonProperty("IP_address")
-  private String IpAddress;
-  
+  private String ipAddress;
+
   @JsonProperty("MAC_address")
-  private String MacAddress;
+  private String macAddress;
 
   public String getPortName() {
     return portName;
   }
 
   public String getIpAddress() {
-    return IpAddress;
+    return ipAddress;
   }
 
   public String getMacAddress() {
-    return MacAddress;
+    return macAddress;
   }
 
   public void setPortName(String portName) {
@@ -47,12 +48,12 @@ public class HeatPort {
   }
 
   public void setIpAddress(String ipAddress) {
-    IpAddress = ipAddress;
+    this.ipAddress = ipAddress;
   }
 
   public void setMacAddress(String macAddress) {
-    MacAddress = macAddress;
+    this.macAddress = macAddress;
   }
-  
-  
+
+
 }
