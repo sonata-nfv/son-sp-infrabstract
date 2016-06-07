@@ -26,9 +26,9 @@ def autheticate(cip, username, password, tenant):
     return heat
 
 def write_server(server,stackname):
-    s_name =server['resource_name']
     s_id = server['physical_resource_id']
-    server = heat.resources.get(stackname, s_name).to_dict()
+    server = heat.resources.get(stackname, server['resource_name']).to_dict()
+    s_name =server['attributes']['name']
     flavor = server['attributes']['flavor']
     server_dict = {'server_name': s_name, 'server_id' : s_id}
     return server_dict
@@ -43,10 +43,12 @@ def write_port(in_rec,stackname):
 def write_net(in_rec,stackname):
     in_rec = heat.resources.get(stackname, in_rec['resource_name']).to_dict()   
     seg_id = in_rec['attributes']['provider:segmentation_id']
-    net_name = in_rec['resource_name']
+    net_name = in_rec['attributes']['name']
     net_id = in_rec['attributes']['id']
     sub_id = in_rec['attributes']['subnets']
     sub_name = net_name.replace(':net',':subnet')
+    obj = open ('tested.json', 'a+')
+    json.dump(in_rec, obj,indent=4, sort_keys=True)
     net_dict = {'segmentation_id': seg_id, 'net_name': net_name, 'net_id' : net_id, 'subnet_id': sub_id[0], 'subnet_name': sub_name}
     return net_dict
 
