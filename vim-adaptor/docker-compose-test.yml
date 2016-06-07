@@ -16,6 +16,8 @@ services:
      - repo_user adaptor
      - repo_pass repotestadaptor 
      - repo_database vimregistry
+    volumes:
+     - ./reports:/adaptor/target
 
   broker:
     image: rabbitmq:3
