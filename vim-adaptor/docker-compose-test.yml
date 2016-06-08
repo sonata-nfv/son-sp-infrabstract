@@ -27,7 +27,7 @@ services:
   postgres:
     image: ntboes/postgres-uuid
     ports:
-     - "5432:5432"
+     - "5432"
     environment:
      - POSTGRES_PASSWORD=repotestadaptor
      - POSTGRES_USER=adaptor
