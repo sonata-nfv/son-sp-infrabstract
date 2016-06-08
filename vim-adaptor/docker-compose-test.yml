@@ -1,0 +1,34 @@
+version: '2'
+services:
+  son-sp-infrabstract:
+    entrypoint: /test.sh
+    image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
+    links:
+     - broker
+     - postgres 
+    environment:
+     - broker_host broker
+     - broker_port 5672
+     - broker_exchange son-kernel
+     - broker_uri amqp://guest:guest@broker:5672/%2F
+     - repo_host postgres
+     - repo_port 5432
+     - repo_user adaptor
+     - repo_pass repotestadaptor 
+     - repo_database vimregistry
+    volumes:
+     - ./reports:/adaptor/target
+
+  broker:
+    image: rabbitmq:3
+    ports:
+     - "5672"
+
+  postgres:
+    image: ntboes/postgres-uuid
+    ports:
+     - "5432"
+    environment:
+     - POSTGRES_PASSWORD=repotestadaptor
+     - POSTGRES_USER=adaptor
+     - POSTGRES_DB=vimregistry
