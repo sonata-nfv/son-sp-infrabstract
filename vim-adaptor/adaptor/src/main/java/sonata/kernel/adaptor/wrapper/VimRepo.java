@@ -49,11 +49,13 @@ public class VimRepo {
     this.prop = this.parseConfigFile();
 
     Connection connection = null;
+    Statement findDatabaseStmt = null;
     PreparedStatement findTablesStmt = null;
+    Statement createDatabaseStmt = null;
     Statement stmt = null;
     ResultSet rs = null;
     String dbUrl = "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
-        + prop.getProperty("repo_port") + "/" + prop.getProperty("database");
+        + prop.getProperty("repo_port") + "/" + "postgres";
     String user = prop.getProperty("user");
     String pass = prop.getProperty("pass");
     System.out.println("[VimRepo] Connecting to postgresql at " + dbUrl);
@@ -61,10 +63,44 @@ public class VimRepo {
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(dbUrl, user, pass);
-
-      System.out.println("[VimRepo] Opened database successfully. Creating environment...");
-      boolean isEnvironmentSet = false;
+      boolean isDatabaseSet = false;
+      System.out.println("[VimRepo] Connection opened successfully. Listing databases...");
       String sql;
+      sql = "SELECT datname FROM pg_catalog.pg_database;";
+      findDatabaseStmt = connection.createStatement();
+      rs = findDatabaseStmt.executeQuery(sql);
+      while (rs.next()) {
+        String datname = rs.getString("datname");
+        if (datname.equals("vimregistry") || datname.equals("VIMREGISTRY")) {
+          isDatabaseSet = true;
+        }
+      }
+      rs.close();
+
+      if (!isDatabaseSet) {
+        System.out.println("[VimRepo] Database not set. Creating database...");
+        sql = "CREATE DATABASE vimregistry;";
+        stmt = connection.createStatement();
+        stmt.execute(sql);
+        sql = "GRANT ALL PRIVILEGES ON DATABASE vimregistry TO " + user + ";";
+        createDatabaseStmt = connection.createStatement();
+
+        System.out.println("[VimRepo] Statement:" + createDatabaseStmt.toString());
+        createDatabaseStmt.execute(sql);
+      } else {
+        System.out.println("[VimRepo] Database already set.");
+      }
+      connection.close();
+
+      // reconnect to the new database;
+
+      dbUrl = "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+          + prop.getProperty("repo_port") + "/" + "vimregistry";
+      System.out.println("[VimRepo] Connecting to the new database: " + dbUrl);
+      connection = DriverManager.getConnection(dbUrl, user, pass);
+
+
+      boolean isEnvironmentSet = false;
       sql = "SELECT * FROM pg_catalog.pg_tables WHERE tableowner=?;";
       findTablesStmt = connection.prepareStatement(sql);
       findTablesStmt.setString(1, user);
@@ -75,10 +111,12 @@ public class VimRepo {
           isEnvironmentSet = true;
         }
       }
-
+      if (stmt != null) {
+        stmt.close();
+      }
       if (!isEnvironmentSet) {
         stmt = connection.createStatement();
-        sql = "CREATE TABLE VIM " + "(UUID TEXT PRIMARY KEY NOT NULL," + " TYPE TEXT NOT NULL,"
+        sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," + " TYPE TEXT NOT NULL,"
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
             + " TENANT TEXT NOT NULL," + " PASS TEXT," + " AUTHKEY TEXT);";
         stmt.executeUpdate(sql);
@@ -98,6 +136,9 @@ public class VimRepo {
         }
         if (rs != null) {
           rs.close();
+        }
+        if (connection != null) {
+          connection.close();
         }
       } catch (SQLException e) {
         System.err.println(e.getClass().getName() + ": " + e.getMessage());
@@ -125,8 +166,8 @@ public class VimRepo {
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(
-          "jdbc:postgresql://" + prop.getProperty("repo_host") + ":" + prop.getProperty("repo_port")
-              + "/" + prop.getProperty("database"),
+        "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+            + prop.getProperty("repo_port") + "/" + "vimregistry",
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
@@ -181,9 +222,8 @@ public class VimRepo {
     PreparedStatement stmt = null;
     try {
       Class.forName("org.postgresql.Driver");
-      connection = DriverManager.getConnection(
-          "jdbc:postgresql://" + prop.getProperty("repo_host") + ":" + prop.getProperty("repo_port")
-              + "/" + prop.getProperty("database"),
+      connection = DriverManager.getConnection("jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+          + prop.getProperty("repo_port") + "/" + "vimregistry",
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
@@ -233,8 +273,8 @@ public class VimRepo {
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(
-          "jdbc:postgresql://" + prop.getProperty("repo_host") + ":" + prop.getProperty("repo_port")
-              + "/" + prop.getProperty("database"),
+          "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+          + prop.getProperty("repo_port") + "/" + "vimregistry",
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
@@ -298,8 +338,8 @@ public class VimRepo {
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(
-          "jdbc:postgresql://" + prop.getProperty("repo_host") + ":" + prop.getProperty("repo_port")
-              + "/" + prop.getProperty("database"),
+        "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+            + prop.getProperty("repo_port") + "/" + "vimregistry",
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
@@ -375,8 +415,8 @@ public class VimRepo {
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(
-          "jdbc:postgresql://" + prop.getProperty("repo_host") + ":" + prop.getProperty("repo_port")
-              + "/" + prop.getProperty("database"),
+        "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+            + prop.getProperty("repo_port") + "/" + "vimregistry",
           prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
@@ -425,12 +465,10 @@ public class VimRepo {
       String repoPort = jsonObject.getString("repo_port");
       String user = jsonObject.getString("user");
       String pass = jsonObject.getString("pass");
-      String database = jsonObject.getString("database");
       prop.put("repo_host", repoUrl);
       prop.put("repo_port", repoPort);
       prop.put("user", user);
       prop.put("pass", pass);
-      prop.put("database", database);
     } catch (FileNotFoundException e) {
       System.err.println("Unable to load Postregs Config file");
     }
