@@ -60,7 +60,7 @@ public class OpenStackHeatClient {
     try {
 
       // Call the python client for creating the stack
-      ProcessBuilder processBuilder = new ProcessBuilder("python2.7", "heat-api.py",
+      ProcessBuilder processBuilder = new ProcessBuilder("python2.7", "./heat-api.py",
           "--configuration", url, userName, password, tenantName, "--create", stackName, template);
       Process process = processBuilder.start();
 
