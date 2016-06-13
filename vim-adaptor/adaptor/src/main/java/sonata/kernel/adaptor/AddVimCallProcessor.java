@@ -26,6 +26,7 @@ import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
 
 import java.util.Observable;
+import java.util.UUID;
 
 public class AddVimCallProcessor extends AbstractCallProcessor {
 
@@ -59,7 +60,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String authPass = jsonObject.getString("pass");
     String tenantName = jsonObject.getString("tenant");
 
-    config.setUuid(this.getSid());
+    config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType(wrapperType);
     config.setVimType(vimType);
     config.setVimEndpoint(vimEndpoint);

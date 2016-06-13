@@ -83,6 +83,7 @@ public class OpenStackHeatClient {
         uuid = string;
       }
       stdInput.close();
+      process.destroy();
 
       if (uuid != null) {
         System.out.println("UUID of new stack: " + uuid);
@@ -124,13 +125,14 @@ public class OpenStackHeatClient {
         status = string;
       }
       stdInput.close();
+      process.destroy();
       System.out
           .println("The status of stack: " + stackName + " with uuid: " + uuid + " : " + status);
     } catch (Exception e) {
       System.out.println("Runtime error getting stack status for stack : " + stackName
           + " error message: " + e.getMessage());
     }
-
+   
     return status;
 
   }
@@ -163,6 +165,8 @@ public class OpenStackHeatClient {
         isDeleted = string;
       }
       stdInput.close();
+      process.destroy();
+
       System.out.println(
           "Request was sent for stack: " + stackName + " with uuid: " + uuid + " : " + isDeleted);
     } catch (Exception e) {
@@ -206,6 +210,7 @@ public class OpenStackHeatClient {
         builder.append(line);
       }
       stdInput.close();
+      process.destroy();
       String compositionString = builder.toString();
       compositionString = compositionString.replace("'", "\"");
       compositionString = compositionString.replace(": u", " : ");
@@ -215,7 +220,7 @@ public class OpenStackHeatClient {
       ObjectMapper mapper = new ObjectMapper(new JsonFactory());
       mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
       composition = mapper.readValue(compositionString, StackComposition.class);
-
+      
     } catch (Exception e) {
       System.out.println("Runtime error getting stack status for stack : " + stackName
           + " error message: " + e.getMessage());
