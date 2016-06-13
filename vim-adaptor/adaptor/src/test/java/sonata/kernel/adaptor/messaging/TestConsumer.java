@@ -29,12 +29,14 @@ public class TestConsumer extends AbstractMsgBusConsumer {
   public void injectMessage(ServicePlatformMessage message) {
     int maxChars = 500;
     if (message.getBody() != null) {
-      if (message.getBody().length() <= maxChars)
+      if (message.getBody().length() <= maxChars) {
         System.out.println(
             "[TestConsumer] Topic: " + message.getTopic() + " - Message:" + message.getBody());
-      else
+      } else {
         System.out.println("[TestConsumer] Topic: " + message.getTopic() + " - Message:"
-            + message.getBody().substring(0, maxChars) + "\n\r ...TRUNCATED");
+            + message.getBody().substring(0, maxChars));
+        System.out.println("\n\r ...TRUNCATED");
+      }
     } else {
       System.out.println("[TestConsumer] Topic: " + message.getTopic() + " - Message empty");
     }

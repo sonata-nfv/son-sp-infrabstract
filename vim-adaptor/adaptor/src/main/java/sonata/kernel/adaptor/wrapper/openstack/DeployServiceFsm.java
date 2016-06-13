@@ -65,13 +65,18 @@ public class DeployServiceFsm implements Runnable {
       System.out.println("[OS-Deploy-FSM]   Serializing stack...");
 
       String stackString = mapper.writeValueAsString(stack);
-      System.out.println("[OS-Deploy-FSM]   stack:");
-      System.out.println(stackString);
 
       String stackName = data.getNsd().getName() + data.getNsd().getInstanceUuid();
       System.out.println("[OS-Deploy-FSM]   Pushing stack to Heat...");
       String instanceUuid = client.createStack(stackName, stackString);
 
+      if (instanceUuid == null) {
+        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "FAIL",
+            "{\"message\":\"unable to contact the VIM to instantiate the service\"}");
+        wrapper.markAsChanged();
+        wrapper.notifyObservers(update);
+        return;
+      }
       int counter = 0;
       int wait = 1000;
       String status = null;
@@ -92,6 +97,14 @@ public class DeployServiceFsm implements Runnable {
         wait *= 2;
       }
 
+      if (status == null) {
+        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "FAIL",
+            "{\"message\":\"unable to contact the VIM to check the instantiation status\"}");
+        wrapper.markAsChanged();
+        wrapper.notifyObservers(update);
+        return;
+      }
+
       counter = 0;
       wait = 1000;
       StackComposition composition = null;
@@ -108,16 +121,15 @@ public class DeployServiceFsm implements Runnable {
         wait *= 2;
       }
 
-      if (composition != null) {
-        System.out.println("[OS-Deploy-FSM]   composition of stack " + instanceUuid + ":\n\r"
-            + mapper.writeValueAsString(composition));
-      } else {
-        // TODO report error to coordination
-        System.out.println("[OS-Deploy-FSM]   unable to retrieve stack composition");
+      if (composition == null) {
+        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "FAIL",
+            "{\"message\":\"unable to contact the VIM to check the instantiation status\"}");
+        wrapper.markAsChanged();
+        wrapper.notifyObservers(update);
         return;
       }
 
-      // Aux data structures for efficent mapping
+      // Aux data structures for efficient mapping
       Hashtable<String, VnfDescriptor> vnfTable = new Hashtable<String, VnfDescriptor>();
       Hashtable<String, VirtualDeploymentUnit> vduTable =
           new Hashtable<String, VirtualDeploymentUnit>();
@@ -182,7 +194,7 @@ public class DeployServiceFsm implements Runnable {
       response.setInstanceVimUuid(instanceUuid);
       response.setStatus(Status.offline);
       String body = mapper.writeValueAsString(response);
-      System.out.println("[OS-Deploy-FSM]   response created:\n" + body);
+      System.out.println("[OS-Deploy-FSM]   response created");
 
       WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
       wrapper.markAsChanged();
