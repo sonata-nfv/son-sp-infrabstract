@@ -30,8 +30,7 @@ public class WrapperFactory {
    */
   public static Wrapper createWrapper(WrapperConfiguration config) {
     Wrapper output = null;
-    System.out.println("WrapperFactory - createWrapper");
-    System.out.println("config:\n\r" + config);
+    System.out.println("  [WrapperFactory] - creating wrapper...");
     if (config.getWrapperType().equals("compute")) {
       output = createComputeWrapper(config);
     }
@@ -41,6 +40,7 @@ public class WrapperFactory {
     if (config.getWrapperType().equals("storage")) {
       output = createStorageWrapper(config);
     }
+    System.out.println("  [WrapperFactory] - Wrapper created...");
     return output;
   }
 

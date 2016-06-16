@@ -47,11 +47,16 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
     String message = new String(body, "UTF-8");
+//    System.out
+//    .println(" [northbound] Received message:" + message + " on " + envelope.getRoutingKey());
     System.out
-        .println(" [northbound] Received message:" + message + " on " + envelope.getRoutingKey());
-    if (!properties.getAppId().equals(AdaptorCore.APP_ID)) {
+    .println(" [northbound] Received message on " + envelope.getRoutingKey());
+    if (properties != null && properties.getAppId() != null
+        && !properties.getAppId().equals(AdaptorCore.APP_ID)) {
       this.msgBusConsumer.processMessage(message, properties.getContentType(),
           envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
+    } else {
+      System.out.println("  [northbound] Message ignored: " + properties);
     }
   }
 

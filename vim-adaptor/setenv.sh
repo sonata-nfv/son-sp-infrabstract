@@ -7,6 +7,5 @@ sed -i "s/REPOHOST/$repo_host/" /etc/son-mano/postgres.config
 sed -i "s/REPOPORT/$repo_port/" /etc/son-mano/postgres.config
 sed -i "s/REPOUSER/$repo_user/" /etc/son-mano/postgres.config
 sed -i "s/REPOPASS/$repo_pass/" /etc/son-mano/postgres.config
-sed -i "s/REPODATABASE/$repo_database/" /etc/son-mano/postgres.config
 
 cat /etc/son-mano/postgres.config

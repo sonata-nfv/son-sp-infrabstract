@@ -50,6 +50,14 @@ def write_net(in_rec,stackname):
     net_dict = {'segmentation_id': seg_id, 'net_name': net_name, 'net_id' : net_id, 'subnet_id': sub_id[0], 'subnet_name': sub_name}
     return net_dict
 
+def write_router(in_rec,stackname):
+    router_id = in_rec['physical_resource_id']
+    in_rec = heat.resources.get(stackname, in_rec['resource_name']).to_dict()
+    router_name = in_rec['attributes']['name']
+    router_dic = {'router_name': router_name, 'router_id': router_id}
+    return router_dic
+    
+
 parser = argparse.ArgumentParser()
 parser.add_argument("-cf", "--configuration", nargs=4, help="pass the cloud url, username, password and tenant name",
                     required=True)  # option configurations, needs to be required
@@ -94,9 +102,9 @@ if args.composition:  # action from the status option
             port_dic = write_port(stack_res,stackname)
             port_list.append(port_dic)
         elif type_res == 'OS::Neutron::Router':
-            router_dic = {'router_name': stack_res['resource_name'], 'router_id': stack_res['physical_resource_id']}
+            router_dic = write_router(stack_res,stackname)
             router_list.append(router_dic)
-        elif type_res == 'OS::Neutron::Net': 
+        elif type_res == 'OS::Neutron::Net':
             net_dic = write_net(stack_res,stackname)
             net_list.append(net_dic)
 
@@ -110,7 +118,7 @@ if args.delete:  # Actions to do if given argument --delete
 
 if args.create:  # Actions to be taken when given argument --create
     stackname = args.create[0]
-    yamlh = args.create[1]         
+    yamlh = args.create[1]
     stack = heat.stacks.create(stack_name=stackname, template=yamlh)
     uid = stack['stack']['id']
     print uid

@@ -18,6 +18,10 @@ import java.nio.charset.Charset;
  */
 public class OpenStackHeatClient {
 
+  private static final String PYTHON2_7 = "python2.7";
+
+  private static final String ADAPTOR_HEAT_API_PY = "/adaptor/heat-api.py";
+
   private String url; // url of the OpenStack Client
 
   private String userName; // OpenStack Client user
@@ -60,7 +64,7 @@ public class OpenStackHeatClient {
     try {
 
       // Call the python client for creating the stack
-      ProcessBuilder processBuilder = new ProcessBuilder("python2.7", "heat-api.py",
+      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
           "--configuration", url, userName, password, tenantName, "--create", stackName, template);
       Process process = processBuilder.start();
 
@@ -83,6 +87,7 @@ public class OpenStackHeatClient {
         uuid = string;
       }
       stdInput.close();
+      process.destroy();
 
       if (uuid != null) {
         System.out.println("UUID of new stack: " + uuid);
@@ -112,18 +117,20 @@ public class OpenStackHeatClient {
 
     try {
       // Call the python client for the status of the stack
-      ProcessBuilder processBuilder = new ProcessBuilder("python2.7", "heat-api.py",
+      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
           "--configuration", url, userName, password, tenantName, "--status", uuid);
       Process process = processBuilder.start();
 
       // Read the status of the stack
       BufferedReader stdInput = new BufferedReader(
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
+
       while ((string = stdInput.readLine()) != null) {
         System.out.println(string);
         status = string;
       }
       stdInput.close();
+      process.destroy();
       System.out
           .println("The status of stack: " + stackName + " with uuid: " + uuid + " : " + status);
     } catch (Exception e) {
@@ -151,7 +158,7 @@ public class OpenStackHeatClient {
 
     try {
       // Call the python client for deleting of the stack
-      ProcessBuilder processBuilder = new ProcessBuilder("python2.7", "heat-api.py",
+      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
           "--configuration", url, userName, password, tenantName, "--delete", uuid);
       Process process = processBuilder.start();
 
@@ -163,6 +170,8 @@ public class OpenStackHeatClient {
         isDeleted = string;
       }
       stdInput.close();
+      process.destroy();
+
       System.out.println(
           "Request was sent for stack: " + stackName + " with uuid: " + uuid + " : " + isDeleted);
     } catch (Exception e) {
@@ -194,7 +203,7 @@ public class OpenStackHeatClient {
     StringBuilder builder = new StringBuilder();
     String line = null;
     try {
-      ProcessBuilder processBuilder = new ProcessBuilder("python2.7", "heat-api.py",
+      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
           "--configuration", url, userName, password, tenantName, "--composition", uuid);
       Process process = processBuilder.start();
 
@@ -202,16 +211,14 @@ public class OpenStackHeatClient {
       BufferedReader stdInput = new BufferedReader(
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
       while ((line = stdInput.readLine()) != null) {
-        System.out.println(line);
         builder.append(line);
       }
       stdInput.close();
+      process.destroy();
       String compositionString = builder.toString();
       compositionString = compositionString.replace("'", "\"");
       compositionString = compositionString.replace(": u", " : ");
 
-      System.out.println("The composition of stack: " + stackName + " with uuid: " + uuid
-          + " :\n\r " + compositionString);
       ObjectMapper mapper = new ObjectMapper(new JsonFactory());
       mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
       composition = mapper.readValue(compositionString, StackComposition.class);

@@ -38,9 +38,8 @@ ENV broker_uri amqp://guest:guest@broker:5672/%2F
 
 ENV repo_host postgres
 ENV repo_port 5432
-ENV repo_user adaptor
-ENV repo_database vimregistry
-ENV repo_pass repotestadaptor
+ENV repo_user sonatatest
+ENV repo_pass sonata
 
 RUN mvn -q compile assembly:single;
 

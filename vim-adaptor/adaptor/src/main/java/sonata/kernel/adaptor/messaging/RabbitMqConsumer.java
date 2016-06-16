@@ -66,18 +66,20 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       cf.setUri(brokerConfig.getProperty("broker_url"));
       connection = cf.newConnection();
       channel = connection.createChannel();
-      channel.exchangeDeclare(brokerConfig.getProperty("exchange"), "topic");
-      queueName = channel.queueDeclare().getQueue();
+      String exchangeName = brokerConfig.getProperty("exchange");
+      channel.exchangeDeclare(exchangeName, "topic");
+      queueName = exchangeName+"."+"InfraAbstract";
+      channel.queueDeclare(queueName, true, false, false, null);
       System.out.println("[northbound] RabbitMqConsumer - binding queue to topics...");
-      channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
+      channel.queueBind(queueName, exchangeName,
           "platform.management.plugin.register");
       System.out.println("[northbound] RabbitMqConsumer - bound to topic "
           + "\"platform.platform.management.plugin.register\"");
-      channel.queueBind(queueName, brokerConfig.getProperty("exchange"),
+      channel.queueBind(queueName, exchangeName,
           "platform.management.plugin.deregister");
       System.out.println("[northbound] RabbitMqConsumer - bound to topic "
           + "\"platform.platform.management.plugin.deregister\"");
-      channel.queueBind(queueName, brokerConfig.getProperty("exchange"), "infrastructure.#");
+      channel.queueBind(queueName, exchangeName, "infrastructure.#");
       System.out.println("[northbound] RabbitMqConsumer - bound to topic \"infrastructure.#\"");
       consumer = new AdaptorDefaultConsumer(channel, this);
     } catch (IOException e) {
