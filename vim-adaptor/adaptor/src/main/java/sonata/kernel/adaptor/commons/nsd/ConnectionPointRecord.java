@@ -16,60 +16,43 @@
  * 
  */
 
-package sonata.kernel.adaptor.commons;
+package sonata.kernel.adaptor.commons.nsd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.adaptor.commons.nsd.ConnectionPointRecord;
+public class ConnectionPointRecord {
 
-import java.util.ArrayList;
-
-public class VnfcInstance {
 
   private String id;
+  private InterfaceRecord type;
+  @JsonProperty("virtua_link_reference")
+  private String virtualLinkReference;
 
-  @JsonProperty("vim_id")
-  private String vimId;
 
-  @JsonProperty("vc_id")
-  private String vcId;
+  public void setId(String id) {
+    this.id = id;
+  }
 
-  @JsonProperty("connection_points")
-  private ArrayList<ConnectionPointRecord> connectionPoints;
+
+  public void setVirtualLinkReference(String virtualLinkReference) {
+    this.virtualLinkReference = virtualLinkReference;
+  }
 
   public String getId() {
     return id;
   }
 
-  public String getVimId() {
-    return vimId;
-  }
-
-  public String getVcId() {
-    return vcId;
-  }
-
- 
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public void setVimId(String vimId) {
-    this.vimId = vimId;
-  }
-
-  public void setVcId(String vcId) {
-    this.vcId = vcId;
-  }
-
-  public ArrayList<ConnectionPointRecord> getConnectionPoints() {
-    return connectionPoints;
-  }
-
-  public void setConnectionPoints(ArrayList<ConnectionPointRecord> connectionPoints) {
-    this.connectionPoints = connectionPoints;
+  public String getVirtualLinkReference() {
+    return virtualLinkReference;
   }
 
 
+  public InterfaceRecord getType() {
+    return type;
+  }
 
+
+  public void setType(InterfaceRecord type) {
+    this.type = type;
+  }
 }

@@ -91,7 +91,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     }
 
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -191,7 +191,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
 
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"op_sonata\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -342,7 +342,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
 
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\",\"vim_address\":\"143.233.127.3\",\"username\":\"operator\",\"pass\":\"0perat0r\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", \"tenant_ext_router\":\"20790da5-2dc1-4c7e-b9c3-a8d590517563\", \"tenant_ext_net\":\"decd89e2-1681-427e-ac24-6e9f1abb1715\",\"vim_address\":\"openstack.sonata-nfv.eu\",\"username\":\"op_sonata\",\"pass\":\"op_s0n@t@\",\"tenant\":\"op_sonata\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -444,18 +444,37 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     for (VnfRecord vnfr : response.getVnfrs())
       assertTrue(vnfr.getStatus() == Status.offline);
 
-    // Clean the OpenStack tenant from the stack
-    OpenStackHeatClient client =
-        new OpenStackHeatClient("143.233.127.3", "operator", "0perat0r", "operator");
-    String stackName = response.getInstanceName();
+    // // Clean the OpenStack tenant from the stack
+    // OpenStackHeatClient client =
+    // new OpenStackHeatClient("143.233.127.3", "op_sonata", "op_s0n@t@", "op_sonata");
+    // String stackName = response.getInstanceName();
+    //
+    // String deleteStatus = client.deleteStack(stackName, response.getInstanceVimUuid());
+    // assertNotNull("Failed to delete stack", deleteStatus);
+    //
+    // if (deleteStatus != null) {
+    // System.out.println("status of deleted stack " + stackName + " is " + deleteStatus);
+    // assertEquals("DELETED", deleteStatus);
+    // }
 
-    String deleteStatus = client.deleteStack(stackName, response.getInstanceVimUuid());
-    assertNotNull("Failed to delete stack", deleteStatus);
+    output = null;
+    String instanceUuid = response.getNsr().getInstanceUuid();
+    message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + wrUuid + "\"}";
+    topic = "infrastructure.service.remove";
+    ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeInstanceMessage);
 
-    if (deleteStatus != null) {
-      System.out.println("status of deleted stack " + stackName + " is " + deleteStatus);
-      assertEquals("DELETED", deleteStatus);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
     }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
 
     output = null;
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";

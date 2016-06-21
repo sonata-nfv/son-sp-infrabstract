@@ -15,26 +15,27 @@
  *       and limitations under the License.
  * 
  */
+package sonata.kernel.adaptor.commons.nsd;
 
-package sonata.kernel.adaptor.wrapper;
+public class InterfaceRecord {
+  
+  private String address;
+  private String netmaks;
 
-import sonata.kernel.adaptor.DeployServiceCallProcessor;
-import sonata.kernel.adaptor.commons.DeployServiceData;
-
-public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
-
-  /**
-   * general constructor for wrappers of type compute.
-   */
-  public ComputeWrapper() {
-
-    this.setType("compute");
-
+  public String getAddress() {
+    return address;
   }
 
-  public abstract boolean deployService(DeployServiceData data,
-      DeployServiceCallProcessor startServiceCallProcessor) throws Exception;
+  public String getNetmaks() {
+    return netmaks;
+  }
 
-  public abstract boolean removeService(String instanceUuid);
+  public void setAddress(String address) {
+    this.address = address;
+  }
+
+  public void setNetmaks(String netmaks) {
+    this.netmaks = netmaks;
+  }
   
 }

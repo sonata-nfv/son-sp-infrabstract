@@ -33,5 +33,7 @@ public class VlspWrapper extends ComputeWrapper {
     // TODO Auto-generated method stub
     return false;
   }
-
+  public boolean removeService(String instanceUuid){
+    return false;
+  }
 }

@@ -86,6 +86,9 @@ public class AdaptorDispatcher implements Runnable {
   private void handleServiceMsg(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("remove")) {
+      System.out.println("Received a remove-service message on topic: " + message.getTopic());
+      myThreadPool.execute(new RemoveServiceCallProcessor(message, message.getSid(), mux));
     }
   }
 

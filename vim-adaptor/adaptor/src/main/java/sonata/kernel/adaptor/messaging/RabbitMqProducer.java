@@ -46,7 +46,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
     super(muxQueue);
   }
 
-  private final String configFilePath = "/etc/son-mano/broker.config";
+  private final static String configFilePath = "/etc/son-mano/broker.config";
 
   private Connection connection;
   private Properties brokerConfig;

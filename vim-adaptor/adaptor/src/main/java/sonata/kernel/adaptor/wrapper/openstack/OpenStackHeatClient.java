@@ -221,6 +221,7 @@ public class OpenStackHeatClient {
 
       ObjectMapper mapper = new ObjectMapper(new JsonFactory());
       mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+      // System.out.println(compositionString);
       composition = mapper.readValue(compositionString, StackComposition.class);
 
     } catch (Exception e) {

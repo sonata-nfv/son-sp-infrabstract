@@ -27,7 +27,7 @@ public class OpenStackHeatClientTest extends TestCase {
   private void initClient() {
 
     // todo - this needs to be moved to configuration file
-    this.heatClient = new OpenStackHeatClient("143.233.127.3", "operator", "0perat0r", "operator");
+    this.heatClient = new OpenStackHeatClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@", "op_sonata");
   }
 
 

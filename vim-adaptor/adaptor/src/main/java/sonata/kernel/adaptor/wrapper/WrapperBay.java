@@ -120,4 +120,12 @@ public class WrapperBay {
     return (ComputeWrapper) this.repository.readVimEntry(vimUuid).getVimWrapper();
   }
 
+  /**
+   * Return the VimRepo
+   * @return the VimRepo object.
+   */
+  public VimRepo getVimRepo() {
+    return repository;
+  }
+
 }

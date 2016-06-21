@@ -30,6 +30,9 @@ public class TestProducer extends AbstractMsgBusProducer {
     if (message.getTopic().equals("infrastructure.service.deploy")) {
       output.receive(message);
     }
+    if (message.getTopic().equals("infrastructure.service.remove")) {
+      output.receive(message);
+    }
     if (message.getTopic().equals("platform.management.plugin.register")) {
       String registrationResponse = "{\"status\":\"OK\",\"uuid\":\"" + UUID.randomUUID().toString()
           + "\",\"error\":\"none\"}";
