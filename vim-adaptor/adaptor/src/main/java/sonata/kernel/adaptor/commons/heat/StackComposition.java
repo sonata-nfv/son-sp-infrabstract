@@ -27,6 +27,7 @@ public class StackComposition {
   private ArrayList<HeatNet> nets;
   private ArrayList<HeatPort> ports;
   private ArrayList<HeatRouter> routers;
+  //private ArrayList<HeatFloatingIp> ips;
 
   public void setServers(ArrayList<HeatServer> servers) {
     this.servers = servers;

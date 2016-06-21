@@ -50,13 +50,10 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String instanceUuid = jsonObject.getString("instance_uuid");
     String vimUuid = jsonObject.getString("vim_uuid");
-    String output = null;
     ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
     wr.addObserver(this);
     wr.removeService(instanceUuid);
 
-
-    this.sendResponse(output);
     boolean out = true;
     return out;
   }
@@ -70,8 +67,9 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
   @Override
   public void update(Observable observable, Object arg) {
    
-    
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg;  
+    System.out.println("[RemoveService] Received an update:");
+    System.out.println(update.getBody());
     
     sendResponse(update.getBody());
     return;

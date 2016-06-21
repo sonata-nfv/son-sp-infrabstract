@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.adaptor.commons.vnfd.Unit.MemoryUnit;
 
-public class Flavor {
+public class InstanceFlavor {
 
   @JsonProperty("cpu_core")
   private int cpu;
@@ -42,7 +42,6 @@ public class Flavor {
   public int getMemory() {
     return memory;
   }
-
   public MemoryUnit getMemoryUnit() {
     return memoryUnit;
   }

@@ -27,7 +27,7 @@ public class HeatServer {
   @JsonProperty("server_id")
   private String serverId;
 
-  private Flavor flavor;
+  private InstanceFlavor flavor;
 
   public String getServerName() {
     return serverName;
@@ -37,7 +37,7 @@ public class HeatServer {
     return serverId;
   }
 
-  public Flavor getFlavor() {
+  public InstanceFlavor getFlavor() {
     return flavor;
   }
 
@@ -49,7 +49,7 @@ public class HeatServer {
     this.serverId = serverId;
   }
 
-  public void setFlavor(Flavor flavor) {
+  public void setFlavor(InstanceFlavor flavor) {
     this.flavor = flavor;
   }
 

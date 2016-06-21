@@ -467,7 +467,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     while (output == null) {
       synchronized (mon) {
-        mon.wait(1000);
+        mon.wait(2000);
+        System.out.println(output);
       }
     }
 

@@ -61,7 +61,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
 
-    HeatModel stack = translate(data);
+    OpenStackNovaClient nova_client = new OpenStackNovaClient(config.getVimEndpoint().toString(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    ArrayList<Flavor> vimFlavors = nova_client.getFlavors();
+    HeatModel stack = translate(data, vimFlavors);
     HeatTemplate template = new HeatTemplate();
     for (HeatResource resource : stack.getResources()) {
       template.putResource(resource.getResourceName(), resource);
@@ -83,8 +86,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * @param data the service descriptors to translate
    * @return an HeatTemplate object translated from the given descriptors
    */
-  public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data) {
-    HeatModel model = this.translate(data);
+  public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data,
+      ArrayList<Flavor> vimFlavors) {
+    HeatModel model = this.translate(data, vimFlavors);
     HeatTemplate template = new HeatTemplate();
     for (HeatResource resource : model.getResources()) {
       template.putResource(resource.getResourceName(), resource);
@@ -92,7 +96,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return template;
   }
 
-  private HeatModel translate(DeployServiceData data) {
+  private HeatModel translate(DeployServiceData data, ArrayList<Flavor> vimFlavors) {
 
     ServiceDescriptor nsd = data.getNsd();
 
@@ -193,7 +197,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
         double memory = vdu.getResourceRequirements().getMemory().getSize();
         double storage = vdu.getResourceRequirements().getStorage().getSize();
-        String flavorName = this.selectFlavor(vcpu, memory, storage);
+        String flavorName = this.selectFlavor(vcpu, memory, storage, vimFlavors);
         server.putProperty("flavor", flavorName);
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
         for (ConnectionPoint cp : vdu.getConnectionPoints()) {
@@ -317,16 +321,23 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       HashMap<String, Object> floatMapPort = new HashMap<String, Object>();
       floatMapPort.put("get_resource", portName);
       floatingIp.putProperty("port_id", floatMapPort);
-      
+
       model.addResource(floatingIp);
     }
     model.prepare();
     return model;
   }
 
-  private String selectFlavor(int vcpu, double memory, double storage) {
+  private String selectFlavor(int vcpu, double memory, double storage,
+      ArrayList<Flavor> vimFlavors) {
     // TODO Implement a method to select the best flavor respecting the resource constraints.
-    return "m1.small";
+    for (Flavor flavor : vimFlavors) {
+      if (vcpu <= flavor.getVcpu() && (memory * 1024) <= flavor.getRam()
+          && storage <= flavor.getStorage()) {
+        return flavor.getFlavorName();
+      }
+    }
+    return "ERROR";
   }
 
 
@@ -335,7 +346,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public boolean removeService(String instanceUuid) {
 
     VimRepo repo = WrapperBay.getInstance().getVimRepo();
-    System.out.println("Truing to remove NS instance: " + instanceUuid);
+    System.out.println("Trying to remove NS instance: " + instanceUuid);
     String stackName = repo.getServiceVimName(instanceUuid);
     String stackUuid = repo.getServiceVimUuid(instanceUuid);
 

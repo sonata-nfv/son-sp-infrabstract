@@ -15,6 +15,7 @@ import sonata.kernel.adaptor.commons.vnfd.Unit;
 import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.adaptor.wrapper.openstack.Flavor;
 import sonata.kernel.adaptor.wrapper.openstack.OpenStackHeatWrapper;
 
 import java.io.BufferedReader;
@@ -108,8 +109,10 @@ public class HeatTemplateTest extends TestCase {
 
     OpenStackHeatWrapper wrapper = new OpenStackHeatWrapper(config);
 
-    HeatTemplate template = wrapper.getHeatTemplateFromSonataDescriptor(data);
-
+    ArrayList<Flavor> vimFlavors = new ArrayList<Flavor>();
+    vimFlavors.add(new Flavor("m1.small", 2, 2048, 20));
+ 
+    HeatTemplate template = wrapper.getHeatTemplateFromSonataDescriptor(data, vimFlavors);
 
 
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
