@@ -434,7 +434,7 @@ public class VimRepo {
    * 
    * @return an arraylist of String with the UUID of the registered VIMs, null if error occurs
    */
-  public ArrayList<String> getComputeVim() {
+  public ArrayList<String> getComputeVims() {
     ArrayList<String> out = new ArrayList<String>();
 
     Connection connection = null;

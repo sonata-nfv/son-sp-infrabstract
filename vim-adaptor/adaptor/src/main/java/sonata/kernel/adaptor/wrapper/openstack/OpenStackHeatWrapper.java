@@ -31,6 +31,7 @@ import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.adaptor.wrapper.ComputeWrapper;
+import sonata.kernel.adaptor.wrapper.ResourceUtilisation;
 import sonata.kernel.adaptor.wrapper.VimRepo;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
@@ -116,8 +117,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     mgmtSubnet.setType("OS::Neutron::Subnet");
     mgmtSubnet.setName(nsd.getName() + ":mgmt:subnet");
     mgmtSubnet.putProperty("name", nsd.getName() + ":mgmt:subnet");
-    mgmtSubnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
-    mgmtSubnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
+    mgmtSubnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
+    mgmtSubnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
     subnetIndex++;
     HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
     mgmtNetMap.put("get_resource", nsd.getName() + ":mgmt:net");
@@ -175,8 +176,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           subnet.setType("OS::Neutron::Subnet");
           subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet");
           subnet.putProperty("name", vnfd.getName() + ":" + link.getId() + ":subnet");
-          subnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
-          subnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
+          subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
+          subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
           subnetIndex++;
           HashMap<String, Object> netMap = new HashMap<String, Object>();
           netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
@@ -365,6 +366,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
 
     return true;
+  }
+
+  @Override
+  public ResourceUtilisation getResourceUtilisation() {
+    
+    OpenStackNovaClient client = new OpenStackNovaClient(config.getVimEndpoint(), config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    
+    return client.getResourceUtilizasion();
   }
 
 

@@ -436,6 +436,8 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
         retry++;
       }
 
+    System.out.println("DeployServiceResponse: ");
+    System.out.println(output);
     assertTrue("No Deploy service response received", retry < maxRetry);
     DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
     assertTrue(response.getRequestStatus() == Status.offline);
@@ -443,6 +445,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     for (VnfRecord vnfr : response.getVnfrs())
       assertTrue(vnfr.getStatus() == Status.offline);
+    
 
     // // Clean the OpenStack tenant from the stack
     // OpenStackHeatClient client =

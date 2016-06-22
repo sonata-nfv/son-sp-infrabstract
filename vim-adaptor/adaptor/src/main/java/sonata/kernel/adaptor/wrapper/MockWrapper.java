@@ -127,7 +127,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     }
   }
   
-  
+  @Override
   public boolean removeService(String instanceUuid){
     boolean out = true;
     
@@ -137,6 +137,18 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     this.notifyObservers(update);
     
     return out;
+  }
+
+  @Override
+  public ResourceUtilisation getResourceUtilisation() {
+    
+    ResourceUtilisation resources = new ResourceUtilisation();
+    resources.setTotCores(10);
+    resources.setUsedCores(0);
+    resources.setTotMemory(10000);
+    resources.setUsedMemory(0);
+
+    return resources;
   }
 
 }

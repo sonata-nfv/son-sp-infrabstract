@@ -13,6 +13,7 @@ import sonata.kernel.adaptor.commons.Status;
 import sonata.kernel.adaptor.commons.VduRecord;
 import sonata.kernel.adaptor.commons.VnfRecord;
 import sonata.kernel.adaptor.commons.VnfcInstance;
+import sonata.kernel.adaptor.commons.heat.HeatNet;
 import sonata.kernel.adaptor.commons.heat.HeatPort;
 import sonata.kernel.adaptor.commons.heat.HeatServer;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
@@ -193,15 +194,18 @@ public class DeployServiceFsm implements Runnable {
         for (ConnectionPoint cp : referenceVdu.getConnectionPoints()) {
           ConnectionPointRecord cpr = new ConnectionPointRecord();
           cpr.setId(cp.getId());
-          cpr.setVirtualLinkReference(cp.getVirtualLinkReference());
 
-          // add each composition.ports information in the response. The IP (and maybe MAC address)ù
+          // add each composition.ports information in the response. The IP, the netmask (and maybe MAC address)
           for (HeatPort port : composition.getPorts()) {
             if (port.getPortName().equals(referenceVnf.getName() + ":" + cp.getId())) {
               InterfaceRecord ip = new InterfaceRecord();
-              ip.setAddress(port.getIpAddress());
-              // TODO we need to add the netmask to the information retrieved from the ports
-              ip.setNetmaks("255.255.255.0");
+              if (port.getFloatinIp() != null) {
+                ip.setAddress(port.getFloatinIp());
+              } else {
+                ip.setAddress(port.getIpAddress());
+                ip.setNetmask("255.255.255.0");
+              
+              } 
               cpr.setType(ip);
               break;
             }
@@ -223,10 +227,9 @@ public class DeployServiceFsm implements Runnable {
       System.out.println("[OS-Deploy-FSM]   response created");
       // System.out.println("body");
 
-      WrapperBay.getInstance().getVimRepo().writeInstanceEntry(
-          response.getNsr().getInstanceUuid(), response.getInstanceVimUuid(),
-          response.getInstanceVimUuid());
-      
+      WrapperBay.getInstance().getVimRepo().writeInstanceEntry(response.getNsr().getInstanceUuid(),
+          response.getInstanceVimUuid(), response.getInstanceVimUuid());
+
       WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
       wrapper.markAsChanged();
       wrapper.notifyObservers(update);

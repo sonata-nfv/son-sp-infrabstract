@@ -36,4 +36,17 @@ public class VlspWrapper extends ComputeWrapper {
   public boolean removeService(String instanceUuid){
     return false;
   }
+
+  @Override
+  public ResourceUtilisation getResourceUtilisation() {
+    
+    ResourceUtilisation resources = new ResourceUtilisation();
+    resources.setTotCores(10);
+    resources.setUsedCores(0);
+    resources.setTotMemory(10000);
+    resources.setUsedMemory(0);
+
+    return resources;
+  }
+  
 }

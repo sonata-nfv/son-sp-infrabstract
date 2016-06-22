@@ -52,7 +52,7 @@ public class OpenStackNovaClientTest extends TestCase {
    */
   public void testFlavors() throws IOException {
 
-    System.out.println(novaClient);
+    //System.out.println(novaClient);
     // list the flavors
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     System.out.println(vimFlavors);
@@ -60,5 +60,16 @@ public class OpenStackNovaClientTest extends TestCase {
 
   }
 
-
+  /**
+   * Test a limits get.
+   *
+   * @throws IOException
+   */
+  public void testLimits() throws IOException {
+    System.out.println(novaClient);
+    ResourceUtilisation resources = novaClient.getResourceUtilizasion();
+    System.out.println(resources);
+    assertNotNull("Failed to retrieve limits", resources);
+  }
+ 
 }

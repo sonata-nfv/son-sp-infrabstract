@@ -2,6 +2,13 @@ package sonata.kernel.adaptor.wrapper.openstack;
 
 
 
+import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import sonata.kernel.adaptor.commons.heat.StackComposition;
+import sonata.kernel.adaptor.wrapper.ResourceUtilisation;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -49,6 +56,51 @@ public class OpenStackNovaClient {
     this.tenantName = tenantName;
   }
 
+  /**
+   * Get the limits and utilisation
+   * 
+   * @return a ResourceUtilisation Object with the limits and utilization for this tenant
+   */
+  public ResourceUtilisation getResourceUtilizasion() {
+    ResourceUtilisation resources = null;
+
+    System.out.println("Getting limits");
+
+    try {
+      // Call the python client for the flavors of the openstack instance
+      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_NOVA_API_PY,
+          "--configuration", url, userName, password, tenantName, "--limits");
+      
+      Process process = processBuilder.start();
+      
+      BufferedReader stdInput = new BufferedReader(
+          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
+
+      StringBuilder builder = new StringBuilder();
+      String string = null;
+      while ((string = stdInput.readLine()) != null) {
+        System.out.println("Line: " + string);
+        builder.append(string);
+      }
+      stdInput.close();
+      process.destroy();
+      String resourceString = builder.toString();
+      resourceString = resourceString.replace("'", "\"");
+      System.out.println("Resources: " + resourceString);
+      ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+      mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+      // System.out.println(compositionString);
+      resources = mapper.readValue(resourceString, ResourceUtilisation.class);
+
+
+    } catch (Exception e) {
+      System.out
+          .println("Runtime error getting openstack limits" + " error message: " + e.getMessage());
+      e.printStackTrace();
+    }
+
+    return resources;
+  }
 
   /**
    * Get the flavors.

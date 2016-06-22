@@ -14,6 +14,12 @@ def autheticate(cip, username, password, tenant):
     nova = nova_client.Client(2.1, auth_token=auth_token,auth_url=auth_url,project_id=project_name)
     return nova
 
+def limit_list(nova):
+    limits = nova.limits.get()
+    abs = {l.name: l.value for l in limits.absolute}
+    print {'memory_used':abs['totalRAMUsed'],'memory_total':abs['maxTotalRAMSize'],'CPU_used':abs['totalCoresUsed'],'CPU_total':abs['maxTotalCores']}
+
+
 #def flavor_list(vcpus,memory,storage):
 def flavor_list(nova):
     flavors = nova.flavors.list()
@@ -24,6 +30,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("-cf", "--configuration", nargs=4, help="pass the cloud url, username, password and tenant name",
                     required=True)  # option configurations, needs to be required
 parser.add_argument("-f", "--flavors", action='store_true',help="list flavors") # option flavors
+parser.add_argument("-l", "--limits", action='store_true',help="list limits") # option limits
 
 args = parser.parse_args()  # pass the arguments to the parser
 
@@ -38,3 +45,5 @@ if args.configuration:  # actions to do from the configuration
 if args.flavors:  # Actions to be taken when given argument --flavor
     flavor_list(nova)
 
+if args.limits:
+    limit_list(nova)

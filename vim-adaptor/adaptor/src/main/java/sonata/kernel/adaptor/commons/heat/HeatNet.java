@@ -38,7 +38,6 @@ public class HeatNet {
   @JsonProperty("segmentation_id")
   private int segmentationId;
 
-  @JsonProperty("CIDR")
   private String cidr;
 
   public String getNetName() {

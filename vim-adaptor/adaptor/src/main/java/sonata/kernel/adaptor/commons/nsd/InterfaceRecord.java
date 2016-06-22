@@ -17,25 +17,29 @@
  */
 package sonata.kernel.adaptor.commons.nsd;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class InterfaceRecord {
   
+  @JsonProperty("address")
   private String address;
-  private String netmaks;
+  @JsonProperty("netmask")
+  private String netmask;
 
   public String getAddress() {
     return address;
   }
 
-  public String getNetmaks() {
-    return netmaks;
+  public String getNetmask() {
+    return netmask;
   }
 
   public void setAddress(String address) {
     this.address = address;
   }
 
-  public void setNetmaks(String netmaks) {
-    this.netmaks = netmaks;
+  public void setNetmask(String netmask) {
+    this.netmask = netmask;
   }
   
 }

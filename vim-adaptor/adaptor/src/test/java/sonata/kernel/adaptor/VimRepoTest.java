@@ -44,7 +44,7 @@ public class VimRepoTest extends TestCase {
   public void testCreateVimRepo() {
 
     repoInstance = new VimRepo();
-    ArrayList<String> vims = repoInstance.getComputeVim();
+    ArrayList<String> vims = repoInstance.getComputeVims();
     assertNotNull("Unable to retrieve an empy list. SQL exception occurred", vims);
   }
 
@@ -100,7 +100,7 @@ public class VimRepoTest extends TestCase {
     assertTrue("Unable to write a vim", out);
 
 
-    ArrayList<String> vims = repoInstance.getComputeVim();
+    ArrayList<String> vims = repoInstance.getComputeVims();
    
     assertTrue("Db doesn't contain all the stored VIMs", vims.contains("1"));
     assertTrue("Db doesn't contain all the stored VIMs", vims.contains("2"));
