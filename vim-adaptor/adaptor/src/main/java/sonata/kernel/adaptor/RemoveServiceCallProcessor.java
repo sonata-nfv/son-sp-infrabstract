@@ -66,11 +66,11 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
 
   @Override
   public void update(Observable observable, Object arg) {
-   
-    WrapperStatusUpdate update = (WrapperStatusUpdate) arg;  
+
+    WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
     System.out.println("[RemoveService] Received an update:");
     System.out.println(update.getBody());
-    
+
     sendResponse(update.getBody());
     return;
   }

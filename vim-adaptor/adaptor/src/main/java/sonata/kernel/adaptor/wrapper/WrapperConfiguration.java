@@ -30,7 +30,7 @@ public class WrapperConfiguration {
   private String uuid;
   private String tenantExtNet;
   private String tenantExtRouter;
-  
+
 
   public String getWrapperType() {
     return wrapperType;

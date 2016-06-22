@@ -101,7 +101,7 @@ public class VimRepoTest extends TestCase {
 
 
     ArrayList<String> vims = repoInstance.getComputeVims();
-   
+
     assertTrue("Db doesn't contain all the stored VIMs", vims.contains("1"));
     assertTrue("Db doesn't contain all the stored VIMs", vims.contains("2"));
     assertTrue("Db doesn't contain all the stored VIMs", vims.contains("3"));

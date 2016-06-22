@@ -49,7 +49,7 @@ public class VnfcInstance {
     return vcId;
   }
 
- 
+
   public void setId(String id) {
     this.id = id;
   }

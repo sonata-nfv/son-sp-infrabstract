@@ -42,6 +42,7 @@ public class InstanceFlavor {
   public int getMemory() {
     return memory;
   }
+
   public MemoryUnit getMemoryUnit() {
     return memoryUnit;
   }

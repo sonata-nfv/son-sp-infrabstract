@@ -37,7 +37,7 @@ import java.util.Properties;
 public class VimRepo {
 
 
-  private final static String configFilePath = "/etc/son-mano/postgres.config";
+  private static final String configFilePath = "/etc/son-mano/postgres.config";
   private Properties prop;
 
   /**
@@ -120,8 +120,8 @@ public class VimRepo {
         stmt = connection.createStatement();
         sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," + " TYPE TEXT NOT NULL,"
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
-            + " TENANT TEXT NOT NULL," + " TENANT_EXT_NET TEXT NOT NULL," + " TENANT_EXT_ROUTER TEXT NOT NULL," + " PASS TEXT,"
-            + " AUTHKEY TEXT);";
+            + " TENANT TEXT NOT NULL," + " TENANT_EXT_NET TEXT NOT NULL,"
+            + " TENANT_EXT_ROUTER TEXT NOT NULL," + " PASS TEXT," + " AUTHKEY TEXT);";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE instances " + "(INSTANCE_UUID TEXT PRIMARY KEY NOT NULL,"
             + " VIM_UUID TEXT NOT NULL," + " VIM_NAME TEXT NOT NULL);";
@@ -185,9 +185,9 @@ public class VimRepo {
               prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      String sql =
-          "INSERT INTO VIM (UUID, TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, TENANT_EXT_NET, TENANT_EXT_ROUTER, PASS, AUTHKEY) "
-              + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+      String sql = "INSERT INTO VIM "
+          + "(UUID, TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, TENANT_EXT_NET, TENANT_EXT_ROUTER, PASS, AUTHKEY) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
       stmt.setString(2, record.getConfig().getWrapperType());
@@ -299,9 +299,9 @@ public class VimRepo {
       connection.setAutoCommit(false);
 
 
-      String sql =
-          "UPDATE VIM set (TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, TENANT_EXT_NET, TENANT_EXT_ROUTER, PASS, AUTHKEY) "
-              + "VALUES (?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
+      String sql = "UPDATE VIM set "
+          + "(TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, TENANT_EXT_NET, TENANT_EXT_ROUTER, PASS, AUTHKEY) "
+          + "VALUES (?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
 
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, record.getConfig().getWrapperType());

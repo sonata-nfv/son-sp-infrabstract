@@ -46,7 +46,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
     super(muxQueue);
   }
 
-  private final static String configFilePath = "/etc/son-mano/broker.config";
+  private static final String configFilePath = "/etc/son-mano/broker.config";
 
   private Connection connection;
   private Properties brokerConfig;
@@ -100,8 +100,8 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
           .correlationId(message.getSid()).build();
       channel.basicPublish(exchangeName, message.getTopic(), properties,
           message.getBody().getBytes("UTF-8"));
-//      System.out.println(
-//          "[northbound] - sending message: " + message + "\n\r - Properties:" + properties);
+      // System.out.println(
+      // "[northbound] - sending message: " + message + "\n\r - Properties:" + properties);
     } catch (Exception e) {
       e.printStackTrace();
       out = false;

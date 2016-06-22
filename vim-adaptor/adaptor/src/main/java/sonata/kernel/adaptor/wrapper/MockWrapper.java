@@ -126,22 +126,22 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       e.printStackTrace();
     }
   }
-  
+
   @Override
-  public boolean removeService(String instanceUuid){
+  public boolean removeService(String instanceUuid) {
     boolean out = true;
-    
+
     this.setChanged();
     String body = "{\"status\":\"SUCCESS\"}";
     WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
     this.notifyObservers(update);
-    
+
     return out;
   }
 
   @Override
   public ResourceUtilisation getResourceUtilisation() {
-    
+
     ResourceUtilisation resources = new ResourceUtilisation();
     resources.setTotCores(10);
     resources.setUsedCores(0);

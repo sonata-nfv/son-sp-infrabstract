@@ -41,7 +41,8 @@ public class OpenStackNovaClientTest extends TestCase {
   private void initClient() {
 
     // todo - this needs to be moved to configuration file
-    this.novaClient = new OpenStackNovaClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@", "op_sonata");
+    this.novaClient =
+        new OpenStackNovaClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@", "op_sonata");
   }
 
 
@@ -52,7 +53,7 @@ public class OpenStackNovaClientTest extends TestCase {
    */
   public void testFlavors() throws IOException {
 
-    //System.out.println(novaClient);
+    // System.out.println(novaClient);
     // list the flavors
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     System.out.println(vimFlavors);
@@ -71,5 +72,5 @@ public class OpenStackNovaClientTest extends TestCase {
     System.out.println(resources);
     assertNotNull("Failed to retrieve limits", resources);
   }
- 
+
 }

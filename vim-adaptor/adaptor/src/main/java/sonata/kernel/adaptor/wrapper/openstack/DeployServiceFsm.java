@@ -195,7 +195,8 @@ public class DeployServiceFsm implements Runnable {
           ConnectionPointRecord cpr = new ConnectionPointRecord();
           cpr.setId(cp.getId());
 
-          // add each composition.ports information in the response. The IP, the netmask (and maybe MAC address)
+          // add each composition.ports information in the response. The IP, the netmask (and maybe
+          // MAC address)
           for (HeatPort port : composition.getPorts()) {
             if (port.getPortName().equals(referenceVnf.getName() + ":" + cp.getId())) {
               InterfaceRecord ip = new InterfaceRecord();
@@ -204,8 +205,8 @@ public class DeployServiceFsm implements Runnable {
               } else {
                 ip.setAddress(port.getIpAddress());
                 ip.setNetmask("255.255.255.0");
-              
-              } 
+
+              }
               cpr.setType(ip);
               break;
             }

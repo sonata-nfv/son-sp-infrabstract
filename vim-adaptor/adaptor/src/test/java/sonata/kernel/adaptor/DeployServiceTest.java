@@ -445,7 +445,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
 
     for (VnfRecord vnfr : response.getVnfrs())
       assertTrue(vnfr.getStatus() == Status.offline);
-    
+
 
     // // Clean the OpenStack tenant from the stack
     // OpenStackHeatClient client =

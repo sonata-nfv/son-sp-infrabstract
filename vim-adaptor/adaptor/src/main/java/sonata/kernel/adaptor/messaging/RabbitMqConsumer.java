@@ -40,7 +40,7 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
-  private final static String configFilePath = "/etc/son-mano/broker.config";
+  private static final String configFilePath = "/etc/son-mano/broker.config";
   DefaultConsumer consumer;
   private Connection connection;
   private Channel channel;

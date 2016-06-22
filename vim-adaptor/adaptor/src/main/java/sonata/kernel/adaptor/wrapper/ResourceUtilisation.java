@@ -15,6 +15,7 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -62,10 +63,10 @@ public class ResourceUtilisation {
     this.totMemory = totMemory;
   }
 
-
-  public String toString(){
-    String s = "totMem: "+totMemory+"/usedMem: "+usedMemory+"\n";
-    s+= "totCore: "+totCores+"/usedMem: "+usedCores;
-    return s;
+  @Override
+  public String toString() {
+    String out = "totMem: " + totMemory + "/usedMem: " + usedMemory + "\n";
+    out += "totCore: " + totCores + "/usedMem: " + usedCores;
+    return out;
   }
 }
