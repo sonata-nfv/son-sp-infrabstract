@@ -20,7 +20,7 @@ package sonata.kernel.adaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.adaptor.commons.nsd.ConnectionPoint;
+import sonata.kernel.adaptor.commons.nsd.ConnectionPointRecord;
 
 import java.util.ArrayList;
 
@@ -35,7 +35,7 @@ public class VnfcInstance {
   private String vcId;
 
   @JsonProperty("connection_points")
-  private ArrayList<ConnectionPoint> connectionPoints;
+  private ArrayList<ConnectionPointRecord> connectionPoints;
 
   public String getId() {
     return id;
@@ -49,10 +49,7 @@ public class VnfcInstance {
     return vcId;
   }
 
-  public ArrayList<ConnectionPoint> getConnectionPoints() {
-    return connectionPoints;
-  }
-
+ 
   public void setId(String id) {
     this.id = id;
   }
@@ -65,9 +62,14 @@ public class VnfcInstance {
     this.vcId = vcId;
   }
 
-  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+  public ArrayList<ConnectionPointRecord> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPointRecord> connectionPoints) {
     this.connectionPoints = connectionPoints;
   }
+
 
 
 }

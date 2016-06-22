@@ -40,7 +40,7 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
-  private final String configFilePath = "/etc/son-mano/broker.config";
+  private final static String configFilePath = "/etc/son-mano/broker.config";
   DefaultConsumer consumer;
   private Connection connection;
   private Channel channel;
@@ -68,15 +68,13 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       channel = connection.createChannel();
       String exchangeName = brokerConfig.getProperty("exchange");
       channel.exchangeDeclare(exchangeName, "topic");
-      queueName = exchangeName+"."+"InfraAbstract";
+      queueName = exchangeName + "." + "InfraAbstract";
       channel.queueDeclare(queueName, true, false, false, null);
       System.out.println("[northbound] RabbitMqConsumer - binding queue to topics...");
-      channel.queueBind(queueName, exchangeName,
-          "platform.management.plugin.register");
+      channel.queueBind(queueName, exchangeName, "platform.management.plugin.register");
       System.out.println("[northbound] RabbitMqConsumer - bound to topic "
           + "\"platform.platform.management.plugin.register\"");
-      channel.queueBind(queueName, exchangeName,
-          "platform.management.plugin.deregister");
+      channel.queueBind(queueName, exchangeName, "platform.management.plugin.deregister");
       System.out.println("[northbound] RabbitMqConsumer - bound to topic "
           + "\"platform.platform.management.plugin.deregister\"");
       channel.queueBind(queueName, exchangeName, "infrastructure.#");

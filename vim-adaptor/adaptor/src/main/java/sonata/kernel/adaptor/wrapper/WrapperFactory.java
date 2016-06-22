@@ -47,11 +47,11 @@ public class WrapperFactory {
   private static ComputeWrapper createComputeWrapper(WrapperConfiguration config) {
     ComputeWrapper output = null;
 
-    if (config.getVimType().equals(ComputeVimType.VLSP.toString())) {
+    if (config.getVimVendor().equals(ComputeVimType.VLSP.toString())) {
       output = new VlspWrapper(config);
-    } else if (config.getVimType().equals(ComputeVimType.MOCK.toString())) {
+    } else if (config.getVimVendor().equals(ComputeVimType.MOCK.toString())) {
       output = new MockWrapper(config);
-    } else if (config.getVimType().equals(ComputeVimType.OPENSTACKHEAT.toString())) {
+    } else if (config.getVimVendor().equals(ComputeVimType.OPENSTACKHEAT.toString())) {
       output = new OpenStackHeatWrapper(config);
     }
     // TODO Extends with all wrappers or refactor with a more OO type

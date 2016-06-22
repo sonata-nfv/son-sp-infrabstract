@@ -13,13 +13,20 @@ import sonata.kernel.adaptor.commons.Status;
 import sonata.kernel.adaptor.commons.VduRecord;
 import sonata.kernel.adaptor.commons.VnfRecord;
 import sonata.kernel.adaptor.commons.VnfcInstance;
+import sonata.kernel.adaptor.commons.heat.HeatNet;
+import sonata.kernel.adaptor.commons.heat.HeatPort;
 import sonata.kernel.adaptor.commons.heat.HeatServer;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
 import sonata.kernel.adaptor.commons.heat.StackComposition;
+import sonata.kernel.adaptor.commons.nsd.ConnectionPoint;
+import sonata.kernel.adaptor.commons.nsd.ConnectionPointRecord;
+import sonata.kernel.adaptor.commons.nsd.InterfaceRecord;
 import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.UUID;
 
@@ -181,20 +188,47 @@ public class DeployServiceFsm implements Runnable {
         vnfc.setVcId(server.getServerId());
         VnfDescriptor referenceVnf = vnfTable.get(vnfName);
         VirtualDeploymentUnit referenceVdu = vduTable.get(vnfName + ":" + vduName);
-        vnfc.setConnectionPoints(referenceVdu.getConnectionPoints());
+
+        ArrayList<ConnectionPointRecord> cpRecords = new ArrayList<ConnectionPointRecord>();
+
+        for (ConnectionPoint cp : referenceVdu.getConnectionPoints()) {
+          ConnectionPointRecord cpr = new ConnectionPointRecord();
+          cpr.setId(cp.getId());
+
+          // add each composition.ports information in the response. The IP, the netmask (and maybe MAC address)
+          for (HeatPort port : composition.getPorts()) {
+            if (port.getPortName().equals(referenceVnf.getName() + ":" + cp.getId())) {
+              InterfaceRecord ip = new InterfaceRecord();
+              if (port.getFloatinIp() != null) {
+                ip.setAddress(port.getFloatinIp());
+              } else {
+                ip.setAddress(port.getIpAddress());
+                ip.setNetmask("255.255.255.0");
+              
+              } 
+              cpr.setType(ip);
+              break;
+            }
+          }
+
+          cpRecords.add(cpr);
+        }
+        vnfc.setConnectionPoints(cpRecords);
         VduRecord referenceVdur =
             vdurTable.get(referenceVnf.getName() + ":" + referenceVdu.getId());
         referenceVdur.addVnfcInstance(vnfc);
       }
 
-      // TODO add each composition.ports information in the response. The IP (and maybe MAC address)
-      // fields in the NSR are still to be defined
 
       response.setInstanceName(stackName);
       response.setInstanceVimUuid(instanceUuid);
       response.setStatus(Status.offline);
       String body = mapper.writeValueAsString(response);
       System.out.println("[OS-Deploy-FSM]   response created");
+      // System.out.println("body");
+
+      WrapperBay.getInstance().getVimRepo().writeInstanceEntry(response.getNsr().getInstanceUuid(),
+          response.getInstanceVimUuid(), response.getInstanceVimUuid());
 
       WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
       wrapper.markAsChanged();

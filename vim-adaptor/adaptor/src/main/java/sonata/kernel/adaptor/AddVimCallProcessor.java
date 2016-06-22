@@ -59,14 +59,19 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
     String tenantName = jsonObject.getString("tenant");
-
+    String tenantExtNet = jsonObject.getString("tenant_ext_net");
+    String tenantExtRouter = jsonObject.getString("tenant_ext_router");
+    
     config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType(wrapperType);
-    config.setVimType(vimType);
+    config.setVimVendor(vimType);
     config.setVimEndpoint(vimEndpoint);
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);
     config.setTenantName(tenantName);
+    config.setTenantExtNet(tenantExtNet);
+    config.setTenantExtRouter(tenantExtRouter);
+    
     String output = null;
     boolean out = true;
     if (wrapperType.equals("compute")) {

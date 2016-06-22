@@ -21,13 +21,16 @@ package sonata.kernel.adaptor.wrapper;
 public class WrapperConfiguration {
 
   private String vimEndpoint;
-  private String vimType;
+  private String vimVendor;
   private String wrapperType;
   private String authUserName;
   private String tenantName;
   private String authPass;
   private String authKey;
   private String uuid;
+  private String tenantExtNet;
+  private String tenantExtRouter;
+  
 
   public String getWrapperType() {
     return wrapperType;
@@ -45,12 +48,12 @@ public class WrapperConfiguration {
     this.vimEndpoint = vimEndpoint2;
   }
 
-  public String getVimType() {
-    return vimType;
+  public String getVimVendor() {
+    return vimVendor;
   }
 
-  public void setVimType(String vimType) {
-    this.vimType = vimType;
+  public void setVimVendor(String vimType) {
+    this.vimVendor = vimType;
   }
 
   public String getAuthUserName() {
@@ -91,7 +94,7 @@ public class WrapperConfiguration {
 
     out += "sid: " + uuid + "\n\r";
     out += "WrapperType: " + wrapperType + "\n\r";
-    out += "VimType: " + vimType + "\n\r";
+    out += "VimType: " + vimVendor + "\n\r";
     out += "VimEndpount: " + vimEndpoint + "\n\r";
     out += "User: " + authUserName + "\n\r";
     out += "pass: " + authPass + "\n\r";
@@ -104,6 +107,22 @@ public class WrapperConfiguration {
 
   public void setTenantName(String tenantName) {
     this.tenantName = tenantName;
+  }
+
+  public String getTenantExtNet() {
+    return tenantExtNet;
+  }
+
+  public void setTenantExtNet(String tenantExtNet) {
+    this.tenantExtNet = tenantExtNet;
+  }
+
+  public String getTenantExtRouter() {
+    return tenantExtRouter;
+  }
+
+  public void setTenantExtRouter(String tenantExtRouter) {
+    this.tenantExtRouter = tenantExtRouter;
   }
 
 }

@@ -6,7 +6,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import sonata.kernel.adaptor.commons.VimResources;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.adaptor.wrapper.ComputeWrapper;
+import sonata.kernel.adaptor.wrapper.ResourceUtilisation;
 import sonata.kernel.adaptor.wrapper.WrapperBay;
 
 import java.util.ArrayList;
@@ -27,6 +30,25 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
 
     ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
+    ArrayList<VimResources> resList = new ArrayList<VimResources>();
+    for (String vimUuid : vimList) {
+      ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
+
+      ResourceUtilisation resource = wr.getResourceUtilisation();
+      
+      if (resource != null) {
+
+        VimResources bodyElement = new VimResources();
+
+        bodyElement.setVimUuid(vimUuid);
+        bodyElement.setCoreTotal(resource.getTotCores());
+        bodyElement.setCoreUsed(resource.getUsedCores());
+        bodyElement.setMemoryTotal(resource.getTotMemory());
+        bodyElement.setMemoryUsed(resource.getUsedMemory());
+        resList.add(bodyElement);
+      }
+    }
+
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
@@ -34,7 +56,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
     mapper.setSerializationInclusion(Include.NON_NULL);
     String body;
     try {
-      body = mapper.writeValueAsString(vimList);
+      body = mapper.writeValueAsString(resList);
 
 
       ServicePlatformMessage response = new ServicePlatformMessage(body, "application/x-yaml",

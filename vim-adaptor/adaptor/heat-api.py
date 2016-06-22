@@ -6,7 +6,7 @@ import yaml
 from subprocess import call
 
 
-def get_stack_list(heat):
+def get_stack_list(heat): #deprecated 
 
     stacks = heat.stacks.list()
     while True:
@@ -16,7 +16,7 @@ def get_stack_list(heat):
         except StopIteration:
             break
 
-def autheticate(cip, username, password, tenant):
+def autheticate(cip, username, password, tenant): #function used to autheticate with keystone
     auth_url = 'http://'+ str(cip)+':5000/v2.0'
     keystone = client.Client(username=username, password=password, tenant_name=tenant, auth_url=auth_url)
     auth_token = keystone.auth_ref['token']['id']
@@ -25,7 +25,7 @@ def autheticate(cip, username, password, tenant):
     heat = Client('1', endpoint=heat_url, token=auth_token)
     return heat
 
-def write_server(server,stackname):
+def write_server(server,stackname):  #function used to write needed server's info to dictionary
     s_id = server['physical_resource_id']
     server = heat.resources.get(stackname, server['resource_name']).to_dict()
     s_name =server['attributes']['name']
@@ -33,32 +33,29 @@ def write_server(server,stackname):
     server_dict = {'server_name': s_name, 'server_id' : s_id}
     return server_dict
 
-def write_port(in_rec,stackname):
+def write_port(in_rec,stackname): #function used to write needed port's info to dictionary
     in_rec = heat.resources.get(stackname, in_rec['resource_name']).to_dict()
+    #obj = open ('portcheck.json', 'a+')
+    #json.dump(in_rec, obj,indent=4, sort_keys=True)
     ip1 = in_rec['attributes']['fixed_ips']
     ip = ip1[0]['ip_address']
-    port_dict = {'port_name': in_rec['attributes']['name'], 'MAC_address' : in_rec['attributes']['mac_address'], 'IP_address' : ip }
+    port_id = in_rec['attributes']['id']
+    port_dict = {'name': in_rec['attributes']['name'], 'MAC_address' : in_rec['attributes']['mac_address'], 'IP_address' : ip , 'port_id': port_id}
     return port_dict
 
-def write_net(in_rec,stackname):
+def write_net(in_rec,stackname): #function used to write needed net's info to dictionary
     in_rec = heat.resources.get(stackname, in_rec['resource_name']).to_dict()   
     seg_id = in_rec['attributes']['provider:segmentation_id']
     net_name = in_rec['attributes']['name']
     net_id = in_rec['attributes']['id']
     sub_id = in_rec['attributes']['subnets']
     sub_name = net_name.replace(':net',':subnet')
+    obj = open ('tested.json', 'a+')
+    json.dump(in_rec, obj,indent=4, sort_keys=True)
     net_dict = {'segmentation_id': seg_id, 'net_name': net_name, 'net_id' : net_id, 'subnet_id': sub_id[0], 'subnet_name': sub_name}
     return net_dict
 
-def write_router(in_rec,stackname):
-    router_id = in_rec['physical_resource_id']
-    in_rec = heat.resources.get(stackname, in_rec['resource_name']).to_dict()
-    router_name = in_rec['attributes']['name']
-    router_dic = {'router_name': router_name, 'router_id': router_id}
-    return router_dic
-    
-
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser()   #here starts the good part. handler for arguments passed 
 parser.add_argument("-cf", "--configuration", nargs=4, help="pass the cloud url, username, password and tenant name",
                     required=True)  # option configurations, needs to be required
 parser.add_argument("-d", "--delete", help="delete this stack")  # option delete
@@ -87,28 +84,61 @@ if args.status:  # action from the status option
 if args.composition:  # action from the status option
     stackname = args.composition
     stack = heat.resources.list(stackname)
-    open('returned.json', 'w+').close()
-    server_list = []
+    server_list = []   #instantiate lists 
     port_list = []
     net_list = []
+    floatingIP_list = []
     router_list = []
-    for item in stack:
+    subnet_list = []
+    for item in stack:    #for every resource item in the stack
         stack_res = item.to_dict()
         type_res = stack_res['resource_type']
         if type_res=='OS::Nova::Server':
             dic = write_server(stack_res,stackname)
             server_list.append(dic)
+        elif type_res=='OS::Neutron::Subnet':
+            in_rec = heat.resources.get(stackname, stack_res['resource_name']).to_dict() #get more info of the resource 
+            cidr = in_rec['attributes']['cidr']
+            sub_id = in_rec['physical_resource_id']
+            subnet_dic = {'subnet_id': sub_id, 'cidr': cidr}
+            subnet_list.append(subnet_dic)
+        elif type_res=='OS::Neutron::FloatingIP':
+            in_rec = heat.resources.get(stackname, stack_res['resource_name']).to_dict()
+            float_ip = in_rec['attributes']['floating_ip_address']
+            port_id = in_rec['attributes']['port_id']
+            floating_dic = {'floating_ip':  float_ip , 'port_id': port_id}
+            floatingIP_list.append(floating_dic)
         elif type_res == 'OS::Neutron::Port':
             port_dic = write_port(stack_res,stackname)
             port_list.append(port_dic)
         elif type_res == 'OS::Neutron::Router':
-            router_dic = write_router(stack_res,stackname)
+            router_dic = {'router_name': stack_res['resource_name'], 'router_id': stack_res['physical_resource_id']}
+            in_rec = heat.resources.get(stackname, stack_res['resource_name']).to_dict()
             router_list.append(router_dic)
-        elif type_res == 'OS::Neutron::Net':
+        elif type_res == 'OS::Neutron::Net': 
             net_dic = write_net(stack_res,stackname)
             net_list.append(net_dic)
 
+    servers_dict = {'servers' : server_list }
+    for port in port_list:
+        for fl in floatingIP_list:
+            if fl['port_id'] == port['port_id']:
+                port['floating_IP']= fl['floating_ip']
+                floatingIP_list.remove(fl)
+        del port['port_id']
+    ports_dict = { 'ports' : port_list }
+
+    for net in net_list:
+        for sub in subnet_list:
+            if sub['subnet_id'] == net['subnet_id']:
+                net['cidr']=sub['cidr']
+                subnet_list.remove(sub)
+    net_dict = { 'nets': net_list}
+    
+    routers_dict = { 'routers' : router_list }
     final_dict = {'servers' : server_list, 'ports' : port_list, 'nets': net_list, 'routers': router_list }
+    #obj = open ('output.json','w')   #write to file...used fo testing
+    # json.dump(final_dict, obj,indent=4, sort_keys=True)
     print final_dict
 
 if args.delete:  # Actions to do if given argument --delete
@@ -118,7 +148,7 @@ if args.delete:  # Actions to do if given argument --delete
 
 if args.create:  # Actions to be taken when given argument --create
     stackname = args.create[0]
-    yamlh = args.create[1]
+    yamlh = args.create[1]         
     stack = heat.stacks.create(stack_name=stackname, template=yamlh)
     uid = stack['stack']['id']
     print uid

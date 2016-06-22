@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class HeatPort {
 
-  @JsonProperty("port_name")
+  @JsonProperty("name")
   private String portName;
 
   @JsonProperty("IP_address")
@@ -30,6 +30,9 @@ public class HeatPort {
 
   @JsonProperty("MAC_address")
   private String macAddress;
+  
+  @JsonProperty("floating_IP")
+  private String floatinIp;
 
   public String getPortName() {
     return portName;
@@ -53,6 +56,14 @@ public class HeatPort {
 
   public void setMacAddress(String macAddress) {
     this.macAddress = macAddress;
+  }
+
+  public String getFloatinIp() {
+    return floatinIp;
+  }
+
+  public void setFloatinIp(String floatinIp) {
+    this.floatinIp = floatinIp;
   }
 
 

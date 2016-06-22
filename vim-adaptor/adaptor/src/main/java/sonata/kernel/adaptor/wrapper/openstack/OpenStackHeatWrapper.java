@@ -31,7 +31,11 @@ import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.adaptor.wrapper.ComputeWrapper;
+import sonata.kernel.adaptor.wrapper.ResourceUtilisation;
+import sonata.kernel.adaptor.wrapper.VimRepo;
+import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -58,7 +62,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
 
-    HeatModel stack = translate(data);
+    OpenStackNovaClient nova_client = new OpenStackNovaClient(config.getVimEndpoint().toString(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    ArrayList<Flavor> vimFlavors = nova_client.getFlavors();
+    HeatModel stack = translate(data, vimFlavors);
     HeatTemplate template = new HeatTemplate();
     for (HeatResource resource : stack.getResources()) {
       template.putResource(resource.getResourceName(), resource);
@@ -80,8 +87,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * @param data the service descriptors to translate
    * @return an HeatTemplate object translated from the given descriptors
    */
-  public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data) {
-    HeatModel model = this.translate(data);
+  public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data,
+      ArrayList<Flavor> vimFlavors) {
+    HeatModel model = this.translate(data, vimFlavors);
     HeatTemplate template = new HeatTemplate();
     for (HeatResource resource : model.getResources()) {
       template.putResource(resource.getResourceName(), resource);
@@ -89,7 +97,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return template;
   }
 
-  private HeatModel translate(DeployServiceData data) {
+  private HeatModel translate(DeployServiceData data, ArrayList<Flavor> vimFlavors) {
 
     ServiceDescriptor nsd = data.getNsd();
 
@@ -109,13 +117,24 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     mgmtSubnet.setType("OS::Neutron::Subnet");
     mgmtSubnet.setName(nsd.getName() + ":mgmt:subnet");
     mgmtSubnet.putProperty("name", nsd.getName() + ":mgmt:subnet");
-    mgmtSubnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
-    mgmtSubnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
+    mgmtSubnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
+    mgmtSubnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
     subnetIndex++;
     HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
     mgmtNetMap.put("get_resource", nsd.getName() + ":mgmt:net");
     mgmtSubnet.putProperty("network", mgmtNetMap);
     model.addResource(mgmtSubnet);
+
+
+    // Internal mgmt router interface
+    HeatResource mgmtRouterInterface = new HeatResource();
+    mgmtRouterInterface.setType("OS::Neutron::RouterInterface");
+    mgmtRouterInterface.setName(nsd.getName() + ":mgmt:internal");
+    HashMap<String, Object> mgmtSubnetMapInt = new HashMap<String, Object>();
+    mgmtSubnetMapInt.put("get_resource", nsd.getName() + ":mgmt:subnet");
+    mgmtRouterInterface.putProperty("subnet", mgmtSubnetMapInt);
+    mgmtRouterInterface.putProperty("router", this.config.getTenantExtRouter());
+    model.addResource(mgmtRouterInterface);
 
 
     // One virtual router for NSD virtual links connecting VNFS (no router for external virtual
@@ -141,6 +160,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
     }
 
+    ArrayList<String> mgmtPortNames = new ArrayList<String>();
+
     for (VnfDescriptor vnfd : vnfs) {
       // One network and subnet for vnf virtual link (mgmt links handled later)
       ArrayList<VnfVirtualLink> links = vnfd.getVirtualLinks();
@@ -155,8 +176,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           subnet.setType("OS::Neutron::Subnet");
           subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet");
           subnet.putProperty("name", vnfd.getName() + ":" + link.getId() + ":subnet");
-          subnet.putProperty("cidr", "10.10." + subnetIndex + ".0/24");
-          subnet.putProperty("gateway_ip", "10.10." + subnetIndex + ".1");
+          subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
+          subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
           subnetIndex++;
           HashMap<String, Object> netMap = new HashMap<String, Object>();
           netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
@@ -166,6 +187,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
       // One virtual machine for each VDU
       // TODO revise after seeing flavour definition in SON-SCHEMA
+
       for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
         HeatResource server = new HeatResource();
         server.setType("OS::Nova::Server");
@@ -176,7 +198,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
         double memory = vdu.getResourceRequirements().getMemory().getSize();
         double storage = vdu.getResourceRequirements().getStorage().getSize();
-        String flavorName = this.selectFlavor(vcpu, memory, storage);
+        String flavorName = this.selectFlavor(vcpu, memory, storage, vimFlavors);
         server.putProperty("flavor", flavorName);
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
         for (ConnectionPoint cp : vdu.getConnectionPoints()) {
@@ -202,8 +224,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             HashMap<String, Object> netMap = new HashMap<String, Object>();
             netMap.put("get_resource", nsd.getName() + ":mgmt:net");
             port.putProperty("network", netMap);
-
             model.addResource(port);
+            mgmtPortNames.add(vnfd.getName() + ":" + cp.getId());
+
             // add the port to the server
             HashMap<String, Object> n1 = new HashMap<String, Object>();
             HashMap<String, Object> portMap = new HashMap<String, Object>();
@@ -287,13 +310,70 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     }
 
+    for (String portName : mgmtPortNames) {
+      // allocate floating IP
+      HeatResource floatingIp = new HeatResource();
+      floatingIp.setType("OS::Neutron::FloatingIP");
+      floatingIp.setName("floating_" + portName);
+
+
+      floatingIp.putProperty("floating_network_id", this.config.getTenantExtNet());
+
+      HashMap<String, Object> floatMapPort = new HashMap<String, Object>();
+      floatMapPort.put("get_resource", portName);
+      floatingIp.putProperty("port_id", floatMapPort);
+
+      model.addResource(floatingIp);
+    }
     model.prepare();
     return model;
   }
 
-  private String selectFlavor(int vcpu, double memory, double storage) {
+  private String selectFlavor(int vcpu, double memory, double storage,
+      ArrayList<Flavor> vimFlavors) {
     // TODO Implement a method to select the best flavor respecting the resource constraints.
-    return "m1.small";
+    for (Flavor flavor : vimFlavors) {
+      if (vcpu <= flavor.getVcpu() && (memory * 1024) <= flavor.getRam()
+          && storage <= flavor.getStorage()) {
+        return flavor.getFlavorName();
+      }
+    }
+    return "ERROR";
+  }
+
+
+
+  @Override
+  public boolean removeService(String instanceUuid) {
+
+    VimRepo repo = WrapperBay.getInstance().getVimRepo();
+    System.out.println("Trying to remove NS instance: " + instanceUuid);
+    String stackName = repo.getServiceVimName(instanceUuid);
+    String stackUuid = repo.getServiceVimUuid(instanceUuid);
+
+    OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+
+    String output = client.deleteStack(stackName, stackUuid);
+
+    if (output.equals("DELETED")) {
+      repo.removeInstanceEntry(instanceUuid);
+      this.setChanged();
+      String body = "{\"status\":\"SUCCESS\"}";
+      WrapperStatusUpdate update = new WrapperStatusUpdate(null, "SUCCESS", body);
+      this.notifyObservers(update);
+    }
+
+
+    return true;
+  }
+
+  @Override
+  public ResourceUtilisation getResourceUtilisation() {
+    
+    OpenStackNovaClient client = new OpenStackNovaClient(config.getVimEndpoint(), config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    
+    return client.getResourceUtilizasion();
   }
 
 

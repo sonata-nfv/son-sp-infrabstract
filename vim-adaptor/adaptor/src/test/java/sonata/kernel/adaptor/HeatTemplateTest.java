@@ -15,6 +15,7 @@ import sonata.kernel.adaptor.commons.vnfd.Unit;
 import sonata.kernel.adaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.adaptor.wrapper.openstack.Flavor;
 import sonata.kernel.adaptor.wrapper.openstack.OpenStackHeatWrapper;
 
 import java.io.BufferedReader;
@@ -100,11 +101,18 @@ public class HeatTemplateTest extends TestCase {
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);
     data.addVnfDescriptor(vnfd3);
+    
+    WrapperConfiguration config = new WrapperConfiguration();
+    
+    config.setTenantExtNet("decd89e2-1681-427e-ac24-6e9f1abb1715");
+    config.setTenantExtRouter("20790da5-2dc1-4c7e-b9c3-a8d590517563");
 
-    OpenStackHeatWrapper wrapper = new OpenStackHeatWrapper(new WrapperConfiguration());
+    OpenStackHeatWrapper wrapper = new OpenStackHeatWrapper(config);
 
-    HeatTemplate template = wrapper.getHeatTemplateFromSonataDescriptor(data);
-
+    ArrayList<Flavor> vimFlavors = new ArrayList<Flavor>();
+    vimFlavors.add(new Flavor("m1.small", 2, 2048, 20));
+ 
+    HeatTemplate template = wrapper.getHeatTemplateFromSonataDescriptor(data, vimFlavors);
 
 
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
@@ -155,7 +163,7 @@ public class HeatTemplateTest extends TestCase {
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
     String body = mapper.writeValueAsString(template);
-    System.out.println(body);
+    //System.out.println(body);
     assertNotNull(body);
 
   }

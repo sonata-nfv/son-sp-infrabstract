@@ -6,6 +6,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import sonata.kernel.adaptor.commons.VimResources;
 import sonata.kernel.adaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.adaptor.messaging.TestConsumer;
 import sonata.kernel.adaptor.messaging.TestProducer;
@@ -13,7 +14,6 @@ import sonata.kernel.adaptor.wrapper.WrapperBay;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -91,7 +91,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
    */
   public void testCreateVLSPWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -147,7 +147,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
    */
   public void testCreateMOCKWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+        "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -225,7 +225,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
 
     for (int i = 0; i < 3; i++) {
-      String message = "{\"wr_type\":\"compute\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
+      String message = "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
           + i + ":9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
       ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
           topic, UUID.randomUUID().toString(), topic);
@@ -259,10 +259,18 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
       }
     }
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    String[] vimList = mapper.readValue(output, String[].class);
+    VimResources[] vimList = mapper.readValue(output, VimResources[].class);
     ArrayList<String> vimArrayList = new ArrayList<String>();
-    Collections.addAll(vimArrayList, vimList);
-
+    
+    for(VimResources resource: vimList){
+      assertNotNull("Resource not set 'VIM UUID'",resource.getVimUuid());
+      assertNotNull("Resource not set 'tot_cores'",resource.getCoreTotal());
+      assertNotNull("Resource not set 'used_cores'",resource.getCoreUsed());
+      assertNotNull("Resource not set 'tot_mem'",resource.getMemoryTotal());
+      assertNotNull("Resource not set 'used_mem'",resource.getMemoryUsed());
+      vimArrayList.add(resource.getVimUuid());
+    }
+    
     for (String returnUiid : vimUuid) {
       assertTrue("VIMs List doesn't contain vim " + returnUiid, vimArrayList.contains(returnUiid));
     }
@@ -297,7 +305,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
       }
     }
 
-    vimList = mapper.readValue(output, String[].class);
+    vimList = mapper.readValue(output, VimResources[].class);
 
     assertTrue("VIMs List not empty", vimList.length == 0);
 

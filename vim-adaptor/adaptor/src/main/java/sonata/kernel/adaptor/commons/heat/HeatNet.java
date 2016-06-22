@@ -38,5 +38,54 @@ public class HeatNet {
   @JsonProperty("segmentation_id")
   private int segmentationId;
 
+  private String cidr;
+
+  public String getNetName() {
+    return netName;
+  }
+
+  public String getNetId() {
+    return netId;
+  }
+
+  public String getSubnetName() {
+    return subnetName;
+  }
+
+  public String getSubnetId() {
+    return subnetId;
+  }
+
+  public int getSegmentationId() {
+    return segmentationId;
+  }
+
+  public String getCidr() {
+    return cidr;
+  }
+
+  public void setNetName(String netName) {
+    this.netName = netName;
+  }
+
+  public void setNetId(String netId) {
+    this.netId = netId;
+  }
+
+  public void setSubnetName(String subnetName) {
+    this.subnetName = subnetName;
+  }
+
+  public void setSubnetId(String subnetId) {
+    this.subnetId = subnetId;
+  }
+
+  public void setSegmentationId(int segmentationId) {
+    this.segmentationId = segmentationId;
+  }
+
+  public void setCidr(String cidr) {
+    this.cidr = cidr;
+  }
 
 }

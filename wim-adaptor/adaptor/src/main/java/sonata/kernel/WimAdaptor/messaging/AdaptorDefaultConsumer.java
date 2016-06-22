@@ -1,0 +1,62 @@
+/**
+ * @author Dario Valocchi (Ph.D.)
+ * @mail d.valocchi@ucl.ac.uk
+ * 
+ *       Copyright 2016 [Dario Valocchi]
+ * 
+ *       Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ *       except in compliance with the License. You may obtain a copy of the License at
+ * 
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ *       Unless required by applicable law or agreed to in writing, software distributed under the
+ *       License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ *       either express or implied. See the License for the specific language governing permissions
+ *       and limitations under the License.
+ * 
+ */
+
+package sonata.kernel.WimAdaptor.messaging;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.DefaultConsumer;
+import com.rabbitmq.client.Envelope;
+
+import sonata.kernel.WimAdaptor.WimAdaptorCore;
+
+import java.io.IOException;
+
+
+public class AdaptorDefaultConsumer extends DefaultConsumer {
+
+  private RabbitMqConsumer msgBusConsumer;
+
+  /**
+   * Create a RabbitMq consumer for the MsgBus plug-in.
+   * 
+   * @param channel the RabbitMQ channel for this consumer
+   * @param msgBusConsumer the Adaptor consumer, responsible for msg processing and queuing.
+   */
+  public AdaptorDefaultConsumer(Channel channel, RabbitMqConsumer msgBusConsumer) {
+    super(channel);
+    this.msgBusConsumer = msgBusConsumer;
+  }
+
+  @Override
+  public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
+      byte[] body) throws IOException {
+    String message = new String(body, "UTF-8");
+    // System.out
+    // .println(" [northbound] Received message:" + message + " on " + envelope.getRoutingKey());
+    System.out.println(" [northbound] Received message on " + envelope.getRoutingKey());
+    if (properties != null && properties.getAppId() != null
+        && !properties.getAppId().equals(WimAdaptorCore.APP_ID)) {
+      this.msgBusConsumer.processMessage(message, properties.getContentType(),
+          envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
+    } else {
+      System.out.println("  [northbound] Message ignored: " + properties);
+    }
+  }
+
+}
