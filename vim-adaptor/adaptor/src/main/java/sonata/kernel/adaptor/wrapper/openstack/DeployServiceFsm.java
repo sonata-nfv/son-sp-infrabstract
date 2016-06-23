@@ -145,7 +145,6 @@ public class DeployServiceFsm implements Runnable {
       // Create the response
       System.out.println("[OS-Deploy-FSM]   creating deploy response");
       ServiceRecord sr = new ServiceRecord();
-      sr.setUuid(data.getNsd().getUuid());
       sr.setStatus(Status.offline);
       sr.setInstanceUuid(data.getNsd().getInstanceUuid());
       for (VnfDescriptor vnf : data.getVnfdList()) {
