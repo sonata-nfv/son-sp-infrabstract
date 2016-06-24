@@ -146,7 +146,8 @@ public class DeployServiceFsm implements Runnable {
       System.out.println("[OS-Deploy-FSM]   creating deploy response");
       ServiceRecord sr = new ServiceRecord();
       sr.setStatus(Status.offline);
-      sr.setInstanceUuid(data.getNsd().getInstanceUuid());
+      sr.setDescriptorVersion("nsr-schema-01");
+      sr.setId(data.getNsd().getInstanceUuid());
       for (VnfDescriptor vnf : data.getVnfdList()) {
         vnfTable.put(vnf.getName(), vnf);
         VnfRecord vnfr = new VnfRecord();
@@ -157,12 +158,12 @@ public class DeployServiceFsm implements Runnable {
         vnfr.setStatus(Status.offline);
         // TODO addresses are added next step
         // vnfr.setVnfAddress("0.0.0.0");
-        vnfr.setUuid(vnf.getUuid());
-        vnfr.setInstanceUuid(vnf.getInstanceUuid());
+
+        vnfr.setId(vnf.getInstanceUuid());
         for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
           vduTable.put(vnf.getName() + ":" + vdu.getId(), vdu);
           VduRecord vdur = new VduRecord();
-          vdur.setId(UUID.randomUUID().toString());
+          vdur.setId(vdu.getId());
           vdur.setNumberOfInstances(1);
           vdur.setVduReference(vnf.getName() + ":" + vdu.getId());
           vdur.setVmImage(vdu.getVmImage());
@@ -227,7 +228,7 @@ public class DeployServiceFsm implements Runnable {
       System.out.println("[OS-Deploy-FSM]   response created");
       // System.out.println("body");
 
-      WrapperBay.getInstance().getVimRepo().writeInstanceEntry(response.getNsr().getInstanceUuid(),
+      WrapperBay.getInstance().getVimRepo().writeInstanceEntry(response.getNsr().getId(),
           response.getInstanceVimUuid(), response.getInstanceVimUuid());
 
       WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);

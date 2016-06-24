@@ -26,12 +26,9 @@ public class VnfRecord {
 
   @JsonProperty("descriptor_version")
   private String descriptorVersion;
-  private String uuid;
   private Status status;
-  @JsonProperty("instance_uuid")
-  private String instanceUuid;
-  @JsonProperty("vnf_address")
-  private String vnfAddress;
+  @JsonProperty("id")
+  private String id;
 
   @JsonProperty("descriptor_reference_vendor")
   private String descriptorReferenceVendor;
@@ -52,17 +49,11 @@ public class VnfRecord {
     this.virtualDeploymentUnits.add(unit);
   }
 
-  public String getUuid() {
-    return uuid;
-  }
 
   public Status getStatus() {
     return status;
   }
 
-  public String getVnfAddress() {
-    return vnfAddress;
-  }
 
   public String getDescriptorVersion() {
     return descriptorVersion;
@@ -72,29 +63,16 @@ public class VnfRecord {
     this.descriptorVersion = descriptorVersion;
   }
 
-  public void setUuid(String id) {
-    this.uuid = id;
-  }
 
   public void setStatus(Status status) {
     this.status = status;
   }
 
-  public void setVnfAddress(String address) {
-    this.vnfAddress = address;
-  }
 
   public ArrayList<VduRecord> getVirtualDeploymentUnits() {
     return virtualDeploymentUnits;
   }
 
-  public String getInstanceUuid() {
-    return instanceUuid;
-  }
-
-  public void setInstanceUuid(String instanceUuid) {
-    this.instanceUuid = instanceUuid;
-  }
 
   public void setVirtualDeploymentUnits(ArrayList<VduRecord> virtualDeploymentUnits) {
     this.virtualDeploymentUnits = virtualDeploymentUnits;
@@ -122,6 +100,14 @@ public class VnfRecord {
 
   public void setDescriptorReferenceVersion(String descriptorReferenceVersion) {
     this.descriptorReferenceVersion = descriptorReferenceVersion;
+  }
+
+  public String getId() {
+    return id;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
 

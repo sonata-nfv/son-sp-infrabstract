@@ -22,11 +22,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServiceRecord {
 
-  @JsonProperty("descriptor_reference")
-  private String descriptorReference;
+  @JsonProperty("descriptor_version")
+  private String descriptorVersion;
   private Status status;
-  @JsonProperty("instance_uuid")
-  private String instanceUuid;
+  @JsonProperty("id")
+  private String id;
 
 
 
@@ -39,22 +39,22 @@ public class ServiceRecord {
     this.status = status;
   }
 
-  public String getInstanceUuid() {
-    return instanceUuid;
+  public String getId() {
+    return id;
   }
 
-  public void setInstanceUuid(String instanceUuid) {
-    this.instanceUuid = instanceUuid;
-  }
-
-
-  public String getDescriptorReference() {
-    return descriptorReference;
+  public void setId(String id) {
+    this.id = id;
   }
 
 
-  public void setDescriptorReference(String descriptorReference) {
-    this.descriptorReference = descriptorReference;
+  public String getDescriptorVersion() {
+    return descriptorVersion;
+  }
+
+
+  public void setDescriptorVersion(String descriptorVersion) {
+    this.descriptorVersion = descriptorVersion;
   }
 
 

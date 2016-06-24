@@ -461,7 +461,7 @@ public class DeployServiceTest extends TestCase implements MessageReceiver {
     // }
 
     output = null;
-    String instanceUuid = response.getNsr().getInstanceUuid();
+    String instanceUuid = response.getNsr().getId();
     message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + wrUuid + "\"}";
     topic = "infrastructure.service.remove";
     ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
