@@ -92,7 +92,10 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       VnfRecord vnfr = new VnfRecord();
       vnfr.setDescriptorVersion("vnfr-schema-01");
       vnfr.setStatus(Status.normal_operation);
-
+      vnfr.setDescriptorReferenceName(vnf.getName());
+      vnfr.setDescriptorReferenceVendor(vnf.getVendor());
+      vnfr.setDescriptorReferenceVersion(vnf.getVersion());
+      
       vnfr.setId(vnf.getInstanceUuid());
       for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
         VduRecord vdur = new VduRecord();
