@@ -225,8 +225,9 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
 
 
     for (int i = 0; i < 3; i++) {
-      String message = "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
-          + i + ":9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+      String message =
+          "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
+              + i + ":9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
       ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
           topic, UUID.randomUUID().toString(), topic);
 
@@ -261,16 +262,16 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     VimResources[] vimList = mapper.readValue(output, VimResources[].class);
     ArrayList<String> vimArrayList = new ArrayList<String>();
-    
-    for(VimResources resource: vimList){
-      assertNotNull("Resource not set 'VIM UUID'",resource.getVimUuid());
-      assertNotNull("Resource not set 'tot_cores'",resource.getCoreTotal());
-      assertNotNull("Resource not set 'used_cores'",resource.getCoreUsed());
-      assertNotNull("Resource not set 'tot_mem'",resource.getMemoryTotal());
-      assertNotNull("Resource not set 'used_mem'",resource.getMemoryUsed());
+
+    for (VimResources resource : vimList) {
+      assertNotNull("Resource not set 'VIM UUID'", resource.getVimUuid());
+      assertNotNull("Resource not set 'tot_cores'", resource.getCoreTotal());
+      assertNotNull("Resource not set 'used_cores'", resource.getCoreUsed());
+      assertNotNull("Resource not set 'tot_mem'", resource.getMemoryTotal());
+      assertNotNull("Resource not set 'used_mem'", resource.getMemoryUsed());
       vimArrayList.add(resource.getVimUuid());
     }
-    
+
     for (String returnUiid : vimUuid) {
       assertTrue("VIMs List doesn't contain vim " + returnUiid, vimArrayList.contains(returnUiid));
     }

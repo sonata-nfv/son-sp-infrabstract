@@ -1,3 +1,21 @@
+/**
+ * @author Bruno Vidalenc (Ph.D.)
+ * @mail bruno.vidalenc@thalesgroup.com
+ *
+ *       Copyright 2016 [bruno Vidalenc]
+ *
+ *       Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
+ *       except in compliance with the License. You may obtain a copy of the License at
+ *
+ *       http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *       Unless required by applicable law or agreed to in writing, software distributed under the
+ *       License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
+ *       either express or implied. See the License for the specific language governing permissions
+ *       and limitations under the License.
+ *
+ */
+
 package sonata.kernel.adaptor.wrapper.openstack;
 
 
@@ -15,21 +33,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
- * Created by Bruno Vidalenc on 06/01/16.
- * 
  * This class wraps a Nova Client written in python when instantiated the onnection details of the
- * OpenStack instance should be provided
+ * OpenStack instance should be provided.
+ * 
  */
 public class OpenStackNovaClient {
 
-  /**
-   * 
-   */
   private static final String ADAPTOR_NOVA_API_PY = "/adaptor/nova-api.py";
 
-  /**
-   * 
-   */
   private static final String PYTHON2_7 = "python2.7";
 
   private String url; // url of the OpenStack Client
@@ -57,7 +68,7 @@ public class OpenStackNovaClient {
   }
 
   /**
-   * Get the limits and utilisation
+   * Get the limits and utilisation.
    * 
    * @return a ResourceUtilisation Object with the limits and utilization for this tenant
    */
@@ -70,9 +81,9 @@ public class OpenStackNovaClient {
       // Call the python client for the flavors of the openstack instance
       ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_NOVA_API_PY,
           "--configuration", url, userName, password, tenantName, "--limits");
-      
+
       Process process = processBuilder.start();
-      
+
       BufferedReader stdInput = new BufferedReader(
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
 

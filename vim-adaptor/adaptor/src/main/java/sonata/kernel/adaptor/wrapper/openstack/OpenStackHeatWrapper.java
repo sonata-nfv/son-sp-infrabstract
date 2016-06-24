@@ -62,9 +62,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
 
-    OpenStackNovaClient nova_client = new OpenStackNovaClient(config.getVimEndpoint().toString(),
+    OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
-    ArrayList<Flavor> vimFlavors = nova_client.getFlavors();
+    ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     HeatModel stack = translate(data, vimFlavors);
     HeatTemplate template = new HeatTemplate();
     for (HeatResource resource : stack.getResources()) {
@@ -370,9 +370,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   @Override
   public ResourceUtilisation getResourceUtilisation() {
-    
-    OpenStackNovaClient client = new OpenStackNovaClient(config.getVimEndpoint(), config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
-    
+
+    OpenStackNovaClient client = new OpenStackNovaClient(config.getVimEndpoint(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+
     return client.getResourceUtilizasion();
   }
 

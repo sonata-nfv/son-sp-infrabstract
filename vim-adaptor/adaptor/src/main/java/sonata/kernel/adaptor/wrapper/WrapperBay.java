@@ -105,8 +105,8 @@ public class WrapperBay {
    * @return an arraylist of String representing the UUIDs of the registered VIMs
    */
   public ArrayList<String> getComputeWrapperList() {
-    return repository.getComputeVims();   
-    
+    return repository.getComputeVims();
+
   }
 
   /**
@@ -123,6 +123,7 @@ public class WrapperBay {
 
   /**
    * Return the VimRepo
+   * 
    * @return the VimRepo object.
    */
   public VimRepo getVimRepo() {

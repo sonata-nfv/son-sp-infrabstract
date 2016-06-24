@@ -106,7 +106,7 @@ public class ServiceDescriptorTest extends TestCase {
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
-    //System.out.println(mapper.writeValueAsString(data));
+    // System.out.println(mapper.writeValueAsString(data));
 
   }
 

@@ -33,13 +33,14 @@ public class VlspWrapper extends ComputeWrapper {
     // TODO Auto-generated method stub
     return false;
   }
-  public boolean removeService(String instanceUuid){
+
+  public boolean removeService(String instanceUuid) {
     return false;
   }
 
   @Override
   public ResourceUtilisation getResourceUtilisation() {
-    
+
     ResourceUtilisation resources = new ResourceUtilisation();
     resources.setTotCores(10);
     resources.setUsedCores(0);
@@ -48,5 +49,5 @@ public class VlspWrapper extends ComputeWrapper {
 
     return resources;
   }
-  
+
 }

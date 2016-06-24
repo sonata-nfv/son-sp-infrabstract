@@ -86,21 +86,19 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     DeployServiceResponse response = new DeployServiceResponse();
     response.setStatus(Status.normal_operation);
     ServiceRecord sr = new ServiceRecord();
-    sr.setUuid(data.getNsd().getUuid());
     sr.setStatus(Status.normal_operation);
-    sr.setInstanceUuid(data.getNsd().getInstanceUuid());
+    sr.setId(data.getNsd().getInstanceUuid());
     for (VnfDescriptor vnf : data.getVnfdList()) {
       VnfRecord vnfr = new VnfRecord();
       vnfr.setDescriptorVersion("vnfr-schema-01");
       vnfr.setStatus(Status.normal_operation);
-      vnfr.setVnfAddress("0.0.0.0");
-      vnfr.setUuid(vnf.getUuid());
-      vnfr.setInstanceUuid(vnf.getInstanceUuid());
+
+      vnfr.setId(vnf.getInstanceUuid());
       for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
         VduRecord vdur = new VduRecord();
-        vdur.setId(UUID.randomUUID().toString());
+        vdur.setId(vdu.getId());
         vdur.setNumberOfInstances(1);
-        vdur.setVduReference(vnf.getName() + ":" + vdu.getId() + ":" + vdur.getId());
+        vdur.setVduReference(vnf.getName() + ":" + vdu.getId());
         vdur.setVmImage(vdu.getVmImage());
         vnfr.addVdu(vdur);
       }
@@ -126,22 +124,22 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       e.printStackTrace();
     }
   }
-  
+
   @Override
-  public boolean removeService(String instanceUuid){
+  public boolean removeService(String instanceUuid) {
     boolean out = true;
-    
+
     this.setChanged();
     String body = "{\"status\":\"SUCCESS\"}";
     WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
     this.notifyObservers(update);
-    
+
     return out;
   }
 
   @Override
   public ResourceUtilisation getResourceUtilisation() {
-    
+
     ResourceUtilisation resources = new ResourceUtilisation();
     resources.setTotCores(10);
     resources.setUsedCores(0);

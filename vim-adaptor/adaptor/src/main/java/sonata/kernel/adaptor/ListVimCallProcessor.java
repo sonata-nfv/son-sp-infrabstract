@@ -35,7 +35,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
 
       ResourceUtilisation resource = wr.getResourceUtilisation();
-      
+
       if (resource != null) {
 
         VimResources bodyElement = new VimResources();

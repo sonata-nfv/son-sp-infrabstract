@@ -15,12 +15,13 @@
  *       and limitations under the License.
  * 
  */
+
 package sonata.kernel.adaptor.commons.nsd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class InterfaceRecord {
-  
+
   @JsonProperty("address")
   private String address;
   @JsonProperty("netmask")
@@ -41,5 +42,5 @@ public class InterfaceRecord {
   public void setNetmask(String netmask) {
     this.netmask = netmask;
   }
-  
+
 }

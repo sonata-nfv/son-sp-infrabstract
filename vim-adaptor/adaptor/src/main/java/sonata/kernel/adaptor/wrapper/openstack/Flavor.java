@@ -15,11 +15,20 @@
  *       and limitations under the License.
  *
  */
+
 package sonata.kernel.adaptor.wrapper.openstack;
 
 public class Flavor {
 
 
+  /**
+   * Basic flavor constructor.
+   * 
+   * @param flavorName the name of this flavor
+   * @param vcpu the number of virtual cpu
+   * @param ram the amount of memory
+   * @param storage the amount of storage
+   */
   public Flavor(String flavorName, int vcpu, int ram, int storage) {
     super();
     this.flavorName = flavorName;

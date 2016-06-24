@@ -44,7 +44,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 
   @Override
   public boolean process(ServicePlatformMessage message) {
-    
+
     // process json message to extract the new Wrapper configurations
     // and ask the bay to create and register it
 
@@ -61,7 +61,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String tenantName = jsonObject.getString("tenant");
     String tenantExtNet = jsonObject.getString("tenant_ext_net");
     String tenantExtRouter = jsonObject.getString("tenant_ext_router");
-    
+
     config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType(wrapperType);
     config.setVimVendor(vimType);
@@ -71,7 +71,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     config.setTenantName(tenantName);
     config.setTenantExtNet(tenantExtNet);
     config.setTenantExtRouter(tenantExtRouter);
-    
+
     String output = null;
     boolean out = true;
     if (wrapperType.equals("compute")) {
@@ -84,7 +84,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
       output = "";
     }
     this.sendResponse(output);
-   
+
     return out;
   }
 

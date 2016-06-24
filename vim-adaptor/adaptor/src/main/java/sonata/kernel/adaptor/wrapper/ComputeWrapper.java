@@ -35,7 +35,8 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   /**
    * Remove a service instance from this VIM.
    * 
-   * @param data the payload containing the service descriptors and the metadata for this service deployment
+   * @param data the payload containing the service descriptors and the metadata for this service
+   *        deployment
    * @param startServiceCallProcessor the call processor to notify on completion
    * 
    * @return true if the remove process has started correctly, false otherwise
@@ -51,13 +52,13 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * @return true if the remove process has started correctly, false otherwise
    */
   public abstract boolean removeService(String instanceUuid);
-  
-  
+
+
   /**
    * Get the resource utilisation status of this compute VIM.
    * 
    * @return the ResourceUtilisation object representing the status of this VIM
    */
   public abstract ResourceUtilisation getResourceUtilisation();
-  
+
 }

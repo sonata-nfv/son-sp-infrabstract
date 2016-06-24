@@ -30,7 +30,7 @@ public class HeatPort {
 
   @JsonProperty("MAC_address")
   private String macAddress;
-  
+
   @JsonProperty("floating_IP")
   private String floatinIp;
 
