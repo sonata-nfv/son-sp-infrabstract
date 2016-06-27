@@ -62,10 +62,14 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     try {
       data = mapper.readValue(message.getBody(), DeployServiceData.class);
+      System.out.println("[DeployServiceCallProcessor] - payload parsed");
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(data.getVimUuid());
+      System.out.println("[DeployServiceCallProcessor] - Wrapper retrieved");
       if (wr == null) {
+        System.out.println("[DeployServiceCallProcessor] - Error retrieving the wrapper");
+        
         this.sendToMux(
-            new ServicePlatformMessage("\"status\":\"error\",\"message\":\"VIM not found\"",
+            new ServicePlatformMessage("{\"status\":\"error\",\"message\":\"VIM not found\"}",
                 "application/json", message.getReplyTo(), message.getSid(), null));
         out = false;
       } else {
@@ -75,8 +79,11 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
         wr.deployService(data, this);
       }
     } catch (Exception e) {
-      // TODO handle possible exception from the wrapper and from the de-serialization and send
-      // report to the SLM;
+      System.out.println("[DeployServiceCallProcessor] - Error deployng the system:");
+      System.out.println("[DeployServiceCallProcessor] - " + e.getMessage() );
+      this.sendToMux(
+          new ServicePlatformMessage("{\"status\":\"error\",\"message\":\"Deployment Error\"}",
+              "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }
     return out;
