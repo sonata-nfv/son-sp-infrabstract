@@ -314,7 +314,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       // allocate floating IP
       HeatResource floatingIp = new HeatResource();
       floatingIp.setType("OS::Neutron::FloatingIP");
-      floatingIp.setName("floating_" + portName);
+      floatingIp.setName("floating:" + portName);
 
 
       floatingIp.putProperty("floating_network_id", this.config.getTenantExtNet());
