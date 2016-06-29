@@ -100,7 +100,14 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
         ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
             "application/x-yaml", "infrastructure.service.deploy", this.getSid(), null);
         this.sendToMux(response);
+      } else if (update.getStatus().equals("ERROR")) {
+        System.out.println("[DeployServiceCallProcessor] - Deploy " + this.getSid() + " error");
+        System.out.println("[DeployServiceCallProcessor] - Pushing back error...");
+        ServicePlatformMessage response = new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\""+update.getBody()+"\"}",
+            "application/x-yaml", "infrastructure.service.deploy", this.getSid(), null);
+        this.sendToMux(response);
       }
+      
       // TODO handle other update from the compute wrapper;
     }
   }

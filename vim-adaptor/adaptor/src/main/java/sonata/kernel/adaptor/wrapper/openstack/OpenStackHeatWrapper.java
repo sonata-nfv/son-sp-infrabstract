@@ -37,6 +37,7 @@ import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
+import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -65,17 +66,26 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
-    HeatModel stack = translate(data, vimFlavors);
-    HeatTemplate template = new HeatTemplate();
-    for (HeatResource resource : stack.getResources()) {
-      template.putResource(resource.getResourceName(), resource);
+    HeatModel stack;
+    try {
+      stack = translate(data, vimFlavors);
+
+      HeatTemplate template = new HeatTemplate();
+      for (HeatResource resource : stack.getResources()) {
+        template.putResource(resource.getResourceName(), resource);
+      }
+      DeployServiceFsm fsm =
+          new DeployServiceFsm(this, client, startServiceCallProcessor.getSid(), data, template);
+
+      Thread thread = new Thread(fsm);
+      thread.start();
+    } catch (Exception e) {
+      this.setChanged();
+      WrapperStatusUpdate errorUpdate =
+          new WrapperStatusUpdate(startServiceCallProcessor.getSid(), "ERROR", e.getMessage());
+      this.notifyObservers(errorUpdate);
+      return false;
     }
-    DeployServiceFsm fsm =
-        new DeployServiceFsm(this, client, startServiceCallProcessor.getSid(), data, template);
-
-    Thread thread = new Thread(fsm);
-    thread.start();
-
 
     return true;
 
@@ -86,9 +96,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * 
    * @param data the service descriptors to translate
    * @return an HeatTemplate object translated from the given descriptors
+   * @throws Exception
    */
   public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data,
-      ArrayList<Flavor> vimFlavors) {
+      ArrayList<Flavor> vimFlavors) throws Exception {
     HeatModel model = this.translate(data, vimFlavors);
     HeatTemplate template = new HeatTemplate();
     for (HeatResource resource : model.getResources()) {
@@ -97,7 +108,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return template;
   }
 
-  private HeatModel translate(DeployServiceData data, ArrayList<Flavor> vimFlavors) {
+  private HeatModel translate(DeployServiceData data, ArrayList<Flavor> vimFlavors)
+      throws Exception {
 
     ServiceDescriptor nsd = data.getNsd();
 
@@ -268,11 +280,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             }
           }
 
+          if (vnfId == null) {
+            throw new Exception("Error binding VNFD.connection_point: Cannot resolve VNFD.name in NSD.network_functions. VNFD.name = "+vnfd.getName()+" - VFND.connection_point = "+cp.getId());
+
+          }
           boolean isInOut = false;
           String nsVirtualLink = null;
-          for (VirtualLink link : nsd.getVirtualLinks()) {
+          boolean isVirtualLinkFound = false;
+          for (VirtualLink link : nsd.getVirtualLinks()) { 
             if (link.getConnectionPointsReference().contains(cp.getId().replace("vnf", vnfId))) {
-
+              isVirtualLinkFound=true;
               for (String cpRef : link.getConnectionPointsReference()) {
                 if (cpRef.startsWith("ns:")) {
                   isInOut = true;
@@ -285,11 +302,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
               break;
             }
           }
-
+          if (!isVirtualLinkFound) {
+            throw new Exception("Error binding VNFD.connection_point: Cannot find NSD.virtual_link attached to VNFD.connection_point. VNFD.connection_point = "+vnfd.getName()+":"+cp.getId());
+          }
           if (!isInOut) {
             HeatResource routerInterface = new HeatResource();
             routerInterface.setType("OS::Neutron::RouterInterface");
             routerInterface.setName(vnfd.getName() + ":" + cp.getId());
+            
             for (VnfVirtualLink link : links) {
               if (link.getConnectionPointsReference().contains(cp.getId())) {
                 HashMap<String, Object> subnetMap = new HashMap<String, Object>();
