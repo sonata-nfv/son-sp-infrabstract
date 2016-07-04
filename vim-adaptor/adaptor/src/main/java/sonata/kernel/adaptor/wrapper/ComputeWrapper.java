@@ -18,7 +18,6 @@
 
 package sonata.kernel.adaptor.wrapper;
 
-import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
@@ -41,8 +40,7 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * 
    * @return true if the remove process has started correctly, false otherwise
    */
-  public abstract boolean deployService(DeployServiceData data,
-      DeployServiceCallProcessor startServiceCallProcessor) throws Exception;
+  public abstract boolean deployService(DeployServiceData data, String callSid) throws Exception;
 
   /**
    * Remove a service instance from this VIM.
@@ -51,7 +49,7 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * 
    * @return true if the remove process has started correctly, false otherwise
    */
-  public abstract boolean removeService(String instanceUuid);
+  public abstract boolean removeService(String instanceUuid, String callSid);
 
 
   /**

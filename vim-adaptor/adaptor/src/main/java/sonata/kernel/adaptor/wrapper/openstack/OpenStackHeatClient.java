@@ -166,7 +166,7 @@ public class OpenStackHeatClient {
       BufferedReader stdInput = new BufferedReader(
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
       while ((string = stdInput.readLine()) != null) {
-        System.out.println(string);
+        // System.out.println(string);
         isDeleted = string;
       }
       stdInput.close();

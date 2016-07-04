@@ -18,8 +18,8 @@
 
 package sonata.kernel.adaptor.wrapper.openstack;
 
-import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
+import sonata.kernel.adaptor.commons.IpNetPool;
 import sonata.kernel.adaptor.commons.heat.HeatModel;
 import sonata.kernel.adaptor.commons.heat.HeatResource;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
@@ -37,28 +37,27 @@ import sonata.kernel.adaptor.wrapper.WrapperBay;
 import sonata.kernel.adaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
-import java.nio.charset.MalformedInputException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.UUID;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private WrapperConfiguration config;
+  private IpNetPool myPool;
 
-
+  /**
+   * Standard constructor for an Compute Wrapper of an OpenStack VIM using Heat.
+   * 
+   * @param config the config object for this Compute Wrapper
+   */
   public OpenStackHeatWrapper(WrapperConfiguration config) {
     super();
     this.config = config;
+    this.myPool = IpNetPool.getInstance();
   }
 
   @Override
-  public boolean deployService(DeployServiceData data,
-      DeployServiceCallProcessor startServiceCallProcessor) {
-
-
-
-    this.addObserver(startServiceCallProcessor);
+  public boolean deployService(DeployServiceData data, String callSid) {
 
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
@@ -74,15 +73,13 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       for (HeatResource resource : stack.getResources()) {
         template.putResource(resource.getResourceName(), resource);
       }
-      DeployServiceFsm fsm =
-          new DeployServiceFsm(this, client, startServiceCallProcessor.getSid(), data, template);
+      DeployServiceFsm fsm = new DeployServiceFsm(this, client, callSid, data, template);
 
       Thread thread = new Thread(fsm);
       thread.start();
     } catch (Exception e) {
       this.setChanged();
-      WrapperStatusUpdate errorUpdate =
-          new WrapperStatusUpdate(startServiceCallProcessor.getSid(), "ERROR", e.getMessage());
+      WrapperStatusUpdate errorUpdate = new WrapperStatusUpdate(callSid, "ERROR", e.getMessage());
       this.notifyObservers(errorUpdate);
       return false;
     }
@@ -95,8 +92,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * Returns a heat template translated from the given descriptors.
    * 
    * @param data the service descriptors to translate
+   * @param vimFlavors the list of available compute flavors
    * @return an HeatTemplate object translated from the given descriptors
-   * @throws Exception
+   * @throws Exception if unable to translate the descriptor.
    */
   public HeatTemplate getHeatTemplateFromSonataDescriptor(DeployServiceData data,
       ArrayList<Flavor> vimFlavors) throws Exception {
@@ -113,27 +111,49 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     ServiceDescriptor nsd = data.getNsd();
 
+    // Allocate Ip Addresses on the basis of the service requirements:
+    int numberOfSubnets = 1;
+    int subnetIndex = 0;
+
+    for (VnfDescriptor vnfd : data.getVnfdList()) {
+      ArrayList<VnfVirtualLink> links = vnfd.getVirtualLinks();
+      for (VnfVirtualLink link : links) {
+        if (!link.getId().equals("mgmt")) {
+          numberOfSubnets++;
+        }
+      }
+    }
+    ArrayList<String> subnets = myPool.reserveSubnets(nsd.getInstanceUuid(), numberOfSubnets);
+
+    if (subnets == null) {
+      throw new Exception("Unable to allocate internal addresses. Too many service instances");
+    }
 
     // Create the management Net and subnet for all the VNFCs and VNFs
     HeatResource mgmtNetwork = new HeatResource();
     mgmtNetwork.setType("OS::Neutron::Net");
-    mgmtNetwork.setName(nsd.getName() + ":mgmt:net");
-    mgmtNetwork.putProperty("name", nsd.getName() + ":mgmt:net");
+    mgmtNetwork.setName(nsd.getName() + ":mgmt:net:" + nsd.getInstanceUuid());
+    mgmtNetwork.putProperty("name", nsd.getName() + ":mgmt:net:" + nsd.getInstanceUuid());
+
+
 
     HeatModel model = new HeatModel();
     model.addResource(mgmtNetwork);
 
     HeatResource mgmtSubnet = new HeatResource();
-    int subnetIndex = 0;
 
     mgmtSubnet.setType("OS::Neutron::Subnet");
-    mgmtSubnet.setName(nsd.getName() + ":mgmt:subnet");
-    mgmtSubnet.putProperty("name", nsd.getName() + ":mgmt:subnet");
-    mgmtSubnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
-    mgmtSubnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
+    mgmtSubnet.setName(nsd.getName() + ":mgmt:subnet:" + nsd.getInstanceUuid());
+    mgmtSubnet.putProperty("name", nsd.getName() + ":mgmt:subnet:" + nsd.getInstanceUuid());
+    String cidr = subnets.get(subnetIndex);
+    mgmtSubnet.putProperty("cidr", cidr);
+    mgmtSubnet.putProperty("gateway_ip", myPool.getGateway(cidr));
+
+    // mgmtSubnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
+    // mgmtSubnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
     subnetIndex++;
     HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
-    mgmtNetMap.put("get_resource", nsd.getName() + ":mgmt:net");
+    mgmtNetMap.put("get_resource", nsd.getName() + ":mgmt:net:" + nsd.getInstanceUuid());
     mgmtSubnet.putProperty("network", mgmtNetMap);
     model.addResource(mgmtSubnet);
 
@@ -141,14 +161,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // Internal mgmt router interface
     HeatResource mgmtRouterInterface = new HeatResource();
     mgmtRouterInterface.setType("OS::Neutron::RouterInterface");
-    mgmtRouterInterface.setName(nsd.getName() + ":mgmt:internal");
+    mgmtRouterInterface.setName(nsd.getName() + ":mgmt:internal:" + nsd.getInstanceUuid());
     HashMap<String, Object> mgmtSubnetMapInt = new HashMap<String, Object>();
-    mgmtSubnetMapInt.put("get_resource", nsd.getName() + ":mgmt:subnet");
+    mgmtSubnetMapInt.put("get_resource", nsd.getName() + ":mgmt:subnet:" + nsd.getInstanceUuid());
     mgmtRouterInterface.putProperty("subnet", mgmtSubnetMapInt);
     mgmtRouterInterface.putProperty("router", this.config.getTenantExtRouter());
     model.addResource(mgmtRouterInterface);
 
-
+    cidr = null;
     // One virtual router for NSD virtual links connecting VNFS (no router for external virtual
     // links and management links)
     // TODO how we connect to the tenant network?
@@ -165,9 +185,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
       if (isInterVnf && !isMgmt) {
         HeatResource router = new HeatResource();
-        router.setName(nsd.getName() + ":" + link.getId());
+        router.setName(nsd.getName() + ":" + link.getId() + ":" + nsd.getInstanceUuid());
         router.setType("OS::Neutron::Router");
-        router.putProperty("name", nsd.getName() + ":" + link.getId());
+        router.putProperty("name",
+            nsd.getName() + ":" + link.getId() + ":" + nsd.getInstanceUuid());
         model.addResource(router);
       }
     }
@@ -181,18 +202,24 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         if (!link.getId().equals("mgmt")) {
           HeatResource network = new HeatResource();
           network.setType("OS::Neutron::Net");
-          network.setName(vnfd.getName() + ":" + link.getId() + ":net");
-          network.putProperty("name", vnfd.getName() + ":" + link.getId() + ":net");
+          network.setName(vnfd.getName() + ":" + link.getId() + ":net:" + nsd.getInstanceUuid());
+          network.putProperty("name",
+              vnfd.getName() + ":" + link.getId() + ":net:" + nsd.getInstanceUuid());
           model.addResource(network);
           HeatResource subnet = new HeatResource();
           subnet.setType("OS::Neutron::Subnet");
-          subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet");
-          subnet.putProperty("name", vnfd.getName() + ":" + link.getId() + ":subnet");
-          subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
-          subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
+          subnet.setName(vnfd.getName() + ":" + link.getId() + ":subnet:" + nsd.getInstanceUuid());
+          subnet.putProperty("name",
+              vnfd.getName() + ":" + link.getId() + ":subnet:" + nsd.getInstanceUuid());
+          cidr = subnets.get(subnetIndex);
+          subnet.putProperty("cidr", cidr);
+          subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
+          // subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
+          // subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
           subnetIndex++;
           HashMap<String, Object> netMap = new HashMap<String, Object>();
-          netMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":net");
+          netMap.put("get_resource",
+              vnfd.getName() + ":" + link.getId() + ":net:" + nsd.getInstanceUuid());
           subnet.putProperty("network", netMap);
           model.addResource(subnet);
         }
@@ -203,9 +230,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
         HeatResource server = new HeatResource();
         server.setType("OS::Nova::Server");
-        server.setName(vnfd.getName() + ":" + vdu.getId());
-        server.putProperty("name", vnfd.getName() + ":" + vdu.getId() + ":"
-            + UUID.randomUUID().toString().substring(0, 4));
+        server.setName(vnfd.getName() + ":" + vdu.getId() + ":" + nsd.getInstanceUuid());
+        server.putProperty("name",
+            vnfd.getName() + ":" + vdu.getId() + ":" + nsd.getInstanceUuid());
         server.putProperty("image", vdu.getVmImage());
         int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
         double memory = vdu.getResourceRequirements().getMemory().getSize();
@@ -231,34 +258,39 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             // connect this VNFC CP to the mgmt network
             HeatResource port = new HeatResource();
             port.setType("OS::Neutron::Port");
-            port.setName(vnfd.getName() + ":" + cp.getId());
-            port.putProperty("name", vnfd.getName() + ":" + cp.getId());
+            port.setName(vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
+            port.putProperty("name",
+                vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
             HashMap<String, Object> netMap = new HashMap<String, Object>();
-            netMap.put("get_resource", nsd.getName() + ":mgmt:net");
+            netMap.put("get_resource", nsd.getName() + ":mgmt:net:" + nsd.getInstanceUuid());
             port.putProperty("network", netMap);
             model.addResource(port);
-            mgmtPortNames.add(vnfd.getName() + ":" + cp.getId());
+            mgmtPortNames.add(vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
 
             // add the port to the server
             HashMap<String, Object> n1 = new HashMap<String, Object>();
             HashMap<String, Object> portMap = new HashMap<String, Object>();
-            portMap.put("get_resource", vnfd.getName() + ":" + cp.getId());
+            portMap.put("get_resource",
+                vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
             n1.put("port", portMap);
             net.add(n1);
           } else if (linkIdReference != null) {
             HeatResource port = new HeatResource();
             port.setType("OS::Neutron::Port");
-            port.setName(vnfd.getName() + ":" + cp.getId());
-            port.putProperty("name", vnfd.getName() + ":" + cp.getId());
+            port.setName(vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
+            port.putProperty("name",
+                vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
             HashMap<String, Object> netMap = new HashMap<String, Object>();
-            netMap.put("get_resource", vnfd.getName() + ":" + linkIdReference + ":net");
+            netMap.put("get_resource",
+                vnfd.getName() + ":" + linkIdReference + ":net:" + nsd.getInstanceUuid());
             port.putProperty("network", netMap);
 
             model.addResource(port);
             // add the port to the server
             HashMap<String, Object> n1 = new HashMap<String, Object>();
             HashMap<String, Object> portMap = new HashMap<String, Object>();
-            portMap.put("get_resource", vnfd.getName() + ":" + cp.getId());
+            portMap.put("get_resource",
+                vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
             n1.put("port", portMap);
             net.add(n1);
           }
@@ -281,15 +313,18 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           }
 
           if (vnfId == null) {
-            throw new Exception("Error binding VNFD.connection_point: Cannot resolve VNFD.name in NSD.network_functions. VNFD.name = "+vnfd.getName()+" - VFND.connection_point = "+cp.getId());
+            throw new Exception(
+                "Error binding VNFD.connection_point: "
+                + "Cannot resolve VNFD.name in NSD.network_functions. "
+                + "VNFD.name = " + vnfd.getName() + " - VFND.connection_point = " + cp.getId());
 
           }
           boolean isInOut = false;
           String nsVirtualLink = null;
           boolean isVirtualLinkFound = false;
-          for (VirtualLink link : nsd.getVirtualLinks()) { 
+          for (VirtualLink link : nsd.getVirtualLinks()) {
             if (link.getConnectionPointsReference().contains(cp.getId().replace("vnf", vnfId))) {
-              isVirtualLinkFound=true;
+              isVirtualLinkFound = true;
               for (String cpRef : link.getConnectionPointsReference()) {
                 if (cpRef.startsWith("ns:")) {
                   isInOut = true;
@@ -297,23 +332,28 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
                 }
               }
               if (!isInOut) {
-                nsVirtualLink = nsd.getName() + ":" + link.getId();
+                nsVirtualLink = nsd.getName() + ":" + link.getId() + ":" + nsd.getInstanceUuid();
               }
               break;
             }
           }
           if (!isVirtualLinkFound) {
-            throw new Exception("Error binding VNFD.connection_point: Cannot find NSD.virtual_link attached to VNFD.connection_point. VNFD.connection_point = "+vnfd.getName()+":"+cp.getId());
+            throw new Exception(
+                "Error binding VNFD.connection_point:"
+                + " Cannot find NSD.virtual_link attached to VNFD.connection_point."
+                + " VNFD.connection_point = " + vnfd.getName() + ":" + cp.getId());
           }
           if (!isInOut) {
             HeatResource routerInterface = new HeatResource();
             routerInterface.setType("OS::Neutron::RouterInterface");
-            routerInterface.setName(vnfd.getName() + ":" + cp.getId());
-            
+            routerInterface
+                .setName(vnfd.getName() + ":" + cp.getId() + ":" + nsd.getInstanceUuid());
+
             for (VnfVirtualLink link : links) {
               if (link.getConnectionPointsReference().contains(cp.getId())) {
                 HashMap<String, Object> subnetMap = new HashMap<String, Object>();
-                subnetMap.put("get_resource", vnfd.getName() + ":" + link.getId() + ":subnet");
+                subnetMap.put("get_resource",
+                    vnfd.getName() + ":" + link.getId() + ":subnet:" + nsd.getInstanceUuid());
                 routerInterface.putProperty("subnet", subnetMap);
                 break;
               }
@@ -364,26 +404,34 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
 
   @Override
-  public boolean removeService(String instanceUuid) {
+  public boolean removeService(String instanceUuid, String callSid) {
 
     VimRepo repo = WrapperBay.getInstance().getVimRepo();
     System.out.println("Trying to remove NS instance: " + instanceUuid);
     String stackName = repo.getServiceVimName(instanceUuid);
     String stackUuid = repo.getServiceVimUuid(instanceUuid);
+    System.out.println("NS instance mapped to stack name: " + stackName);
+    System.out.println("NS instance mapped to stack uuid: " + stackUuid);
 
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    try {
+      String output = client.deleteStack(stackName, stackUuid);
 
-    String output = client.deleteStack(stackName, stackUuid);
-
-    if (output.equals("DELETED")) {
-      repo.removeInstanceEntry(instanceUuid);
+      if (output.equals("DELETED")) {
+        repo.removeInstanceEntry(instanceUuid);
+        myPool.freeSubnets(instanceUuid);
+        this.setChanged();
+        String body = "SUCCESS";
+        WrapperStatusUpdate update = new WrapperStatusUpdate(null, "SUCCESS", body);
+        this.notifyObservers(update);
+      }
+    } catch (Exception e) {
       this.setChanged();
-      String body = "{\"status\":\"SUCCESS\"}";
-      WrapperStatusUpdate update = new WrapperStatusUpdate(null, "SUCCESS", body);
-      this.notifyObservers(update);
+      WrapperStatusUpdate errorUpdate = new WrapperStatusUpdate(callSid, "ERROR", e.getMessage());
+      this.notifyObservers(errorUpdate);
+      return false;
     }
-
 
     return true;
   }

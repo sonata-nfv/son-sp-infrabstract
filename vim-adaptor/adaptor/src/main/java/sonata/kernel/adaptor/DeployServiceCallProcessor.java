@@ -67,23 +67,24 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
       System.out.println("[DeployServiceCallProcessor] - Wrapper retrieved");
       if (wr == null) {
         System.out.println("[DeployServiceCallProcessor] - Error retrieving the wrapper");
-        
-        this.sendToMux(
-            new ServicePlatformMessage("{\"status\":\"error\",\"message\":\"VIM not found\"}",
-                "application/json", message.getReplyTo(), message.getSid(), null));
+
+        this.sendToMux(new ServicePlatformMessage(
+            "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
+            message.getReplyTo(), message.getSid(), null));
         out = false;
       } else {
         // use wrapper interface to send the NSD/VNFD, along with meta-data
         // to the wrapper, triggering the service instantiation.
         System.out.println("[DeployServiceCallProcessor] - Calling wrapper: " + wr);
-        wr.deployService(data, this);
+        wr.addObserver(this);
+        wr.deployService(data, this.getSid());
       }
     } catch (Exception e) {
       System.out.println("[DeployServiceCallProcessor] - Error deployng the system:");
-      System.out.println("[DeployServiceCallProcessor] - " + e.getMessage() );
-      this.sendToMux(
-          new ServicePlatformMessage("{\"status\":\"error\",\"message\":\"Deployment Error\"}",
-              "application/json", message.getReplyTo(), message.getSid(), null));
+      System.out.println("[DeployServiceCallProcessor] - " + e.getMessage());
+      this.sendToMux(new ServicePlatformMessage(
+          "{\"request_status\":\"fail\",\"message\":\"Deployment Error\"}", "application/json",
+          message.getReplyTo(), message.getSid(), null));
       out = false;
     }
     return out;
@@ -103,11 +104,16 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
       } else if (update.getStatus().equals("ERROR")) {
         System.out.println("[DeployServiceCallProcessor] - Deploy " + this.getSid() + " error");
         System.out.println("[DeployServiceCallProcessor] - Pushing back error...");
-        ServicePlatformMessage response = new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\""+update.getBody()+"\"}",
+        ServicePlatformMessage response = new ServicePlatformMessage(
+            "{\"request_status\":\"fail\",\"message\":\"" + update.getBody() + "\"}",
             "application/x-yaml", "infrastructure.service.deploy", this.getSid(), null);
         this.sendToMux(response);
+      } else {
+        System.out.println(
+            "[DeployServiceCallProcessor] - Deploy " + this.getSid() + " - " + update.getStatus());
+        System.out.println("[DeployServiceCallProcessor] - Message " + update.getBody());
       }
-      
+
       // TODO handle other update from the compute wrapper;
     }
   }

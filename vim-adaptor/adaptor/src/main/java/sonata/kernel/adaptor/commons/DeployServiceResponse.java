@@ -27,33 +27,13 @@ public class DeployServiceResponse {
   private String instanceName;
   private String instanceVimUuid;
   @JsonProperty("request_status")
-  private Status requestStatus;
+  private String requestStatus;
   private ServiceRecord nsr;
   private ArrayList<VnfRecord> vnfrs;
   private String errorCode;
 
   public DeployServiceResponse() {
     this.vnfrs = new ArrayList<VnfRecord>();
-  }
-
-  public void setStatus(Status status) {
-    this.requestStatus = status;
-  }
-
-  public void setNsr(ServiceRecord record) {
-    this.nsr = record;
-  }
-
-  public void addVnfRecord(VnfRecord vnfr) {
-    this.vnfrs.add(vnfr);
-  }
-
-  public ServiceRecord getNsr() {
-    return nsr;
-  }
-
-  public Status getRequestStatus() {
-    return requestStatus;
   }
 
   public String getInstanceName() {
@@ -64,8 +44,20 @@ public class DeployServiceResponse {
     return instanceVimUuid;
   }
 
+  public String getRequestStatus() {
+    return requestStatus;
+  }
+
+  public ServiceRecord getNsr() {
+    return nsr;
+  }
+
   public ArrayList<VnfRecord> getVnfrs() {
     return vnfrs;
+  }
+
+  public String getErrorCode() {
+    return errorCode;
   }
 
   public void setInstanceName(String instanceName) {
@@ -76,20 +68,31 @@ public class DeployServiceResponse {
     this.instanceVimUuid = instanceVimUuid;
   }
 
-  public void setRequestStatus(Status requestStatus) {
+  public void setRequestStatus(String requestStatus) {
     this.requestStatus = requestStatus;
+  }
+
+  public void setNsr(ServiceRecord nsr) {
+    this.nsr = nsr;
   }
 
   public void setVnfrs(ArrayList<VnfRecord> vnfrs) {
     this.vnfrs = vnfrs;
   }
 
-  public String getErrorCode() {
-    return errorCode;
-  }
-
   public void setErrorCode(String errorCode) {
     this.errorCode = errorCode;
   }
+
+  /**
+   * add a VNFR to the VNFR list.
+   * 
+   * @param vnfr the VNFR to add
+   */
+  public void addVnfRecord(VnfRecord vnfr) {
+    this.vnfrs.add(vnfr);
+  }
+
+
 
 }

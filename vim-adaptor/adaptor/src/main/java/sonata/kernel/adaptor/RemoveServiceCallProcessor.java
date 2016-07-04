@@ -52,7 +52,7 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     String vimUuid = jsonObject.getString("vim_uuid");
     ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
     wr.addObserver(this);
-    wr.removeService(instanceUuid);
+    wr.removeService(instanceUuid, this.getSid());
 
     boolean out = true;
     return out;
@@ -71,7 +71,7 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     System.out.println("[RemoveService] Received an update:");
     System.out.println(update.getBody());
 
-    sendResponse(update.getBody());
+    sendResponse("{\"request_status\":\"" + update.getBody() + "\"}");
     return;
   }
 }

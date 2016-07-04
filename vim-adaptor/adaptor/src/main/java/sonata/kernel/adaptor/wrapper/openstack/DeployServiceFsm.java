@@ -13,7 +13,6 @@ import sonata.kernel.adaptor.commons.Status;
 import sonata.kernel.adaptor.commons.VduRecord;
 import sonata.kernel.adaptor.commons.VnfRecord;
 import sonata.kernel.adaptor.commons.VnfcInstance;
-import sonata.kernel.adaptor.commons.heat.HeatNet;
 import sonata.kernel.adaptor.commons.heat.HeatPort;
 import sonata.kernel.adaptor.commons.heat.HeatServer;
 import sonata.kernel.adaptor.commons.heat.HeatTemplate;
@@ -28,7 +27,6 @@ import sonata.kernel.adaptor.wrapper.WrapperStatusUpdate;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
-import java.util.UUID;
 
 public class DeployServiceFsm implements Runnable {
 
@@ -62,22 +60,22 @@ public class DeployServiceFsm implements Runnable {
   @Override
   public void run() {
     DeployServiceResponse response = new DeployServiceResponse();
-    try {
-      System.out.println("[OS-Deploy-FSM] Deploying new stack");
-      ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-      mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-      mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-      mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-      mapper.setSerializationInclusion(Include.NON_NULL);
-      System.out.println("[OS-Deploy-FSM]   Serializing stack...");
 
+    System.out.println("[OS-Deploy-FSM] Deploying new stack");
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    System.out.println("[OS-Deploy-FSM]   Serializing stack...");
+    try {
       String stackString = mapper.writeValueAsString(stack);
 
       String stackName = data.getNsd().getName() + data.getNsd().getInstanceUuid();
       System.out.println("[OS-Deploy-FSM]   Pushing stack to Heat...");
-      String instanceUuid = client.createStack(stackName, stackString);
+      String stackUuid = client.createStack(stackName, stackString);
 
-      if (instanceUuid == null) {
+      if (stackUuid == null) {
         WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "FAIL",
             "{\"message\":\"unable to contact the VIM to instantiate the service\"}");
         wrapper.markAsChanged();
@@ -87,11 +85,12 @@ public class DeployServiceFsm implements Runnable {
       int counter = 0;
       int wait = 1000;
       String status = null;
-      while ((status == null || !status.equals("CREATE_COMPLETE"))
+      while ((status == null || !status.equals("CREATE_COMPLETE") || !status.equals("CREATE_FAILED"))
           && counter < DeployServiceFsm.maxCounter) {
-        status = client.getStackStatus(stackName, instanceUuid);
-        System.out.println("[OS-Deploy-FSM]   Status of stack " + instanceUuid + ": " + status);
-        if (status != null && status.equals("CREATE_COMPLETE")) {
+        status = client.getStackStatus(stackName, stackUuid);
+        System.out.println("[OS-Deploy-FSM]   Status of stack " + stackUuid + ": " + status);
+        if (status != null
+            && (status.equals("CREATE_COMPLETE") || status.equals("CREATE_FAILED"))) {
           break;
         }
         try {
@@ -105,8 +104,16 @@ public class DeployServiceFsm implements Runnable {
       }
 
       if (status == null) {
-        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "FAIL",
-            "{\"message\":\"unable to contact the VIM to check the instantiation status\"}");
+        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "ERROR",
+            "unable to contact the VIM to check the instantiation status");
+        wrapper.markAsChanged();
+        wrapper.notifyObservers(update);
+        return;
+      }
+      if (status.equals("CREATE_FAILED")) {
+        // client.deleteStack(stackName, instanceUuid);
+        WrapperStatusUpdate update =
+            new WrapperStatusUpdate(this.sid, "ERROR", "Stack Creation Failed.");
         wrapper.markAsChanged();
         wrapper.notifyObservers(update);
         return;
@@ -116,8 +123,8 @@ public class DeployServiceFsm implements Runnable {
       wait = 1000;
       StackComposition composition = null;
       while (composition == null && counter < DeployServiceFsm.maxCounter) {
-        System.out.println("[OS-Deploy-FSM]   getting composition of stack " + instanceUuid);
-        composition = client.getStackComposition(stackName, instanceUuid);
+        System.out.println("[OS-Deploy-FSM]   getting composition of stack " + stackUuid);
+        composition = client.getStackComposition(stackName, stackUuid);
         try {
           Thread.sleep(wait);
         } catch (InterruptedException e) {
@@ -129,8 +136,8 @@ public class DeployServiceFsm implements Runnable {
       }
 
       if (composition == null) {
-        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "FAIL",
-            "{\"message\":\"unable to contact the VIM to check the instantiation status\"}");
+        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "ERROR",
+            "unable to contact the VIM to check the instantiation status");
         wrapper.markAsChanged();
         wrapper.notifyObservers(update);
         return;
@@ -198,13 +205,18 @@ public class DeployServiceFsm implements Runnable {
           // add each composition.ports information in the response. The IP, the netmask (and maybe
           // MAC address)
           for (HeatPort port : composition.getPorts()) {
-            if (port.getPortName().equals(referenceVnf.getName() + ":" + cp.getId())) {
+            if (port.getPortName().equals(referenceVnf.getName() + ":" + cp.getId() + ":"
+                + data.getNsd().getInstanceUuid())) {
               InterfaceRecord ip = new InterfaceRecord();
               if (port.getFloatinIp() != null) {
                 ip.setAddress(port.getFloatinIp());
+                // System.out.println("Port:" + port.getPortName() + "- Addr: " +
+                // port.getFloatinIp());
               } else {
                 ip.setAddress(port.getIpAddress());
-                ip.setNetmask("255.255.255.0");
+                // System.out.println("Port:" + port.getPortName() + "- Addr: " +
+                // port.getFloatinIp());
+                ip.setNetmask("255.255.255.248");
 
               }
               cpr.setType(ip);
@@ -222,21 +234,36 @@ public class DeployServiceFsm implements Runnable {
 
 
       response.setInstanceName(stackName);
-      response.setInstanceVimUuid(instanceUuid);
-      response.setStatus(Status.offline);
+      response.setInstanceVimUuid(stackUuid);
+      response.setRequestStatus("DEPLOYED");
       String body = mapper.writeValueAsString(response);
       System.out.println("[OS-Deploy-FSM]   response created");
       // System.out.println("body");
 
       WrapperBay.getInstance().getVimRepo().writeInstanceEntry(response.getNsr().getId(),
-          response.getInstanceVimUuid(), response.getInstanceVimUuid());
+          response.getInstanceVimUuid(), response.getInstanceName());
 
       WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
       wrapper.markAsChanged();
       wrapper.notifyObservers(update);
     } catch (JsonProcessingException e) {
       e.printStackTrace();
+      response.setRequestStatus("FAIL");
       response.setErrorCode("TranslationError");
+      try {
+        String body = mapper.writeValueAsString(response);
+        System.out.println("[OS-Deploy-FSM]   response created");
+        // System.out.println("body");
+
+        WrapperBay.getInstance().getVimRepo().writeInstanceEntry(response.getNsr().getId(),
+            response.getInstanceVimUuid(), response.getInstanceVimUuid());
+
+        WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+        wrapper.markAsChanged();
+        wrapper.notifyObservers(update);
+      } catch (Exception f) {
+        System.out.println("Error while handling Error!");
+      }
     }
   }
 

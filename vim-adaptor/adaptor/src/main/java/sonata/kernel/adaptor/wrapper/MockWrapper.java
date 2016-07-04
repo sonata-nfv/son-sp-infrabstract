@@ -24,7 +24,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 import sonata.kernel.adaptor.commons.DeployServiceResponse;
 import sonata.kernel.adaptor.commons.ServiceRecord;
@@ -56,11 +55,9 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
   }
 
   @Override
-  public boolean deployService(DeployServiceData data,
-      final DeployServiceCallProcessor callProcessor) {
-    this.addObserver(callProcessor);
+  public boolean deployService(DeployServiceData data, String callSid) {
     this.data = data;
-    this.sid = callProcessor.getSid();
+    this.sid = callSid;
     // This is a mock compute wrapper.
 
     /*
@@ -82,9 +79,9 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
-    System.out.println("[MockWrapperFSM] - Service Deployed. Creating response");
+    System.out.println("[MockWrapperFSM] - Service DEPLOYED. Creating response");
     DeployServiceResponse response = new DeployServiceResponse();
-    response.setStatus(Status.normal_operation);
+    response.setRequestStatus("DEPLOYED");;
     ServiceRecord sr = new ServiceRecord();
     sr.setStatus(Status.normal_operation);
     sr.setId(data.getNsd().getInstanceUuid());
@@ -95,7 +92,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       vnfr.setDescriptorReferenceName(vnf.getName());
       vnfr.setDescriptorReferenceVendor(vnf.getVendor());
       vnfr.setDescriptorReferenceVersion(vnf.getVersion());
-      
+
       vnfr.setId(vnf.getInstanceUuid());
       for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
         VduRecord vdur = new VduRecord();
@@ -129,7 +126,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
   }
 
   @Override
-  public boolean removeService(String instanceUuid) {
+  public boolean removeService(String instanceUuid, String callSid) {
     boolean out = true;
 
     this.setChanged();

@@ -28,13 +28,12 @@ public class VlspWrapper extends ComputeWrapper {
   }
 
   @Override
-  public boolean deployService(DeployServiceData data,
-      DeployServiceCallProcessor startServiceCallProcessor) {
+  public boolean deployService(DeployServiceData data, String callSid) {
     // TODO Auto-generated method stub
     return false;
   }
 
-  public boolean removeService(String instanceUuid) {
+  public boolean removeService(String instanceUuid, String callSid) {
     return false;
   }
 
