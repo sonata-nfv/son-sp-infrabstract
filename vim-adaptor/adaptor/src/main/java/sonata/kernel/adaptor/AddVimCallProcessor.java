@@ -88,14 +88,14 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     return out;
   }
 
-  private void sendError(String message) {
-
-    String jsonError =
-        "{\"status\":\"error,\"sid\":\"" + this.getSid() + "\",\"message\":\"" + message + "\"}";
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError, "application/json",
-        this.getMessage().getTopic(), this.getMessage().getSid(), null);
-    this.sendToMux(spMessage);
-  }
+  // private void sendError(String message) {
+  //
+  // String jsonError =
+  // "{\"status\":\"ERROR\",\"message\":\"" + message + "\"}";
+  // ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError, "application/json",
+  // this.getMessage().getTopic(), this.getMessage().getSid(), null);
+  // this.sendToMux(spMessage);
+  // }
 
   private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",

@@ -18,7 +18,6 @@
 
 package sonata.kernel.adaptor.wrapper;
 
-import sonata.kernel.adaptor.DeployServiceCallProcessor;
 import sonata.kernel.adaptor.commons.DeployServiceData;
 
 public class VlspWrapper extends ComputeWrapper {

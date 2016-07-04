@@ -24,7 +24,6 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import sonata.kernel.adaptor.commons.heat.StackComposition;
 import sonata.kernel.adaptor.wrapper.ResourceUtilisation;
 
 import java.io.BufferedReader;

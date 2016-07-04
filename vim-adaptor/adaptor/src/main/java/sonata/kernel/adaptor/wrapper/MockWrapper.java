@@ -33,7 +33,6 @@ import sonata.kernel.adaptor.commons.VnfRecord;
 import sonata.kernel.adaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.adaptor.commons.vnfd.VnfDescriptor;
 
-import java.util.UUID;
 
 public class MockWrapper extends ComputeWrapper implements Runnable {
 
@@ -85,13 +84,15 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     ServiceRecord sr = new ServiceRecord();
     sr.setStatus(Status.normal_operation);
     sr.setId(data.getNsd().getInstanceUuid());
+    sr.setDescriptorReference(data.getNsd().getUuid());
     for (VnfDescriptor vnf : data.getVnfdList()) {
       VnfRecord vnfr = new VnfRecord();
       vnfr.setDescriptorVersion("vnfr-schema-01");
       vnfr.setStatus(Status.normal_operation);
-      vnfr.setDescriptorReferenceName(vnf.getName());
-      vnfr.setDescriptorReferenceVendor(vnf.getVendor());
-      vnfr.setDescriptorReferenceVersion(vnf.getVersion());
+      vnfr.setDescriptorReference(vnf.getUuid());
+      // vnfr.setDescriptorReferenceName(vnf.getName());
+      // vnfr.setDescriptorReferenceVendor(vnf.getVendor());
+      // vnfr.setDescriptorReferenceVersion(vnf.getVersion());
 
       vnfr.setId(vnf.getInstanceUuid());
       for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {

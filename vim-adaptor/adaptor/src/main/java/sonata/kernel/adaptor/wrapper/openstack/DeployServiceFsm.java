@@ -155,13 +155,15 @@ public class DeployServiceFsm implements Runnable {
       sr.setStatus(Status.offline);
       sr.setDescriptorVersion("nsr-schema-01");
       sr.setId(data.getNsd().getInstanceUuid());
+      sr.setDescriptorReference(data.getNsd().getUuid());
       for (VnfDescriptor vnf : data.getVnfdList()) {
         vnfTable.put(vnf.getName(), vnf);
         VnfRecord vnfr = new VnfRecord();
         vnfr.setDescriptorVersion("vnfr-schema-01");
-        vnfr.setDescriptorReferenceName(vnf.getName());
-        vnfr.setDescriptorReferenceVendor(vnf.getVendor());
-        vnfr.setDescriptorReferenceVersion(vnf.getVersion());
+        vnfr.setDescriptorReference(vnf.getUuid());
+        // vnfr.setDescriptorReferenceName(vnf.getName());
+        // vnfr.setDescriptorReferenceVendor(vnf.getVendor());
+        // vnfr.setDescriptorReferenceVersion(vnf.getVersion());
         vnfr.setStatus(Status.offline);
         // TODO addresses are added next step
         // vnfr.setVnfAddress("0.0.0.0");

@@ -27,6 +27,8 @@ public class ServiceRecord {
   private Status status;
   @JsonProperty("id")
   private String id;
+  @JsonProperty("descritpor_reference")
+  private String descriptorReference;
 
 
 
@@ -56,6 +58,18 @@ public class ServiceRecord {
   public void setDescriptorVersion(String descriptorVersion) {
     this.descriptorVersion = descriptorVersion;
   }
+
+
+  public String getDescriptorReference() {
+    return descriptorReference;
+  }
+
+
+  public void setDescriptorReference(String descriptorReference) {
+    this.descriptorReference = descriptorReference;
+  }
+
+
 
 
 

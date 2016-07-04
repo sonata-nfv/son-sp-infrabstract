@@ -30,13 +30,16 @@ public class VnfRecord {
   @JsonProperty("id")
   private String id;
 
-  @JsonProperty("descriptor_reference_vendor")
-  private String descriptorReferenceVendor;
-  @JsonProperty("descriptor_reference_name")
-  private String descriptorReferenceName;
-  @JsonProperty("descriptor_reference_version")
-  private String descriptorReferenceVersion;
+//  @JsonProperty("descriptor_reference_vendor")
+//  private String descriptorReferenceVendor;
+//  @JsonProperty("descriptor_reference_name")
+//  private String descriptorReferenceName;
+//  @JsonProperty("descriptor_reference_version")
+//  private String descriptorReferenceVersion;
 
+  @JsonProperty("descriptor_reference")
+  private String descriptorReference;
+  
   @JsonProperty("virtual_deployment_units")
   private ArrayList<VduRecord> virtualDeploymentUnits;
 
@@ -78,29 +81,29 @@ public class VnfRecord {
     this.virtualDeploymentUnits = virtualDeploymentUnits;
   }
 
-  public String getDescriptorReferenceVendor() {
-    return descriptorReferenceVendor;
-  }
-
-  public String getDescriptorReferenceName() {
-    return descriptorReferenceName;
-  }
-
-  public String getDescriptorReferenceVersion() {
-    return descriptorReferenceVersion;
-  }
-
-  public void setDescriptorReferenceVendor(String descriptorReferenceVendor) {
-    this.descriptorReferenceVendor = descriptorReferenceVendor;
-  }
-
-  public void setDescriptorReferenceName(String descriptorReferenceName) {
-    this.descriptorReferenceName = descriptorReferenceName;
-  }
-
-  public void setDescriptorReferenceVersion(String descriptorReferenceVersion) {
-    this.descriptorReferenceVersion = descriptorReferenceVersion;
-  }
+  // public String getDescriptorReferenceVendor() {
+  // return descriptorReferenceVendor;
+  // }
+  //
+  // public String getDescriptorReferenceName() {
+  // return descriptorReferenceName;
+  // }
+  //
+  // public String getDescriptorReferenceVersion() {
+  // return descriptorReferenceVersion;
+  // }
+  //
+  // public void setDescriptorReferenceVendor(String descriptorReferenceVendor) {
+  // this.descriptorReferenceVendor = descriptorReferenceVendor;
+  // }
+  //
+  // public void setDescriptorReferenceName(String descriptorReferenceName) {
+  // this.descriptorReferenceName = descriptorReferenceName;
+  // }
+  //
+  // public void setDescriptorReferenceVersion(String descriptorReferenceVersion) {
+  // this.descriptorReferenceVersion = descriptorReferenceVersion;
+  // }
 
   public String getId() {
     return id;
@@ -110,6 +113,13 @@ public class VnfRecord {
     this.id = id;
   }
 
+  public String getDescriptorReference() {
+    return descriptorReference;
+  }
+
+  public void setDescriptorReference(String descriptorReference) {
+    this.descriptorReference = descriptorReference;
+  }
 
 
 }
