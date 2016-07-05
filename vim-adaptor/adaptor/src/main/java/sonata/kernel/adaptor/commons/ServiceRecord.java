@@ -27,7 +27,7 @@ public class ServiceRecord {
   private Status status;
   @JsonProperty("id")
   private String id;
-  @JsonProperty("descritpor_reference")
+  @JsonProperty("descriptor_reference")
   private String descriptorReference;
 
 
