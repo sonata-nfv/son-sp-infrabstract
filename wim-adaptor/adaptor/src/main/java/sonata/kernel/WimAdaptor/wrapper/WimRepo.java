@@ -34,18 +34,18 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
 
-public class VimRepo {
+public class WimRepo {
 
 
   private final static String configFilePath = "/etc/son-mano/postgres.config";
   private Properties prop;
 
   /**
-   * Create the a VimRepo that read from the config file, connect to the database, and if needed
+   * Create the a WimRepo that read from the config file, connect to the database, and if needed
    * creates the tables.
    * 
    */
-  public VimRepo() {
+  public WimRepo() {
     this.prop = this.parseConfigFile();
 
     Connection connection = null;
@@ -58,13 +58,13 @@ public class VimRepo {
         + prop.getProperty("repo_port") + "/" + "postgres";
     String user = prop.getProperty("user");
     String pass = prop.getProperty("pass");
-    System.out.println("[VimRepo] Connecting to postgresql at " + dbUrl);
+    System.out.println("[WimRepo] Connecting to postgresql at " + dbUrl);
     boolean errors = false;
     try {
       Class.forName("org.postgresql.Driver");
       connection = DriverManager.getConnection(dbUrl, user, pass);
       boolean isDatabaseSet = false;
-      System.out.println("[VimRepo] Connection opened successfully. Listing databases...");
+      System.out.println("[WimRepo] Connection opened successfully. Listing databases...");
       String sql;
       sql = "SELECT datname FROM pg_catalog.pg_database;";
       findDatabaseStmt = connection.createStatement();
@@ -78,17 +78,17 @@ public class VimRepo {
       rs.close();
 
       if (!isDatabaseSet) {
-        System.out.println("[VimRepo] Database not set. Creating database...");
+        System.out.println("[WimRepo] Database not set. Creating database...");
         sql = "CREATE DATABASE wimregistry;";
         stmt = connection.createStatement();
         stmt.execute(sql);
         sql = "GRANT ALL PRIVILEGES ON DATABASE wimregistry TO " + user + ";";
         createDatabaseStmt = connection.createStatement();
 
-        System.out.println("[VimRepo] Statement:" + createDatabaseStmt.toString());
+        System.out.println("[WimRepo] Statement:" + createDatabaseStmt.toString());
         createDatabaseStmt.execute(sql);
       } else {
-        System.out.println("[VimRepo] Database already set.");
+        System.out.println("[WimRepo] Database already set.");
       }
       connection.close();
 
@@ -96,7 +96,7 @@ public class VimRepo {
 
       dbUrl = "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
           + prop.getProperty("repo_port") + "/" + "wimregistry";
-      System.out.println("[VimRepo] Connecting to the new database: " + dbUrl);
+      System.out.println("[WimRepo] Connecting to the new database: " + dbUrl);
       connection = DriverManager.getConnection(dbUrl, user, pass);
 
 
@@ -123,7 +123,7 @@ public class VimRepo {
             + " TENANT TEXT," + " PASS TEXT," + " AUTHKEY TEXT);";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE serviced_segments " + "(NETWOR_SEGMENT TEXT PRIMARY KEY NOT NULL,"
-            + " WIM_UUID TEXT NOT NULL FOREIGN KEY REFERENCES wim(UUID);";
+            + " WIM_UUID TEXT NOT NULL REFERENCES wim(UUID));";
         stmt.executeUpdate(sql);
 
       }
@@ -154,9 +154,9 @@ public class VimRepo {
       }
     }
     if (!errors) {
-      System.out.println("[VimRepo] Environment created successfully");
+      System.out.println("[WimRepo] Environment created successfully");
     } else {
-      System.out.println("[VimRepo] Errors creating the environment");
+      System.out.println("[WimRepo] Errors creating the environment");
     }
     return;
   }
@@ -230,7 +230,7 @@ public class VimRepo {
         out = false;
       }
     }
-    System.out.println("[VimRepo] Records created successfully");
+    System.out.println("[WimRepo] Records created successfully");
 
     return out;
   }
@@ -293,7 +293,7 @@ public class VimRepo {
    * 
    * @return true for process success
    */
-  public boolean updateVimEntry(String uuid, WrapperRecord record) {
+  public boolean updateWimEntry(String uuid, WrapperRecord record) {
     boolean out = true;
 
     Connection connection = null;
@@ -344,7 +344,7 @@ public class VimRepo {
 
       }
     }
-    System.out.println("[VimRepo] Records created successfully");
+    System.out.println("[WimRepo] Records created successfully");
 
     return out;
   }

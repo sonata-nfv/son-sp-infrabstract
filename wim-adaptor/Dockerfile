@@ -19,15 +19,15 @@ RUN pip install --upgrade pip; \
 ADD adaptor /adaptor
 ADD broker.config /etc/son-mano/broker.config
 ADD postgres.config /etc/son-mano/postgres.config
-ADD son-sp-infra-* /usr/local/bin/
-ADD son-sp-infra /etc/init.d/
+ADD wim-adaptor-* /usr/local/bin/
+ADD wim-adaptor /etc/init.d/
 ADD ./setenv.sh /
 ADD ./test.sh /
 ADD ./docker-entrypoint.sh /
 RUN chmod +x /setenv.sh
 RUN chmod +x /test.sh
-RUN chmod +x /usr/local/bin/son-sp-infra-*
-RUN chmod +x /etc/init.d/son-sp-infra
+RUN chmod +x /usr/local/bin/wim-adaptor-*
+RUN chmod +x /etc/init.d/wim-adaptor
 
 WORKDIR /adaptor
 

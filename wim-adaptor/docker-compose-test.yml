@@ -1,8 +1,8 @@
 version: '2'
 services:
-  son-sp-infrabstract:
+  wim-adaptor:
     entrypoint: /test.sh
-    image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
+    image: registry.sonata-nfv.eu:5000/wim-adaptor
     links:
      - postgres 
     environment:

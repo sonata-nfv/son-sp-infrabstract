@@ -25,7 +25,7 @@ public class WrapperBay {
 
   private static WrapperBay myInstance = null;
 
-  private VimRepo repository = null;
+  private WimRepo repository = null;
 
   private WrapperBay() {}
 
@@ -47,7 +47,7 @@ public class WrapperBay {
    * 
    * @param repo the Database reader/writer to store the wrappers
    */
-  public void setRepo(VimRepo repo) {
+  public void setRepo(WimRepo repo) {
     this.repository = repo;
   }
 

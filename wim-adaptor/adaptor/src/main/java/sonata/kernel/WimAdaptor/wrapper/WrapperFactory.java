@@ -18,7 +18,6 @@
 
 package sonata.kernel.WimAdaptor.wrapper;
 
-import sonata.kernel.WimAdaptor.wrapper.openstack.OpenStackHeatWrapper;
 import sonata.kernel.WimAdaptor.wrapper.vtn.VtnWrapper;
 
 public class WrapperFactory {

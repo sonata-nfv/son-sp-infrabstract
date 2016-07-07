@@ -1,7 +1,7 @@
 version: '2'
 services:
-  son-sp-infrabstract:
-    image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
+  wim-adaptor:
+    image: registry.sonata-nfv.eu:5000/wim-adaptor
     entrypoint: /docker-entrypoint.sh
     links:
      - broker
@@ -15,7 +15,7 @@ services:
      - repo_port 5432
      - repo_user adaptor
      - repo_pass repotestadaptor 
-     - repo_database vimregistry
+     - repo_database wimregistry
     restart: always
 
   broker:
@@ -30,4 +30,4 @@ services:
     environment:
      - POSTGRES_PASSWORD=repotestadaptor
      - POSTGRES_USER=adaptor
-     - POSTGRES_DB=vimregistry
+     - POSTGRES_DB=wimregistry

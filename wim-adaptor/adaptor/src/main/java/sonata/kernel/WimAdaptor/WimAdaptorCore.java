@@ -28,7 +28,7 @@ import sonata.kernel.WimAdaptor.messaging.MsgBusProducer;
 import sonata.kernel.WimAdaptor.messaging.RabbitMqConsumer;
 import sonata.kernel.WimAdaptor.messaging.RabbitMqProducer;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.WimAdaptor.wrapper.VimRepo;
+import sonata.kernel.WimAdaptor.wrapper.WimRepo;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 
 import java.io.IOException;
@@ -71,7 +71,7 @@ public class WimAdaptorCore {
     dispatcher = new WimAdaptorDispatcher(dispatcherQueue, mux, this);
     northConsumer = consumer;
     northProducer = producer;
-    VimRepo repo = new VimRepo();
+    WimRepo repo = new WimRepo();
     WrapperBay.getInstance().setRepo(repo);
     status = "READY";
     this.rate = rate;
@@ -96,7 +96,7 @@ public class WimAdaptorCore {
     dispatcher = new WimAdaptorDispatcher(dispatcherQueue, mux, this);
 
     // - Wrapper bay connection with the Database.
-    VimRepo repo = new VimRepo();
+    WimRepo repo = new WimRepo();
     WrapperBay.getInstance().setRepo(repo);
 
     // - Northbound interface

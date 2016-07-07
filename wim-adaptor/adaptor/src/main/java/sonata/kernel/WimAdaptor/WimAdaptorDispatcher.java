@@ -34,8 +34,8 @@ public class WimAdaptorDispatcher implements Runnable {
   private WimAdaptorCore core;
 
   /**
-   * Create an WimAdaptorDispatcher attached to the queue. CallProcessor will be bind to the provided
-   * mux.
+   * Create an WimAdaptorDispatcher attached to the queue. CallProcessor will be bind to the
+   * provided mux.
    * 
    * @param queue the queue the dispatcher is attached to
    * 
@@ -56,13 +56,26 @@ public class WimAdaptorDispatcher implements Runnable {
       try {
         message = myQueue.take();
 
+        if (isRegistrationResponse(message)) {
+          this.core.handleRegistrationResponse(message);
+        } else if (isDeregistrationResponse(message)) {
+          this.core.handleDeregistrationResponse(message);
+        }
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
     } while (!stop);
   }
 
-  
+  private boolean isRegistrationResponse(ServicePlatformMessage message) {
+    return message.getTopic().equals("platform.management.plugin.register")
+        && message.getSid().equals(core.getRegistrationSid());
+  }
+
+  private boolean isDeregistrationResponse(ServicePlatformMessage message) {
+    return message.getTopic().equals("platform.management.plugin.deregister")
+        && message.getSid().equals(core.getRegistrationSid());
+  }
 
   public void start() {
     Thread thread = new Thread(this);

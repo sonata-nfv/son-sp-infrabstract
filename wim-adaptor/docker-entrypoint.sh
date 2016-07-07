@@ -14,4 +14,4 @@ while ! nc -z $repo_host $repo_port; do
   sleep 1 && echo -n .; # waiting for postgresql
 done;
 
-service son-sp-infra start
+service wim-adaptor start

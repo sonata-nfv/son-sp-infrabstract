@@ -1,9 +1,0 @@
-sonata/kernel/adaptor/VimRepoTest.class
-sonata/kernel/adaptor/HeatTemplateTest.class
-sonata/kernel/adaptor/AdaptorTest.class
-sonata/kernel/adaptor/wrapper/OpenStackHeatClientTest.class
-sonata/kernel/adaptor/DeployServiceTest.class
-sonata/kernel/adaptor/MessageReceiver.class
-sonata/kernel/adaptor/messaging/TestConsumer.class
-sonata/kernel/adaptor/ServiceDescriptorTest.class
-sonata/kernel/adaptor/messaging/TestProducer.class
