@@ -1,18 +1,26 @@
 /**
- * @author Dario Valocchi (Ph.D.)
- * @mail d.valocchi@ucl.ac.uk
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
- *       Copyright 2016 [Dario Valocchi]
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  * 
- *       Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
- *       except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  * 
- *       Unless required by applicable law or agreed to in writing, software distributed under the
- *       License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- *       either express or implied. See the License for the specific language governing permissions
- *       and limitations under the License.
+ * Neither the name of the SONATA-NFV, UCL, NOKIA, NCSR Demokritos nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without specific prior
+ * written permission.
+ * 
+ * This work has been performed in the framework of the SONATA project, funded by the European
+ * Commission under Grant number 671517 through the Horizon 2020 and 5G-PPP programmes. The authors
+ * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
+ * (www.sonata-nfv.eu).
+ *
+ * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
 
@@ -107,8 +115,8 @@ public class WimRepo {
       rs = findTablesStmt.executeQuery();
       while (rs.next()) {
         String tablename = rs.getString("tablename");
-        if (tablename.equals("wim") || tablename.equals("WIM") || tablename.equals("serviced_segments")
-            || tablename.equals("SERVICED_SEGMENTS")) {
+        if (tablename.equals("wim") || tablename.equals("WIM")
+            || tablename.equals("serviced_segments") || tablename.equals("SERVICED_SEGMENTS")) {
           isEnvironmentSet = true;
           break;
         }
@@ -199,18 +207,17 @@ public class WimRepo {
       stmt.executeUpdate();
       connection.commit();
       stmt.close();
-      
-      sql = "INSERT INTO SERVICED_SEGMENTS (NETWOR_SEGMENT, WIM_UUID) "
-          + "VALUES (?, ?);";
+
+      sql = "INSERT INTO SERVICED_SEGMENTS (NETWOR_SEGMENT, WIM_UUID) " + "VALUES (?, ?);";
       stmt = connection.prepareStatement(sql);
       for (String segment : record.getConfig().getServicedSegments()) {
         stmt.setString(1, segment);
-        stmt.setString(2, uuid); 
+        stmt.setString(2, uuid);
         stmt.executeUpdate();
-        
+
       }
       connection.commit();
-      
+
     } catch (SQLException e) {
       System.err.println(e.getClass().getName() + ": " + e.getMessage());
       out = false;
@@ -484,9 +491,9 @@ public class WimRepo {
     System.out.println("Operation done successfully");
     return out;
   }
- 
 
-  
+
+
   private Properties parseConfigFile() {
     Properties prop = new Properties();
     try {

@@ -8,7 +8,7 @@
 
 	<packaging>jar</packaging>
 
-	<name>Sonata Infrastructure Adaptor</name>
+	<name>SONATA Infrastructure Adaptor</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

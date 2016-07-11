@@ -28,28 +28,39 @@ package sonata.kernel.WimAdaptor.commons.nsd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Event {
-
-  @JsonProperty("vnf_id")
-  private String vnfId;
-  @JsonProperty("vnf_event")
-  private String vnfEvent;
+public class ConnectionPointRecord {
 
 
-  public String getVnfId() {
-    return vnfId;
+  private String id;
+  private InterfaceRecord type;
+  @JsonProperty("virtua_link_reference")
+  private String virtualLinkReference;
+
+
+  public void setId(String id) {
+    this.id = id;
   }
 
-  public String getVnfEvent() {
-    return vnfEvent;
+
+  public void setVirtualLinkReference(String virtualLinkReference) {
+    this.virtualLinkReference = virtualLinkReference;
   }
 
-  public void setVnfId(String vnfId) {
-    this.vnfId = vnfId;
+  public String getId() {
+    return id;
   }
 
-  public void setVnfEvent(String vnfEvent) {
-    this.vnfEvent = vnfEvent;
+  public String getVirtualLinkReference() {
+    return virtualLinkReference;
   }
 
+
+  public InterfaceRecord getType() {
+    return type;
+  }
+
+
+  public void setType(InterfaceRecord type) {
+    this.type = type;
+  }
 }

@@ -28,28 +28,27 @@ package sonata.kernel.WimAdaptor.commons.nsd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Event {
+public class InterfaceRecord {
 
-  @JsonProperty("vnf_id")
-  private String vnfId;
-  @JsonProperty("vnf_event")
-  private String vnfEvent;
+  @JsonProperty("address")
+  private String address;
+  @JsonProperty("netmask")
+  private String netmask;
 
-
-  public String getVnfId() {
-    return vnfId;
+  public String getAddress() {
+    return address;
   }
 
-  public String getVnfEvent() {
-    return vnfEvent;
+  public String getNetmask() {
+    return netmask;
   }
 
-  public void setVnfId(String vnfId) {
-    this.vnfId = vnfId;
+  public void setAddress(String address) {
+    this.address = address;
   }
 
-  public void setVnfEvent(String vnfEvent) {
-    this.vnfEvent = vnfEvent;
+  public void setNetmask(String netmask) {
+    this.netmask = netmask;
   }
 
 }

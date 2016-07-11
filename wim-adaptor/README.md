@@ -1,48 +1,66 @@
-# VIM Adaptor
-
 [![Build Status](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract)
-SONATA's Service Platform Infrastructure Abstraction
+
+# WIM Adaptor
+This repository contains the VIM-Adaptor module of the SONATA Infrastructure Abstraction.
 
 
-## Folder structure
-  
- * `.` contains docker support scripts and configuration files.
- * `adaptor` contains the source and test directory of the mvn project + pyton source.
+## Development
+(if applicable)
 
-### Requirements
- * A running SP Broker and MANO-pluginmanager
- * A postgresql container to store VIM and WIM related info
+### Building
+* You can run './docker build -t wim-adaptor .' in this folder to build the selfcontained docker image of the VIM-adaptor 
 
-## Docker support
-### Build Docker containers for each component
+If you prefer to manually build the source code, please consider the following:
 
- * run mano framework
-   * checkout son-mano-framework
-   * `git clone https://github.com/sonata-nfv/son-mano-framework.git`
-   * run the broker:
-     * (do in son-mano-framework/)
-     * `docker build -t broker -f son-mano-broker/Dockerfile .`
-     * `docker run -d -p 5672:5672 --name broker broker`
-   * run the pluginmanager:
-     * (do in son-mano-framework/)
-     * `docker build -t pluginmanager -f son-mano-pluginmanager/Dockerfile .`
-     * `docker run -it --link broker:broker --name pluginmanager pluginmanager`
- * run it
-    * (do in son-sp-infrabstract/)
-    * `docker build -t infrastructure_adaptor .`
-    * `docker run -it --link broker:broker --name infrastructure_adaptor infrastructure_adaptor`
+* This software is mainly organised as a maven project, so you can run 'mvn build assembly:single' in ./adaptor.
+* The VTN wrapper makes use of python clients, you can see ./Dockerfile or Dependencies section of this README for the needed dependencies.
 
-## Automated Tests
+### Dependencies
+Name all the dependencies needed by the software, including version, license (!), and a link. For example
+* [amqp-client](https://www.rabbitmq.com/java-client.html) >=3.6.1, "Apache 2.0"
+* [commons-io](https://commons.apache.org/proper/commons-io/) >= 1.3.2, "Apache 2.0"
+* [jackson-annotations](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations) >=  2.7.0, "Apache 2.0"
+* [jackson-core](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core) >= 2.7.5	, "Apache 2.0"
+* [jackson-databind](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind) >= 2.7.5, "Apache 2.0"
+* [jackson-dataformat-yaml](https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml) >= 2.7.5, "Apache 2.0"
+* [json](http://www.json.org/), 20160212, "The JSON License"
+* [junit](https://mvnrepository.com/artifact/junit/junit/3.8.1) = 3.8.1, "Common Public License Version 1.0"
+* [postgresql](https://mvnrepository.com/artifact/org.postgresql/postgresql), 9.4.1208.jre7, "The PostgreSQL License"
+* [pyaml](https://pypi.python.org/pypi/pyaml) >=15.8.2 (WTFPL)
 
- * Run unit test using docker-compose (do in son-sp-infrabstract/):
- * docker-compose -f docker-compose-test.yml up. It will run mvn tests which;
-    * Register the Adaptor to the MANO-core-pluginmanager, sends 4 heartbeat and deregister (mano framework is mocked)
-    * Send an `addVim` request coming from a mock-up MsgBus through the Adaptor components. The adaptor parses it and creates a Wrapper for a Mock VIM.
-    * add 4 Vims, list them, and remove them
-    * Parse SONATA VNFD
-    * Parse SONATA NSD
-    * Instantiate the SONATA example service on the Mock VIM
-    * Use the OpenStack client to create, retrieve status, and delete, a small example stack
-    * ...
+### Contributing
+(if applicable) Description (encouraging) how to contribute to this project/repository.
+
+## Installation
+(if applicable) Describe briefly how to install the software. You may want to put a link to son-install instead:
+
+The installation of this component can be done using the [son-install](https://github.com/sonata-nfv/son-install) script.
+
+## Usage
+(if applicable) Describe briefly how to use the software.
+
+## License
+
+This [SOFTWARE] is published under Apache 2.0 license. Please see the LICENSE file for more details.
+
+## Useful Links
+
+* https://wiki.opendaylight.org/view/OpenDaylight_Virtual_Tenant_Network_(VTN):Overview The VTN documentation page
+* https://pypi.python.org/pypi/pip Python Package Index
+* https://maven.apache.org/ Java Maven 
+* https://www.docker.com/ The Docker project
+* https://docs.docker.com/compose/ Docker-compose documentation
+
+---
+#### Lead Developers
+
+The following lead developers are responsible for this repository and have admin rights. They can, for example, merge pull requests.
+
+* DarioValocchi
+
+#### Feedback-Channel
+
+* You may use the mailing list sonata-dev@lists.atosresearch.eu
+* Please use the GitHub issues to report bugs.
 
 
