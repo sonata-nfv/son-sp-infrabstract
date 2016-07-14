@@ -15,29 +15,29 @@ If you prefer to manually build the source code, please consider the following:
 ### Dependencies
 
 * Java dependencies:
-** [Java JDK] = 1.8.0 
-** [Apache Maven](https://maven.apache.org/) >=3.3.9, "Apache 2.0"
-** [amqp-client](https://www.rabbitmq.com/java-client.html) >=3.6.1, "Apache 2.0"
-** [commons-io](https://commons.apache.org/proper/commons-io/) >= 1.3.2, "Apache 2.0"
-** [jackson-annotations](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations) >=  2.7.0, "Apache 2.0"
-** [jackson-core](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core) >= 2.7.5	, "Apache 2.0"
-** [jackson-databind](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind) >= 2.7.5, "Apache 2.0"
-** [jackson-dataformat-yaml](https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml) >= 2.7.5, "Apache 2.0"
-** [json](http://www.json.org/), 20160212, "The JSON License"
-** [junit](https://mvnrepository.com/artifact/junit/junit/3.8.1) = 3.8.1, "Common Public License Version 1.0"
-** [postgresql](https://mvnrepository.com/artifact/org.postgresql/postgresql), 9.4.1208.jre7, "The PostgreSQL License"
+  * [Java JDK] = 1.8.0 
+  * [Apache Maven](https://maven.apache.org/) >=3.3.9, "Apache 2.0"
+  * [amqp-client](https://www.rabbitmq.com/java-client.html) >=3.6.1, "Apache 2.0"
+  * [commons-io](https://commons.apache.org/proper/commons-io/) >= 1.3.2, "Apache 2.0"
+  * [jackson-annotations](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-annotations) >=  2.7.0, "Apache 2.0"
+  * [jackson-core](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-core) >= 2.7.5	, "Apache 2.0"
+  * [jackson-databind](https://mvnrepository.com/artifact/com.fasterxml.jackson.core/jackson-databind) >= 2.7.5, "Apache 2.0"
+  * [jackson-dataformat-yaml](https://mvnrepository.com/artifact/com.fasterxml.jackson.dataformat/jackson-dataformat-yaml) >= 2.7.5, "Apache 2.0"
+  * [json](http://www.json.org/), 20160212, "The JSON License"
+  * [junit](https://mvnrepository.com/artifact/junit/junit/3.8.1) = 3.8.1, "Common Public License Version 1.0"
+  * [postgresql](https://mvnrepository.com/artifact/org.postgresql/postgresql), 9.4.1208.jre7, "The PostgreSQL License"
 
 *Python dependencies
-** [python-pip](https://pypi.python.org/pypi/pip)>=8.1.2, "MIT"
-** [python-dev](http://packages.ubuntu.com/search?keywords=python-dev)
-** [pyaml](https://pypi.python.org/pypi/pyaml) >=15.8.2 (WTFPL)
-** [python-httplib2](https://pypi.python.org/pypi/httplib2) >=0.9.2, "MIT"
-** [python-setuptools](https://pypi.python.org/pypi/setuptools) >=24.0.3
+  * [python-pip](https://pypi.python.org/pypi/pip)>=8.1.2, "MIT"
+  * [python-dev](http://packages.ubuntu.com/search?keywords=python-dev)
+  * [pyaml](https://pypi.python.org/pypi/pyaml) >=15.8.2 (WTFPL)
+  * [python-httplib2](https://pypi.python.org/pypi/httplib2) >=0.9.2, "MIT"
+  * [python-setuptools](https://pypi.python.org/pypi/setuptools) >=24.0.3
 
 *General Ubuntu dependencies
-** [librtmp-dev](http://packages.ubuntu.com/precise/librtmp-dev)
-** [libcurl4-gnutls-dev](http://packages.ubuntu.com/trusty/libcurl4-gnutls-dev)
-** [build-essential](http://packages.ubuntu.com/precise/build-essential)
+  * [librtmp-dev](http://packages.ubuntu.com/precise/librtmp-dev)
+  * [libcurl4-gnutls-dev](http://packages.ubuntu.com/trusty/libcurl4-gnutls-dev)
+  * [build-essential](http://packages.ubuntu.com/precise/build-essential)
 
 ### Contributing
 
