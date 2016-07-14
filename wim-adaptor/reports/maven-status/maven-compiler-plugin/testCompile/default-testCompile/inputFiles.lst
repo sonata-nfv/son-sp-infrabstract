@@ -1,9 +1,0 @@
-/adaptor/src/test/java/sonata/kernel/adaptor/DeployServiceTest.java
-/adaptor/src/test/java/sonata/kernel/adaptor/ServiceDescriptorTest.java
-/adaptor/src/test/java/sonata/kernel/adaptor/messaging/TestConsumer.java
-/adaptor/src/test/java/sonata/kernel/adaptor/wrapper/OpenStackHeatClientTest.java
-/adaptor/src/test/java/sonata/kernel/adaptor/AdaptorTest.java
-/adaptor/src/test/java/sonata/kernel/adaptor/VimRepoTest.java
-/adaptor/src/test/java/sonata/kernel/adaptor/messaging/TestProducer.java
-/adaptor/src/test/java/sonata/kernel/adaptor/MessageReceiver.java
-/adaptor/src/test/java/sonata/kernel/adaptor/HeatTemplateTest.java

@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y python-pip \
 RUN pip install --upgrade pip; \
   pip install --upgrade virtualenv; \
   pip install python-keystoneclient; \
+  pip install python-novaclient; \
   pip install python-heatclient \
   && rm -rf /var/lib/apt/lists/*
 

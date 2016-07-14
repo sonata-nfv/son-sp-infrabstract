@@ -1,18 +1,26 @@
 /**
- * @author Dario Valocchi (Ph.D.)
- * @mail d.valocchi@ucl.ac.uk
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
- *       Copyright 2016 [Dario Valocchi]
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
+ * in compliance with the License. You may obtain a copy of the License at
  * 
- *       Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file
- *       except in compliance with the License. You may obtain a copy of the License at
+ * http://www.apache.org/licenses/LICENSE-2.0
  * 
- *       http://www.apache.org/licenses/LICENSE-2.0
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  * 
- *       Unless required by applicable law or agreed to in writing, software distributed under the
- *       License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
- *       either express or implied. See the License for the specific language governing permissions
- *       and limitations under the License.
+ * Neither the name of the SONATA-NFV, UCL, NOKIA, NCSR Demokritos nor the names of its contributors
+ * may be used to endorse or promote products derived from this software without specific prior
+ * written permission.
+ * 
+ * This work has been performed in the framework of the SONATA project, funded by the European
+ * Commission under Grant number 671517 through the Horizon 2020 and 5G-PPP programmes. The authors
+ * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
+ * (www.sonata-nfv.eu).
+ *
+ * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
 
@@ -28,7 +36,7 @@ import sonata.kernel.WimAdaptor.messaging.MsgBusProducer;
 import sonata.kernel.WimAdaptor.messaging.RabbitMqConsumer;
 import sonata.kernel.WimAdaptor.messaging.RabbitMqProducer;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.WimAdaptor.wrapper.VimRepo;
+import sonata.kernel.WimAdaptor.wrapper.WimRepo;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 
 import java.io.IOException;
@@ -71,7 +79,7 @@ public class WimAdaptorCore {
     dispatcher = new WimAdaptorDispatcher(dispatcherQueue, mux, this);
     northConsumer = consumer;
     northProducer = producer;
-    VimRepo repo = new VimRepo();
+    WimRepo repo = new WimRepo();
     WrapperBay.getInstance().setRepo(repo);
     status = "READY";
     this.rate = rate;
@@ -96,7 +104,7 @@ public class WimAdaptorCore {
     dispatcher = new WimAdaptorDispatcher(dispatcherQueue, mux, this);
 
     // - Wrapper bay connection with the Database.
-    VimRepo repo = new VimRepo();
+    WimRepo repo = new WimRepo();
     WrapperBay.getInstance().setRepo(repo);
 
     // - Northbound interface
@@ -130,8 +138,8 @@ public class WimAdaptorCore {
   }
 
   private void register() {
-    String body = "{\"name\":\"" + WimAdaptorCore.APP_ID + "\",\"version\":\"" + WimAdaptorCore.version
-        + "\",\"description\":\"" + WimAdaptorCore.description + "\"}";
+    String body = "{\"name\":\"" + WimAdaptorCore.APP_ID + "\",\"version\":\""
+        + WimAdaptorCore.version + "\",\"description\":\"" + WimAdaptorCore.description + "\"}";
     String topic = "platform.management.plugin.register";
     ServicePlatformMessage message = new ServicePlatformMessage(body, "application/json", topic,
         java.util.UUID.randomUUID().toString(), topic);
@@ -214,7 +222,8 @@ public class WimAdaptorCore {
    * @param message the response message
    */
   public void handleRegistrationResponse(ServicePlatformMessage message) {
-    System.out.println("[WimAdaptorCore] Received the registration response from the pluginmanager");
+    System.out
+        .println("[WimAdaptorCore] Received the registration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject object = (JSONObject) tokener.nextValue();
     String status = object.getString("status");
@@ -238,7 +247,8 @@ public class WimAdaptorCore {
    * @param message the response message
    */
   public void handleDeregistrationResponse(ServicePlatformMessage message) {
-    System.out.println("[WimAdaptorCore] Received the deregistration response from the pluginmanager");
+    System.out
+        .println("[WimAdaptorCore] Received the deregistration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject object = (JSONObject) tokener.nextValue();
     String status = object.getString("status");
