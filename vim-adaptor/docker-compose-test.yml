@@ -2,7 +2,7 @@ version: '2'
 services:
   son-sp-infrabstract:
     entrypoint: /test.sh
-    image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
+    image: vim-adaptor
     links:
      - postgres 
     environment:

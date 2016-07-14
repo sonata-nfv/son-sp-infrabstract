@@ -37,41 +37,26 @@ import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
+import org.junit.Assert;
+import org.junit.Test;
+
 
 /**
  * Unit test for simple App.
  */
-public class AdaptorTest extends TestCase implements MessageReceiver {
+public class AdaptorTest implements MessageReceiver {
   private String output = null;
   private Object mon = new Object();
   private TestConsumer consumer;
   private String lastHeartbeat;
 
-  /**
-   * Create the test case
-   *
-   * @param testName name of the test case
-   */
-  public AdaptorTest(String testName) {
-    super(testName);
-  }
-
-  /**
-   * @return the suite of tests being tested
-   */
-  public static Test suite() {
-    return new TestSuite(AdaptorTest.class);
-  }
 
   /**
    * Register, send 4 heartbeat, deregister.
    * 
    * @throws IOException
    */
-  public void testHeartbeating() throws IOException {
+  @Test public void testHeartbeating() throws IOException {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -83,7 +68,7 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
     int counter = 0;
 
     core.start();
-    assertNotNull(core.getUuid());
+    Assert.assertNotNull(core.getUuid());
 
     try {
       while (counter < 4) {
@@ -93,14 +78,14 @@ public class AdaptorTest extends TestCase implements MessageReceiver {
         }
       }
     } catch (Exception e) {
-      assertTrue(false);
+      Assert.assertTrue(false);
     }
 
     System.out.println("Heartbeats received");
-    assertTrue(true);
+    Assert.assertTrue(true);
 
     core.stop();
-    assertTrue(core.getState().equals("STOPPED"));
+    Assert.assertTrue(core.getState().equals("STOPPED"));
   }
 
 
