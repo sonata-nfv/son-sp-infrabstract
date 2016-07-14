@@ -1,8 +1,8 @@
 version: '2'
 services:
   wim-adaptor:
+    build: ./
     entrypoint: /test.sh
-    image: wim-adaptor
     links:
      - postgres 
     environment:
