@@ -51,8 +51,8 @@ If you prefer to manually build the source code, please consider the following:
 ### Contributing
 
 You can contribute to this repository extending the set VIM supported by the adaptor.
-The VIM Adaptor architecture is based on VIM wrappers that implement technology dependant process for deploying and managing NVFs. 
-You can extend the set of available VIM wrapper creating a subpackage of sonata.kernel.VimAdaptor.wrapper and extending the interfaces therein. 
+The VIM Adaptor architecture is based on VIM wrappers that implement technology dependant processes for deploying and managing VNFs. 
+You can extend the set of available VIM wrappers creating a subpackage of sonata.kernel.VimAdaptor.wrapper and extending the interfaces therein. 
 
 ## Usage
 

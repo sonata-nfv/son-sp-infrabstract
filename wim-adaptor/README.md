@@ -15,7 +15,7 @@ If you prefer to manually build the source code, please consider the following:
 ### Dependencies
 
 * Java dependencies:
-  * [Java JDK] = 1.8.0 
+  * Java JDK = 1.8.0 
   * [Apache Maven](https://maven.apache.org/) >=3.3.9, "Apache 2.0"
   * [amqp-client](https://www.rabbitmq.com/java-client.html) >=3.6.1, "Apache 2.0"
   * [commons-io](https://commons.apache.org/proper/commons-io/) >= 1.3.2, "Apache 2.0"
@@ -42,8 +42,8 @@ If you prefer to manually build the source code, please consider the following:
 ### Contributing
 
 You can contribute to this repository extending the set WIM supported by the adaptor.
-The WIM Adaptor architecture is based on wim wrappers that implement technology dependant process for deploying and managing NVFs. 
-You can extend the set of available WIM wrapper creating a subpackage of sonata.kernel.WimAdaptor.wrapper and extending the interfaces therein. 
+The WIM Adaptor architecture is based on wim wrappers that implement technology dependant processes for deploying and managing VNFs. 
+You can extend the set of available WIM wrappers creating a subpackage of sonata.kernel.WimAdaptor.wrapper and implementing the interfaces therein. 
 
 
 ## Usage
