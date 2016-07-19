@@ -53,16 +53,18 @@ import java.nio.charset.Charset;
 /**
  * Unit test for simple App.
  */
-public class ServiceDescriptorTest{
+public class ServiceDescriptorTest {
 
 
 
   /**
-   * Test the whole DeployService payload parsing it from file and doing some basic check on the parsed data.
+   * Test the whole DeployService payload parsing it from file and doing some basic check on the
+   * parsed data.
    * 
    * @throws IOException
    */
-  @Test public void testParsePayload() throws IOException {
+  @Test
+  public void testParsePayload() throws IOException {
 
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
@@ -125,7 +127,8 @@ public class ServiceDescriptorTest{
    * 
    * @throws IOException
    */
-  @Test public void testParseServiceDescriptor() throws IOException {
+  @Test
+  public void testParseServiceDescriptor() throws IOException {
 
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
@@ -156,7 +159,8 @@ public class ServiceDescriptorTest{
    * 
    * @throws IOException
    */
-  @Test public void testParseVNFDescriptor() throws IOException {
+  @Test
+  public void testParseVNFDescriptor() throws IOException {
 
     VnfDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();

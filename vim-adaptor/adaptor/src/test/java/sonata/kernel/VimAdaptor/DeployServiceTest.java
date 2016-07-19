@@ -96,7 +96,8 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @param testName name of the test case
    */
-  @Before public void setUp() throws Exception {
+  @Before
+  public void setUp() throws Exception {
 
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
@@ -154,7 +155,8 @@ public class DeployServiceTest implements MessageReceiver {
 
   }
 
-  @Test public void testCheckResources() throws IOException, InterruptedException {
+  @Test
+  public void testCheckResources() throws IOException, InterruptedException {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -242,8 +244,9 @@ public class DeployServiceTest implements MessageReceiver {
     core.stop();
 
   }
-  
-  @Test public void testDeployServiceMock() throws IOException, InterruptedException {
+
+  @Test
+  public void testDeployServiceMock() throws IOException, InterruptedException {
 
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -343,12 +346,14 @@ public class DeployServiceTest implements MessageReceiver {
 
   }
 
-  /** 
-   * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody String Member to match your OpenStack configuration.
+  /**
+   * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody
+   * String Member to match your OpenStack configuration.
    * 
    * @throws IOException
    */
-  @Ignore public void testDeployServiceOpenStack() throws IOException, InterruptedException {
+  @Ignore
+  public void testDeployServiceOpenStack() throws IOException, InterruptedException {
 
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -371,15 +376,15 @@ public class DeployServiceTest implements MessageReceiver {
         }
       }
     } catch (Exception e) {
-     Assert.assertTrue(false);
+      Assert.assertTrue(false);
     }
 
 
-    String addVimBody=
+    String addVimBody =
         "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", \"tenant_ext_router\":\"20790da5-2dc1-4c7e-b9c3-a8d590517563\", \"tenant_ext_net\":\"decd89e2-1681-427e-ac24-6e9f1abb1715\",\"vim_address\":\"openstack.sonata-nfv.eu\",\"username\":\"op_sonata\",\"pass\":\"op_s0n@t@\",\"tenant\":\"op_sonata\"}";
     String topic = "infrastructure.management.compute.add";
-    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody, "application/json",
-        topic, UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -546,226 +551,153 @@ public class DeployServiceTest implements MessageReceiver {
 
   }
 
-  
-  /** 
+
+  /**
    * 
-   * This Module test try to deploy the demo service with the OpenStack wrapper.
-   * The actual connection to OpenStack is mocked.
-   * @throws Exception 
+   * This Module test try to deploy the demo service with the OpenStack wrapper. The actual
+   * connection to OpenStack is mocked.
+   * 
+   * @throws Exception
    */
   /*
-  public void testDeployServiceMockStack() throws Exception {
-
-    OpenStackHeatClient client = Mockito.mock(OpenStackHeatClient.class);
-    Mockito.when(client.createStack(Matchers.anyString(),Matchers.anyString())).thenReturn(UUID.randomUUID().toString());
-    
-    Mockito.when(client.getStackStatus(Matchers.anyString(), Matchers.anyString())).thenReturn("CREATE_COMPLETE");
-    
-    Mockito.when(client.deleteStack(Matchers.anyString(), Matchers.anyString())).thenReturn("DELETED");
-    
-    StackComposition comp = 
-    
-    Mockito.when(client.getStackComposition(Matchers.anyString(), Matchers.anyString())).thenReturn(comp);
-
-    PowerMockito.whenNew(OpenStackHeatClient.class).withAnyArguments().thenReturn(client);
-    
-    
-    
-    BlockingQueue<ServicePlatformMessage> muxQueue =
-        new LinkedBlockingQueue<ServicePlatformMessage>();
-    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-        new LinkedBlockingQueue<ServicePlatformMessage>();
-
-    TestProducer producer = new TestProducer(muxQueue, this);
-    consumer = new TestConsumer(dispatcherQueue);
-    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.1);
-
-    core.start();
-    int counter = 0;
-
-    try {
-      while (counter < 2) {
-        synchronized (mon) {
-          mon.wait();
-          if (lastHeartbeat.contains("RUNNING")) counter++;
-        }
-      }
-    } catch (Exception e) {
-      assertTrue(false);
-    }
-
-
-    String addVimBody=
-        "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", \"tenant_ext_router\":\"20790da5-2dc1-4c7e-b9c3-a8d590517563\", \"tenant_ext_net\":\"decd89e2-1681-427e-ac24-6e9f1abb1715\",\"vim_address\":\"openstack.sonata-nfv.eu\",\"username\":\"op_sonata\",\"pass\":\"op_s0n@t@\",\"tenant\":\"op_sonata\"}";
-    String topic = "infrastructure.management.compute.add";
-    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody, "application/json",
-        topic, UUID.randomUUID().toString(), topic);
-    consumer.injectMessage(addVimMessage);
-    Thread.sleep(2000);
-    while (output == null)
-      synchronized (mon) {
-        mon.wait(1000);
-      }
-
-    JSONTokener tokener = new JSONTokener(output);
-    JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String status = jsonObject.getString("status");
-    String wrUuid = jsonObject.getString("uuid");
-    assertTrue(status.equals("COMPLETED"));
-    System.out.println("OenStack Wrapper added, with uuid: " + wrUuid);
-
-    output = null;
-    String baseInstanceUuid = data.getNsd().getInstanceUuid();
-    data.setVimUuid(wrUuid);
-    data.getNsd().setInstanceUuid(baseInstanceUuid + "-01");
-
-    String body = mapper.writeValueAsString(data);
-
-    topic = "infrastructure.service.deploy";
-    ServicePlatformMessage deployServiceMessage = new ServicePlatformMessage(body,
-        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
-
-    consumer.injectMessage(deployServiceMessage);
-
-    Thread.sleep(2000);
-    while (output == null)
-      synchronized (mon) {
-        mon.wait(1000);
-      }
-    assertNotNull(output);
-    int retry = 0;
-    int maxRetry = 60;
-    while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry)
-      synchronized (mon) {
-        mon.wait(1000);
-        retry++;
-      }
-
-    System.out.println("DeployServiceResponse: ");
-    System.out.println(output);
-    assertTrue("No Deploy service response received", retry < maxRetry);
-    DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
-    assertTrue(response.getRequestStatus().equals("DEPLOYED"));
-    assertTrue(response.getNsr().getStatus() == Status.offline);
-
-    for (VnfRecord vnfr : response.getVnfrs())
-      assertTrue(vnfr.getStatus() == Status.offline);
-
-
-    // Deploy a second instance of the same service
-
-    data.getNsd().setInstanceUuid(baseInstanceUuid + "-02");
-    output = null;
-
-    body = mapper.writeValueAsString(data);
-
-    topic = "infrastructure.service.deploy";
-    deployServiceMessage = new ServicePlatformMessage(body, "application/x-yaml", topic,
-        UUID.randomUUID().toString(), topic);
-
-    consumer.injectMessage(deployServiceMessage);
-
-    Thread.sleep(2000);
-    while (output == null)
-      synchronized (mon) {
-        mon.wait(1000);
-      }
-    assertNotNull(output);
-    retry = 0;
-    while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry)
-      synchronized (mon) {
-        mon.wait(1000);
-        retry++;
-      }
-
-    System.out.println("DeployServiceResponse: ");
-    System.out.println(output);
-    assertTrue("No Deploy service response received", retry < maxRetry);
-    response = mapper.readValue(output, DeployServiceResponse.class);
-    assertTrue(response.getRequestStatus().equals("DEPLOYED"));
-    assertTrue(response.getNsr().getStatus() == Status.offline);
-    for (VnfRecord vnfr : response.getVnfrs())
-      assertTrue(vnfr.getStatus() == Status.offline);
-
-
-    // // Clean the OpenStack tenant from the stack
-    // OpenStackHeatClient client =
-    // new OpenStackHeatClient("143.233.127.3", "op_sonata", "op_s0n@t@", "op_sonata");
-    // String stackName = response.getInstanceName();
-    //
-    // String deleteStatus = client.deleteStack(stackName, response.getInstanceVimUuid());
-    // assertNotNull("Failed to delete stack", deleteStatus);
-    //
-    // if (deleteStatus != null) {
-    // System.out.println("status of deleted stack " + stackName + " is " + deleteStatus);
-    // assertEquals("DELETED", deleteStatus);
-    // }
-
-
-    // Service removal
-    output = null;
-    String instanceUuid = baseInstanceUuid + "-01";
-    String message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + wrUuid + "\"}";
-    topic = "infrastructure.service.remove";
-    ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
-        "application/json", topic, UUID.randomUUID().toString(), topic);
-    consumer.injectMessage(removeInstanceMessage);
-
-    while (output == null) {
-      synchronized (mon) {
-        mon.wait(2000);
-        System.out.println(output);
-      }
-    }
-    System.out.println(output);
-    tokener = new JSONTokener(output);
-    jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("request_status");
-    assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
-
-    output = null;
-    instanceUuid = baseInstanceUuid + "-02";
-    message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + wrUuid + "\"}";
-    topic = "infrastructure.service.remove";
-    removeInstanceMessage = new ServicePlatformMessage(message, "application/json", topic,
-        UUID.randomUUID().toString(), topic);
-    consumer.injectMessage(removeInstanceMessage);
-
-    while (output == null) {
-      synchronized (mon) {
-        mon.wait(2000);
-        System.out.println(output);
-      }
-    }
-    System.out.println(output);
-    tokener = new JSONTokener(output);
-    jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("request_status");
-    assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
-
-
-
-    output = null;
-    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}";
-    topic = "infrastructure.management.compute.remove";
-    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
-        "application/json", topic, UUID.randomUUID().toString(), topic);
-    consumer.injectMessage(removeVimMessage);
-
-    while (output == null) {
-      synchronized (mon) {
-        mon.wait(1000);
-      }
-    }
-    System.out.println(output);
-    tokener = new JSONTokener(output);
-    jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
-    assertTrue(status.equals("COMPLETED"));
-    core.stop();
-
-  }
-*/
+   * public void testDeployServiceMockStack() throws Exception {
+   * 
+   * OpenStackHeatClient client = Mockito.mock(OpenStackHeatClient.class);
+   * Mockito.when(client.createStack(Matchers.anyString(),Matchers.anyString())).thenReturn(UUID.
+   * randomUUID().toString());
+   * 
+   * Mockito.when(client.getStackStatus(Matchers.anyString(),
+   * Matchers.anyString())).thenReturn("CREATE_COMPLETE");
+   * 
+   * Mockito.when(client.deleteStack(Matchers.anyString(),
+   * Matchers.anyString())).thenReturn("DELETED");
+   * 
+   * StackComposition comp =
+   * 
+   * Mockito.when(client.getStackComposition(Matchers.anyString(),
+   * Matchers.anyString())).thenReturn(comp);
+   * 
+   * PowerMockito.whenNew(OpenStackHeatClient.class).withAnyArguments().thenReturn(client);
+   * 
+   * 
+   * 
+   * BlockingQueue<ServicePlatformMessage> muxQueue = new
+   * LinkedBlockingQueue<ServicePlatformMessage>(); BlockingQueue<ServicePlatformMessage>
+   * dispatcherQueue = new LinkedBlockingQueue<ServicePlatformMessage>();
+   * 
+   * TestProducer producer = new TestProducer(muxQueue, this); consumer = new
+   * TestConsumer(dispatcherQueue); AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue,
+   * consumer, producer, 0.1);
+   * 
+   * core.start(); int counter = 0;
+   * 
+   * try { while (counter < 2) { synchronized (mon) { mon.wait(); if
+   * (lastHeartbeat.contains("RUNNING")) counter++; } } } catch (Exception e) { assertTrue(false); }
+   * 
+   * 
+   * String addVimBody=
+   * "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", \"tenant_ext_router\":\"20790da5-2dc1-4c7e-b9c3-a8d590517563\", \"tenant_ext_net\":\"decd89e2-1681-427e-ac24-6e9f1abb1715\",\"vim_address\":\"openstack.sonata-nfv.eu\",\"username\":\"op_sonata\",\"pass\":\"op_s0n@t@\",\"tenant\":\"op_sonata\"}"
+   * ; String topic = "infrastructure.management.compute.add"; ServicePlatformMessage addVimMessage
+   * = new ServicePlatformMessage(addVimBody, "application/json", topic,
+   * UUID.randomUUID().toString(), topic); consumer.injectMessage(addVimMessage);
+   * Thread.sleep(2000); while (output == null) synchronized (mon) { mon.wait(1000); }
+   * 
+   * JSONTokener tokener = new JSONTokener(output); JSONObject jsonObject = (JSONObject)
+   * tokener.nextValue(); String status = jsonObject.getString("status"); String wrUuid =
+   * jsonObject.getString("uuid"); assertTrue(status.equals("COMPLETED"));
+   * System.out.println("OenStack Wrapper added, with uuid: " + wrUuid);
+   * 
+   * output = null; String baseInstanceUuid = data.getNsd().getInstanceUuid();
+   * data.setVimUuid(wrUuid); data.getNsd().setInstanceUuid(baseInstanceUuid + "-01");
+   * 
+   * String body = mapper.writeValueAsString(data);
+   * 
+   * topic = "infrastructure.service.deploy"; ServicePlatformMessage deployServiceMessage = new
+   * ServicePlatformMessage(body, "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+   * 
+   * consumer.injectMessage(deployServiceMessage);
+   * 
+   * Thread.sleep(2000); while (output == null) synchronized (mon) { mon.wait(1000); }
+   * assertNotNull(output); int retry = 0; int maxRetry = 60; while (output.contains("heartbeat") ||
+   * output.contains("Vim Added") && retry < maxRetry) synchronized (mon) { mon.wait(1000); retry++;
+   * }
+   * 
+   * System.out.println("DeployServiceResponse: "); System.out.println(output);
+   * assertTrue("No Deploy service response received", retry < maxRetry); DeployServiceResponse
+   * response = mapper.readValue(output, DeployServiceResponse.class);
+   * assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+   * assertTrue(response.getNsr().getStatus() == Status.offline);
+   * 
+   * for (VnfRecord vnfr : response.getVnfrs()) assertTrue(vnfr.getStatus() == Status.offline);
+   * 
+   * 
+   * // Deploy a second instance of the same service
+   * 
+   * data.getNsd().setInstanceUuid(baseInstanceUuid + "-02"); output = null;
+   * 
+   * body = mapper.writeValueAsString(data);
+   * 
+   * topic = "infrastructure.service.deploy"; deployServiceMessage = new
+   * ServicePlatformMessage(body, "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+   * 
+   * consumer.injectMessage(deployServiceMessage);
+   * 
+   * Thread.sleep(2000); while (output == null) synchronized (mon) { mon.wait(1000); }
+   * assertNotNull(output); retry = 0; while (output.contains("heartbeat") ||
+   * output.contains("Vim Added") && retry < maxRetry) synchronized (mon) { mon.wait(1000); retry++;
+   * }
+   * 
+   * System.out.println("DeployServiceResponse: "); System.out.println(output);
+   * assertTrue("No Deploy service response received", retry < maxRetry); response =
+   * mapper.readValue(output, DeployServiceResponse.class);
+   * assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+   * assertTrue(response.getNsr().getStatus() == Status.offline); for (VnfRecord vnfr :
+   * response.getVnfrs()) assertTrue(vnfr.getStatus() == Status.offline);
+   * 
+   * 
+   * // // Clean the OpenStack tenant from the stack // OpenStackHeatClient client = // new
+   * OpenStackHeatClient("143.233.127.3", "op_sonata", "op_s0n@t@", "op_sonata"); // String
+   * stackName = response.getInstanceName(); // // String deleteStatus =
+   * client.deleteStack(stackName, response.getInstanceVimUuid()); //
+   * assertNotNull("Failed to delete stack", deleteStatus); // // if (deleteStatus != null) { //
+   * System.out.println("status of deleted stack " + stackName + " is " + deleteStatus); //
+   * assertEquals("DELETED", deleteStatus); // }
+   * 
+   * 
+   * // Service removal output = null; String instanceUuid = baseInstanceUuid + "-01"; String
+   * message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + wrUuid + "\"}"; topic
+   * = "infrastructure.service.remove"; ServicePlatformMessage removeInstanceMessage = new
+   * ServicePlatformMessage(message, "application/json", topic, UUID.randomUUID().toString(),
+   * topic); consumer.injectMessage(removeInstanceMessage);
+   * 
+   * while (output == null) { synchronized (mon) { mon.wait(2000); System.out.println(output); } }
+   * System.out.println(output); tokener = new JSONTokener(output); jsonObject = (JSONObject)
+   * tokener.nextValue(); status = jsonObject.getString("request_status");
+   * assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+   * 
+   * output = null; instanceUuid = baseInstanceUuid + "-02"; message = "{\"instance_uuid\":\"" +
+   * instanceUuid + "\",\"vim_uuid\":\"" + wrUuid + "\"}"; topic = "infrastructure.service.remove";
+   * removeInstanceMessage = new ServicePlatformMessage(message, "application/json", topic,
+   * UUID.randomUUID().toString(), topic); consumer.injectMessage(removeInstanceMessage);
+   * 
+   * while (output == null) { synchronized (mon) { mon.wait(2000); System.out.println(output); } }
+   * System.out.println(output); tokener = new JSONTokener(output); jsonObject = (JSONObject)
+   * tokener.nextValue(); status = jsonObject.getString("request_status");
+   * assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+   * 
+   * 
+   * 
+   * output = null; message = "{\"wr_type\":\"compute\",\"uuid\":\"" + wrUuid + "\"}"; topic =
+   * "infrastructure.management.compute.remove"; ServicePlatformMessage removeVimMessage = new
+   * ServicePlatformMessage(message, "application/json", topic, UUID.randomUUID().toString(),
+   * topic); consumer.injectMessage(removeVimMessage);
+   * 
+   * while (output == null) { synchronized (mon) { mon.wait(1000); } } System.out.println(output);
+   * tokener = new JSONTokener(output); jsonObject = (JSONObject) tokener.nextValue(); status =
+   * jsonObject.getString("status"); assertTrue(status.equals("COMPLETED")); core.stop();
+   * 
+   * }
+   */
 
   public void receiveHeartbeat(ServicePlatformMessage message) {
     synchronized (mon) {

@@ -46,9 +46,10 @@ public class OpenStackHeatClientTest {
 
   private OpenStackHeatClient heatClient;
 
- 
 
-  @Before public void initClient() {
+
+  @Before
+  public void initClient() {
 
     // todo - this needs to be moved to configuration file
     this.heatClient =
@@ -61,7 +62,8 @@ public class OpenStackHeatClientTest {
    *
    * @throws IOException
    */
-  @Ignore public void testStackCreateAndStatusAndDelete() throws IOException {
+  @Ignore
+  public void testStackCreateAndStatusAndDelete() throws IOException {
 
     final String stackName = "testStack" + UUID.randomUUID().toString().replaceAll("-", "");
 
@@ -100,7 +102,8 @@ public class OpenStackHeatClientTest {
    *
    * @throws Exception
    */
-  @Ignore public void testStatusOfNonValidUUID() throws Exception {
+  @Ignore
+  public void testStatusOfNonValidUUID() throws Exception {
 
     // generate random stack name and random stack uuid
     final String stackName = "testStack" + UUID.randomUUID().toString().replaceAll("-", "");
@@ -108,11 +111,13 @@ public class OpenStackHeatClientTest {
 
     // try to get the status of this random uuid and verify it is null
     String isDeleted = heatClient.deleteStack(stackName, stackUUID);
-    Assert.assertNull("Non valid delete operation - recieved DELETED of a non existing stack", isDeleted);
+    Assert.assertNull("Non valid delete operation - recieved DELETED of a non existing stack",
+        isDeleted);
 
   }
 
-  @Ignore public void testDeleteNonValidUUID() throws Exception {
+  @Ignore
+  public void testDeleteNonValidUUID() throws Exception {
 
     final String stackName = "testStack" + UUID.randomUUID().toString().replaceAll("-", "");
     final String stackUUID = UUID.randomUUID().toString().replaceAll("-", "");

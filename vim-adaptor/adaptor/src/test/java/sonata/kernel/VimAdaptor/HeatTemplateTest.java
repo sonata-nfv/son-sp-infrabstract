@@ -62,10 +62,11 @@ import java.util.HashMap;
 /**
  * Unit test for simple App.
  */
-public class HeatTemplateTest{
+public class HeatTemplateTest {
 
-  
-  @Test public void testHeatTranslate() throws IOException {
+
+  @Test
+  public void testHeatTranslate() throws IOException {
 
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
@@ -148,7 +149,8 @@ public class HeatTemplateTest{
   }
 
 
-  @Test public void testHeatSerialize() throws IOException {
+  @Test
+  public void testHeatSerialize() throws IOException {
 
     HeatTemplate template = new HeatTemplate();
 

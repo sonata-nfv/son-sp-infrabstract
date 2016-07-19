@@ -63,7 +63,8 @@ public class AdaptorTest implements MessageReceiver {
    * 
    * @throws IOException
    */
-  @Test public void testHeartbeating() throws IOException {
+  @Test
+  public void testHeartbeating() throws IOException {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -100,7 +101,8 @@ public class AdaptorTest implements MessageReceiver {
    * 
    * @throws IOException
    */
-  @Ignore public void testCreateVLSPWrapper() throws InterruptedException, IOException {
+  @Ignore
+  public void testCreateVLSPWrapper() throws InterruptedException, IOException {
     String message =
         "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"VLSP\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
@@ -156,7 +158,8 @@ public class AdaptorTest implements MessageReceiver {
    * 
    * @throws IOException
    */
-  @Test public void testCreateMOCKWrapper() throws InterruptedException, IOException {
+  @Test
+  public void testCreateMOCKWrapper() throws InterruptedException, IOException {
     String message =
         "{\"wr_type\":\"compute\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
@@ -215,7 +218,8 @@ public class AdaptorTest implements MessageReceiver {
    * 
    * @throws IOException
    */
-  @Test public void testListVimList() throws InterruptedException, IOException {
+  @Test
+  public void testListVimList() throws InterruptedException, IOException {
 
     ArrayList<String> vimUuid = new ArrayList<String>();
     JSONTokener tokener;
@@ -284,7 +288,8 @@ public class AdaptorTest implements MessageReceiver {
     }
 
     for (String returnUiid : vimUuid) {
-      Assert.assertTrue("VIMs List doesn't contain vim " + returnUiid, vimArrayList.contains(returnUiid));
+      Assert.assertTrue("VIMs List doesn't contain vim " + returnUiid,
+          vimArrayList.contains(returnUiid));
     }
 
     output = null;

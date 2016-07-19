@@ -3,6 +3,8 @@ MAINTAINER Dario Valocchi <d.valocchi@ucl.ac.uk>
 
 RUN apt-get update && apt-get install -y python-pip \
   python-dev \
+  libpython2.7-dev \
+  libyaml-dev \
   build-essential \
   libcurl4-gnutls-dev \
   librtmp-dev \
@@ -11,9 +13,7 @@ RUN apt-get update && apt-get install -y python-pip \
   netcat
 
 RUN pip install --upgrade pip; \
-  pip install --upgrade virtualenv; \
-  pip install python-keystoneclient; \
-  pip install python-heatclient \
+  pip install --upgrade virtualenv \
   && rm -rf /var/lib/apt/lists/*
 
 ADD adaptor /adaptor
