@@ -60,7 +60,8 @@ public class IpNetPoolTest {
    * 
    * 
    */
-  @Test public void testReserveSubnetRange() throws Exception {
+  @Test
+  public void testReserveSubnetRange() throws Exception {
 
 
     int totSubnet = pool.getFreeSubnetsNumber();
@@ -70,7 +71,8 @@ public class IpNetPoolTest {
     int availableSubnet = pool.getFreeSubnetsNumber();
     Assert.assertNotNull("Null pool returned from allocation", myPool);
 
-    Assert.assertTrue("Subnets have not been reserved", totSubnet == (availableSubnet + neededSubnet));
+    Assert.assertTrue("Subnets have not been reserved",
+        totSubnet == (availableSubnet + neededSubnet));
 
     pool.freeSubnets(instanceUuid);
 
@@ -84,14 +86,16 @@ public class IpNetPoolTest {
    * 
    * 
    */
-  @Test public void testReserveSubnetRangeTooMany() {
+  @Test
+  public void testReserveSubnetRangeTooMany() {
 
     pool = IpNetPool.getInstance();
     int totSubnet = pool.getFreeSubnetsNumber();
     String instanceUuid = UUID.randomUUID().toString();
     ArrayList<String> myPool = pool.reserveSubnets(instanceUuid, totSubnet + 1);
 
-    Assert.assertNull("More reserved subnets than available subnets, result should be null and it's not.",
+    Assert.assertNull(
+        "More reserved subnets than available subnets, result should be null and it's not.",
         myPool);
 
   }
@@ -101,7 +105,8 @@ public class IpNetPoolTest {
    * 
    * 
    */
-  @Test public void testReserveSubnetRangeTwice() {
+  @Test
+  public void testReserveSubnetRangeTwice() {
 
     pool = IpNetPool.getInstance();
     int numOfSubnet = 100;
@@ -114,7 +119,8 @@ public class IpNetPoolTest {
 
     Assert.assertNotNull("Second reservation gave unexpected null result.", mySecondPool);
 
-    Assert.assertTrue("The two reservation should be equals. They are not.", myPool.equals(mySecondPool));
+    Assert.assertTrue("The two reservation should be equals. They are not.",
+        myPool.equals(mySecondPool));
   }
 
   /**
@@ -122,7 +128,8 @@ public class IpNetPoolTest {
    * 
    * 
    */
-  @Test public void testGetGateway() {
+  @Test
+  public void testGetGateway() {
 
     pool = IpNetPool.getInstance();
     String gateway = pool.getGateway("192.168.0.0/24");

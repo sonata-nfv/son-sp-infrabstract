@@ -28,12 +28,11 @@ package sonata.kernel.WimAdaptor;
 
 
 import java.io.IOException;
-import java.util.ArrayList;
 
-import org.junit.Assert;
 import org.junit.Test;
 
 import sonata.kernel.WimAdaptor.wrapper.WimRepo;
+
 
 /**
  * Unit test for simple App.
@@ -47,27 +46,30 @@ public class WimRepoTest {
    * 
    * @throws IOException
    */
-  @Test public void testCreateWimRepo() {
+  @Test
+  public void testCreateWimRepo() {
 
     repoInstance = new WimRepo();
-    ArrayList<String> vims = repoInstance.getComputeVim();
-    Assert.assertNotNull("Unable to retrieve an empy list. SQL exception occurred", vims);
   }
 
-  @Test public void testAddVim() {
+  @Test
+  public void testAddVim() {
 
-
-  }
-
-  @Test public void testListWims() {
 
   }
 
-  @Test public void testAddTenantNet() {
+  @Test
+  public void testListWims() {
 
   }
 
-  @Test public void testGetTenantNet() {}
+  @Test
+  public void testAddTenantNet() {
+
+  }
+
+  @Test
+  public void testGetTenantNet() {}
 
 
 }

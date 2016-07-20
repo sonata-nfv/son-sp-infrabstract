@@ -50,7 +50,7 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
   private AdaptorMux mux;
 
   /**
-   * Abtract class for an API call processor. The processo runs on a thread an processes a
+   * Abstract class for an API call processor. The processor runs on a thread an processes a
    * ServicePlatformMessage.
    * 
    * @param message The ServicePlatformMessage to process

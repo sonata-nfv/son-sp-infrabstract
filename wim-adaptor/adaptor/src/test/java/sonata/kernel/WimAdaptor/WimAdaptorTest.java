@@ -27,11 +27,6 @@
 package sonata.kernel.WimAdaptor;
 
 
-import sonata.kernel.WimAdaptor.WimAdaptorCore;
-import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.WimAdaptor.messaging.TestConsumer;
-import sonata.kernel.WimAdaptor.messaging.TestProducer;
-
 import java.io.IOException;
 
 import java.util.concurrent.BlockingQueue;
@@ -40,11 +35,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 import org.junit.Assert;
 import org.junit.Test;
 
+import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.WimAdaptor.messaging.TestConsumer;
+import sonata.kernel.WimAdaptor.messaging.TestProducer;
+
 
 /**
  * Unit test for simple App.
  */
-public class AdaptorTest implements MessageReceiver {
+public class WimAdaptorTest implements MessageReceiver {
   private String output = null;
   private Object mon = new Object();
   private TestConsumer consumer;
@@ -56,7 +55,8 @@ public class AdaptorTest implements MessageReceiver {
    * 
    * @throws IOException
    */
-  @Test public void testHeartbeating() throws IOException {
+  @Test
+  public void testHeartbeating() throws IOException {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -106,4 +106,5 @@ public class AdaptorTest implements MessageReceiver {
   public void forwardToConsumer(ServicePlatformMessage message) {
     consumer.injectMessage(message);
   }
+  
 }

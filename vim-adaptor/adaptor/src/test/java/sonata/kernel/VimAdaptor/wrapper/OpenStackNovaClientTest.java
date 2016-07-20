@@ -41,11 +41,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 
-public class OpenStackNovaClientTest{
+public class OpenStackNovaClientTest {
 
   private OpenStackNovaClient novaClient;
 
-   @Before public void initClient() {
+  @Before
+  public void initClient() {
 
     // todo - this needs to be moved to configuration file
     this.novaClient =
@@ -58,7 +59,8 @@ public class OpenStackNovaClientTest{
    *
    * @throws IOException
    */
-  @Ignore public void testFlavors() throws IOException {
+  @Ignore
+  public void testFlavors() throws IOException {
 
     // System.out.println(novaClient);
     // list the flavors
@@ -73,7 +75,8 @@ public class OpenStackNovaClientTest{
    *
    * @throws IOException
    */
-  @Ignore public void testLimits() throws IOException {
+  @Ignore
+  public void testLimits() throws IOException {
     System.out.println(novaClient);
     ResourceUtilisation resources = novaClient.getResourceUtilizasion();
     System.out.println(resources);

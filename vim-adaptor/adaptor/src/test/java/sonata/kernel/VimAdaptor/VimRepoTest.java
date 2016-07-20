@@ -51,14 +51,16 @@ public class VimRepoTest {
    * 
    * @throws IOException
    */
-  @Test public void testCreateVimRepo() {
+  @Test
+  public void testCreateVimRepo() {
 
     repoInstance = new VimRepo();
     ArrayList<String> vims = repoInstance.getComputeVims();
     Assert.assertNotNull("Unable to retrieve an empy list. SQL exception occurred", vims);
   }
 
-  @Test public void testAddVim() {
+  @Test
+  public void testAddVim() {
 
     repoInstance = new VimRepo();
     WrapperConfiguration config = new WrapperConfiguration();
@@ -81,7 +83,8 @@ public class VimRepoTest {
     Assert.assertTrue("unable to remove vim", out);
   }
 
-  @Test public void testListVims() {
+  @Test
+  public void testListVims() {
 
     repoInstance = new VimRepo();
     WrapperConfiguration config = new WrapperConfiguration();
@@ -124,7 +127,8 @@ public class VimRepoTest {
     Assert.assertTrue("unable to remove vim", out);
   }
 
-  @Test public void testAddInstance() {
+  @Test
+  public void testAddInstance() {
 
     repoInstance = new VimRepo();
 
@@ -138,7 +142,8 @@ public class VimRepoTest {
 
   }
 
-  @Test public void testGetInstanceVimUuid() {
+  @Test
+  public void testGetInstanceVimUuid() {
 
     repoInstance = new VimRepo();
 
@@ -155,7 +160,8 @@ public class VimRepoTest {
     Assert.assertTrue("Errors while removing the instance", out);
   }
 
-  @Test public void testGetInstanceVimName() {
+  @Test
+  public void testGetInstanceVimName() {
 
     repoInstance = new VimRepo();
 
@@ -165,7 +171,8 @@ public class VimRepoTest {
 
     String vimName = repoInstance.getServiceVimName("1");
 
-    Assert.assertTrue("Retrieved vim Name different from the stored Name", vimName.equals("stack1-1"));
+    Assert.assertTrue("Retrieved vim Name different from the stored Name",
+        vimName.equals("stack1-1"));
 
     out = repoInstance.removeInstanceEntry("1");
 
