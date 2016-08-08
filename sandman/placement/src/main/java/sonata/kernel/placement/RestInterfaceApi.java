@@ -16,6 +16,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpGet;
+import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
 
 class RestInterfaceClientApi implements Runnable{
 
@@ -97,6 +99,9 @@ class RestInterfaceClientApi implements Runnable{
         String output;
         try {
 
+            /*WrapperConfiguration config = new WrapperConfiguration();
+            OpenStackHeatClient heatClient = new OpenStackHeatClient(uri, config.)
+*/
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpPost postRequest = new HttpPost(uri);
 

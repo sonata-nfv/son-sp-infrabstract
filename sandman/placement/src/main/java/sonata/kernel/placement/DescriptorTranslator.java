@@ -1,6 +1,7 @@
 package sonata.kernel.placement;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -110,15 +111,16 @@ class DescriptorTranslator
         ArrayList<Flavor> vimFlavors = new ArrayList<Flavor>();
         vimFlavors.add(new Flavor("m1.small", 2, 2048, 20));
 
+        ObjectMapper mapper2 = new ObjectMapper(new JsonFactory());
         HeatTemplate template;
         try {
             template = wrapper.getHeatTemplateFromSonataDescriptor(data, vimFlavors);
-            mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-            mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-            mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-            mapper.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
-            mapper.setSerializationInclusion(Include.NON_NULL);
-            String body = mapper.writeValueAsString(template);
+            mapper2.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+            mapper2.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+            mapper2.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+            mapper2.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+            mapper2.setSerializationInclusion(Include.NON_NULL);
+            String body = mapper2.writeValueAsString(template);
             return body;
 
            // Assert.assertNotNull(body);
