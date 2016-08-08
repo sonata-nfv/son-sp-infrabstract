@@ -12,13 +12,31 @@ import java.math.BigInteger;
 import java.nio.charset.Charset;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public final class PackageLoader {
 
-    public static void processZipFile(byte[] data, List<byte[]> services, List<byte[]> functions) throws IOException {
+    public final static String basedir = "/tmp/placementtmp/";
+
+    public static String processZipFile(byte[] data) throws IOException {
+
+        String currentDir = "";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
+        currentDir = basedir+sdf.format(new Date());
+
+
+        String sddirstr = currentDir+"/sd/";
+        String vnfddirstr = currentDir+"/vnfd/";
+
+        File sddir = new File(sddirstr);
+        if(sddir.isDirectory()==false)
+            sddir.mkdirs();
+        File vnfddir = new File(vnfddirstr);
+        if(vnfddir.isDirectory()==false)
+            vnfddir.mkdirs();
 
         ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
 
@@ -82,6 +100,9 @@ public final class PackageLoader {
             }
 
 
+            List<byte[]> services = new ArrayList<byte[]>();
+            List<byte[]> functions = new ArrayList<byte[]>();
+
             for(PackageContentObject pObj:pd.getPackageContent()){
 
                 String name;
@@ -129,17 +150,29 @@ public final class PackageLoader {
 
                 // It's a service descriptor
                 if ("application/sonata.service_descriptors".equals(pObj.getContentType())) {
+
                     services.add(fileData);
+
+                    FileOutputStream foutstream = new FileOutputStream(sddirstr+"ns"+services.size()+".yml");
+                    foutstream.write(fileData);
+                    foutstream.close();
+
                     System.out.println("Found service descriptor: "+name);
                 }
 
                 // It's a function descriptor
                 if ("application/sonata.function_descriptor".equals(pObj.getContentType())) {
                     functions.add(fileData);
+
+                    FileOutputStream foutstream = new FileOutputStream(vnfddirstr+"vnfd"+functions.size()+".yml");
+                    foutstream.write(fileData);
+                    foutstream.close();
+
                     System.out.println("Found function descriptor: "+name);
                 }
             }
         }
+        return currentDir;
     }
 
     public static byte[] readFile(ZipInputStream zipstream, ZipEntry ze) throws IOException {
