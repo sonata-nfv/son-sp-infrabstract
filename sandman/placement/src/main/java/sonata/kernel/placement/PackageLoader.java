@@ -40,6 +40,10 @@ public final class PackageLoader {
 
         ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
 
+        FileOutputStream datastream = new FileOutputStream(currentDir+"/data");
+        datastream.write(data);
+        datastream.close();
+
         System.out.println("Start zip stuff");
 
         ZipInputStream zipstream;

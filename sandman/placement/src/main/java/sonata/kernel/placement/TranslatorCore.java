@@ -12,8 +12,9 @@ public class TranslatorCore {
 
     public static void main(String[] args) throws InterruptedException {
         try {
-            new RestInterfaceClientApi();
-            new RestInterfaceServerApi("http://localhost", 8080);
+            new Thread(new RestInterfaceClientApi()).start();
+            new RestInterfaceServerApi("localhost", 8080).start();
+
           } catch (IOException ioe) {
             System.err.println("TranslatorCore::main() : Encountered exception" + ioe);
         }
@@ -31,6 +32,7 @@ public class TranslatorCore {
                     String out = DescriptorTranslator.process_descriptor(q_data.data);
                 } catch (IOException e)
                 {
+                    e.printStackTrace();
                     System.err.println("TranslatorCore::main() : Encountered exception whilte translating");
                 }
 

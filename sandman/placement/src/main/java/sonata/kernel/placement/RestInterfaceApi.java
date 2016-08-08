@@ -165,6 +165,7 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable{
           Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
 
           byte[] buffer = new byte[contentLength];
+          session.getInputStream().read(buffer, 0, contentLength);
           String base_dir = PackageLoader.processZipFile(buffer);
 
           MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
