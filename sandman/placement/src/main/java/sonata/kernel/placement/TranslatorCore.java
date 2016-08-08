@@ -23,12 +23,15 @@ public class TranslatorCore {
         {
             MessageQueueData q_data = MessageQueue.get_rest_serverQ().take();
 
+            if(q_data.data == null)
+                continue;
+
             if(q_data.message_type == MessageType.TRANSLATE_DESC){
                 try{
-                    desc_translator.process_descriptor(q_data.data);
+                    String out = DescriptorTranslator.process_descriptor(q_data.data);
                 } catch (IOException e)
                 {
-                    System.err.println("TranslatorCore::main() : Encountered exception whilte translating" + ioe);
+                    System.err.println("TranslatorCore::main() : Encountered exception whilte translating");
                 }
 
             }

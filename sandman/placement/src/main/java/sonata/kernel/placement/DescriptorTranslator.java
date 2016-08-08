@@ -32,7 +32,7 @@ import java.util.List;
 
 class DescriptorTranslator
 {
-    public String process_descriptor(String base_dir) throws IOException
+    public static String process_descriptor(String base_dir) throws IOException
     {
         ServiceDescriptor sd = null;
         List<VnfDescriptor> vnfd_list = new ArrayList<VnfDescriptor>();
@@ -121,7 +121,7 @@ class DescriptorTranslator
             String body = mapper.writeValueAsString(template);
             return body;
 
-            Assert.assertNotNull(body);
+           // Assert.assertNotNull(body);
         } catch (Exception e) {
             System.out.println("Exception translating template.");
             e.printStackTrace();

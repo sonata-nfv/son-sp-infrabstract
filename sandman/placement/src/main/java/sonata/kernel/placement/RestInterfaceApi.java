@@ -1,8 +1,11 @@
 package sonata.kernel.placement;
 
+//import com.sun.xml.internal.bind.v2.runtime.reflect.Lister;
 import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import java.io.BufferedReader;
@@ -157,18 +160,25 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable{
     @Override
     public Response serve(IHTTPSession session) {
 
-        /*
-         * Handle message from the Editor
-         * Pre-process the message and forward it to the queue.
-         */
-        String msg = "<html><body><h1>Hello server</h1>\n";
-        Map<String, String> parms = session.getParms();
-        if (parms.get("username") == null) {
-            msg += "<form action='?' method='get'>\n  <p>Your name: <input type='text' name='username'></p>\n" + "</form>\n";
-        } else {
-            msg += "<p>Hello, " + parms.get("username") + "!</p>";
-        }
-        return newFixedLengthResponse(msg + "</body></html>\n");
+      try{
+          session.getParms();
+          Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
+
+          byte[] buffer = new byte[contentLength];
+          String base_dir = PackageLoader.processZipFile(buffer);
+
+          MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
+          MessageQueue.get_rest_serverQ().put(q_data);
+
+
+
+      } catch (IOException e){
+
+      } catch (InterruptedException e) {
+          e.printStackTrace();
+      }
+
+        return newFixedLengthResponse(Response.Status.OK, null, "OK");
     }
 }
 

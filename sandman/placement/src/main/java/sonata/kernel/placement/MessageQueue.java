@@ -1,5 +1,7 @@
 package sonata.kernel.placement;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.BlockingQueue;
 
@@ -13,6 +15,10 @@ class MessageQueueData
     String data;
     String uri;
 
+    public MessageQueueData(MessageType message_type, String data) {
+        this.message_type = message_type;
+        this.data = data;
+    }
 }
 class MessageQueue
 {
