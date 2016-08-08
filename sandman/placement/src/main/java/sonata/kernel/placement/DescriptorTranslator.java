@@ -113,6 +113,8 @@ class DescriptorTranslator
 
         ObjectMapper mapper2 = new ObjectMapper(new JsonFactory());
         HeatTemplate template;
+        HeatStackCreate createStack = new HeatStackCreate();
+        createStack.stackName = "MyLittleStack";
         try {
             template = wrapper.getHeatTemplateFromSonataDescriptor(data, vimFlavors);
             mapper2.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
@@ -120,7 +122,8 @@ class DescriptorTranslator
             mapper2.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
             mapper2.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
             mapper2.setSerializationInclusion(Include.NON_NULL);
-            String body = mapper2.writeValueAsString(template);
+            createStack.template = template;
+            String body = mapper2.writeValueAsString(createStack);
             return body;
 
            // Assert.assertNotNull(body);
