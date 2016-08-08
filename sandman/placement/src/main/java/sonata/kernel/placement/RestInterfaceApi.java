@@ -53,7 +53,7 @@ class RestInterfaceClientApi implements Runnable{
     }
 
 
-    public String get_message(String uri, String data)
+    public void get_message(String uri, String data)
     {
         String output;
         try {
@@ -77,14 +77,14 @@ class RestInterfaceClientApi implements Runnable{
             }
 
             httpClient.getConnectionManager().shutdown();
-            return output;
+            return;
 
         }  catch (IOException e) {
 
             e.printStackTrace();
         }
 
-        return null;
+        return;
     }
     /*
      * Post message to PoP.
@@ -106,10 +106,11 @@ class RestInterfaceClientApi implements Runnable{
 
             HttpResponse response = httpClient.execute(postRequest);
 
-            if (response.getStatusLine().getStatusCode() != 201) {
+            if (response.getStatusLine().getStatusCode() != 200) {
                 throw new RuntimeException("RestInterfaceClientApi::post_message(): Error : HTTP error code : "
                         + response.getStatusLine().getStatusCode());
             }
+
 
             BufferedReader br = new BufferedReader(
                     new InputStreamReader((response.getEntity().getContent())));
@@ -118,6 +119,7 @@ class RestInterfaceClientApi implements Runnable{
             while ((output = br.readLine()) != null) {
                 System.out.println(output);
             }
+
             httpClient.getConnectionManager().shutdown();
             return output;
 
@@ -125,6 +127,8 @@ class RestInterfaceClientApi implements Runnable{
 
             e.printStackTrace();
 
+        } catch (RuntimeException e) {
+            e.printStackTrace();
         }
         return null;
     }

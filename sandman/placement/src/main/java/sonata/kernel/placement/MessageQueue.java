@@ -20,6 +20,12 @@ class MessageQueueData
         this.message_type = message_type;
         this.data = data;
     }
+
+    public MessageQueueData(MessageType message_type, String data, String uri) {
+        this.message_type = message_type;
+        this.data = data;
+        this.uri = uri;
+    }
 }
 class MessageQueue
 {

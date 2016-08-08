@@ -30,6 +30,9 @@ public class TranslatorCore {
             if(q_data.message_type == MessageType.TRANSLATE_DESC){
                 try{
                     String out = DescriptorTranslator.process_descriptor(q_data.data);
+                    MessageQueueData c_data = new MessageQueueData(MessageType.POST_MESSAGE, out, "http://131.234.244.233:8080");
+                    MessageQueue.get_rest_clientQ().put(c_data);
+
                 } catch (IOException e)
                 {
                     e.printStackTrace();
