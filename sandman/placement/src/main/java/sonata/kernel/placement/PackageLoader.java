@@ -10,6 +10,7 @@ import sonata.kernel.placement.pd.PackageDescriptor;
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
@@ -19,17 +20,17 @@ import java.util.zip.ZipInputStream;
 
 public final class PackageLoader {
 
-    public final static String basedir = "/tmp/placementtmp/";
+    public final static String basedir = Paths.get(System.getProperty("java.io.tmpdir"), "placementtmp").toString();
 
     public static String processZipFile(byte[] data) throws IOException {
 
         String currentDir = "";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
-        currentDir = basedir+sdf.format(new Date());
+        currentDir = Paths.get(basedir,sdf.format(new Date())).toString();
 
 
-        String sddirstr = currentDir+"/sd/";
-        String vnfddirstr = currentDir+"/vnfd/";
+        String sddirstr = Paths.get(currentDir,"sd").toString();
+        String vnfddirstr = Paths.get(currentDir,"vnfd").toString();
 
         File sddir = new File(sddirstr);
         if(sddir.isDirectory()==false)
@@ -40,7 +41,7 @@ public final class PackageLoader {
 
         ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
 
-        FileOutputStream datastream = new FileOutputStream(currentDir+"/data");
+        FileOutputStream datastream = new FileOutputStream(Paths.get(currentDir,"data").toString());
         datastream.write(data);
         datastream.close();
 
@@ -157,7 +158,7 @@ public final class PackageLoader {
 
                     services.add(fileData);
 
-                    FileOutputStream foutstream = new FileOutputStream(sddirstr+"ns"+services.size()+".yml");
+                    FileOutputStream foutstream = new FileOutputStream(Paths.get(sddirstr,"ns"+services.size()+".yml").toString());
                     foutstream.write(fileData);
                     foutstream.close();
 
@@ -168,7 +169,7 @@ public final class PackageLoader {
                 if ("application/sonata.function_descriptor".equals(pObj.getContentType())) {
                     functions.add(fileData);
 
-                    FileOutputStream foutstream = new FileOutputStream(vnfddirstr+"vnfd"+functions.size()+".yml");
+                    FileOutputStream foutstream = new FileOutputStream(Paths.get(vnfddirstr,"vnfd"+functions.size()+".yml").toString());
                     foutstream.write(fileData);
                     foutstream.close();
 
