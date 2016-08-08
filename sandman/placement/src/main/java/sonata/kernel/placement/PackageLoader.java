@@ -18,9 +18,9 @@ import java.util.zip.ZipInputStream;
 
 public final class PackageLoader {
 
-    public static void processZipFile(ByteArrayOutputStream byteOutputStream) throws IOException {
+    public static void processZipFile(byte[] data, List<byte[]> services, List<byte[]> functions) throws IOException {
 
-        ByteArrayInputStream byteIn = new ByteArrayInputStream(byteOutputStream.toByteArray());
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
 
         System.out.println("Start zip stuff");
 
@@ -72,8 +72,7 @@ public final class PackageLoader {
 
             pd = mapper.readValue(bodyBuilder.toString(), PackageDescriptor.class);
 
-            List<byte[]> services = new ArrayList<byte[]>();
-            List<byte[]> functions = new ArrayList<byte[]>();
+
 
             MessageDigest md5 = null;
             try {
