@@ -1,0 +1,22 @@
+description: Example service with three chained empty VNFs
+descriptor_version: '1.0'
+entry_service_template: /service_descriptors/nsd.yml
+maintainer: Manuel Peuster, Paderborn University, manuel.peuster@uni-paderborn.de
+name: sonata-empty-service
+package_content:
+- content-type: application/sonata.service_descriptors
+  md5: 607c5cef2cc7821c63e2367bd3151d5c
+  name: /service_descriptors/sonata-demo.yml
+- content-type: application/sonata.function_descriptor
+  md5: ad845395cbd6075029ee7b4e52eff74e
+  name: /function_descriptors/firewall-vnfd.yml
+- content-type: application/sonata.function_descriptor
+  md5: 62aaa58556c9e6b7b6a00b2d08ec972d
+  name: /function_descriptors/iperf-vnfd.yml
+- content-type: application/sonata.function_descriptor
+  md5: 59c8c403e635d17530176c697958d204
+  name: /function_descriptors/tcpdump-vnfd.yml
+schema: https://raw.githubusercontent.com/sonata-nfv/son-schema/master/package-descriptor/pd-schema.yml
+sealed: true
+vendor: eu.sonata-nfv.package
+version: '0.3'
