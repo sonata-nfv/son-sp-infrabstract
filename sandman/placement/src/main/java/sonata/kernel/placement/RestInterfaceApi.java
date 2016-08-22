@@ -16,6 +16,10 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.openstack4j.api.Builders;
+import org.openstack4j.api.OSClient;
+import org.openstack4j.model.heat.Stack;
+import org.openstack4j.openstack.OSFactory;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
 
@@ -58,6 +62,8 @@ class RestInterfaceClientApi implements Runnable{
     public void get_message(String uri, String data)
     {
         String output;
+
+
         try {
 
             DefaultHttpClient httpClient = new DefaultHttpClient();
@@ -97,45 +103,60 @@ class RestInterfaceClientApi implements Runnable{
     public String post_message(String uri, String data)
     {
         String output;
-        try {
+        OSClient.OSClientV2 os = OSFactory.builderV2()
+                .endpoint("http://131.234.31.45:5001/v2.0")
+                .credentials("admin","sample")
+                .tenantName("admin")
+                .authenticate();
+        Stack stack = os.heat().stacks().create(Builders.stack()
+                .name("XYZ")
+                .template(data)
+                .timeoutMins(5L).build());
 
-            /*WrapperConfiguration config = new WrapperConfiguration();
-            OpenStackHeatClient heatClient = new OpenStackHeatClient(uri, config.)
-*/
-            DefaultHttpClient httpClient = new DefaultHttpClient();
-            HttpPost postRequest = new HttpPost(uri);
-
-            StringEntity input = new StringEntity(data);
-            input.setContentType("application/json");
-            postRequest.setEntity(input);
-
-            HttpResponse response = httpClient.execute(postRequest);
-
-            if (response.getStatusLine().getStatusCode() != 200) {
-                throw new RuntimeException("RestInterfaceClientApi::post_message(): Error : HTTP error code : "
-                        + response.getStatusLine().getStatusCode());
-            }
-
-
-            BufferedReader br = new BufferedReader(
-                    new InputStreamReader((response.getEntity().getContent())));
-
-
-            while ((output = br.readLine()) != null) {
-                System.out.println(output);
-            }
-
-            httpClient.getConnectionManager().shutdown();
-            return output;
-
-        }  catch (IOException e) {
-
-            e.printStackTrace();
-
-        } catch (RuntimeException e) {
-            e.printStackTrace();
-        }
+        System.out.println("ZZZZZz");
         return null;
+
+//        try {
+//
+//            /*WrapperConfiguration config = new WrapperConfiguration();
+//            OpenStackHeatClient heatClient = new OpenStackHeatClient(uri, config.)
+//*/
+//            /*
+//            DefaultHttpClient httpClient = new DefaultHttpClient();
+//            HttpPost postRequest = new HttpPost(uri);
+//
+//            StringEntity input = new StringEntity(data);
+//            input.setContentType("application/json");
+//            postRequest.setEntity(input);
+//
+//            HttpResponse response = httpClient.execute(postRequest);
+//
+//            if (response.getStatusLine().getStatusCode() != 200) {
+//                throw new RuntimeException("RestInterfaceClientApi::post_message(): Error : HTTP error code : "
+//                        + response.getStatusLine().getStatusCode());
+//            }
+//
+//
+//            BufferedReader br = new BufferedReader(
+//                    new InputStreamReader((response.getEntity().getContent())));
+//
+//
+//            while ((output = br.readLine()) != null) {
+//                System.out.println(output);
+//            }
+//
+//            httpClient.getConnectionManager().shutdown();
+//            return output;
+//
+//        }  catch (IOException e) {
+//
+//            e.printStackTrace();
+//
+//        } catch (RuntimeException e) {
+//            e.printStackTrace();
+//        }
+//        return null;
+
     }
 }
 class RestInterfaceServerApi extends NanoHTTPD implements Runnable{
