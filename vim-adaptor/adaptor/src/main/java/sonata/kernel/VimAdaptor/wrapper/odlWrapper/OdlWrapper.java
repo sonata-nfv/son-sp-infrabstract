@@ -208,7 +208,8 @@ public class OdlWrapper extends NetworkingWrapper {
     if (!response.equals("SUCCESS")) {
       Logger.error("received string length: " + response.length());
       Logger.error("received string: " + response + " not equal SUCCESS");
-      throw new Exception("Unexcepted response from ODL SFC agent while trying to add a configuration.");
+      throw new Exception(
+          "Unexcepted response from ODL SFC agent while trying to add a configuration.");
     }
     return;
   }
@@ -242,7 +243,8 @@ public class OdlWrapper extends NetworkingWrapper {
     if (!response.equals("SUCCESS")) {
       Logger.error("received string length: " + response.length());
       Logger.error("received string: " + response + " not equal SUCCESS");
-      throw new Exception("Unexcepted response from ODL SFC agent while trying to delete a configuration.");
+      throw new Exception(
+          "Unexcepted response from ODL SFC agent while trying to delete a configuration.");
     }
     return;
   }

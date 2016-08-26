@@ -72,10 +72,11 @@ public class WimAdaptorTest implements MessageReceiver {
   private DeployServiceResponse response;
 
   @Before
-  public void setUp() throws IOException{
+  public void setUp() throws IOException {
     StringBuilder bodyBuilder = new StringBuilder();
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/DeployResponseExample.yml")), Charset.forName("UTF-8")));
+    BufferedReader in = new BufferedReader(
+        new InputStreamReader(new FileInputStream(new File("./YAML/DeployResponseExample.yml")),
+            Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -89,9 +90,9 @@ public class WimAdaptorTest implements MessageReceiver {
     mapper.setSerializationInclusion(Include.NON_NULL);
 
     response = mapper.readValue(bodyBuilder.toString(), DeployServiceResponse.class);
-    
+
   }
-  
+
   /**
    * Register, send 4 heartbeat, deregister.
    * 
@@ -128,7 +129,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     core.stop();
     Assert.assertTrue(core.getState().equals("STOPPED"));
-   
+
   }
 
 
@@ -186,14 +187,14 @@ public class WimAdaptorTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
+
     core.stop();
     Assert.assertTrue(core.getState().equals("STOPPED"));
   }
 
   @Test
-  public void configureService() throws IOException, InterruptedException{
-    
+  public void configureService() throws IOException, InterruptedException {
+
     String message =
         "{\"wr_type\":\"WIM\",\"wim_type\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
     String topic = "infrastructure.wan.add";
@@ -223,21 +224,21 @@ public class WimAdaptorTest implements MessageReceiver {
     String uuid = jsonObject.getString("uuid");
     String status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
-    output=null;
+
+    output = null;
     topic = "infrastructure.wan.configure";
     message = mapper.writeValueAsString(response);
     ServicePlatformMessage configService = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(configService);
-    
+
     Thread.sleep(2000);
     while (output == null) {
       synchronized (mon) {
         mon.wait(1000);
       }
     }
-    
+
     Assert.assertNotNull(output);
     int retry = 0;
     int maxRetry = 60;
@@ -253,7 +254,7 @@ public class WimAdaptorTest implements MessageReceiver {
     Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
     Assert.assertTrue(response.getNsr().getStatus() == Status.normal_operation);
     Assert.assertNull(response.getVimUuid());
-    
+
     output = null;
     message = "{\"wr_type\":\"WIM\",\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.wan.remove";
@@ -271,17 +272,17 @@ public class WimAdaptorTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
-    core.stop();
-    Assert.assertTrue(core.getState().equals("STOPPED"));    
 
-    //Clean the VTN
-    
+    core.stop();
+    Assert.assertTrue(core.getState().equals("STOPPED"));
+
+    // Clean the VTN
+
     VtnClient c = new VtnClient("10.30.0.13", "admin", "admin");
     boolean delete = c.deleteVtn(response.getNsr().getId());
-    Assert.assertTrue("unable to delete the service configuration in VTN",delete);
+    Assert.assertTrue("unable to delete the service configuration in VTN", delete);
   }
-  
+
   public void receiveHeartbeat(ServicePlatformMessage message) {
     synchronized (mon) {
       this.lastHeartbeat = message.getBody();

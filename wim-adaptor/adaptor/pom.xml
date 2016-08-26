@@ -115,7 +115,7 @@
     </reporting>
 
 	<dependencies>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.powermock</groupId>
 			<artifactId>powermock-api-mockito</artifactId>
 			<version>${powermock.all.version}</version>
@@ -134,7 +134,8 @@
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-all</artifactId>
 			<version>${mockito.all.version}</version>
-		</dependency>
+		</dependency>-->
+		
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
