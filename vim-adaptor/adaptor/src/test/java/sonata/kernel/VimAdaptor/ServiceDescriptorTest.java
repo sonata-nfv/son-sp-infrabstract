@@ -83,7 +83,7 @@ public class ServiceDescriptorTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -92,27 +92,16 @@ public class ServiceDescriptorTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/firewall-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-
-    VnfDescriptor vnfd3;
-    bodyBuilder = new StringBuilder();
-    in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/tcpdump-vnfd.yml")), Charset.forName("UTF-8")));
-    line = null;
-    while ((line = in.readLine()) != null)
-      bodyBuilder.append(line + "\n\r");
-    vnfd3 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
-
     DeployServiceData data = new DeployServiceData();
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);
-    data.addVnfDescriptor(vnfd3);
 
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
@@ -152,26 +141,87 @@ public class ServiceDescriptorTest {
     Assert.assertTrue(sd.getConnectionPoints().size() > 0);
     Assert.assertTrue(sd.getVirtualLinks().size() > 0);
     Assert.assertTrue(sd.getForwardingGraphs().size() > 0);
+
+    sd = null;
+    bodyBuilder = new StringBuilder();
+    in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/sonata-demo1.yml")), Charset.forName("UTF-8")));
+    line = null;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    in.close();
+    mapper = new ObjectMapper(new YAMLFactory());
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
+
+    Assert.assertNotNull(sd.getDescriptorVersion());
+    Assert.assertNotNull(sd.getVendor());
+    Assert.assertNotNull(sd.getName());
+    Assert.assertNotNull(sd.getVersion());
+    Assert.assertNotNull(sd.getAuthor());
+    Assert.assertNotNull(sd.getDescription());
+    Assert.assertTrue(sd.getNetworkFunctions().size() > 0);
+    Assert.assertTrue(sd.getConnectionPoints().size() > 0);
+    Assert.assertTrue(sd.getVirtualLinks().size() > 0);
+    Assert.assertTrue(sd.getForwardingGraphs().size() > 0);
+
   }
 
   /**
-   * Test the VNF Descriptor parsing it from file and doing some basic check on the parsed data.
+   * Test the firewall example VNF Descriptor parsing it from file and doing some basic check on the
+   * parsed data.
    * 
    * @throws IOException
    */
   @Test
-  public void testParseVNFDescriptor() throws IOException {
+  public void testParseFirewallVNFDescriptor() throws IOException {
 
     VnfDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     in.close();
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    vd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+    Assert.assertNotNull(vd.getDescriptorVersion());
+    Assert.assertNotNull(vd.getVendor());
+    Assert.assertNotNull(vd.getName());
+    Assert.assertNotNull(vd.getVersion());
+    Assert.assertNotNull(vd.getAuthor());
+    Assert.assertNotNull(vd.getDescription());
+    Assert.assertTrue(vd.getVirtualDeploymentUnits().size() > 0);
+    Assert.assertTrue(vd.getVirtualLinks().size() > 0);
+    Assert.assertTrue(vd.getConnectionPoints().size() > 0);
+
+  }
+
+  /**
+   * Test the vTC example VNF Descriptor parsing it from file and doing some basic check on the
+   * parsed data.
+   * 
+   * @throws IOException
+   */
+  @Test
+  public void testParseVtcVNFDescriptor() throws IOException {
+
+    VnfDescriptor vd;
+    StringBuilder bodyBuilder = new StringBuilder();
+    BufferedReader in = new BufferedReader(new InputStreamReader(
+        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+    String line;
+    while ((line = in.readLine()) != null)
+      bodyBuilder.append(line + "\n\r");
+    in.close();
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    SimpleModule module = new SimpleModule();
+    module.addDeserializer(Unit.class, new UnitDeserializer());
+    mapper.registerModule(module);
     vd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
     Assert.assertNotNull(vd.getDescriptorVersion());

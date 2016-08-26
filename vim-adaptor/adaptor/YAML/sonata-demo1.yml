@@ -25,10 +25,6 @@ network_functions:
     vnf_vendor: "eu.sonata-nfv"
     vnf_name: "vtc-vnf"
     vnf_version: "0.1"
-  - vnf_id: "vnf_firewall"
-    vnf_vendor: "eu.sonata-nfv"
-    vnf_name: "fw-vnf"
-    vnf_version: "0.1"
 ##
 ## The NS connection points to the
 ## outside world.
@@ -50,17 +46,11 @@ virtual_links:
     connectivity_type: "E-LAN"
     connection_points_reference:
       - "vnf_vtc:mgmt"
-      - "vnf_firewall:mgmt"
       - "ns:mgmt"
-  - id: "input-2-fw"
+  - id: "input-2-vtc"
     connectivity_type: "E-Line"
     connection_points_reference:
       - "ns:input"
-      - "vnf_firewall:input"
-  - id: "fw-2-vtc"
-    connectivity_type: "E-Line"
-    connection_points_reference:
-      - "vnf_firewall:output"
       - "vnf_vtc:input"
   - id: "vtc-2-output"
     connectivity_type: "E-Line"
@@ -82,16 +72,11 @@ forwarding_graphs:
         connection_points:
           - connection_point_ref: "ns:input"
             position: 1
-          - connection_point_ref: "vnf_firewall:input"
-            position: 2
-          - connection_point_ref: "vnf_firewall:output"
-            position: 3
           - connection_point_ref: "vnf_vtc:input"
-            position: 4
+            position: 2
           - connection_point_ref: "vnf_vtc:output"
-            position: 5
+            position: 3
           - connection_point_ref: "ns:output"
-            position: 6
+            position: 4
 uuid: 9df6a98f-9e11-4cb7-b3c0-b1375e7ca1a1
 instance_uuid: 9df6a98f-9e11-4cb7-b3c0-InAdUnitTest
-

@@ -34,6 +34,7 @@ import com.rabbitmq.client.ConnectionFactory;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.AdaptorCore;
 
 import java.io.FileInputStream;
@@ -55,6 +56,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
   }
 
   private static final String configFilePath = "/etc/son-mano/broker.config";
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqProducer.class);
 
   private Connection connection;
   private Properties brokerConfig;
@@ -65,31 +67,26 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
 
     ConnectionFactory cf = new ConnectionFactory();
     if (!brokerConfig.containsKey("broker_url") || !brokerConfig.containsKey("exchange")) {
-      System.err.println("Missing broker url configuration.");
+      Logger.error("Missing broker url configuration.");
       System.exit(1);
     }
 
     try {
       cf.setUri(brokerConfig.getProperty("broker_url"));
-    } catch (KeyManagementException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    } catch (NoSuchAlgorithmException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
-    } catch (URISyntaxException e1) {
-      // TODO Auto-generated catch block
-      e1.printStackTrace();
+    } catch (KeyManagementException e) {
+      Logger.error(e.getMessage(), e);
+    } catch (NoSuchAlgorithmException e) {
+      Logger.error(e.getMessage(), e);
+    } catch (URISyntaxException e) {
+      Logger.error(e.getMessage(), e);
     }
 
     try {
       connection = cf.newConnection();
     } catch (IOException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
     } catch (TimeoutException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
     }
   }
 
@@ -108,10 +105,9 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
           .correlationId(message.getSid()).build();
       channel.basicPublish(exchangeName, message.getTopic(), properties,
           message.getBody().getBytes("UTF-8"));
-      // System.out.println(
-      // "[northbound] - sending message: " + message + "\n\r - Properties:" + properties);
+      // Logger.info("Sending message: " + message + "\n\r - Properties:" + properties);
     } catch (Exception e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
       out = false;
     }
     return out;
@@ -137,7 +133,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
       prop.put("broker_url", brokerUrl);
       prop.put("exchange", exchange);
     } catch (FileNotFoundException e) {
-      System.err.println("Unable to load Broker Config file");
+      Logger.error("Unable to load Broker Config file", e);
       System.exit(1);
     }
 

@@ -28,32 +28,67 @@ package sonata.kernel.VimAdaptor.commons.vnfd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ConnectionPointReference implements Comparable<ConnectionPointReference> {
+import java.util.ArrayList;
 
-  @JsonProperty("connection_point_ref")
-  private String connectionPointRef;
-  private int position;
+public class FunctionSpecificManager {
 
+  private String description;
+  private String id;
+  private String image;
+  @JsonProperty("image_md5")
+  private String imageMd5;
+  @JsonProperty("resource_requirements")
+  private FsmResourceRequirements resourceRequirements;
+  private ArrayList<FsmOption> options;
 
-  public int getPosition() {
-    return position;
+  public String getDescription() {
+    return description;
   }
 
-  public String getConnectionPointRef() {
-    return connectionPointRef;
+  public String getId() {
+    return id;
   }
 
-  public void setConnectionPointRef(String connectionPointRef) {
-    this.connectionPointRef = connectionPointRef;
+  public String getImage() {
+    return image;
   }
 
-  public void setPosition(int position) {
-    this.position = position;
+  public String getImageMd5() {
+    return imageMd5;
   }
 
-  @Override
-  public int compareTo(ConnectionPointReference o) {
-    return (int) Math.signum(position - o.getPosition());
+  public FsmResourceRequirements getResourceRequirements() {
+    return resourceRequirements;
   }
+
+  public ArrayList<FsmOption> getOptions() {
+    return options;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setImage(String image) {
+    this.image = image;
+  }
+
+  public void setImageMd5(String imageMd5) {
+    this.imageMd5 = imageMd5;
+  }
+
+  public void setResourceRequirements(FsmResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
+  }
+
+  public void setOptions(ArrayList<FsmOption> options) {
+    this.options = options;
+  }
+
+
 
 }

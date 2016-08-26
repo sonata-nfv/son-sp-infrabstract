@@ -34,6 +34,7 @@ import sonata.kernel.VimAdaptor.wrapper.MockWrapper;
 import sonata.kernel.VimAdaptor.wrapper.VimRepo;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperRecord;
+import sonata.kernel.VimAdaptor.wrapper.odlWrapper.OdlWrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -132,7 +133,8 @@ public class VimRepoTest {
 
     repoInstance = new VimRepo();
 
-    boolean out = repoInstance.writeInstanceEntry("1", "1-1", "stack1-1");
+    boolean out =
+        repoInstance.writeInstanceEntry("1", "1-1", "stack1-1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while writing the instance", out);
 
@@ -147,7 +149,8 @@ public class VimRepoTest {
 
     repoInstance = new VimRepo();
 
-    boolean out = repoInstance.writeInstanceEntry("1", "1-1", "stack1-1");
+    boolean out =
+        repoInstance.writeInstanceEntry("1", "1-1", "stack1-1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while writing the instance", out);
 
@@ -165,7 +168,8 @@ public class VimRepoTest {
 
     repoInstance = new VimRepo();
 
-    boolean out = repoInstance.writeInstanceEntry("1", "1-1", "stack1-1");
+    boolean out =
+        repoInstance.writeInstanceEntry("1", "1-1", "stack1-1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while writing the instance", out);
 
@@ -180,5 +184,52 @@ public class VimRepoTest {
 
   }
 
+  @Test
+  public void testNetworkingVim() {
 
+    repoInstance = new VimRepo();
+    String computeUuid = "12345777";
+    String networkingUuid = "abcde";
+
+    WrapperConfiguration config = new WrapperConfiguration();
+    config.setVimEndpoint("x.x.x.x");
+    config.setVimVendor("mock");
+    config.setAuthUserName("operator");
+    config.setAuthPass("apass");
+    config.setTenantName("tenant");
+    config.setUuid(computeUuid);
+    config.setWrapperType("compute");
+    config.setTenantExtNet("ext-subnet");
+    config.setTenantExtRouter("ext-router");
+    WrapperRecord record = new WrapperRecord(new MockWrapper(config), config, null);
+    boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
+    Assert.assertTrue("Unable to write the compute vim", out);
+
+    config = new WrapperConfiguration();
+    config.setVimEndpoint("x.x.x.x");
+    config.setVimVendor("OpenDaylight");
+    config.setAuthUserName("operator");
+    config.setAuthPass("apass");
+    config.setTenantName("tenant");
+    config.setUuid(networkingUuid);
+    config.setWrapperType("networking");
+    config.setTenantExtNet(null);
+    config.setTenantExtRouter(null);
+    record = new WrapperRecord(new OdlWrapper(config), config, null);
+    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    Assert.assertTrue("Unable to write the networking vim", out);
+
+    out = repoInstance.writeNetworkVimLink(computeUuid, networkingUuid);
+    Assert.assertTrue("Unable to write compute/networking association", out);
+
+    WrapperRecord netRecord = repoInstance.getNetworkVim(computeUuid);
+
+    Assert.assertTrue("The retrieved vim is not a networking vim",
+        netRecord.getConfig().getWrapperType().equals("networking"));
+    Assert.assertTrue("Unexpected networking vim uuid",
+        netRecord.getConfig().getUuid().equals(networkingUuid));
+
+    out = repoInstance.removeVimEntry(config.getUuid());
+    Assert.assertTrue("unable to remove vim", out);
+  }
 }

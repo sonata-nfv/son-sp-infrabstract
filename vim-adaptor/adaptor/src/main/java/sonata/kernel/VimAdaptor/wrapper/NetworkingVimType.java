@@ -20,51 +20,23 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.)
+ * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
 
-package sonata.kernel.VimAdaptor.commons;
+package sonata.kernel.VimAdaptor.wrapper;
 
-import java.util.ArrayList;
+enum NetworkingVimType {
+  OPENDAYLIGHT("odl");
 
-public class DeploymentResponse {
+  private final String name;
 
-  private String instanceName;
-  private String instanceVimUuid;
-  private ArrayList<VimInstanceInfo> instanceInfo;
-  private String errorCode = null;
-
-  public String getInstanceName() {
-    return instanceName;
+  NetworkingVimType(String name) {
+    this.name = name;
   }
 
-  public String getInstanceVimUuid() {
-    return instanceVimUuid;
+  @Override
+  public String toString() {
+    return this.name;
   }
-
-  public ArrayList<VimInstanceInfo> getInstanceInfo() {
-    return instanceInfo;
-  }
-
-  public void setInstanceName(String instanceName) {
-    this.instanceName = instanceName;
-  }
-
-  public void setInstanceVimUuid(String instanceVimUuid) {
-    this.instanceVimUuid = instanceVimUuid;
-  }
-
-  public void setInstanceInfo(ArrayList<VimInstanceInfo> instanceInfo) {
-    this.instanceInfo = instanceInfo;
-  }
-
-  public String getErrorCode() {
-    return errorCode;
-  }
-
-  public void setErrorCode(String errorCode) {
-    this.errorCode = errorCode;
-  }
-
 }

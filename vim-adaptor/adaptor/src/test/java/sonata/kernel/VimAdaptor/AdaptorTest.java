@@ -209,7 +209,6 @@ public class AdaptorTest implements MessageReceiver {
     Assert.assertTrue(status.equals("COMPLETED"));
 
     core.stop();
-    WrapperBay.getInstance().clear();
   }
 
 

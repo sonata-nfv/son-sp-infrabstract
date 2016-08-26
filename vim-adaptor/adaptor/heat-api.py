@@ -58,7 +58,7 @@ def write_server(server,stackname):  #function used to write needed server's inf
     s_id = server['physical_resource_id']
     server = heat.resources.get(stackname, server['resource_name']).to_dict()
     s_name =server['attributes']['name']
-    flavor = server['attributes']['flavor']
+    #flavor = server['attributes']['flavor']
     server_dict = {'server_name': s_name, 'server_id' : s_id}
     return server_dict
 

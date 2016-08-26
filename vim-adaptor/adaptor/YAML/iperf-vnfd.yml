@@ -23,10 +23,10 @@ virtual_deployment_units:
       cpu:
         vcpus: 1
       memory:
-        size: 2
-        size_unit: GB
+        size: 256
+        size_unit: MB
       storage:
-        size: 10
+        size: 1
         size_unit: GB
     connection_points:
       - id: vdu01:cp01

@@ -28,32 +28,18 @@ package sonata.kernel.VimAdaptor.commons.vnfd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ConnectionPointReference implements Comparable<ConnectionPointReference> {
+public class FsmResourceRequirements {
 
-  @JsonProperty("connection_point_ref")
-  private String connectionPointRef;
-  private int position;
+  @JsonProperty("docker_version")
+  private String dockerVersion;
 
-
-  public int getPosition() {
-    return position;
+  public String getDockerVersion() {
+    return dockerVersion;
   }
 
-  public String getConnectionPointRef() {
-    return connectionPointRef;
+  public void setDockerVersion(String dockerVersion) {
+    this.dockerVersion = dockerVersion;
   }
 
-  public void setConnectionPointRef(String connectionPointRef) {
-    this.connectionPointRef = connectionPointRef;
-  }
-
-  public void setPosition(int position) {
-    this.position = position;
-  }
-
-  @Override
-  public int compareTo(ConnectionPointReference o) {
-    return (int) Math.signum(position - o.getPosition());
-  }
 
 }

@@ -31,6 +31,7 @@ import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.AdaptorCore;
 
 import java.io.IOException;
@@ -39,6 +40,9 @@ import java.io.IOException;
 public class AdaptorDefaultConsumer extends DefaultConsumer {
 
   private RabbitMqConsumer msgBusConsumer;
+
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(AdaptorDefaultConsumer.class);
 
   /**
    * Create a RabbitMq consumer for the MsgBus plug-in.
@@ -55,15 +59,14 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
     String message = new String(body, "UTF-8");
-    // System.out
-    // .println(" [northbound] Received message:" + message + " on " + envelope.getRoutingKey());
-    System.out.println(" [northbound] Received message on " + envelope.getRoutingKey());
+    // Logger.info("Received message:" + message + " on " + envelope.getRoutingKey());
+    Logger.info("Received message on " + envelope.getRoutingKey());
     if (properties != null && properties.getAppId() != null
         && !properties.getAppId().equals(AdaptorCore.APP_ID)) {
       this.msgBusConsumer.processMessage(message, properties.getContentType(),
           envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
     } else {
-      System.out.println("  [northbound] Message ignored: " + properties);
+      Logger.info("Message ignored: " + properties);
     }
   }
 
