@@ -282,7 +282,7 @@ public class DeployServiceFsm implements Runnable {
     } catch (Exception e) {
       Logger.error(e.getMessage(), e);
       response.setRequestStatus("FAIL");
-      response.setErrorCode("TranslationError");
+      response.setErrorCode("DeploymentError");
       try {
         String body = mapper.writeValueAsString(response);
         Logger.info("Error response created");

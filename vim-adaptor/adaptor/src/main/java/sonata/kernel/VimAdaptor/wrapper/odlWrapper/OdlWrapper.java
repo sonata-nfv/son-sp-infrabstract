@@ -182,8 +182,8 @@ public class OdlWrapper extends NetworkingWrapper {
     }
 
     Collections.sort(odlList);
-    OdlPayload odlPayload = new OdlPayload("add", data.getNsd().getInstanceUuid(), "254.0.0.1/32",
-        "254.0.0.2/32", odlList);
+    OdlPayload odlPayload = new OdlPayload("add", data.getNsd().getInstanceUuid(),
+        "10.100.16.40/32", "10.100.32.40/32", odlList);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
@@ -201,19 +201,21 @@ public class OdlWrapper extends NetworkingWrapper {
     clientSocket.send(sendPacket);
     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
     clientSocket.receive(receivePacket);
-    String response = new String(receivePacket.getData(), 0, receivePacket.getLength(),Charset.forName("UTF-8"));
+    String response =
+        new String(receivePacket.getData(), 0, receivePacket.getLength(), Charset.forName("UTF-8"));
     Logger.info("SFC Agent response:\n" + response);
     clientSocket.close();
     if (!response.equals("SUCCESS")) {
-      Logger.error("received string length: "+response.length());  
-      Logger.error("received string: "+response+" not equal SUCCESS");
+      Logger.error("received string length: " + response.length());
+      Logger.error("received string: " + response + " not equal SUCCESS");
+      throw new Exception("Unexcepted response from ODL SFC agent while trying to add a configuration.");
     }
     return;
   }
 
   public void deconfigureNetworking(String instanceId) throws Exception {
 
-    OdlPayload odlPayload = new OdlPayload("delete", instanceId,null,null,null);
+    OdlPayload odlPayload = new OdlPayload("delete", instanceId, null, null, null);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
@@ -231,15 +233,16 @@ public class OdlWrapper extends NetworkingWrapper {
     clientSocket.send(sendPacket);
     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
     clientSocket.receive(receivePacket);
-    String response = new String(receivePacket.getData(), 0, receivePacket.getLength(),Charset.forName("UTF-8"));
+    String response =
+        new String(receivePacket.getData(), 0, receivePacket.getLength(), Charset.forName("UTF-8"));
     Logger.info("SFC Agent response:\n" + response);
     clientSocket.close();
-    
-    
+
+
     if (!response.equals("SUCCESS")) {
-      Logger.error("received string length: "+response.length());  
-      Logger.error("received string: "+response+" not equal SUCCESS");
-      throw new Exception("Unexcepted response from ODL SFC agent.");
+      Logger.error("received string length: " + response.length());
+      Logger.error("received string: " + response + " not equal SUCCESS");
+      throw new Exception("Unexcepted response from ODL SFC agent while trying to delete a configuration.");
     }
     return;
   }

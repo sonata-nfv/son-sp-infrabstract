@@ -90,13 +90,13 @@ public class OpenStackHeatClient {
 
     Logger.info("Creating stack: " + stackName);
     Logger.debug("Template:\n" + template);
-    Logger.debug("User" + userName);
-    Logger.debug("Tenant" + tenantName);
-    Logger.debug("Pass" + password);
+    // Logger.debug("User: " + userName);
+    // Logger.debug("Tenant: " + tenantName);
+    // Logger.debug("Pass: " + password);
     try {
 
       // Call the python client for creating the stack
-      
+
       ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
           "--configuration", url, userName, password, tenantName, "--create", stackName, template);
       Process process = processBuilder.start();
