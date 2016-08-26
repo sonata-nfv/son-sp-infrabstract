@@ -40,8 +40,7 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.Test;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+
 
 import sonata.kernel.VimAdaptor.AdaptorCore;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
@@ -59,7 +58,6 @@ import sonata.kernel.VimAdaptor.messaging.TestConsumer;
 import sonata.kernel.VimAdaptor.messaging.TestProducer;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.odlWrapper.OdlWrapper;
-import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -75,8 +73,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 /**
  * Unit test for simple App.
  */
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(OpenStackHeatClient.class)
 
 public class DeployServiceTest implements MessageReceiver {
   private String output = null;

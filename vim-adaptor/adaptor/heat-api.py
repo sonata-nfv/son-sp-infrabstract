@@ -46,6 +46,7 @@ def get_stack_list(heat): #deprecated
             break
 
 def autheticate(cip, username, password, tenant): #function used to autheticate with keystone
+    print "authenticating with user "+str(username)+" tenant "+str(tenant)+" and pass "+str(password)
     auth_url = 'http://'+ str(cip)+':5000/v2.0'
     keystone = client.Client(username=username, password=password, tenant_name=tenant, auth_url=auth_url)
     auth_token = keystone.auth_ref['token']['id']
