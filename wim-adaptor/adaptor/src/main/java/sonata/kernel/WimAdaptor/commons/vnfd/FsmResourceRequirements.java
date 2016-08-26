@@ -28,55 +28,18 @@ package sonata.kernel.WimAdaptor.commons.vnfd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.WimAdaptor.commons.vnfd.Unit.FrequencyUnit;
+public class FsmResourceRequirements {
 
+  @JsonProperty("docker_version")
+  private String dockerVersion;
 
-public class VduMonitoringParameter {
-
-  private String name;
-  private String description;
-  private Unit unit;
-  private double frequency;
-  @JsonProperty("frequency_unit")
-  private FrequencyUnit frequencyUnit;
-
-  public double getFrequency() {
-    return frequency;
+  public String getDockerVersion() {
+    return dockerVersion;
   }
 
-  public String getDescription() {
-    return description;
+  public void setDockerVersion(String dockerVersion) {
+    this.dockerVersion = dockerVersion;
   }
 
-  public Unit getUnit() {
-    return unit;
-  }
 
-  public String getName() {
-    return name;
-  }
-
-  public FrequencyUnit getFrequencyUnit() {
-    return frequencyUnit;
-  }
-
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public void setUnit(Unit unit) {
-    this.unit = unit;
-  }
-
-  public void setFrequency(double frequency) {
-    this.frequency = frequency;
-  }
-
-  public void setFrequencyUnit(FrequencyUnit frequencyUnit) {
-    this.frequencyUnit = frequencyUnit;
-  }
 }

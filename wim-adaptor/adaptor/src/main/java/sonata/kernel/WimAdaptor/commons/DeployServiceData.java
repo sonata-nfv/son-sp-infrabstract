@@ -24,59 +24,57 @@
  * 
  */
 
-package sonata.kernel.WimAdaptor.commons.vnfd;
+package sonata.kernel.WimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.WimAdaptor.commons.vnfd.Unit.FrequencyUnit;
+import sonata.kernel.WimAdaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.WimAdaptor.commons.vnfd.VnfDescriptor;
 
+import java.util.ArrayList;
 
-public class VduMonitoringParameter {
+public class DeployServiceData {
 
-  private String name;
-  private String description;
-  private Unit unit;
-  private double frequency;
-  @JsonProperty("frequency_unit")
-  private FrequencyUnit frequencyUnit;
+  @JsonProperty("vim_uuid")
+  private String vimUuid;
+  private ServiceDescriptor nsd;
+  private ArrayList<VnfDescriptor> vnfds;
 
-  public double getFrequency() {
-    return frequency;
+  public DeployServiceData() {
+    this.vnfds = new ArrayList<VnfDescriptor>();
   }
 
-  public String getDescription() {
-    return description;
+  public void setServiceDescriptor(ServiceDescriptor descriptor) {
+    this.nsd = descriptor;
   }
 
-  public Unit getUnit() {
-    return unit;
+  public void addVnfDescriptor(VnfDescriptor descriptor) {
+    this.vnfds.add(descriptor);
   }
 
-  public String getName() {
-    return name;
+  public ServiceDescriptor getNsd() {
+    return nsd;
   }
 
-  public FrequencyUnit getFrequencyUnit() {
-    return frequencyUnit;
+  public ArrayList<VnfDescriptor> getVnfdList() {
+    return vnfds;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public String getVimUuid() {
+    return vimUuid;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
   }
 
-  public void setUnit(Unit unit) {
-    this.unit = unit;
+  public void setNsd(ServiceDescriptor nsd) {
+    this.nsd = nsd;
   }
 
-  public void setFrequency(double frequency) {
-    this.frequency = frequency;
+  public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
+    this.vnfds = vnfds;
   }
 
-  public void setFrequencyUnit(FrequencyUnit frequencyUnit) {
-    this.frequencyUnit = frequencyUnit;
-  }
+
 }

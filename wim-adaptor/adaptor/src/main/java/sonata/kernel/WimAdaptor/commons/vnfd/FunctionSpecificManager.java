@@ -28,55 +28,67 @@ package sonata.kernel.WimAdaptor.commons.vnfd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.WimAdaptor.commons.vnfd.Unit.FrequencyUnit;
+import java.util.ArrayList;
 
+public class FunctionSpecificManager {
 
-public class VduMonitoringParameter {
-
-  private String name;
   private String description;
-  private Unit unit;
-  private double frequency;
-  @JsonProperty("frequency_unit")
-  private FrequencyUnit frequencyUnit;
-
-  public double getFrequency() {
-    return frequency;
-  }
+  private String id;
+  private String image;
+  @JsonProperty("image_md5")
+  private String imageMd5;
+  @JsonProperty("resource_requirements")
+  private FsmResourceRequirements resourceRequirements;
+  private ArrayList<FsmOption> options;
 
   public String getDescription() {
     return description;
   }
 
-  public Unit getUnit() {
-    return unit;
+  public String getId() {
+    return id;
   }
 
-  public String getName() {
-    return name;
+  public String getImage() {
+    return image;
   }
 
-  public FrequencyUnit getFrequencyUnit() {
-    return frequencyUnit;
+  public String getImageMd5() {
+    return imageMd5;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public FsmResourceRequirements getResourceRequirements() {
+    return resourceRequirements;
+  }
+
+  public ArrayList<FsmOption> getOptions() {
+    return options;
   }
 
   public void setDescription(String description) {
     this.description = description;
   }
 
-  public void setUnit(Unit unit) {
-    this.unit = unit;
+  public void setId(String id) {
+    this.id = id;
   }
 
-  public void setFrequency(double frequency) {
-    this.frequency = frequency;
+  public void setImage(String image) {
+    this.image = image;
   }
 
-  public void setFrequencyUnit(FrequencyUnit frequencyUnit) {
-    this.frequencyUnit = frequencyUnit;
+  public void setImageMd5(String imageMd5) {
+    this.imageMd5 = imageMd5;
   }
+
+  public void setResourceRequirements(FsmResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
+  }
+
+  public void setOptions(ArrayList<FsmOption> options) {
+    this.options = options;
+  }
+
+
+
 }

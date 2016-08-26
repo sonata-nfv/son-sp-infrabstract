@@ -26,7 +26,7 @@
 
 package sonata.kernel.WimAdaptor.wrapper;
 
-
+import java.util.ArrayList;
 
 public class WrapperBay {
 
@@ -58,13 +58,19 @@ public class WrapperBay {
     this.repository = repo;
   }
 
+  /**
+   * Register a new WIM wrapper to the WIM adaptor.
+   * 
+   * @param config the WrapperConfiguration for the WIM wrapper to be created
+   * @return a JSON formatted string with the result of the operation
+   */
   public String registerWrapper(WrapperConfiguration config) {
 
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
-    } else if (newWrapper.getType().equals("compute")) {
+      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Wim\"}";
+    } else {
       WrapperRecord record = new WrapperRecord(newWrapper, config);
       this.repository.writeWimEntry(config.getUuid(), record);
       output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
@@ -73,6 +79,15 @@ public class WrapperBay {
     return output;
   }
 
+  public WrapperRecord getWimRecord(String vimUuid) {
+    WrapperRecord out;
+    out = this.repository.readWimEntryFromNetSegment(vimUuid);
+    return out;
+  }
 
+  public String removeWimWrapper(String uuid) {
+    repository.removeWimEntry(uuid);
+    return "{\"status\":\"COMPLETED\"}";
+  }
 
 }

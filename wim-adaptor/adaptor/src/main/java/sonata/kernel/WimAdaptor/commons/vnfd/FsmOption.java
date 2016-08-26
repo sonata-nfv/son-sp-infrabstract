@@ -26,57 +26,27 @@
 
 package sonata.kernel.WimAdaptor.commons.vnfd;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public class FsmOption {
 
-import sonata.kernel.WimAdaptor.commons.vnfd.Unit.FrequencyUnit;
+  private String key;
+  private String value;
 
-
-public class VduMonitoringParameter {
-
-  private String name;
-  private String description;
-  private Unit unit;
-  private double frequency;
-  @JsonProperty("frequency_unit")
-  private FrequencyUnit frequencyUnit;
-
-  public double getFrequency() {
-    return frequency;
+  public String getKey() {
+    return key;
   }
 
-  public String getDescription() {
-    return description;
+  public String getValue() {
+    return value;
   }
 
-  public Unit getUnit() {
-    return unit;
+  public void setKey(String key) {
+    this.key = key;
   }
 
-  public String getName() {
-    return name;
+  public void setValue(String value) {
+    this.value = value;
   }
 
-  public FrequencyUnit getFrequencyUnit() {
-    return frequencyUnit;
-  }
 
-  public void setName(String name) {
-    this.name = name;
-  }
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public void setUnit(Unit unit) {
-    this.unit = unit;
-  }
-
-  public void setFrequency(double frequency) {
-    this.frequency = frequency;
-  }
-
-  public void setFrequencyUnit(FrequencyUnit frequencyUnit) {
-    this.frequencyUnit = frequencyUnit;
-  }
 }

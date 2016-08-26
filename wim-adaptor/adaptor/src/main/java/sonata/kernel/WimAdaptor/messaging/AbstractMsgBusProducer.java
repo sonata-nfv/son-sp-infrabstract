@@ -28,7 +28,13 @@ package sonata.kernel.WimAdaptor.messaging;
 
 import java.util.concurrent.BlockingQueue;
 
+import org.slf4j.LoggerFactory;
+
+
 public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable {
+
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(AbstractMsgBusProducer.class);
 
   private BlockingQueue<ServicePlatformMessage> muxQueue;
   private boolean stop = false;
@@ -54,7 +60,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
     try {
       thread.start();
     } catch (Exception e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
       out = false;
     }
     return out;
@@ -69,7 +75,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     }
     this.stop = true;
@@ -82,7 +88,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
       try {
         this.sendMessage(muxQueue.take());
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     } while (!stop);
   }
