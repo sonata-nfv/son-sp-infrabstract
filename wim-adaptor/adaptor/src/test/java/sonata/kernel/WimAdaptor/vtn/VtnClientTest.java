@@ -31,6 +31,7 @@ import java.io.IOException;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import sonata.kernel.WimAdaptor.wrapper.vtn.VtnClient;
@@ -54,7 +55,7 @@ public class VtnClientTest {
     client = new VtnClient("10.30.0.13", "admin", "admin");
   }
 
-  @Test
+  @Ignore
   public void testAddDeleteVtn() {
     System.out.println("Adding and deleting a test VTN");
     boolean create = client.setupVtn("TestVtn01");
@@ -64,14 +65,14 @@ public class VtnClientTest {
     System.out.println("DONE");
   }
 
-  @Test
+  @Ignore
   public void testDeleteNonEsistingVtn() {
     System.out.println("Deleting a non existing VTN");
     boolean delete = client.deleteVtn("TestVtn01");
     Assert.assertFalse("Cannot delete the test VTN", delete);
   }
 
-  @Test
+  @Ignore
   public void testAddDeleteFlowRule() {
     System.out.println("Adding a flow rule");
     boolean create = client.setupVtn("TestVtn01");

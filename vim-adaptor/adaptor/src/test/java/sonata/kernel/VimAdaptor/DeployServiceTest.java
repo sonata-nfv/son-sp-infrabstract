@@ -369,7 +369,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployServiceOpenStack() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
