@@ -62,7 +62,7 @@ class RestHelper extends NanoHTTPD {
             	}
             	String finalString = finalStringBuilder.toString();
             	System.out.println("RequestBody: " + finalString);
-            	return newFixedLengthResponse(Response.Status.OK, null, finalString);
+            	return newFixedLengthResponse(Response.Status.OK, null, "Status Ok");
             } catch (IOException ioe) {
                 return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, MIME_PLAINTEXT, "SERVER INTERNAL ERROR: IOException: " + ioe.getMessage());
             }
