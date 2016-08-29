@@ -1,5 +1,8 @@
 package sonata.kernel.placement;
 
+import sonata.kernel.placement.config.PlacementConfig;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
@@ -11,6 +14,17 @@ public class TranslatorCore {
     }
 
     public static void main(String[] args) throws InterruptedException {
+
+        // Load configuration
+        System.out.println("Current path: "+new File("").getAbsolutePath());
+        PlacementConfig config = PlacementConfigLoader.loadPlacementConfig();
+        System.out.println("Plugin-path: "+config.pluginPath);
+        System.out.println("Placement-plugin: "+config.placementPlugin);
+
+        // Load placement plugin
+        PlacementPluginLoader.loadPlacementPlugin(config.pluginPath,config.placementPlugin);
+        System.out.println("Loaded placement-plugin: "+PlacementPluginLoader.placementPlugin.getClass().getName());
+
         try {
             new Thread(new RestInterfaceClientApi()).start();
             new RestInterfaceServerApi("localhost", 8080).start();
