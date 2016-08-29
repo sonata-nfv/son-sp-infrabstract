@@ -36,6 +36,7 @@ import com.rabbitmq.client.ConnectionFactory;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -56,6 +57,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
   }
 
   private final static String configFilePath = "/etc/son-mano/broker.config";
+  private final static org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqProducer.class);
 
   private Connection connection;
   private Properties brokerConfig;
@@ -66,7 +68,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
 
     ConnectionFactory cf = new ConnectionFactory();
     if (!brokerConfig.containsKey("broker_url") || !brokerConfig.containsKey("exchange")) {
-      System.err.println("Missing broker url configuration.");
+      Logger.error("Missing broker url configuration.");
       System.exit(1);
     }
 
@@ -138,7 +140,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
       prop.put("broker_url", brokerUrl);
       prop.put("exchange", exchange);
     } catch (FileNotFoundException e) {
-      System.err.println("Unable to load Broker Config file");
+      Logger.error("Unable to load Broker Config file", e);
       System.exit(1);
     }
 

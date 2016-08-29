@@ -21,7 +21,7 @@
  * (www.sonata-nfv.eu).
  *
  * @author Dario Valocchi (Ph.D.), UCL
- * 
+ * @author Michael Bredel (Ph.D.), NEC
  */
 
 package sonata.kernel.VimAdaptor;
@@ -29,6 +29,7 @@ package sonata.kernel.VimAdaptor;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.messaging.AbstractMsgBusConsumer;
 import sonata.kernel.VimAdaptor.messaging.AbstractMsgBusProducer;
 import sonata.kernel.VimAdaptor.messaging.MsgBusConsumer;
@@ -61,6 +62,8 @@ public class AdaptorCore {
 
   private static final String version = "0.0.1";
   private static final String description = "Service Platform Infrastructure Adaptor";
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AdaptorCore.class);
+  private static final int writeLockCoolDown = 100000;
 
 
   /**
@@ -147,9 +150,9 @@ public class AdaptorCore {
       try {
         this.registrationSid = message.getSid();
         mux.enqueue(message);
-        writeLock.wait(10000);
+        writeLock.wait(writeLockCoolDown);
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     }
   }
@@ -163,9 +166,9 @@ public class AdaptorCore {
       try {
         this.registrationSid = message.getSid();
         mux.enqueue(message);
-        writeLock.wait(10000);
+        writeLock.wait(writeLockCoolDown);
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     }
     this.status = "STOPPED";
@@ -222,7 +225,7 @@ public class AdaptorCore {
    * @param message the response message
    */
   public void handleRegistrationResponse(ServicePlatformMessage message) {
-    System.out.println("[AdaptorCore] Received the registration response from the pluginmanager");
+    Logger.info("Received the registration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject object = (JSONObject) tokener.nextValue();
     String status = object.getString("status");
@@ -234,8 +237,8 @@ public class AdaptorCore {
       }
     } else {
       String error = object.getString("error");
-      System.err.println("Failed to register to the plugin manager");
-      System.err.println("Message: " + error);
+      Logger.error("Failed to register to the plugin manager");
+      Logger.error("Message: " + error);
     }
 
   }
@@ -246,7 +249,7 @@ public class AdaptorCore {
    * @param message the response message
    */
   public void handleDeregistrationResponse(ServicePlatformMessage message) {
-    System.out.println("[AdaptorCore] Received the deregistration response from the pluginmanager");
+    Logger.info("Received the deregistration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject object = (JSONObject) tokener.nextValue();
     String status = object.getString("status");
@@ -255,7 +258,7 @@ public class AdaptorCore {
         writeLock.notifyAll();
       }
     } else {
-      System.err.println("Failed to deregister to the plugin manager");
+      Logger.error("Failed to deregister to the plugin manager");
       this.status = "FAILED";
     }
 

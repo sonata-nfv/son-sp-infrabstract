@@ -30,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.WimAdaptor.commons.vnfd.Unit.BandwidthUnit;
 
+
 public class Network {
 
 

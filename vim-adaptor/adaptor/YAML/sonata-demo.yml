@@ -1,90 +1,97 @@
+##
+## This is the network service descriptor of the
+## SONATA demo example that comprises a virtual traffic
+## classifier (vTC)
+##
+## @author Felipe Vicens
+##
 ---
-author: Michael Bredel, NEC Labs Europe
-connection_points:
-- id: ns:mgmt
-  type: interface
-- id: ns:input
-  type: interface
-- id: ns:output
-  type: interface
-created_at: '2016-04-28T14:25:47.309+00:00'
-description: |
+descriptor_version: "1.0"
+
+vendor: "eu.sonata-nfv.service-descriptor"
+name: "sonata-demo-1"
+version: "0.1"
+author: "Felipe Vicens, Atos IT Solutions and Services Iberia"
+description: >
   "The network service descriptor for the SONATA demo,
-   comprising iperf, a firewall, and tcpump."
-descriptor_version: '1.0'
-forwarding_graphs:
-- fg_id: ns:fg01
-  number_of_endpoints: 2
-  number_of_virtual_links: 4
-  constituent_vnfs:
-  - vnf_iperf
-  - vnf_firewall
-  - vnf_tcpdump
-  network_forwarding_paths:
-  - fp_id: ns:fg01:fp01
-    policy: none
-    connection_points:
-    - connection_point_ref: ns:input
-      position: 1
-    - connection_point_ref: vnf_iperf:input
-      position: 2
-    - connection_point_ref: vnf_iperf:output
-      position: 3
-    - connection_point_ref: vnf_firewall:input
-      position: 4
-    - connection_point_ref: vnf_firewall:output
-      position: 5
-    - connection_point_ref: vnf_tcpdump:input
-      position: 6
-    - connection_point_ref: vnf_tcpdump:output
-      position: 7
-    - connection_point_ref: ns:output
-      position: 8
-name: sonata-demo
+   comprising a Virtual Traffic Classifier"
+
+##
+## The various network functions this service
+## is composed of.
+##
 network_functions:
-- vnf_id: vnf_firewall
-  vnf_vendor: eu.sonata-nfv
-  vnf_name: firewall-vnf
-  vnf_version: '0.1'
-- vnf_id: vnf_iperf
-  vnf_vendor: eu.sonata-nfv
-  vnf_name: iperf-vnf
-  vnf_version: '0.1'
-- vnf_id: vnf_tcpdump
-  vnf_vendor: eu.sonata-nfv
-  vnf_name: tcpdump-vnf
-  vnf_version: '0.1'
-status: Inactive
-updated_at: '2016-04-28T14:25:47.309+00:00'
-vendor: eu.sonata-nfv.service-descriptor
-version: '0.2'
+  - vnf_id: "vnf_vtc"
+    vnf_vendor: "eu.sonata-nfv"
+    vnf_name: "vtc-vnf"
+    vnf_version: "0.1"
+  - vnf_id: "vnf_firewall"
+    vnf_vendor: "eu.sonata-nfv"
+    vnf_name: "fw-vnf"
+    vnf_version: "0.1"
+##
+## The NS connection points to the
+## outside world.
+##
+connection_points:
+  - id: "ns:mgmt"
+    type: "interface"
+  - id: "ns:input"
+    type: "interface"
+  - id: "ns:output"
+    type: "interface"
+
+##
+## The virtual links that interconnect
+## the different connections points.
+##
 virtual_links:
-- id: mgmt
-  connectivity_type: E-LAN
-  connection_points_reference:
-  - vnf_iperf:mgmt
-  - vnf_firewall:mgmt
-  - vnf_tcpdump:mgmt
-  - ns:mgmt
-- id: input-2-iperf
-  connectivity_type: E-Line
-  connection_points_reference:
-  - ns:input
-  - vnf_iperf:input
-- id: iperf-2-firewall
-  connectivity_type: E-Line
-  connection_points_reference:
-  - vnf_iperf:output
-  - vnf_firewall:input
-- id: firewall-2-tcpdump
-  connectivity_type: E-Line
-  connection_points_reference:
-  - vnf_firewall:output
-  - vnf_tcpdump:input
-- id: tcpdump-2-output
-  connectivity_type: E-Line
-  connection_points_reference:
-  - vnf_tcpdump:output
-  - ns:output
-uuid: 9df6a98f-9e11-4cb7-b3c0-b1375e7cb0b0
+  - id: "mgmt"
+    connectivity_type: "E-LAN"
+    connection_points_reference:
+      - "vnf_vtc:mgmt"
+      - "vnf_firewall:mgmt"
+      - "ns:mgmt"
+  - id: "input-2-fw"
+    connectivity_type: "E-Line"
+    connection_points_reference:
+      - "ns:input"
+      - "vnf_firewall:input"
+  - id: "fw-2-vtc"
+    connectivity_type: "E-Line"
+    connection_points_reference:
+      - "vnf_firewall:output"
+      - "vnf_vtc:input"
+  - id: "vtc-2-output"
+    connectivity_type: "E-Line"
+    connection_points_reference:
+      - "vnf_vtc:output"
+      - "ns:output"
+##
+## The forwarding graphs.
+##
+forwarding_graphs:
+  - fg_id: "ns:fg01"
+    number_of_endpoints: 2
+    number_of_virtual_links: 3
+    constituent_vnfs:
+      - "vnf_vtc"
+    network_forwarding_paths:
+      - fp_id: "ns:fg01:fp01"
+        policy: "none"
+        connection_points:
+          - connection_point_ref: "ns:input"
+            position: 1
+          - connection_point_ref: "vnf_firewall:input"
+            position: 2
+          - connection_point_ref: "vnf_firewall:output"
+            position: 3
+          - connection_point_ref: "vnf_vtc:input"
+            position: 4
+          - connection_point_ref: "vnf_vtc:output"
+            position: 5
+          - connection_point_ref: "ns:output"
+            position: 6
+uuid: 9df6a98f-9e11-4cb7-b3c0-b1375e7ca1a1
 instance_uuid: 9df6a98f-9e11-4cb7-b3c0-InAdUnitTest
+

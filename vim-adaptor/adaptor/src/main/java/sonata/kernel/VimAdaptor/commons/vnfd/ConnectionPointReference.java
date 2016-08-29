@@ -28,7 +28,7 @@ package sonata.kernel.VimAdaptor.commons.vnfd;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class ConnectionPointReference {
+public class ConnectionPointReference implements Comparable<ConnectionPointReference> {
 
   @JsonProperty("connection_point_ref")
   private String connectionPointRef;
@@ -49,6 +49,11 @@ public class ConnectionPointReference {
 
   public void setPosition(int position) {
     this.position = position;
+  }
+
+  @Override
+  public int compareTo(ConnectionPointReference o) {
+    return (int) Math.signum(position - o.getPosition());
   }
 
 }

@@ -129,6 +129,28 @@ public class WrapperBay {
     return (ComputeWrapper) this.repository.readVimEntry(vimUuid).getVimWrapper();
   }
 
+
+
+  /**
+   * @param config
+   * @param computeVimRef
+   * @return
+   */
+  public String registerNetworkingWrapper(WrapperConfiguration config, String computeVimRef) {
+    Wrapper newWrapper = WrapperFactory.createWrapper(config);
+    String output = "";
+    if (newWrapper == null) {
+      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
+    } else if (newWrapper.getType().equals("networking")) {
+      WrapperRecord record = new WrapperRecord(newWrapper, config, null);
+      this.repository.writeVimEntry(config.getUuid(), record);
+      this.repository.writeNetworkVimLink(computeVimRef, config.getUuid());
+      output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
+    }
+    return output;
+  }
+
+
   /**
    * Return the VimRepo
    * 
@@ -137,5 +159,7 @@ public class WrapperBay {
   public VimRepo getVimRepo() {
     return repository;
   }
+
+
 
 }

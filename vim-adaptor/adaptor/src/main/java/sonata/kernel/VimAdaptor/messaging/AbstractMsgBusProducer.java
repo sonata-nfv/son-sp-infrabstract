@@ -21,10 +21,13 @@
  * (www.sonata-nfv.eu).
  *
  * @author Dario Valocchi (Ph.D.), UCL
+ * @author Michael Bredel (Ph.D.), NEC
  * 
  */
 
 package sonata.kernel.VimAdaptor.messaging;
+
+import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.BlockingQueue;
 
@@ -33,6 +36,9 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
   private BlockingQueue<ServicePlatformMessage> muxQueue;
   private boolean stop = false;
 
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(AbstractMsgBusProducer.class);
+
   public AbstractMsgBusProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
     this.muxQueue = muxQueue;
   }
@@ -40,7 +46,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
   /**
    * Send a message in the MsgBus.
    * 
-   * @param the SP message to send
+   * @param message the SP message to send
    */
   public abstract boolean sendMessage(ServicePlatformMessage message);
 
@@ -54,7 +60,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
     try {
       thread.start();
     } catch (Exception e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
       out = false;
     }
     return out;
@@ -69,7 +75,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
       try {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     }
     this.stop = true;
@@ -82,7 +88,7 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
       try {
         this.sendMessage(muxQueue.take());
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     } while (!stop);
   }
