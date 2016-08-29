@@ -503,6 +503,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
 
+    // VIM removal
     output = null;
     message = "{\"wr_type\":\"compute\",\"uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
@@ -523,9 +524,10 @@ public class DeployServiceTest implements MessageReceiver {
     core.stop();
 
     // clean the SFC engine
+    System.out.println("Cleaning the SFC environment...");
     WrapperConfiguration config = new WrapperConfiguration();
 
-    config.setVimEndpoint("10.100.32.10");
+    config.setVimEndpoint("10.100.32.200");
 
     OdlWrapper wrapper = new OdlWrapper(config);
     wrapper.deconfigureNetworking(data.getNsd().getInstanceUuid());

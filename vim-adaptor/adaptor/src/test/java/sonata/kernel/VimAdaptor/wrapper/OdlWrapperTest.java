@@ -26,6 +26,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
@@ -73,7 +74,7 @@ public class OdlWrapperTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -82,28 +83,17 @@ public class OdlWrapperTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/firewall-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-
-    VnfDescriptor vnfd3;
-    bodyBuilder = new StringBuilder();
-    in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/tcpdump-vnfd.yml")), Charset.forName("UTF-8")));
-    line = null;
-    while ((line = in.readLine()) != null)
-      bodyBuilder.append(line + "\n\r");
-    vnfd3 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
-
     this.data = new DeployServiceData();
-
+    sd.setInstanceUuid(sd.getInstanceUuid()+"IASFCTEST");
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);
-    data.addVnfDescriptor(vnfd3);
 
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
@@ -117,11 +107,11 @@ public class OdlWrapperTest {
 
   }
 
-  @Test
-  public void testOdlWrapper() throws Exception {
+  @Ignore
+  void testOdlWrapper() throws Exception {
     WrapperConfiguration config = new WrapperConfiguration();
 
-    config.setVimEndpoint("10.100.32.10");
+    config.setVimEndpoint("10.100.32.200");
 
     OdlWrapper wrapper = new OdlWrapper(config);
     try {
