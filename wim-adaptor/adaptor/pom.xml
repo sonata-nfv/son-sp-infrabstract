@@ -39,7 +39,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>sonata.kernel.WimAdaptor.AdaptorCore</mainClass>
+							<mainClass>sonata.kernel.WimAdaptor.WimAdaptorCore</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>

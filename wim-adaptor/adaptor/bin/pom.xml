@@ -21,7 +21,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>sonata.kernel.adaptor.AdaptorCore</mainClass>
+							<mainClass>sonata.kernel.adaptor.WimAdaptorCore</mainClass>
 						</manifest>
 					</archive>
 					<descriptorRefs>
