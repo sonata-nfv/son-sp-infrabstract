@@ -1,0 +1,4 @@
+# Placement config file
+
+pluginPath: "./sandman/placement/target/classes/sonata/kernel/placement/"
+placementPlugin: "sonata.kernel.placement.DefaultPlacementPlugin"
