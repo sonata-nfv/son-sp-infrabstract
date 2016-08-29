@@ -123,7 +123,8 @@ class DescriptorTranslator
             mapper2.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
             mapper2.setSerializationInclusion(Include.NON_NULL);
             createStack.template = template;
-            String body = mapper2.writeValueAsString(createStack);
+            String body = mapper2.writeValueAsString(template);
+            System.out.println(body);
             return body;
 
            // Assert.assertNotNull(body);

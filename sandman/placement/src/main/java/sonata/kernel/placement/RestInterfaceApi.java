@@ -5,6 +5,7 @@ import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -105,15 +106,18 @@ class RestInterfaceClientApi implements Runnable{
         String output;
         OSClient.OSClientV2 os = OSFactory.builderV2()
                 .endpoint("http://131.234.31.45:5001/v2.0")
-                .credentials("admin","sample")
-                .tenantName("admin")
+                .credentials("bla","bla")
+                .tenantName("fc394f2ab2df4114bde39905f800dc57")
                 .authenticate();
+
         Stack stack = os.heat().stacks().create(Builders.stack()
                 .name("XYZ")
                 .template(data)
                 .timeoutMins(5L).build());
 
-        System.out.println("ZZZZZz");
+        Stack stack2 = os.heat().stacks().getDetails(stack.getName(), stack.getId());
+        System.out.println(stack2);
+
         return null;
 
 //        try {
