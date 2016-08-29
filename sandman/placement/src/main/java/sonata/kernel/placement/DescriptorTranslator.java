@@ -123,6 +123,10 @@ class DescriptorTranslator
             mapper2.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
             mapper2.setSerializationInclusion(Include.NON_NULL);
             createStack.template = template;
+
+            System.out.println("+++++++++++++++++++++++++++++++");
+            System.out.println(template.getResources());
+            System.out.println("+++++++++++++++++++++++++++++++");
             String body = mapper2.writeValueAsString(template);
             System.out.println(body);
             return body;
