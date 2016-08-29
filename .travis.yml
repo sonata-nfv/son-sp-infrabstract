@@ -1,4 +1,6 @@
 language: java
 script:
-- cd sandman/placement
+- cd vim-adaptor/adaptor
+- mvn -Dmaven.test.skip=true -q install
+- cd ../../sandman/placement
 - mvn clean install verify
