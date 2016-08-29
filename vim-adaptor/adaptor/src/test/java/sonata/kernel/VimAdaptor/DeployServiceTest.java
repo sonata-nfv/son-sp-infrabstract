@@ -38,7 +38,6 @@ import org.json.JSONTokener;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.runner.RunWith;
 import org.junit.Test;
 
 import sonata.kernel.VimAdaptor.AdaptorCore;

@@ -31,7 +31,6 @@ package sonata.kernel.VimAdaptor.wrapper;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import sonata.kernel.VimAdaptor.wrapper.ResourceUtilisation;
 import sonata.kernel.VimAdaptor.wrapper.openstack.Flavor;

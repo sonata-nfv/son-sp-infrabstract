@@ -28,14 +28,12 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.Before;
 import org.junit.Test;
 
-import sonata.kernel.VimAdaptor.MessageReceiver;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.VimAdaptor.messaging.TestConsumer;
 import sonata.kernel.VimAdaptor.wrapper.odlWrapper.OdlWrapper;
 
 import java.io.BufferedReader;
@@ -46,10 +44,7 @@ import java.nio.charset.Charset;
 
 public class OdlWrapperTest {
 
-  private String output = null;
-  private Object mon = new Object();
   private DeployServiceData data;
-  private DeployServiceData data1;
   private ObjectMapper mapper;
   private StackComposition composition;
 
