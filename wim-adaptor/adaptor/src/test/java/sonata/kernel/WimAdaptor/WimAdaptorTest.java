@@ -42,6 +42,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -192,7 +193,7 @@ public class WimAdaptorTest implements MessageReceiver {
     Assert.assertTrue(core.getState().equals("STOPPED"));
   }
 
-  @Test
+  @Ignore
   public void configureService() throws IOException, InterruptedException {
 
     String message =
