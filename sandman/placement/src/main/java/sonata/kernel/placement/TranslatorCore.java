@@ -53,10 +53,7 @@ public class TranslatorCore {
                     String out = DescriptorTranslator.process_descriptor(q_data.data);
                     MessageQueueData c_data = new MessageQueueData(MessageType.POST_MESSAGE, out, "http://131.234.31.45:8080");
                     MessageQueue.get_rest_clientQ().put(c_data);
-/*
-                    OSClient.OSClientV2 os = TranslatorNet.authenticate_instance("http://131.234.244.233:8080");
-                    Subnet net = TranslatorNet.create_subnet(os, "testNetwork", "testNetworkId", "testTenantId", "192.168.0.1",
-                            "192.168.0.10");*/
+
 
                 } catch (IOException e)
                 {

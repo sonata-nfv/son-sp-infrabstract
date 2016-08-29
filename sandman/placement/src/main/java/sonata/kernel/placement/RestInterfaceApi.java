@@ -23,6 +23,7 @@ import org.openstack4j.model.heat.Stack;
 import org.openstack4j.openstack.OSFactory;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
+import sonata.kernel.placement.net.TranslatorNet;
 
 class RestInterfaceClientApi implements Runnable{
 
@@ -115,8 +116,12 @@ class RestInterfaceClientApi implements Runnable{
                 .template(data)
                 .timeoutMins(5L).build());
 
-        Stack stack2 = os.heat().stacks().getDetails(stack.getName(), stack.getId());
-        System.out.println(stack2);
+        TranslatorNet.create_subnet(os, "testNetwork", "testNetworkId", "testTenantId", "192.168.0.1",
+            "192.168.0.10");
+
+
+       /* Stack stack2 = os.heat().stacks().getDetails(stack.getName(), stack.getId());
+        System.out.println(stack2); */
 
         return null;
 

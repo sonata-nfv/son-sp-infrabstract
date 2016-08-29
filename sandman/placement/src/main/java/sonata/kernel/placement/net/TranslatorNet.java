@@ -20,8 +20,8 @@ public class TranslatorNet {
     {
         OSClientV2 os = OSFactory.builderV2()
                 .endpoint(uri)
-                .credentials("admin","sample")
-                .tenantName("admin")
+                .credentials("bla","bla")
+                .tenantName("fc394f2ab2df4114bde39905f800dc57")
                 .authenticate();
         return os;
     }
@@ -33,11 +33,19 @@ public class TranslatorNet {
                                         String start_ip,
                                         String end_ip)
     {
+        System.out.println("create_subnet");
         List<? extends Network> networks = os.networking().network().list();
         for (Object o: networks
              ) {
             System.out.println(o);
         }
+        System.out.println("+++++++++++++++++++++++++++++++");
+        List<? extends Subnet> ss = os.networking().subnet().list();
+        for (Object o: ss
+                ) {
+            System.out.println(o);
+        }
+        System.out.println("+++++++++++++++++++++++++++++++");
         /*
         Subnet subnet = os.networking().subnet().create(Builders.subnet()
                 .name(name)
