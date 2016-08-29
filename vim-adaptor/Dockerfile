@@ -1,5 +1,5 @@
 FROM maven:3.3.9-jdk-7
-MAINTAINER Dario Valocchi <d.valocchi@ucl.ac.uk>
+MAINTAINER D.Valocchi <d.valocchi@ucl.ac.uk>
 
 RUN apt-get update && apt-get install -y python-pip \
   python-dev \
@@ -42,7 +42,7 @@ ENV repo_port 5432
 ENV repo_user sonatatest
 ENV repo_pass sonata
 
-RUN mvn -q compile assembly:single;
+RUN mvn compile assembly:single;
 
 CMD ["/docker-entrypoint.sh","/test.sh"]
 

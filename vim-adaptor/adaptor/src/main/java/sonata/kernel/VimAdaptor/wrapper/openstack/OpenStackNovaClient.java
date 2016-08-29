@@ -33,6 +33,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.wrapper.ResourceUtilisation;
 
 import java.io.BufferedReader;
@@ -50,6 +51,8 @@ public class OpenStackNovaClient {
   private static final String ADAPTOR_NOVA_API_PY = "/adaptor/nova-api.py";
 
   private static final String PYTHON2_7 = "python2.7";
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
 
   private String url; // url of the OpenStack Client
 
@@ -83,7 +86,7 @@ public class OpenStackNovaClient {
   public ResourceUtilisation getResourceUtilizasion() {
     ResourceUtilisation resources = null;
 
-    System.out.println("Getting limits");
+    Logger.info("Getting limits");
 
     try {
       // Call the python client for the flavors of the openstack instance
@@ -98,24 +101,23 @@ public class OpenStackNovaClient {
       StringBuilder builder = new StringBuilder();
       String string = null;
       while ((string = stdInput.readLine()) != null) {
-        System.out.println("Line: " + string);
+        Logger.info("Line: " + string);
         builder.append(string);
       }
       stdInput.close();
       process.destroy();
       String resourceString = builder.toString();
       resourceString = resourceString.replace("'", "\"");
-      System.out.println("Resources: " + resourceString);
+      Logger.info("Resources: " + resourceString);
       ObjectMapper mapper = new ObjectMapper(new JsonFactory());
       mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-      // System.out.println(compositionString);
+      // Logger.info(compositionString);
       resources = mapper.readValue(resourceString, ResourceUtilisation.class);
 
 
     } catch (Exception e) {
-      System.out
-          .println("Runtime error getting openstack limits" + " error message: " + e.getMessage());
-      e.printStackTrace();
+      Logger.error("Runtime error getting openstack limits" + " error message: " + e.getMessage(),
+          e);
     }
 
     return resources;
@@ -137,7 +139,7 @@ public class OpenStackNovaClient {
     ArrayList<Flavor> flavors = new ArrayList<Flavor>();
     String[] flavorString;
 
-    System.out.println("Getting flavors");
+    Logger.info("Getting flavors");
 
     try {
       // Call the python client for the flavors of the openstack instance
@@ -145,13 +147,13 @@ public class OpenStackNovaClient {
           "--configuration", url, userName, password, tenantName, "--flavors");
       Process process = processBuilder.start();
 
-      System.out.println("The available flavors are:");
+      Logger.info("The available flavors are:");
 
       // Read the flavors
       BufferedReader stdInput = new BufferedReader(
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
       while ((string = stdInput.readLine()) != null) {
-        System.out.println(string);
+        Logger.info(string);
         flavorString = string.split(" ");
         flavorName = flavorString[0];
         cpu = Integer.parseInt(flavorString[2]);
@@ -163,8 +165,7 @@ public class OpenStackNovaClient {
       stdInput.close();
 
     } catch (Exception e) {
-      System.out
-          .println("Runtime error getting openstack flavors" + " error message: " + e.getMessage());
+      Logger.error("Runtime error getting openstack flavors" + " error message: " + e.getMessage());
     }
 
     return flavors;

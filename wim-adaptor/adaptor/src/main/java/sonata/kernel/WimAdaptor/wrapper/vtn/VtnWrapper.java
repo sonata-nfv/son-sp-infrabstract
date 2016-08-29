@@ -26,10 +26,10 @@
 
 package sonata.kernel.WimAdaptor.wrapper.vtn;
 
-import sonata.kernel.WimAdaptor.wrapper.Wrapper;
+import sonata.kernel.WimAdaptor.WimWrapper;
 import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
 
-public class VtnWrapper implements Wrapper {
+public class VtnWrapper extends WimWrapper {
 
   private WrapperConfiguration config;
 
@@ -44,11 +44,24 @@ public class VtnWrapper implements Wrapper {
   }
 
 
-  public boolean configureNetwork() {
+  @Override
+  public boolean configureNetwork(String instanceId) {
     boolean out = true;
+    VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
+        this.config.getAuthPass());
 
+    out = out && client.setupVtn(instanceId);
+
+    out = out && client.setupFlow(instanceId, "In-PoP-Out");
 
     return out;
+  }
+
+  @Override
+  public boolean removeNetConfiguration(String instanceId) {
+    VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
+        this.config.getAuthPass());
+    return client.deleteVtn(instanceId);
   }
 
 

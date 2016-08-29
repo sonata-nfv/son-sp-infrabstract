@@ -27,7 +27,7 @@
 
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
-public class Flavor {
+public class Flavor implements Comparable<Flavor> {
 
 
   /**
@@ -84,6 +84,23 @@ public class Flavor {
 
   public void setFlavorName(String flavorName) {
     this.flavorName = flavorName;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.lang.Comparable#compareTo(java.lang.Object)
+   */
+  @Override
+  public int compareTo(Flavor other) {
+    if ((this.vcpu - other.vcpu) != 0)
+      return (int) Math.signum(this.vcpu - other.vcpu);
+    else if ((this.ram - other.ram) != 0)
+      return (int) Math.signum(this.ram - other.ram);
+    else if ((this.storage - other.storage) != 0)
+      return (int) Math.signum(this.storage - other.storage);
+    else
+      return 0;
   }
 
 

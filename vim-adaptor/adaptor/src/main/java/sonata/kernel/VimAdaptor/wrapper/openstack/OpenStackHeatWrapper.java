@@ -27,6 +27,7 @@
 
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.IpNetPool;
 import sonata.kernel.VimAdaptor.commons.heat.HeatModel;
@@ -47,12 +48,16 @@ import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private WrapperConfiguration config;
   private IpNetPool myPool;
+
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(OpenStackHeatWrapper.class);
 
   /**
    * Standard constructor for an Compute Wrapper of an OpenStack VIM using Heat.
@@ -74,6 +79,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
+    Collections.sort(vimFlavors);
     HeatModel stack;
     try {
       stack = translate(data, vimFlavors);
@@ -180,7 +186,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     cidr = null;
     // One virtual router for NSD virtual links connecting VNFS (no router for external virtual
     // links and management links)
-    // TODO how we connect to the tenant network?
+
     ArrayList<VnfDescriptor> vnfs = data.getVnfdList();
     for (VirtualLink link : nsd.getVirtualLinks()) {
       ArrayList<String> connectionPointReference = link.getConnectionPointsReference();
@@ -222,7 +228,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
               vnfd.getName() + ":" + link.getId() + ":subnet:" + nsd.getInstanceUuid());
           cidr = subnets.get(subnetIndex);
           subnet.putProperty("cidr", cidr);
-          subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
+          // subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
           // subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
           // subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
           subnetIndex++;
@@ -315,7 +321,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         if (!isMgmtPort) {
           // Resolve vnf_id from vnf_name
           String vnfId = null;
+          // Logger.info("[TRANSLATION] VNFD.name: " + vnfd.getName());
+
           for (NetworkFunction vnf : nsd.getNetworkFunctions()) {
+            // Logger.info("[TRANSLATION] NSD.network_functions.vnf_name: " + vnf.getVnfName());
+            // Logger.info("[TRANSLATION] NSD.network_functions.vnf_id: " + vnf.getVnfId());
+
             if (vnf.getVnfName().equals(vnfd.getName())) {
               vnfId = vnf.getVnfId();
             }
@@ -414,11 +425,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public boolean removeService(String instanceUuid, String callSid) {
 
     VimRepo repo = WrapperBay.getInstance().getVimRepo();
-    System.out.println("Trying to remove NS instance: " + instanceUuid);
+    Logger.info("Trying to remove NS instance: " + instanceUuid);
     String stackName = repo.getServiceVimName(instanceUuid);
     String stackUuid = repo.getServiceVimUuid(instanceUuid);
-    System.out.println("NS instance mapped to stack name: " + stackName);
-    System.out.println("NS instance mapped to stack uuid: " + stackUuid);
+    Logger.info("NS instance mapped to stack name: " + stackName);
+    Logger.info("NS instance mapped to stack uuid: " + stackUuid);
 
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());

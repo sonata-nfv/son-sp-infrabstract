@@ -26,6 +26,7 @@
 
 package sonata.kernel.WimAdaptor.messaging;
 
+import com.jcraft.jsch.Logger;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
@@ -35,8 +36,13 @@ import sonata.kernel.WimAdaptor.WimAdaptorCore;
 
 import java.io.IOException;
 
+import org.slf4j.LoggerFactory;
+
 
 public class AdaptorDefaultConsumer extends DefaultConsumer {
+
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(AdaptorDefaultConsumer.class);
 
   private RabbitMqConsumer msgBusConsumer;
 
@@ -57,13 +63,13 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
     String message = new String(body, "UTF-8");
     // System.out
     // .println(" [northbound] Received message:" + message + " on " + envelope.getRoutingKey());
-    System.out.println(" [northbound] Received message on " + envelope.getRoutingKey());
+    Logger.info("Received message on " + envelope.getRoutingKey());
     if (properties != null && properties.getAppId() != null
         && !properties.getAppId().equals(WimAdaptorCore.APP_ID)) {
       this.msgBusConsumer.processMessage(message, properties.getContentType(),
           envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
     } else {
-      System.out.println("  [northbound] Message ignored: " + properties);
+      Logger.info("Message ignored: " + properties);
     }
   }
 

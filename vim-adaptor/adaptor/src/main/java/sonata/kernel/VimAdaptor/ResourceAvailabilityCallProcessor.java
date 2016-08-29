@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
@@ -41,6 +42,9 @@ import java.util.Observable;
 
 
 public class ResourceAvailabilityCallProcessor extends AbstractCallProcessor {
+
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(ResourceAvailabilityCallProcessor.class);
 
   /**
    * Generate a CallProcessor to process an API call to create a new VIM wrapper
@@ -58,8 +62,7 @@ public class ResourceAvailabilityCallProcessor extends AbstractCallProcessor {
   @Override
   public boolean process(ServicePlatformMessage message) {
     boolean out = true;
-    System.out.println("[ResourceAvailabilityCallProcessor] - Call received...");
-
+    Logger.info("Call received...");
 
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
@@ -70,9 +73,8 @@ public class ResourceAvailabilityCallProcessor extends AbstractCallProcessor {
       ResourceAvailabilityData data = null;
       data = mapper.readValue(message.getBody(), ResourceAvailabilityData.class);
 
-      System.out.println(
-          "[ResourceAvailabilityCallProcessor] - Checking availability of resource. Minimum:");
-      System.out.println(mapper.writeValueAsString(data));
+      Logger
+          .info("Checking availability of resource. Minimum:\n" + mapper.writeValueAsString(data));
       // TODO get resource availability
 
       // By now we just answer OK, for resource available.
@@ -81,8 +83,8 @@ public class ResourceAvailabilityCallProcessor extends AbstractCallProcessor {
           "application/x-yaml", message.getTopic(), message.getSid(), null);
 
       this.sendToMux(response);
-    } catch (IOException e1) {
-      e1.printStackTrace();
+    } catch (IOException e) {
+      Logger.error(e.getMessage(), e);
       // TODO report deserialization error to the SLM (malformed requests)
     }
 

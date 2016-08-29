@@ -34,7 +34,6 @@ public class WrapperConfiguration {
   private String wimVendor;
   private String wrapperType;
   private String authUserName;
-  private String tenantName;
   private String authPass;
   private String authKey;
   private String uuid;
@@ -108,14 +107,6 @@ public class WrapperConfiguration {
     out += "pass: " + authPass + "\n\r";
     out += "serviced_segments: \n\r" + servicedSegments;
     return out;
-  }
-
-  public String getTenantName() {
-    return tenantName;
-  }
-
-  public void setTenantName(String tenantName) {
-    this.tenantName = tenantName;
   }
 
   public ArrayList<String> getServicedSegments() {

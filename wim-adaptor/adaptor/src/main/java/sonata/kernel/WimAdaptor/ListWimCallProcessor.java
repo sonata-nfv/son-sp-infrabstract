@@ -37,9 +37,9 @@ import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import java.util.ArrayList;
 import java.util.Observable;
 
-public class ListVimCallProcessor extends AbstractCallProcessor {
+public class ListWimCallProcessor extends AbstractCallProcessor {
 
-  public ListVimCallProcessor(ServicePlatformMessage message, String sid, WimAdaptorMux mux) {
+  public ListWimCallProcessor(ServicePlatformMessage message, String sid, WimAdaptorMux mux) {
     super(message, sid, mux);
   }
 
