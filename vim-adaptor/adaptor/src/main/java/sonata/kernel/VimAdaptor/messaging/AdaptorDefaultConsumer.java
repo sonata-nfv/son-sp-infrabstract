@@ -65,6 +65,9 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
         && !properties.getAppId().equals(AdaptorCore.APP_ID)) {
       this.msgBusConsumer.processMessage(message, properties.getContentType(),
           envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
+    } else if (properties != null && properties.getAppId() != null
+        && properties.getAppId().equals("sonata.kernel.WimAdapter") && envelope.getRoutingKey().equals("infrastructure.service.deploy")){
+      Logger.info("Ignoring WIM adaptor response after service deployment");
     } else {
       Logger.info("Message ignored: " + properties);
     }
