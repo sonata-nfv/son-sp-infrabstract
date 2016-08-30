@@ -30,33 +30,51 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ServiceRecord {
 
-  private String uuid;
+  @JsonProperty("descriptor_version")
+  private String descriptorVersion;
   private Status status;
-  @JsonProperty("instance_uuid")
-  private String instanceUuid;
+  @JsonProperty("id")
+  private String id;
+  @JsonProperty("descriptor_reference")
+  private String descriptorReference;
 
-  public String getUuid() {
-    return uuid;
-  }
+
 
   public Status getStatus() {
     return status;
   }
 
-  public void setUuid(String id) {
-    this.uuid = id;
-  }
 
   public void setStatus(Status status) {
     this.status = status;
   }
 
-  public String getInstanceUuid() {
-    return instanceUuid;
+  public String getId() {
+    return id;
   }
 
-  public void setInstanceUuid(String instanceUuid) {
-    this.instanceUuid = instanceUuid;
+  public void setId(String id) {
+    this.id = id;
+  }
+
+
+  public String getDescriptorVersion() {
+    return descriptorVersion;
+  }
+
+
+  public void setDescriptorVersion(String descriptorVersion) {
+    this.descriptorVersion = descriptorVersion;
+  }
+
+
+  public String getDescriptorReference() {
+    return descriptorReference;
+  }
+
+
+  public void setDescriptorReference(String descriptorReference) {
+    this.descriptorReference = descriptorReference;
   }
 
 

@@ -85,7 +85,7 @@ public class HeatTemplateTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/iperf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -94,27 +94,18 @@ public class HeatTemplateTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/firewall-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
 
-    VnfDescriptor vnfd3;
-    bodyBuilder = new StringBuilder();
-    in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/tcpdump-vnfd.yml")), Charset.forName("UTF-8")));
-    line = null;
-    while ((line = in.readLine()) != null)
-      bodyBuilder.append(line + "\n\r");
-    vnfd3 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
     DeployServiceData data = new DeployServiceData();
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);
-    data.addVnfDescriptor(vnfd3);
 
     WrapperConfiguration config = new WrapperConfiguration();
 

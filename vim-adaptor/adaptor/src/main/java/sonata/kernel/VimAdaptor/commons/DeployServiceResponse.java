@@ -34,6 +34,7 @@ public class DeployServiceResponse {
 
   private String instanceName;
   private String instanceVimUuid;
+  private String vimUuid;
   @JsonProperty("request_status")
   private String requestStatus;
   private ServiceRecord nsr;
@@ -99,6 +100,14 @@ public class DeployServiceResponse {
    */
   public void addVnfRecord(VnfRecord vnfr) {
     this.vnfrs.add(vnfr);
+  }
+
+  public String getVimUuid() {
+    return vimUuid;
+  }
+
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
   }
 
 

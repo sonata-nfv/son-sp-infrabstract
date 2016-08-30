@@ -21,11 +21,12 @@
  * (www.sonata-nfv.eu).
  *
  * @author Dario Valocchi (Ph.D.), UCL
- * 
+ * @author Michael Bredel (Ph.D.), NEC
  */
 
 package sonata.kernel.VimAdaptor;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 
 import java.util.concurrent.BlockingQueue;
@@ -40,6 +41,8 @@ public class AdaptorDispatcher implements Runnable {
   private boolean stop = false;
   private AdaptorMux mux;
   private AdaptorCore core;
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AdaptorDispatcher.class);
 
   /**
    * Create an AdaptorDispatcher attached to the queue. CallProcessor will be bind to the provided
@@ -76,18 +79,18 @@ public class AdaptorDispatcher implements Runnable {
           this.handleMonitoringMessage(message);
         }
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     } while (!stop);
   }
 
   private void handleMonitoringMessage(ServicePlatformMessage message) {
     if (message.getTopic().contains("compute")) {
-      System.out.println("Received a monitoring message on topic: " + message.getTopic());
+      Logger.info("Received a monitoring message on topic: " + message.getTopic());
     } else if (message.getTopic().contains("storage")) {
-      System.out.println("Received a monitoring message on topic: " + message.getTopic());
+      Logger.info("Received a monitoring message on topic: " + message.getTopic());
     } else if (message.getTopic().contains("network")) {
-      System.out.println("Received a monitoring message on topic: " + message.getTopic());
+      Logger.info("Received a monitoring message on topic: " + message.getTopic());
     }
   }
 
@@ -95,7 +98,7 @@ public class AdaptorDispatcher implements Runnable {
     if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
     } else if (message.getTopic().endsWith("remove")) {
-      System.out.println("Received a remove-service message on topic: " + message.getTopic());
+      Logger.info("Received a remove-service message on topic: " + message.getTopic());
       myThreadPool.execute(new RemoveServiceCallProcessor(message, message.getSid(), mux));
     }
   }
@@ -115,9 +118,11 @@ public class AdaptorDispatcher implements Runnable {
     } else if (message.getTopic().contains("storage")) {
       // TODO Storage Management API
     } else if (message.getTopic().contains("network")) {
-      // TODO Networking Management API
+      if (message.getTopic().endsWith("add")) {
+        myThreadPool.execute(new AddVimCallProcessor(message, message.getSid(), mux));
+      }
     } else {
-      System.out.println("Received an unknown menagement message on topic: " + message.getTopic());
+      Logger.info("Received an unknown menagement message on topic: " + message.getTopic());
     }
 
   }

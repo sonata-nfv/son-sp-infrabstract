@@ -32,6 +32,7 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 
 import java.io.BufferedReader;
@@ -49,6 +50,8 @@ public class OpenStackHeatClient {
   private static final String PYTHON2_7 = "python2.7";
 
   private static final String ADAPTOR_HEAT_API_PY = "/adaptor/heat-api.py";
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackHeatClient.class);
 
   private String url; // url of the OpenStack Client
 
@@ -85,13 +88,15 @@ public class OpenStackHeatClient {
     String uuid = null;
     String string = null;
 
-    // todo - log in debug mode the template as well
-
-    System.out.println("Creating stack: " + stackName);
-
+    Logger.info("Creating stack: " + stackName);
+    Logger.debug("Template:\n" + template);
+    // Logger.debug("User: " + userName);
+    // Logger.debug("Tenant: " + tenantName);
+    // Logger.debug("Pass: " + password);
     try {
 
       // Call the python client for creating the stack
+
       ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
           "--configuration", url, userName, password, tenantName, "--create", stackName, template);
       Process process = processBuilder.start();
@@ -100,29 +105,29 @@ public class OpenStackHeatClient {
       BufferedReader stdError = new BufferedReader(
           new InputStreamReader(process.getErrorStream(), Charset.forName("UTF-8")));
       if (stdError.read() != -1) {
-        System.out.println("The errors of creating stack (if any):");
+        Logger.error("The errors of creating stack (if any):");
         while ((string = stdError.readLine()) != null) {
-          System.out.println(string);
+          Logger.error("  " + string);
         }
       }
       stdError.close();
       // Read the results of creating the stack
       BufferedReader stdInput = new BufferedReader(
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-      System.out.println("The results of creating the stack:");
+      Logger.info("The results of creating the stack:");
       while ((string = stdInput.readLine()) != null) {
-        System.out.println(string);
+        Logger.info("  " + string);
         uuid = string;
       }
       stdInput.close();
       process.destroy();
 
       if (uuid != null) {
-        System.out.println("UUID of new stack: " + uuid);
+        Logger.info("UUID of new stack: " + uuid);
       }
 
     } catch (Exception e) {
-      System.out.println(
+      Logger.error(
           "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
     }
 
@@ -141,7 +146,7 @@ public class OpenStackHeatClient {
 
     String status = null;
     String string = null;
-    System.out.println("Getting status for stack: " + stackName);
+    Logger.info("Getting status for stack: " + stackName);
 
     try {
       // Call the python client for the status of the stack
@@ -154,15 +159,14 @@ public class OpenStackHeatClient {
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
 
       while ((string = stdInput.readLine()) != null) {
-        System.out.println(string);
+        Logger.info(string);
         status = string;
       }
       stdInput.close();
       process.destroy();
-      System.out
-          .println("The status of stack: " + stackName + " with uuid: " + uuid + " : " + status);
+      Logger.info("The status of stack: " + stackName + " with uuid: " + uuid + " : " + status);
     } catch (Exception e) {
-      System.out.println("Runtime error getting stack status for stack : " + stackName
+      Logger.error("Runtime error getting stack status for stack : " + stackName
           + " error message: " + e.getMessage());
     }
 
@@ -182,7 +186,7 @@ public class OpenStackHeatClient {
     String isDeleted = null;
     String string = null;
 
-    System.out.println("Deleting stack: " + stackName);
+    Logger.info("Deleting stack: " + stackName);
 
     try {
       // Call the python client for deleting of the stack
@@ -194,16 +198,16 @@ public class OpenStackHeatClient {
       BufferedReader stdInput = new BufferedReader(
           new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
       while ((string = stdInput.readLine()) != null) {
-        // System.out.println(string);
+        // Logger.info(string);
         isDeleted = string;
       }
       stdInput.close();
       process.destroy();
 
-      System.out.println(
+      Logger.info(
           "Request was sent for stack: " + stackName + " with uuid: " + uuid + " : " + isDeleted);
     } catch (Exception e) {
-      System.out.println(
+      Logger.error(
           "Runtime error when deleting stack : " + stackName + " error message: " + e.getMessage());
     }
 
@@ -246,14 +250,13 @@ public class OpenStackHeatClient {
       String compositionString = builder.toString();
       compositionString = compositionString.replace("'", "\"");
       compositionString = compositionString.replace(": u", " : ");
-
       ObjectMapper mapper = new ObjectMapper(new JsonFactory());
       mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-      // System.out.println(compositionString);
+      Logger.info(compositionString);
       composition = mapper.readValue(compositionString, StackComposition.class);
 
     } catch (Exception e) {
-      System.out.println("Runtime error getting stack status for stack : " + stackName
+      Logger.error("Runtime error getting stack status for stack : " + stackName
           + " error message: " + e.getMessage());
     }
 

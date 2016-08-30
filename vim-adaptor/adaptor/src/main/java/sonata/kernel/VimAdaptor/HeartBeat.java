@@ -26,6 +26,7 @@
 
 package sonata.kernel.VimAdaptor;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 
 import java.util.UUID;
@@ -36,6 +37,8 @@ public class HeartBeat implements Runnable {
   private AdaptorCore core;
   private double rate; // measured in beat/s
   private boolean stop;
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(HeartBeat.class);
 
   /**
    * Create the Heart-beat runnable.
@@ -62,7 +65,7 @@ public class HeartBeat implements Runnable {
         mux.enqueue(message);
         Thread.sleep((int) ((1 / rate) * 1000));
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Logger.error(e.getMessage(), e);
       }
     }
 

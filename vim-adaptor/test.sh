@@ -5,4 +5,4 @@ echo "Setting environment"
 
 echo "Doing maven test"
 cd /adaptor
-mvn -Dcheckstyle.config.location=google_checks.xml checkstyle:checkstyle findbugs:findbugs cobertura:cobertura
+mvn -q -Dcheckstyle.config.location=google_checks.xml checkstyle:checkstyle findbugs:findbugs cobertura:cobertura
