@@ -1,5 +1,8 @@
-package sonata.kernel.placement;
+package sonata.kernel.placement.service;
 
+
+import sonata.kernel.placement.service.DefaultPlacementPlugin;
+import sonata.kernel.placement.service.PlacementPlugin;
 
 import java.io.File;
 import java.lang.reflect.Modifier;

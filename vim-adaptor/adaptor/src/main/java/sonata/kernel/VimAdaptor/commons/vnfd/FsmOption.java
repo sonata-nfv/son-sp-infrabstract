@@ -20,12 +20,33 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.)
+ * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
 
-package sonata.kernel.VimAdaptor.commons;
+package sonata.kernel.VimAdaptor.commons.vnfd;
 
-public class VimInstanceInfo {
+public class FsmOption {
+
+  private String key;
+  private String value;
+
+  public String getKey() {
+    return key;
+  }
+
+  public String getValue() {
+    return value;
+  }
+
+  public void setKey(String key) {
+    this.key = key;
+  }
+
+  public void setValue(String value) {
+    this.value = value;
+  }
+
+
 
 }

@@ -62,17 +62,25 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String wrapperType = jsonObject.getString("wr_type");
-    String vimType = jsonObject.getString("vim_type");
+    String vimVendor = jsonObject.getString("vim_type");
     String vimEndpoint = jsonObject.getString("vim_address");
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
     String tenantName = jsonObject.getString("tenant");
-    String tenantExtNet = jsonObject.getString("tenant_ext_net");
-    String tenantExtRouter = jsonObject.getString("tenant_ext_router");
 
+    String tenantExtNet = null;
+    String tenantExtRouter = null;
+    String computeVimRef = null;
+
+    if (wrapperType.equals("compute")) {
+      tenantExtNet = jsonObject.getString("tenant_ext_net");
+      tenantExtRouter = jsonObject.getString("tenant_ext_router");
+    } else if (wrapperType.equals("networking")) {
+      computeVimRef = jsonObject.getString("compute_uuid");
+    }
     config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType(wrapperType);
-    config.setVimVendor(vimType);
+    config.setVimVendor(vimVendor);
     config.setVimEndpoint(vimEndpoint);
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);
@@ -87,9 +95,8 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     } else if (wrapperType.equals("storage")) {
       // TODO
       output = "";
-    } else if (wrapperType.equals("network")) {
-      // TODO
-      output = "";
+    } else if (wrapperType.equals("networking")) {
+      output = WrapperBay.getInstance().registerNetworkingWrapper(config, computeVimRef);
     }
     this.sendResponse(output);
 

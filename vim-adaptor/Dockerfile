@@ -1,5 +1,5 @@
 FROM maven:3.3.9-jdk-7
-MAINTAINER Dario Valocchi <d.valocchi@ucl.ac.uk>
+MAINTAINER D.Valocchi <d.valocchi@ucl.ac.uk>
 
 RUN apt-get update && apt-get install -y python-pip \
   python-dev \

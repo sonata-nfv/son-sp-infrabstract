@@ -68,12 +68,25 @@ public class WimAdaptorDispatcher implements Runnable {
           this.core.handleRegistrationResponse(message);
         } else if (isDeregistrationResponse(message)) {
           this.core.handleDeregistrationResponse(message);
+        } else {
+          if (message.getTopic().endsWith("wan.add")) {
+            myThreadPool.execute(new AddWimCallProcessor(message, message.getSid(), mux));
+          } else if (message.getTopic().endsWith("wan.remove")) {
+            myThreadPool.execute(new RemoveWimCallProcessor(message, message.getSid(), mux));
+          } else if (message.getTopic().endsWith("wan.configure")) {
+            myThreadPool.execute(new ConfigureWimCallProcessor(message, message.getSid(), mux));
+          }
         }
       } catch (InterruptedException e) {
         e.printStackTrace();
       }
     } while (!stop);
   }
+
+  private void handleManagementMessage(ServicePlatformMessage message) {
+
+  }
+
 
   private boolean isRegistrationResponse(ServicePlatformMessage message) {
     return message.getTopic().equals("platform.management.plugin.register")

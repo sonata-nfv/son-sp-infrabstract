@@ -63,6 +63,8 @@ public class VnfDescriptor {
   private ArrayList<VnfLifeCycleEvent> lifecycleEvents;
   @JsonProperty("monitoring_rules")
   private ArrayList<VduMonitoringRules> monitoringRules;
+  @JsonProperty("function_specific_managers")
+  private ArrayList<FunctionSpecificManager> functionSpecificManagers;
 
 
 
@@ -192,6 +194,15 @@ public class VnfDescriptor {
 
   public void setInstanceUuid(String instanceUuid) {
     this.instanceUuid = instanceUuid;
+  }
+
+  public ArrayList<FunctionSpecificManager> getFunctionSpecificManagers() {
+    return functionSpecificManagers;
+  }
+
+  public void setFunctionSpecificManagers(
+      ArrayList<FunctionSpecificManager> functionSpecificManagers) {
+    this.functionSpecificManagers = functionSpecificManagers;
   }
 
 }

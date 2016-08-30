@@ -44,7 +44,7 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * 
    * @param data the payload containing the service descriptors and the metadata for this service
    *        deployment
-   * @param startServiceCallProcessor the call processor to notify on completion
+   * @param callSid the call processor to notify on completion
    * 
    * @return true if the remove process has started correctly, false otherwise
    */

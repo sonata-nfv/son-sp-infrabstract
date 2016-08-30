@@ -33,6 +33,7 @@ If you prefer to manually build the source code, please consider the following:
   * [pyaml](https://pypi.python.org/pypi/pyaml) >=15.8.2 (WTFPL)
   * [python-httplib2](https://pypi.python.org/pypi/httplib2) >=0.9.2, "MIT"
   * [python-setuptools](https://pypi.python.org/pypi/setuptools) >=24.0.3
+  * [Requests](http://docs.python-requests.org/en/master/), "Apache 2.0"
 
 * General Ubuntu dependencies
   * [librtmp-dev](http://packages.ubuntu.com/precise/librtmp-dev)
@@ -54,6 +55,7 @@ This sofware exposes its API through an AMPQ interface implemented with Rabbitmq
 
 You can run Unit and Module tests using docker compose. Just run in `son-sp-infrabstract/wim-adaptor/`:
 
+`docker-compose -f docker-compose-test.yml build`
 `docker-compose -f docker-compose-test.yml up`
 
 After the test, remember to tear down the compose running:

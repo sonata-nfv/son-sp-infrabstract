@@ -30,10 +30,11 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 
 import java.util.Observable;
 
-public class RemoveVimCallProcessor extends AbstractCallProcessor {
+public class RemoveWimCallProcessor extends AbstractCallProcessor {
 
   /**
    * Generate a CallProcessor to process an API call to create a new VIM wrapper
@@ -42,7 +43,7 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
    * @param sid the session ID of thi API call
    * @param mux the Adaptor Mux to which send responses.
    */
-  public RemoveVimCallProcessor(ServicePlatformMessage message, String sid, WimAdaptorMux mux) {
+  public RemoveWimCallProcessor(ServicePlatformMessage message, String sid, WimAdaptorMux mux) {
     super(message, sid, mux);
 
   }
@@ -56,7 +57,7 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     String uuid = jsonObject.getString("uuid");
     String type = jsonObject.getString("wr_type");
     String output = null;
-    // TODO
+    output = WrapperBay.getInstance().removeWimWrapper(uuid);
     this.sendResponse(output);
     boolean out = true;
     return out;
