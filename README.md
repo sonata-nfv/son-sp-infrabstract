@@ -1,3 +1,5 @@
+[![VIM adaptor](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract-vim)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract-vim)	[![WIM adaptor](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract-wim)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract-wim)
+
 # son-sp-infrabstract
 
 In the SONATA Service Platform the Infrastructure Abstraction plays the role of an abstraction layer between the MANO framework and the underlying (virtualised) infrastructure.

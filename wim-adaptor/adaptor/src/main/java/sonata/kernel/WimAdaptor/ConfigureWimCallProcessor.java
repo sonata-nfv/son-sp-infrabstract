@@ -65,16 +65,18 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
 
     WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecord(vimId).getWimWrapper();
     wim.addObserver(this);
-
+    Logger.debug("Configuring WIM...");
     ServicePlatformMessage responseMessage = null;
     if (wim.configureNetwork(instanceId)) {
       response.setVimUuid(null);
       String body;
       try {
+        Logger.debug("Serialising deploy response...");
         body = mapper.writeValueAsString(response);
         responseMessage = new ServicePlatformMessage(body, "application/x-yaml",
             this.getMessage().getReplyTo(), this.getSid(), null);
         this.sendToMux(responseMessage);
+        Logger.info("WIM configured. Risponse sent to the MANO framework");
       } catch (JsonProcessingException e) {
         Logger.error("Unable to serialize YAML response", e);
         sendResponse("{\"request_status\":\"ERROR\",\"module\":\"WimAdaptor\",\"message\":\""
@@ -83,7 +85,7 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
 
     } else {
       sendResponse(
-          "{\"status\":\"ERROR\",\"module\":\"WimAdaptor\",\"message\":\"Unable to configure WAN\"}");
+          "{\"request_status\":\"ERROR\",\"module\":\"WimAdaptor\",\"message\":\"Unable to configure WAN\"}");
     }
 
     return true;
