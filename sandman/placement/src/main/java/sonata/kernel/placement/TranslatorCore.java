@@ -8,6 +8,7 @@ import java.io.File;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.network.Subnet;
 import sonata.kernel.placement.net.TranslatorNet;
+import sonata.kernel.placement.service.PlacementPluginLoader;
 
 
 import java.io.IOException;

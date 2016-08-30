@@ -1,6 +1,5 @@
 package sonata.kernel.placement.service;
 
-import jdk.nashorn.internal.objects.annotations.Function;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.heat.HeatTemplate;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
