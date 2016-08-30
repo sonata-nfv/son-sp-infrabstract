@@ -1,15 +1,23 @@
 package sonata.kernel.placement;
 
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
+import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.placement.pd.PackageContentObject;
 import sonata.kernel.placement.pd.PackageDescriptor;
 
 import java.io.*;
 import java.math.BigInteger;
 import java.nio.charset.Charset;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -24,14 +32,15 @@ public final class PackageLoader {
 
     public static String processZipFile(byte[] data) throws IOException {
 
+        // Create destination paths
         String currentDir = "";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
         currentDir = Paths.get(basedir,sdf.format(new Date())).toString();
 
-
         String sddirstr = Paths.get(currentDir,"sd").toString();
         String vnfddirstr = Paths.get(currentDir,"vnfd").toString();
 
+        // Create directories if necessary
         File sddir = new File(sddirstr);
         if(sddir.isDirectory()==false)
             sddir.mkdirs();
@@ -39,11 +48,134 @@ public final class PackageLoader {
         if(vnfddir.isDirectory()==false)
             vnfddir.mkdirs();
 
-        ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
-
+        // Write whole package to disk
         FileOutputStream datastream = new FileOutputStream(Paths.get(currentDir,"data").toString());
         datastream.write(data);
         datastream.close();
+
+
+        List<byte[]> services = new ArrayList<byte[]>();
+        List<byte[]> functions = new ArrayList<byte[]>();
+
+        processZipFileData(data, services, functions);
+
+        int i;
+        for(i=0; i<services.size(); i++){
+            FileOutputStream foutstream = new FileOutputStream(Paths.get(sddirstr,"ns"+i+".yml").toString());
+            foutstream.write(services.get(i));
+            foutstream.close();
+        }
+
+        for(i=0; i<functions.size(); i++){
+            FileOutputStream foutstream = new FileOutputStream(Paths.get(vnfddirstr,"vnfd"+i+".yml").toString());
+            foutstream.write(functions.get(i));
+            foutstream.close();
+        }
+
+        return currentDir;
+    }
+
+    public static DeployServiceData loadPackageFromDisk(String packagePath) {
+
+        File packageFile = new File(packagePath);
+        if (!packageFile.exists())
+            return null;
+
+        List<byte[]> servicesDataList = new ArrayList<byte[]>();
+        List<byte[]> functionsDataList = new ArrayList<byte[]>();
+
+        List<ServiceDescriptor> services = new ArrayList<ServiceDescriptor>();
+        List<VnfDescriptor> functions = new ArrayList<VnfDescriptor>();
+
+        byte[] data;
+        DeployServiceData serviceData = new DeployServiceData();
+
+        try {
+
+            data = Files.readAllBytes(Paths.get(packagePath));
+            processZipFileData(data, servicesDataList, functionsDataList);
+
+            for(byte[] serviceBytes : servicesDataList) {
+                services.add(byteArrayToServiceDescriptor(serviceBytes));
+            }
+
+            for(byte[] functionBytes : functionsDataList) {
+                functions.add(byteArrayToVnfDescriptor(functionBytes));
+            }
+
+            serviceData.setServiceDescriptor(services.get(0));
+            for(VnfDescriptor function : functions)
+                serviceData.addVnfDescriptor(function);
+
+            return serviceData;
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+
+    public static ServiceDescriptor byteArrayToServiceDescriptor(byte[] data){
+
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        SimpleModule module = new SimpleModule();
+
+        ServiceDescriptor sd;
+
+        try {
+
+            StringBuilder bodyBuilder = new StringBuilder();
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    new ByteArrayInputStream(data), Charset.forName("UTF-8")));
+            String line;
+
+            while ((line = in.readLine()) != null)
+                bodyBuilder.append(line + "\n\r");
+
+
+            module.addDeserializer(Unit.class, new UnitDeserializer());
+            mapper.registerModule(module);
+            mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+            sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return sd;
+    }
+
+    public static VnfDescriptor byteArrayToVnfDescriptor(byte[] data){
+
+        ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+        SimpleModule module = new SimpleModule();
+
+        VnfDescriptor vnfd;
+
+        try{
+            StringBuilder bodyBuilder = new StringBuilder();
+            BufferedReader in = new BufferedReader(new InputStreamReader(
+                    new ByteArrayInputStream(data), Charset.forName("UTF-8")));
+            String line = null;
+            while ((line = in.readLine()) != null)
+                bodyBuilder.append(line + "\n\r");
+
+            module.addDeserializer(Unit.class, new UnitDeserializer());
+            mapper.registerModule(module);
+            mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+            vnfd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+        return vnfd;
+    }
+
+    public static void processZipFileData(byte[] data, List<byte[]> services, List<byte[]> functions) throws IOException {
+
+        ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
 
         System.out.println("Start zip stuff");
 
@@ -105,8 +237,6 @@ public final class PackageLoader {
             }
 
 
-            List<byte[]> services = new ArrayList<byte[]>();
-            List<byte[]> functions = new ArrayList<byte[]>();
 
             for(PackageContentObject pObj:pd.getPackageContent()){
 
@@ -158,10 +288,6 @@ public final class PackageLoader {
 
                     services.add(fileData);
 
-                    FileOutputStream foutstream = new FileOutputStream(Paths.get(sddirstr,"ns"+services.size()+".yml").toString());
-                    foutstream.write(fileData);
-                    foutstream.close();
-
                     System.out.println("Found service descriptor: "+name);
                 }
 
@@ -169,15 +295,10 @@ public final class PackageLoader {
                 if ("application/sonata.function_descriptor".equals(pObj.getContentType())) {
                     functions.add(fileData);
 
-                    FileOutputStream foutstream = new FileOutputStream(Paths.get(vnfddirstr,"vnfd"+functions.size()+".yml").toString());
-                    foutstream.write(fileData);
-                    foutstream.close();
-
                     System.out.println("Found function descriptor: "+name);
                 }
             }
         }
-        return currentDir;
     }
 
     public static byte[] readFile(ZipInputStream zipstream, ZipEntry ze) throws IOException {
