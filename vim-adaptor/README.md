@@ -1,4 +1,4 @@
-[![Build Status](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract)
+[![Build Status](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract-vim)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract-vim)
 
 # VIM Adaptor
 The VIM Adaptor is the component of the Infrastructure Abstraction Layer responsible to offer the functionalities of the underlying Virtual Infrastructure Managers to the SONATA Service Platform (SP) modules in a vendor-independent way.
