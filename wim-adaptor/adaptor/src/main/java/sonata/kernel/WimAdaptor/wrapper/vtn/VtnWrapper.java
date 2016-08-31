@@ -65,11 +65,13 @@ public class VtnWrapper extends WimWrapper {
     Logger.info("Setting up the flow rules in the VTN");
     out = out && client.setupFlow(instanceId, "In-PoP-Out");
     if (out){
-      Logger.info("FLows created");
+      Logger.info("Flow rules created");
     } else {
-      Logger.error("Unable to create flows");
+      Logger.error("Unable to create flow rules. GOING ON NONETHELESS");
     }
-    return out;
+    //FIXME This is a DEBUG edit! ! Remove me ASAP!
+    //return out;
+    return true;
   }
 
   @Override
