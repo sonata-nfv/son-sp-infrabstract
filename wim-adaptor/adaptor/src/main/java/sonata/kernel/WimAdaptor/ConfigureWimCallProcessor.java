@@ -84,6 +84,7 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
       }
 
     } else {
+      Logger.error("Unable to configure WIM");
       sendResponse(
           "{\"request_status\":\"ERROR\",\"module\":\"WimAdaptor\",\"message\":\"Unable to configure WAN\"}");
     }

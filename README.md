@@ -1,4 +1,5 @@
-VIM Adaptor: [![VIM adaptor](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract-vim)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract-vim)	WIM Adaptor:[![WIM adaptor](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract-wim)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract-wim)
+VIM Adaptor: [![VIM adaptor](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract-vim)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract-vim)
+WIM Adaptor: [![WIM adaptor](http://jenkins.sonata-nfv.eu/buildStatus/icon?job=son-sp-infrabstract-wim)](http://jenkins.sonata-nfv.eu/job/son-sp-infrabstract-wim)
 
 # son-sp-infrabstract
 
