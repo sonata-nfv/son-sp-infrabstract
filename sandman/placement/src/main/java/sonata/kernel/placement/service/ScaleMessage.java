@@ -10,7 +10,6 @@ public class ScaleMessage {
     }
 
     public final SCALE_TYPE type;
-
     // TODO: define type for scale subject
     public final List<Object> node_list;
 

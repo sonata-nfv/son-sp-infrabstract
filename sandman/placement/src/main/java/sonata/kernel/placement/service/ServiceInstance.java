@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
+
 public class ServiceInstance {
+	final static Logger logger = Logger.getLogger(ServiceInstance.class);
 
     public ServiceDescriptor service;
 
@@ -17,6 +20,7 @@ public class ServiceInstance {
     public List<Object> links;
 
     public ServiceInstance(){
+    	logger.info("Service Instance");
         nodes = new HashMap<String,FunctionInstance>();
         links = new ArrayList<Object>();
     }

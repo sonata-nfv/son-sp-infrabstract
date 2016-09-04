@@ -1,14 +1,20 @@
 package sonata.kernel.placement.pd;
 
+import org.apache.log4j.Logger;
+
+import sonata.kernel.placement.TranslatorCore;
+
 public class ArtifactDependency {
 
-    private String name;
+	final Logger logger = Logger.getLogger(ArtifactDependency.class);
+	private String name;
     private String url;
     private String md5;
     private String credentials;
 
 
     public String getName() {
+    	logger.info("Artifact Dependency Name" + name);
         return name;
     }
 
@@ -17,6 +23,7 @@ public class ArtifactDependency {
     }
 
     public String getUrl() {
+    	logger.info("Artifact Dependency Url" + url);
         return url;
     }
 
@@ -25,6 +32,7 @@ public class ArtifactDependency {
     }
 
     public String getMd5() {
+    	logger.info("Artifact Dependency MD5 hash" + md5);
         return md5;
     }
 
@@ -33,6 +41,7 @@ public class ArtifactDependency {
     }
 
     public String getCredentials() {
+    	logger.info("Artifact Dependency credentials" + credentials);
         return credentials;
     }
 

@@ -1,9 +1,14 @@
 package sonata.kernel.placement.pd;
 
+import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import sonata.kernel.placement.TranslatorCore;
 
 public class PackageContentObject {
 
+	final static Logger logger = Logger.getLogger(PackageContentObject.class);
     private String name;
     @JsonProperty("content-type")
     private String contentType;
@@ -12,6 +17,7 @@ public class PackageContentObject {
 
 
     public String getName() {
+    	logger.info("Name "+ name);
         return name;
     }
 
@@ -20,6 +26,7 @@ public class PackageContentObject {
     }
 
     public String getContentType() {
+    	logger.info("Content Type" + contentType);
         return contentType;
     }
 
@@ -28,6 +35,7 @@ public class PackageContentObject {
     }
 
     public String getMd5() {
+    	logger.info("MD5 hash "+ md5);
         return md5;
     }
 
@@ -36,6 +44,7 @@ public class PackageContentObject {
     }
 
     public String getSealed() {
+    	logger.info("Sealed "+ sealed);
         return sealed;
     }
 

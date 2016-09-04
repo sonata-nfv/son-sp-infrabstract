@@ -6,16 +6,20 @@ import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.nsd.VirtualLink;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.placement.TranslatorCore;
 import sonata.kernel.placement.config.NodeResource;
 import sonata.kernel.placement.config.PopResource;
 import sonata.kernel.placement.service.PlacementPlugin;
 
 import java.util.*;
 
-public class DefaultPlacementPlugin implements PlacementPlugin {
+import org.apache.log4j.Logger;
 
+public class DefaultPlacementPlugin implements PlacementPlugin {
+	final static Logger logger = Logger.getLogger(DefaultPlacementPlugin.class);
     @Override
     public ServiceInstance initialScaling(DeployServiceData serviceData) {
+    	logger.info("Initial Scaling");
         ServiceInstance instance = new ServiceInstance();
         int nodeCounter = 0;
 
@@ -27,6 +31,7 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
         Map<String,VnfDescriptor> functionMap = new HashMap<String,VnfDescriptor>();
         for(VnfDescriptor descriptor : serviceData.getVnfdList()) {
             functionMap.put(descriptor.getName(),descriptor);
+            logger.debug("VNF Descriptor "+ descriptor);
         }
 
         // Create one network service instance as direct mirror of the descriptor definition
@@ -60,7 +65,8 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                 assert conPointParts!=null && conPointParts.length == 2 : "Virtual Link "+link.getId()+" uses odd vnf reference "+conPoint;
                 String vnfid = conPointParts[0];
                 String connectionPointName = conPointParts[1];
-
+                logger.debug("VNF Id "+ vnfid);
+                logger.debug("Connection Point Name "+ connectionPointName);
                 System.out.println(vnfid+" --- "+connectionPointName);
                 if("ns".equals(vnfid)) {
                     // TODO: Maybe add virtual links that connect the service (!) connection points to an additional list
@@ -68,6 +74,7 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                 }
 
                 FunctionInstance node = instance.nodes.get(vnfid);
+                logger.debug("Nodes "+ instance.nodes.get(vnfid));
                 assert node!=null : "Virtual Link "+link.getId()+" references unknown vnf with id "+vnfid;
                 linkInstance.nodeList.add(node);
             }
@@ -81,14 +88,15 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
 
     @Override
     public ServiceInstance updateScaling(DeployServiceData serviceData, ServiceInstance instance, ScaleMessage trigger) {
-
+    	logger.info("Update Scaling");
         // TODO: implement update for scale out/in
         return null;
     }
 
     @Override
     public PlacementMapping initialPlacement(DeployServiceData serviceData, ServiceInstance instance, List<PopResource> resources) {
-        PlacementMapping mapping = new PlacementMapping();
+    	logger.info("Initial Placement");
+    	PlacementMapping mapping = new PlacementMapping();
         mapping.resources.addAll(resources);
 
         // For every pop there is a list of available nodes

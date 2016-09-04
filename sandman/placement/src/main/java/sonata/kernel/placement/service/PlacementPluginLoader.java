@@ -10,16 +10,22 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 
-public final class PlacementPluginLoader {
+import org.apache.log4j.Logger;
 
+public final class PlacementPluginLoader {
+	
+	final static Logger logger = Logger.getLogger(PlacementPluginLoader.class);
     public static PlacementPlugin placementPlugin;
 
     public static void loadPlacementPlugin(String path, String pluginName) {
+    	logger.info("Loading Placement Plugin");
         placementPlugin = createPlacementPlugin(path, pluginName);
     }
 
     public static PlacementPlugin createPlacementPlugin(String path, String pluginName){
-
+    	logger.info("Creating placement Plugin");
+    	logger.debug("Plugin pathe: "+path);
+    	logger.debug("Plugin Name: "+pluginName);
         try {
             // Get ClassLoader for plugin folder
             File pluginFolder = new File(path);

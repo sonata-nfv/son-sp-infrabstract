@@ -1,9 +1,14 @@
 package sonata.kernel.placement.pd;
 
+import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import sonata.kernel.placement.TranslatorCore;
 
 public class PackageDependency {
 
+	final static Logger logger = Logger.getLogger(TranslatorCore.class);
     private String group;
     private String name;
     private String version;
@@ -13,6 +18,7 @@ public class PackageDependency {
 
 
     public String getGroup() {
+    	logger.info("Group "+ group);
         return group;
     }
 
@@ -21,6 +27,7 @@ public class PackageDependency {
     }
 
     public String getName() {
+    	logger.info("Name "+ name);
         return name;
     }
 
@@ -29,6 +36,7 @@ public class PackageDependency {
     }
 
     public String getVersion() {
+    	logger.info("Version "+ version);
         return version;
     }
 
@@ -37,6 +45,7 @@ public class PackageDependency {
     }
 
     public String getCredentials() {
+    	logger.info("Credentials "+ credentials);
         return credentials;
     }
 
@@ -45,6 +54,7 @@ public class PackageDependency {
     }
 
     public String getVerificationKey() {
+    	logger.info("Verfication Key "+ verificationKey);
         return verificationKey;
     }
 

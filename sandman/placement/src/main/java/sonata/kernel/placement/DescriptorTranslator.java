@@ -30,17 +30,20 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import org.apache.log4j.Logger;
 
-class DescriptorTranslator
+class DescriptorTranslator		
 {
+	final static Logger logger = Logger.getLogger(DescriptorTranslator.class);
     public static String process_descriptor(String base_dir) throws IOException
     {
+    	logger.debug("Base Directory is : " + base_dir);
         ServiceDescriptor sd = null;
         List<VnfDescriptor> vnfd_list = new ArrayList<VnfDescriptor>();
 
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         SimpleModule module = new SimpleModule();
-
+ 
         File dir_sd = new File(base_dir + "/sd/");
         if(dir_sd.isDirectory())
         {
@@ -48,6 +51,7 @@ class DescriptorTranslator
             if(sd_files[0].isFile() && sd_files[0].canRead()){
                 System.out.println("DescriptorTranslator::process_descriptor(): Processing file : "
                         + sd_files[0].getAbsolutePath());
+                logger.debug("DescriptorTranslator::process_descriptor(): Processing file : "+ sd_files[0].getAbsolutePath());
 
 
                 StringBuilder bodyBuilder = new StringBuilder();
@@ -76,7 +80,7 @@ class DescriptorTranslator
                 if (file.isFile() && file.canRead()) {
                     System.out.println("DescriptorTranslator::process_descriptor(): Processing file : "
                             + file.getAbsolutePath());
-
+                    logger.debug("DescriptorTranslator::process_descriptor(): Processing file :"+file.getAbsolutePath() );
                     VnfDescriptor vnfd;
                     StringBuilder bodyBuilder = new StringBuilder();
                     BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -126,8 +130,10 @@ class DescriptorTranslator
 
             System.out.println("+++++++++++++++++++++++++++++++");
             System.out.println(template.getResources());
+            logger.debug("Template Resources: "+template.getResources());
             System.out.println("+++++++++++++++++++++++++++++++");
             String body = mapper2.writeValueAsString(template);
+            logger.debug("Body: "+body);
             System.out.println(body);
             return body;
 

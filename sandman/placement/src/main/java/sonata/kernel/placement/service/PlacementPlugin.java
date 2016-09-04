@@ -8,8 +8,10 @@ import sonata.kernel.placement.config.PopResource;
 
 import java.util.List;
 
-public interface PlacementPlugin {
+import org.apache.log4j.Logger;
 
+public interface PlacementPlugin {
+	
     /*
      * SONATA D4.1 - 4.2.1.1 Future Plugins - Features
      * Service Scaling:

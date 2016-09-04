@@ -26,20 +26,23 @@ import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public final class PackageLoader {
+import org.apache.log4j.Logger;
 
+public final class PackageLoader {
+	final static Logger logger = Logger.getLogger(PackageLoader.class);
     public final static String basedir = Paths.get(System.getProperty("java.io.tmpdir"), "placementtmp").toString();
 
     public static String processZipFile(byte[] data) throws IOException {
-
+    	logger.info("Processing ZIP file");
         // Create destination paths
         String currentDir = "";
         SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd-HHmmss");
         currentDir = Paths.get(basedir,sdf.format(new Date())).toString();
-
+        logger.debug("Current Directory: "+ currentDir);
         String sddirstr = Paths.get(currentDir,"sd").toString();
         String vnfddirstr = Paths.get(currentDir,"vnfd").toString();
-
+        logger.debug("Service descriptor Dir: "+sddirstr);
+        logger.debug("VNF descriptor Dir: "+vnfddirstr);
         // Create directories if necessary
         File sddir = new File(sddirstr);
         if(sddir.isDirectory()==false)
@@ -76,7 +79,7 @@ public final class PackageLoader {
     }
 
     public static DeployServiceData loadPackageFromDisk(String packagePath) {
-
+    	logger.info("Loading package from disk");
         File packageFile = new File(packagePath);
         if (!packageFile.exists())
             return null;
@@ -93,6 +96,7 @@ public final class PackageLoader {
         try {
 
             data = Files.readAllBytes(Paths.get(packagePath));
+            logger.debug("Data: "+ data.length);
             processZipFileData(data, servicesDataList, functionsDataList);
 
             for(byte[] serviceBytes : servicesDataList) {
@@ -117,7 +121,7 @@ public final class PackageLoader {
     }
 
     public static ServiceDescriptor byteArrayToServiceDescriptor(byte[] data){
-
+    	logger.info("Byte Array to Service Descriptor");
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         SimpleModule module = new SimpleModule();
 
@@ -133,7 +137,6 @@ public final class PackageLoader {
             while ((line = in.readLine()) != null)
                 bodyBuilder.append(line + "\n\r");
 
-
             module.addDeserializer(Unit.class, new UnitDeserializer());
             mapper.registerModule(module);
             mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
@@ -147,7 +150,7 @@ public final class PackageLoader {
     }
 
     public static VnfDescriptor byteArrayToVnfDescriptor(byte[] data){
-
+    	logger.info("Byte array to VNF descriptor");
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         SimpleModule module = new SimpleModule();
 
@@ -174,7 +177,8 @@ public final class PackageLoader {
     }
 
     public static void processZipFileData(byte[] data, List<byte[]> services, List<byte[]> functions) throws IOException {
-
+    	
+    	logger.info("Processing zip file data");
         ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
 
         System.out.println("Start zip stuff");
@@ -192,6 +196,8 @@ public final class PackageLoader {
                 byte[] fileData = readFile(zipstream, ze);
                 String filePath = ze.getName();
                 fileMap.put(filePath, fileData);
+                logger.debug("File data lenght: "+ fileData.length);
+                logger.debug("File Path: "+ filePath);
 
             }
 
@@ -203,7 +209,7 @@ public final class PackageLoader {
         zipstream.close();
 
         System.out.println("End zip stuff");
-
+        logger.info("End of ZIP file");
         Set<String> files = fileMap.keySet();
 
         if (files.contains("META-INF/MANIFEST.MF")) {
@@ -251,19 +257,20 @@ public final class PackageLoader {
                     name = name.substring(1);
 
                 System.out.println("Check out content file: "+name);
-
+                logger.debug("COntent file name: "+ name);
                 // Get file data from map
                 byte[] fileData;
                 fileData = fileMap.get(name);
                 if (fileData==null) {
                     System.out.println("No file data found for: "+name);
+                    logger.info("No data found in: "+ name);
                     continue;
                 }
 
                 // Check MD5
                 if (md5!=null) {
                     byte[] digest = md5.digest(fileData);
-
+                    
                     digest.toString();
                     BigInteger bigInt = new BigInteger(1,digest);
                     String hashtext = bigInt.toString(16);
@@ -275,8 +282,10 @@ public final class PackageLoader {
                     if (fileMd5!=null) {
                         if (hashtext.toLowerCase().equals(fileMd5.toLowerCase()) == false) {
                             System.out.println("MD5 mismatch for file "+name+" (given md5: "+fileMd5.toLowerCase()+", actual md5: "+hashtext.toLowerCase()+")");
+                            logger.debug("MD5 mismatch for file: "+ name);
                         } else {
                             System.out.println("MD5 matches "+hashtext.toLowerCase());
+                            logger.info("MD5 matches");
                         }
                     }
                 }
@@ -289,6 +298,7 @@ public final class PackageLoader {
                     services.add(fileData);
 
                     System.out.println("Found service descriptor: "+name);
+                    logger.info("Service Descriptor found: "+name);
                 }
 
                 // It's a function descriptor
@@ -296,6 +306,7 @@ public final class PackageLoader {
                     functions.add(fileData);
 
                     System.out.println("Found function descriptor: "+name);
+                    logger.info("Function Descriptor found: "+name);
                 }
             }
         }

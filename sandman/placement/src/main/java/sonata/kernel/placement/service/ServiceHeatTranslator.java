@@ -11,16 +11,19 @@ import sonata.kernel.placement.config.PopResource;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 public class ServiceHeatTranslator {
-
+	
+	final static Logger logger = Logger.getLogger(ServiceHeatTranslator.class);
     public static List<HeatTemplate> translatePlacementMappingToHeat(ServiceInstance instance, List<PopResource> resources, PlacementMapping mapping) {
-
+    	logger.info("Transalating Placement Mapping to Heat");
         List<HeatTemplate> templates = new ArrayList<HeatTemplate>();
-
+        
         ServiceDescriptor service = instance.service;
-
+        
         for(PopResource datacenter : resources) {
-
+        	
             HeatTemplate template = null;
 
             // TODO: do something more intelligent, also how to connect multiple datacenters?
@@ -54,7 +57,7 @@ public class ServiceHeatTranslator {
                 e.printStackTrace();
             }
         }
-
+        logger.info("Returning templates: "+ templates.size());
         return templates;
     }
 

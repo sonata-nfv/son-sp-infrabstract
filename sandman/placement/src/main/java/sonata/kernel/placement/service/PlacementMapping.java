@@ -7,8 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class PlacementMapping {
+import org.apache.log4j.Logger;
 
+public class PlacementMapping {
+	final static Logger logger = Logger.getLogger(PlacementMapping.class);
     public final List<PopResource> resources;
 
     // Maps instance node names to resource node names
@@ -20,6 +22,7 @@ public class PlacementMapping {
 
 
     public PlacementMapping(){
+    	logger.debug("Placement Mapping");
         mapping = new HashMap<String,String>();
         resources = new ArrayList<PopResource>();
         popMapping = new HashMap<String,PopResource>();

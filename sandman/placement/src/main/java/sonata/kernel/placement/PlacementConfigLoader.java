@@ -14,19 +14,22 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Paths;
 
-public final class PlacementConfigLoader {
+import org.apache.log4j.Logger;
 
+public final class PlacementConfigLoader {
+	final static Logger logger = Logger.getLogger(PlacementConfigLoader.class);
     public final static String CONFIG_FILENAME = "placementd.yml";
 
     public final static String[] CONFIG_FOLDERS = new String[]{""};
 
     public static PlacementConfig loadPlacementConfig(){
+    	logger.info("Placement config loader");
         PlacementConfig config = null;
 
         for (String configFolder : CONFIG_FOLDERS){
 
             File configFile = new File(Paths.get(configFolder,CONFIG_FILENAME).toString());
-
+            logger.debug("Config Folder is: "+ configFile.getPath());
             if (configFile.exists()) {
 
                 config = mapConfigFile(configFile);
@@ -43,6 +46,7 @@ public final class PlacementConfigLoader {
     }
 
     public static PlacementConfig mapConfigFile(File configFile) {
+    	logger.info("Map config file");
         PlacementConfig config = null;
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         SimpleModule module = new SimpleModule();
@@ -69,6 +73,7 @@ public final class PlacementConfigLoader {
     }
 
     public static PlacementConfig createDefaultConfig(){
+    	logger.info("Create Default Config");
         PlacementConfig config = new PlacementConfig();
         config.pluginPath = "";
         config.placementPlugin = "";
