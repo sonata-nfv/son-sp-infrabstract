@@ -32,6 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.DeployServiceResponse;
 import sonata.kernel.VimAdaptor.commons.ServiceRecord;
@@ -51,6 +52,9 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
    */
   private DeployServiceData data;
   private String sid;
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(MockWrapper.class);
+  private static final long THREAD_SLEEP = 1000;
 
   public MockWrapper(WrapperConfiguration config) {
     super();
@@ -80,13 +84,13 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
 
   @Override
   public void run() {
-    System.out.println("[MockWrapperFSM] - Deploying Service...");
+    Logger.info("Deploying Service...");
     try {
-      Thread.sleep(1000);
+      Thread.sleep(THREAD_SLEEP);
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
     }
-    System.out.println("[MockWrapperFSM] - Service DEPLOYED. Creating response");
+    Logger.info("Service DEPLOYED. Creating response");
     DeployServiceResponse response = new DeployServiceResponse();
     response.setRequestStatus("DEPLOYED");;
     ServiceRecord sr = new ServiceRecord();
@@ -115,7 +119,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     }
     response.setNsr(sr);
 
-    System.out.println("[MockWrapperFSM] - Response created. Serializing...");
+    Logger.info("Response created. Serializing...");
 
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
@@ -126,11 +130,11 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     try {
       body = mapper.writeValueAsString(response);
       this.setChanged();
-      System.out.println("[MockWrapperFSM] - Serialized. notifying call processor");
+      Logger.info("Serialized. notifying call processor");
       WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
       this.notifyObservers(update);
     } catch (JsonProcessingException e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
     }
   }
 

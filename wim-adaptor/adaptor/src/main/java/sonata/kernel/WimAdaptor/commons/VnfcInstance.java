@@ -20,7 +20,7 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.), UCL
+ * @author Dario Valocchi (Ph.D.)
  * 
  */
 
@@ -28,7 +28,7 @@ package sonata.kernel.WimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.WimAdaptor.commons.nsd.ConnectionPoint;
+import sonata.kernel.WimAdaptor.commons.nsd.ConnectionPointRecord;
 
 import java.util.ArrayList;
 
@@ -43,7 +43,7 @@ public class VnfcInstance {
   private String vcId;
 
   @JsonProperty("connection_points")
-  private ArrayList<ConnectionPoint> connectionPoints;
+  private ArrayList<ConnectionPointRecord> connectionPoints;
 
   public String getId() {
     return id;
@@ -57,9 +57,6 @@ public class VnfcInstance {
     return vcId;
   }
 
-  public ArrayList<ConnectionPoint> getConnectionPoints() {
-    return connectionPoints;
-  }
 
   public void setId(String id) {
     this.id = id;
@@ -73,9 +70,14 @@ public class VnfcInstance {
     this.vcId = vcId;
   }
 
-  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+  public ArrayList<ConnectionPointRecord> getConnectionPoints() {
+    return connectionPoints;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPointRecord> connectionPoints) {
     this.connectionPoints = connectionPoints;
   }
+
 
 
 }

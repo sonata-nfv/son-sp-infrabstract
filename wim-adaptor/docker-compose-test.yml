@@ -1,7 +1,7 @@
 version: '2'
 services:
   wim-adaptor:
-    build: ./
+    image: registry.sonata-nfv.eu:5000/wim-adaptor
     entrypoint: /test.sh
     links:
      - postgres 

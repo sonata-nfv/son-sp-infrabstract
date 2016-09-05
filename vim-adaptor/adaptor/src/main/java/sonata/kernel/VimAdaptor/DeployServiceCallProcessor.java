@@ -26,13 +26,12 @@
 
 package sonata.kernel.VimAdaptor;
 
-
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
@@ -44,6 +43,11 @@ import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
 import java.util.Observable;
 
 public class DeployServiceCallProcessor extends AbstractCallProcessor {
+
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(DeployServiceCallProcessor.class);
+
+  private DeployServiceData data;
 
   /**
    * Create a CallProcessor to process a DeployService API call.
@@ -59,10 +63,10 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
   @Override
   public boolean process(ServicePlatformMessage message) {
     boolean out = true;
-    System.out.println("[DeployServiceCallProcessor] - Call received...");
+    Logger.info("Call received...");
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
-    System.out.println("[DeployServiceCallProcessor] - Parsing payload...");
-    DeployServiceData data = null;
+    Logger.info("Parsing payload...");
+    data = null;
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Unit.class, new UnitDeserializer());
@@ -70,11 +74,11 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     try {
       data = mapper.readValue(message.getBody(), DeployServiceData.class);
-      System.out.println("[DeployServiceCallProcessor] - payload parsed");
+      Logger.info("payload parsed");
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(data.getVimUuid());
-      System.out.println("[DeployServiceCallProcessor] - Wrapper retrieved");
+      Logger.info("Wrapper retrieved");
       if (wr == null) {
-        System.out.println("[DeployServiceCallProcessor] - Error retrieving the wrapper");
+        Logger.warn("Error retrieving the wrapper");
 
         this.sendToMux(new ServicePlatformMessage(
             "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
@@ -83,13 +87,12 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
       } else {
         // use wrapper interface to send the NSD/VNFD, along with meta-data
         // to the wrapper, triggering the service instantiation.
-        System.out.println("[DeployServiceCallProcessor] - Calling wrapper: " + wr);
+        Logger.info("Calling wrapper: " + wr);
         wr.addObserver(this);
         wr.deployService(data, this.getSid());
       }
     } catch (Exception e) {
-      System.out.println("[DeployServiceCallProcessor] - Error deployng the system:");
-      System.out.println("[DeployServiceCallProcessor] - " + e.getMessage());
+      Logger.error("Error deploying the system: " + e.getMessage(), e);
       this.sendToMux(new ServicePlatformMessage(
           "{\"request_status\":\"fail\",\"message\":\"Deployment Error\"}", "application/json",
           message.getReplyTo(), message.getSid(), null));
@@ -102,28 +105,31 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
   public void update(Observable arg0, Object arg1) {
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg1;
     if (update.getSid().equals(this.getSid())) {
-      System.out.println("[DeployServiceCallProcessor] - Received an update from the wrapper...");
+      Logger.info("Received an update from the wrapper...");
       if (update.getStatus().equals("SUCCESS")) {
-        System.out.println("[DeployServiceCallProcessor] - Deploy " + this.getSid() + " succed");
-        System.out.println("[DeployServiceCallProcessor] - Sending response...");
-        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
-            "application/x-yaml", "infrastructure.service.deploy", this.getSid(), null);
+        Logger.info("Deploy " + this.getSid() + " succeed");
+
+        // Sending a hook to trigger the WIM adaptor
+        Logger.info("Sending partial response to WIM adaptor...");
+        ServicePlatformMessage response =
+            new ServicePlatformMessage(update.getBody(), "application/x-yaml",
+                "infrastructure.wan.configure", this.getSid(), this.getMessage().getReplyTo());
         this.sendToMux(response);
       } else if (update.getStatus().equals("ERROR")) {
-        System.out.println("[DeployServiceCallProcessor] - Deploy " + this.getSid() + " error");
-        System.out.println("[DeployServiceCallProcessor] - Pushing back error...");
+        Logger.warn("Deploy " + this.getSid() + " error");
+        Logger.warn("Pushing back error...");
         ServicePlatformMessage response = new ServicePlatformMessage(
             "{\"request_status\":\"fail\",\"message\":\"" + update.getBody() + "\"}",
-            "application/x-yaml", "infrastructure.service.deploy", this.getSid(), null);
+            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
         this.sendToMux(response);
       } else {
-        System.out.println(
-            "[DeployServiceCallProcessor] - Deploy " + this.getSid() + " - " + update.getStatus());
-        System.out.println("[DeployServiceCallProcessor] - Message " + update.getBody());
+        Logger.info("Deploy " + this.getSid() + " - " + update.getStatus());
+        Logger.info("Message " + update.getBody());
       }
 
       // TODO handle other update from the compute wrapper;
     }
   }
+
 
 }

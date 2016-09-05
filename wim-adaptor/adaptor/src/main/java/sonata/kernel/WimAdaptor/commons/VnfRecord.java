@@ -20,7 +20,7 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.), UCL
+ * @author Dario Valocchi (Ph.D.)
  * 
  */
 
@@ -34,19 +34,19 @@ public class VnfRecord {
 
   @JsonProperty("descriptor_version")
   private String descriptorVersion;
-  private String uuid;
   private Status status;
-  @JsonProperty("instance_uuid")
-  private String instanceUuid;
-  @JsonProperty("vnf_address")
-  private String vnfAddress;
+  @JsonProperty("id")
+  private String id;
 
-  @JsonProperty("descriptor_reference_vendor")
-  private String descriptorReferenceVendor;
-  @JsonProperty("descriptor_reference_name")
-  private String descriptorReferenceName;
-  @JsonProperty("descriptor_reference_version")
-  private String descriptorReferenceVersion;
+  // @JsonProperty("descriptor_reference_vendor")
+  // private String descriptorReferenceVendor;
+  // @JsonProperty("descriptor_reference_name")
+  // private String descriptorReferenceName;
+  // @JsonProperty("descriptor_reference_version")
+  // private String descriptorReferenceVersion;
+
+  @JsonProperty("descriptor_reference")
+  private String descriptorReference;
 
   @JsonProperty("virtual_deployment_units")
   private ArrayList<VduRecord> virtualDeploymentUnits;
@@ -60,17 +60,11 @@ public class VnfRecord {
     this.virtualDeploymentUnits.add(unit);
   }
 
-  public String getUuid() {
-    return uuid;
-  }
 
   public Status getStatus() {
     return status;
   }
 
-  public String getVnfAddress() {
-    return vnfAddress;
-  }
 
   public String getDescriptorVersion() {
     return descriptorVersion;
@@ -80,58 +74,60 @@ public class VnfRecord {
     this.descriptorVersion = descriptorVersion;
   }
 
-  public void setUuid(String id) {
-    this.uuid = id;
-  }
 
   public void setStatus(Status status) {
     this.status = status;
   }
 
-  public void setVnfAddress(String address) {
-    this.vnfAddress = address;
-  }
 
   public ArrayList<VduRecord> getVirtualDeploymentUnits() {
     return virtualDeploymentUnits;
   }
 
-  public String getInstanceUuid() {
-    return instanceUuid;
-  }
-
-  public void setInstanceUuid(String instanceUuid) {
-    this.instanceUuid = instanceUuid;
-  }
 
   public void setVirtualDeploymentUnits(ArrayList<VduRecord> virtualDeploymentUnits) {
     this.virtualDeploymentUnits = virtualDeploymentUnits;
   }
 
-  public String getDescriptorReferenceVendor() {
-    return descriptorReferenceVendor;
+  // public String getDescriptorReferenceVendor() {
+  // return descriptorReferenceVendor;
+  // }
+  //
+  // public String getDescriptorReferenceName() {
+  // return descriptorReferenceName;
+  // }
+  //
+  // public String getDescriptorReferenceVersion() {
+  // return descriptorReferenceVersion;
+  // }
+  //
+  // public void setDescriptorReferenceVendor(String descriptorReferenceVendor) {
+  // this.descriptorReferenceVendor = descriptorReferenceVendor;
+  // }
+  //
+  // public void setDescriptorReferenceName(String descriptorReferenceName) {
+  // this.descriptorReferenceName = descriptorReferenceName;
+  // }
+  //
+  // public void setDescriptorReferenceVersion(String descriptorReferenceVersion) {
+  // this.descriptorReferenceVersion = descriptorReferenceVersion;
+  // }
+
+  public String getId() {
+    return id;
   }
 
-  public String getDescriptorReferenceName() {
-    return descriptorReferenceName;
+  public void setId(String id) {
+    this.id = id;
   }
 
-  public String getDescriptorReferenceVersion() {
-    return descriptorReferenceVersion;
+  public String getDescriptorReference() {
+    return descriptorReference;
   }
 
-  public void setDescriptorReferenceVendor(String descriptorReferenceVendor) {
-    this.descriptorReferenceVendor = descriptorReferenceVendor;
+  public void setDescriptorReference(String descriptorReference) {
+    this.descriptorReference = descriptorReference;
   }
-
-  public void setDescriptorReferenceName(String descriptorReferenceName) {
-    this.descriptorReferenceName = descriptorReferenceName;
-  }
-
-  public void setDescriptorReferenceVersion(String descriptorReferenceVersion) {
-    this.descriptorReferenceVersion = descriptorReferenceVersion;
-  }
-
 
 
 }

@@ -28,6 +28,7 @@ package sonata.kernel.WimAdaptor;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
 
 import sonata.kernel.WimAdaptor.messaging.AbstractMsgBusConsumer;
 import sonata.kernel.WimAdaptor.messaging.AbstractMsgBusProducer;
@@ -61,6 +62,7 @@ public class WimAdaptorCore {
 
   private static final String version = "0.0.1";
   private static final String description = "Service Platform WIM Infrastructure Adapter";
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(WimAdaptorCore.class);
 
 
   /**
@@ -222,8 +224,7 @@ public class WimAdaptorCore {
    * @param message the response message
    */
   public void handleRegistrationResponse(ServicePlatformMessage message) {
-    System.out
-        .println("[WimAdaptorCore] Received the registration response from the pluginmanager");
+    Logger.info("Received the registration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject object = (JSONObject) tokener.nextValue();
     String status = object.getString("status");
@@ -235,8 +236,8 @@ public class WimAdaptorCore {
       }
     } else {
       String error = object.getString("error");
-      System.err.println("Failed to register to the plugin manager");
-      System.err.println("Message: " + error);
+      Logger.error("Failed to register to the plugin manager");
+      Logger.error("Message: " + error);
     }
 
   }
@@ -247,8 +248,7 @@ public class WimAdaptorCore {
    * @param message the response message
    */
   public void handleDeregistrationResponse(ServicePlatformMessage message) {
-    System.out
-        .println("[WimAdaptorCore] Received the deregistration response from the pluginmanager");
+    Logger.info("Received the deregistration response from the pluginmanager");
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject object = (JSONObject) tokener.nextValue();
     String status = object.getString("status");
@@ -257,7 +257,7 @@ public class WimAdaptorCore {
         writeLock.notifyAll();
       }
     } else {
-      System.err.println("Failed to deregister to the plugin manager");
+      Logger.error("Failed to deregister to the plugin manager");
       this.status = "FAILED";
     }
 

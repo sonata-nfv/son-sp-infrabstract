@@ -31,7 +31,6 @@ import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
 

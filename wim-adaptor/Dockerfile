@@ -13,7 +13,8 @@ RUN apt-get update && apt-get install -y python-pip \
   netcat
 
 RUN pip install --upgrade pip; \
-  pip install --upgrade virtualenv \
+  pip install --upgrade virtualenv; \
+  pip install requests pyyaml \
   && rm -rf /var/lib/apt/lists/*
 
 ADD adaptor /adaptor

@@ -1,9 +1,11 @@
 package sonata.kernel.placement.pd;
 
+import org.apache.log4j.Logger;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Credentials {
-
+	final Logger logger = Logger.getLogger(ArtifactDependency.class);
     // username_and_password case
     protected String username;
     protected String password;
@@ -16,6 +18,7 @@ public class Credentials {
 
 
     public String getUsername() {
+    	logger.info("Credentials Username" + username);
         return username;
     }
 

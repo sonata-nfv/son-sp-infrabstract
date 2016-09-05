@@ -46,6 +46,7 @@ def get_stack_list(heat): #deprecated
             break
 
 def autheticate(cip, username, password, tenant): #function used to autheticate with keystone
+    #print "authenticating with user "+str(username)+" tenant "+str(tenant)+" and pass "+str(password)
     auth_url = 'http://'+ str(cip)+':5000/v2.0'
     keystone = client.Client(username=username, password=password, tenant_name=tenant, auth_url=auth_url)
     auth_token = keystone.auth_ref['token']['id']
@@ -58,7 +59,7 @@ def write_server(server,stackname):  #function used to write needed server's inf
     s_id = server['physical_resource_id']
     server = heat.resources.get(stackname, server['resource_name']).to_dict()
     s_name =server['attributes']['name']
-    flavor = server['attributes']['flavor']
+    #flavor = server['attributes']['flavor']
     server_dict = {'server_name': s_name, 'server_id' : s_id}
     return server_dict
 

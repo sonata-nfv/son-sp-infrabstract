@@ -62,6 +62,7 @@ This sofware exposes its API through an AMPQ interface implemented with Rabbitmq
 
 You can run Unit and Module tests using docker compose. Just run in `son-sp-infrabstract/vim-adaptor/`:
 
+`docker-compose -f docker-compose-test.yml build`
 `docker-compose -f docker-compose-test.yml up`
 
 After the test, remember to tear down the compose running:

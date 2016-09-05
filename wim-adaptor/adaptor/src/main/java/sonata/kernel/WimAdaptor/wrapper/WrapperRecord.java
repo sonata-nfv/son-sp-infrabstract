@@ -29,14 +29,14 @@ package sonata.kernel.WimAdaptor.wrapper;
 public class WrapperRecord {
 
   private WrapperConfiguration config;
-  private Wrapper vimWrapper;
+  private Wrapper wimWrapper;
 
   public WrapperConfiguration getConfig() {
     return config;
   }
 
-  public Wrapper getVimWrapper() {
-    return vimWrapper;
+  public Wrapper getWimWrapper() {
+    return wimWrapper;
   }
 
   /**
@@ -49,6 +49,6 @@ public class WrapperRecord {
    */
   public WrapperRecord(Wrapper wrapper, WrapperConfiguration config) {
     this.config = config;
-    this.vimWrapper = wrapper;
+    this.wimWrapper = wrapper;
   }
 }

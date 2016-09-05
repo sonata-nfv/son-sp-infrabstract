@@ -37,7 +37,7 @@ public class AdaptorMux {
   /**
    * Create a multiplexer for the outgoing messages bind to the provided queue.
    * 
-   * @param the queue to en-queue outgoing messages
+   * @param muxQueue the queue to en-queue outgoing messages
    */
   public AdaptorMux(BlockingQueue<ServicePlatformMessage> muxQueue) {
     this.muxQueue = muxQueue;

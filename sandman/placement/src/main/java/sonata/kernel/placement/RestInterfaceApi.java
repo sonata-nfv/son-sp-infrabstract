@@ -24,9 +24,10 @@ import org.openstack4j.openstack.OSFactory;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
 import sonata.kernel.placement.net.TranslatorNet;
+import org.apache.log4j.Logger;
 
 class RestInterfaceClientApi implements Runnable{
-
+	
     public RestInterfaceClientApi()
     {
         //Do something.
@@ -169,14 +170,14 @@ class RestInterfaceClientApi implements Runnable{
     }
 }
 class RestInterfaceServerApi extends NanoHTTPD implements Runnable{
-
+	final Logger logger = Logger.getLogger(RestInterfaceServerApi.class);
     public RestInterfaceServerApi()
     {
         super(8080);
     }
     public RestInterfaceServerApi(String hostname, int port) throws IOException {
         super(hostname, port);
-
+        	logger.debug("Content Length is " +hostname+" "+ port);
             System.out.println("RestInterfaceServerApi:: Started RESTful server Hostname: "
                     + hostname + " Port: " + port);
 
@@ -198,11 +199,11 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable{
     }
     @Override
     public Response serve(IHTTPSession session) {
-
+    	final Logger logger = Logger.getLogger(RestInterfaceClientApi.class);
       try{
           session.getParms();
           Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
-
+          logger.info("Content Length is " +contentLength);
           byte[] buffer = new byte[contentLength];
           session.getInputStream().read(buffer, 0, contentLength);
           String base_dir = PackageLoader.processZipFile(buffer);
