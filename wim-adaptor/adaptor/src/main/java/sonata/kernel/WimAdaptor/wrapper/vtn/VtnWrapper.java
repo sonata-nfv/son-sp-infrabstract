@@ -54,16 +54,16 @@ public class VtnWrapper extends WimWrapper {
     boolean out = true;
     VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
         this.config.getAuthPass());
-    Logger.info("Setting up the VTN for the service");
-    out = out && client.setupVtn(instanceId);
-    if (out){
-      Logger.info("VTN created");
-    } else {
-      Logger.error("Unable to create VTN");
-    }
-
+/**    Logger.info("Setting up the VTN for the service");
+  *  out = out && client.setupVtn(instanceId);
+  *  if (out){
+  *    Logger.info("VTN created");
+  *  } else {
+  *    Logger.error("Unable to create VTN");
+  *  }   Comment it out, as for the moment, new vtn will not be created
+*/ 
     Logger.info("Setting up the flow rules in the VTN");
-    out = out && client.setupFlow(instanceId, "In-PoP-Out");
+    out = out && client.setupFlow("vtn7", "green");
     if (out){
       Logger.info("Flow rules created");
     } else {
@@ -76,9 +76,11 @@ public class VtnWrapper extends WimWrapper {
 
   @Override
   public boolean removeNetConfiguration(String instanceId) {
-    VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
+	  String condition = "green";
+	  VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
         this.config.getAuthPass());
-    return client.deleteVtn(instanceId);
+    //return client.deleteVtn(instanceId);  commenting for clarity
+	  return client.modifyFlow(condition);
   }
 
 
