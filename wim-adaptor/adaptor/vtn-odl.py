@@ -52,7 +52,7 @@ if args.installation:
 	# create and map interfaces through file 
 	i_url = 'operations/vtn-vinterface:update-vinterface'
 	m_url = 'operations/vtn-port-map:set-port-map'
-	with open("configs.txt", "r+") as file:
+	with open("/adaptor/configs.txt", "r+") as file:
 		while True:
 			interface = file.readline()
 			if not interface: break
