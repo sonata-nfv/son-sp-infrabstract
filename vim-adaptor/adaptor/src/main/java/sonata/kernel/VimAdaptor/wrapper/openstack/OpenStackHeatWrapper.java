@@ -229,7 +229,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           cidr = subnets.get(subnetIndex);
           subnet.putProperty("cidr", cidr);
           //TODO remove this static DNS allocation in future use and implement the DNS as a VIM config parameter
-          subnet.putProperty("dns_nameservers","[10.30.0.11,8.8.8.8]");
+	  subnet.putProperty("dns_nameservers”,{"10.30.0.11","8.8.8.8"});
           // subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
           // subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
           // subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
