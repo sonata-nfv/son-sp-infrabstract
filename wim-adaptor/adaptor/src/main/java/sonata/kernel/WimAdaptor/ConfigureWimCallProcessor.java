@@ -16,6 +16,8 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.WimAdaptor.commons.DeployServiceResponse;
+import sonata.kernel.WimAdaptor.commons.Status;
+import sonata.kernel.WimAdaptor.commons.VnfRecord;
 import sonata.kernel.WimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
@@ -69,6 +71,10 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
     ServicePlatformMessage responseMessage = null;
     if (wim.configureNetwork(instanceId)) {
       response.setVimUuid(null);
+      // response.getNsr().setStatus(Status.normal_operation);
+      // for (VnfRecord vnfr:response.getVnfrs()){
+      // vnfr.setStatus(Status.normal_operation);
+      // }
       String body;
       try {
         Logger.debug("Serialising deploy response...");
