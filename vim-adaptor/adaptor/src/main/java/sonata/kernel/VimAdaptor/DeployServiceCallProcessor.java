@@ -72,6 +72,7 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
     module.addDeserializer(Unit.class, new UnitDeserializer());
     mapper.registerModule(module);
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     try {
       data = mapper.readValue(message.getBody(), DeployServiceData.class);
       Logger.info("payload parsed");
