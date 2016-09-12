@@ -20,7 +20,7 @@ public final class PlacementConfigLoader {
 	final static Logger logger = Logger.getLogger(PlacementConfigLoader.class);
     public final static String CONFIG_FILENAME = "placementd.yml";
 
-    public final static String[] CONFIG_FOLDERS = new String[]{"D:\\UPB\\SandMAN\\son-sp-infrabstract\\sandman\\placement\\YAML"};
+    public final static String[] CONFIG_FOLDERS = new String[]{"sandman\\placement\\YAML", "sandman/placement/YAML", "YAML"};
 
     public static PlacementConfig loadPlacementConfig(){
     	logger.info("Placement config loader");
