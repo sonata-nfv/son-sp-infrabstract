@@ -25,7 +25,7 @@ public class TranslatorCore {
     public static void main(String[] args) throws InterruptedException {
 
         // Load configuration
-    	logger.info("Loading COnfigurations");
+    	logger.info("Loading Configurations");
         System.out.println("Current path: "+new File("").getAbsolutePath());
         PlacementConfig config = PlacementConfigLoader.loadPlacementConfig();
         System.out.println("Plugin-path: "+config.pluginPath);
