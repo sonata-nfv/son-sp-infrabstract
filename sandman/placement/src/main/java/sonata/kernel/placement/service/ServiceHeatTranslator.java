@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Logger;
-import sun.nio.ch.Net;
 
 public class ServiceHeatTranslator {
 
