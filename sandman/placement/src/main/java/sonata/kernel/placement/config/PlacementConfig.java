@@ -7,6 +7,7 @@ public class PlacementConfig {
     public String pluginPath;
     public String placementPlugin;
     public ArrayList<PopResource> resources;
+    public RestInterface restApi;
 
     public ArrayList<PopResource> getResources() {
         return resources;
@@ -32,4 +33,11 @@ public class PlacementConfig {
         this.placementPlugin = placementPlugin;
     }
 
+    public RestInterface getRestApi() {
+        return restApi;
+    }
+
+    public void setRestApi(RestInterface restApi) {
+        this.restApi = restApi;
+    }
 }
