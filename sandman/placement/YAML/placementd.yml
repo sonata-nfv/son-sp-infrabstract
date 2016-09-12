@@ -1,4 +1,7 @@
 # Placement config file
+restApi:
+   serverIp: "localhost"
+   port: 8080
 
 pluginPath: "./sandman/placement/target/classes/sonata/kernel/placement/"
 
@@ -6,6 +9,11 @@ placementPlugin: "sonata.kernel.placement.service.DefaultPlacementPlugin"
 
 resources:
   - popName: "Datacenter1"
+    endpoint: "http://131.234.31.45:8080"
+    userName: "bla"
+    password: "bla"
+    tenantName: "fc394f2ab2df4114bde39905f800dc57"
+
     nodes:
       - name: "NodeSet1"
         quantity: 100
