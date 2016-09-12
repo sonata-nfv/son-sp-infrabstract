@@ -28,11 +28,11 @@
 
 package sonata.kernel.WimAdaptor.wrapper.vtn;
 
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+
+import org.slf4j.LoggerFactory;
 
 /**
  * Created by smendel on 4/20/16.
@@ -226,6 +226,46 @@ public class VtnClient {
     } catch (Exception e) {
       Logger.error(
           "Runtime error when deleting stack : " + vtnName + " error message: " + e.getMessage(),
+          e);
+      return false;
+    }
+
+    return isDeleted.equals("SUCCESS");
+
+  }
+
+  /**
+   * Modify flow of VTN.
+   * 
+   * @param condition - the condition to be modified, return to start status
+   * @return - true if the operation was completed successfully
+   */
+  public boolean modifyFlow(String condition) {
+    String isDeleted = null;
+    String string = null;
+    condition = formatField(condition);
+    Logger.info("Modifying VTN flow: " + condition);
+
+    try {
+      // Call the python client for changing the flow
+      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
+          "--configuration", url, userName, password, "-m", condition);
+      Process process = processBuilder.start();
+
+      // Read the results
+      BufferedReader stdInput = new BufferedReader(
+          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
+      while ((string = stdInput.readLine()) != null) {
+        // Logger.info(string);
+        isDeleted = string;
+      }
+      stdInput.close();
+      process.destroy();
+
+      Logger.info("Request was sent for VTN condition: " + condition + " : " + isDeleted);
+    } catch (Exception e) {
+      Logger.error(
+          "Runtime error when deleting stack : " + condition + " error message: " + e.getMessage(),
           e);
       return false;
     }

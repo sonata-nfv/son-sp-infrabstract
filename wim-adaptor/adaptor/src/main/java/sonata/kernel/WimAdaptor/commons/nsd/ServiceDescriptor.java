@@ -27,11 +27,11 @@
 
 package sonata.kernel.WimAdaptor.commons.nsd;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.WimAdaptor.commons.vnfd.AutoScalePolicy;
-
-import java.util.ArrayList;
 
 public class ServiceDescriptor {
 

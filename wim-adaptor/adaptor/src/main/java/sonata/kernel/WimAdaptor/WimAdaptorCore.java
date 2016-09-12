@@ -26,6 +26,10 @@
 
 package sonata.kernel.WimAdaptor;
 
+import java.io.IOException;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
@@ -39,10 +43,6 @@ import sonata.kernel.WimAdaptor.messaging.RabbitMqProducer;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.wrapper.WimRepo;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
-
-import java.io.IOException;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 
 
