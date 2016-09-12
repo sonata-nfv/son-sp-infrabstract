@@ -1,6 +1,8 @@
 package sonata.kernel.placement;
 
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sonata.kernel.placement.config.PlacementConfig;
 
 import java.io.File;
@@ -9,7 +11,8 @@ import org.openstack4j.api.OSClient;
 import org.openstack4j.model.network.Subnet;
 import sonata.kernel.placement.net.TranslatorNet;
 import sonata.kernel.placement.service.PlacementPluginLoader;
-import org.apache.log4j.Logger;
+//import org.apache.log4j.Logger;
+
 
 
 import java.io.IOException;
@@ -21,16 +24,15 @@ public class TranslatorCore {
 
     public TranslatorCore() {
     }
-    final static Logger logger = Logger.getLogger(TranslatorCore.class);
+    final static Logger logger = LoggerFactory.getLogger(TranslatorCore.class);
     public static void main(String[] args) throws InterruptedException {
 
         // Load configuration
     	logger.info("Loading Configurations");
         System.out.println("Current path: "+new File("").getAbsolutePath());
         PlacementConfig config = PlacementConfigLoader.loadPlacementConfig();
-        System.out.println("Plugin-path: "+config.pluginPath);
-        System.out.println("Placement-plugin: "+config.placementPlugin);
-        logger.info("Configurations loaded");
+
+
         // Load placement plugin
         logger.info("Loading placement plugins");
         PlacementPluginLoader.loadPlacementPlugin(config.pluginPath,config.placementPlugin);
@@ -38,7 +40,7 @@ public class TranslatorCore {
 
         try {
             new Thread(new RestInterfaceClientApi()).start();
-            new RestInterfaceServerApi("localhost", 8080).start();
+            new RestInterfaceServerApi(config.restApi.getServerIp(), config.restApi.getPort()).start();
 
           } catch (IOException ioe) {
             System.err.println("TranslatorCore::main() : Encountered exception" + ioe);

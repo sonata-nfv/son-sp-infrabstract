@@ -26,12 +26,17 @@
 
 package sonata.kernel.WimAdaptor.wrapper.vtn;
 
+import org.slf4j.LoggerFactory;
+
+import sonata.kernel.WimAdaptor.ConfigureWimCallProcessor;
 import sonata.kernel.WimAdaptor.WimWrapper;
 import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
 
 public class VtnWrapper extends WimWrapper {
 
   private WrapperConfiguration config;
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(ConfigureWimCallProcessor.class);
 
   public VtnWrapper(WrapperConfiguration config) {
     super();
@@ -49,12 +54,24 @@ public class VtnWrapper extends WimWrapper {
     boolean out = true;
     VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
         this.config.getAuthPass());
-
+    Logger.info("Setting up the VTN for the service");
     out = out && client.setupVtn(instanceId);
+    if (out){
+      Logger.info("VTN created");
+    } else {
+      Logger.error("Unable to create VTN");
+    }
 
+    Logger.info("Setting up the flow rules in the VTN");
     out = out && client.setupFlow(instanceId, "In-PoP-Out");
-
-    return out;
+    if (out){
+      Logger.info("Flow rules created");
+    } else {
+      Logger.error("Unable to create flow rules. GOING ON NONETHELESS");
+    }
+    //FIXME This is a DEBUG edit! ! Remove me ASAP!
+    //return out;
+    return true;
   }
 
   @Override

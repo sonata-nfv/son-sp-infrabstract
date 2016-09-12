@@ -107,7 +107,7 @@ class RestInterfaceClientApi implements Runnable{
     {
         String output;
         OSClient.OSClientV2 os = OSFactory.builderV2()
-                .endpoint("http://131.234.31.45:5001/v2.0")
+                .endpoint( uri + "/v2.0")
                 .credentials("bla","bla")
                 .tenantName("fc394f2ab2df4114bde39905f800dc57")
                 .authenticate();
