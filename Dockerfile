@@ -83,5 +83,5 @@ RUN cd /adaptor; mvn -Dmaven.test.skip=true -q install; cd /placement; mvn -Dmav
 
 CMD /docker-entrypoint.sh
 
-
+EXPOSE 8080
 
