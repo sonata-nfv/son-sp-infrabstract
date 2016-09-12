@@ -2,10 +2,14 @@ package sonata.kernel.placement.service;
 
 import com.google.common.collect.Lists;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPoint;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.nsd.VirtualLink;
+import sonata.kernel.VimAdaptor.commons.vnfd.ConnectionPointReference;
+import sonata.kernel.VimAdaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.placement.TranslatorCore;
 import sonata.kernel.placement.config.NodeResource;
 import sonata.kernel.placement.config.PopResource;
@@ -44,45 +48,125 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
 
 
         // Add functions
+        //Map<String, FunctionInstance> functionInstances = new HashMap<String, FunctionInstance>();
         for (NetworkFunction function : functions) {
             VnfDescriptor descriptor = functionMap.get(function.getVnfName());
             assert descriptor!=null : "Virtual Network Function "+function.getVnfName()+" not found";
-            FunctionInstance functionInstance = new FunctionInstance(descriptor, "node_"+(++nodeCounter)+"_"+function.getVnfId());
-            // TODO: Maybe add additional version/ vendor check
-            instance.nodes.put(function.getVnfId(),functionInstance);
+            //assert function.getVnfVersion().equals(descriptor.getVersion())==false;
+            //assert function.getVnfVendor().equals(descriptor.getVendor())==false;
+
+            FunctionInstance functionInstance = initVnf(function, descriptor);
+
+            //functionInstances.put(function.getVnfId(),functionInstance);
+
+            instance.functions.put(function.getVnfId(),functionInstance);
         }
 
 
-        // Add virtual links
+        // Add virtual links to connect functions
         for (VirtualLink link : links) {
-            LinkInstance linkInstance = new LinkInstance(link);
+            LinkInstance linkInstance = new LinkInstance(link, "nslink:"+link.getId());
 
-            System.out.println("->> " + link.getId());
+            int nsConnectionPointCount = 0;
+            String nsConnectionPointName = null;
+
             // Search for nodes with connection points that are involved in this link
             for(String conPoint : link.getConnectionPointsReference()) {
 
                 String[] conPointParts = conPoint.split(":");
-                assert conPointParts!=null && conPointParts.length == 2 : "Virtual Link "+link.getId()+" uses odd vnf reference "+conPoint;
+                assert conPointParts != null && conPointParts.length == 2 : "Virtual Link " + link.getId() + " uses odd vnf reference " + conPoint;
                 String vnfid = conPointParts[0];
                 String connectionPointName = conPointParts[1];
-                logger.debug("VNF Id "+ vnfid);
-                logger.debug("Connection Point Name "+ connectionPointName);
-                System.out.println(vnfid+" --- "+connectionPointName);
-                if("ns".equals(vnfid)) {
-                    // TODO: Maybe add virtual links that connect the service (!) connection points to an additional list
+
+                if ("ns".equals(vnfid)) {
+                    nsConnectionPointCount++;
+                    nsConnectionPointName = connectionPointName;
+                    // No units to add for ns outer connection point
                     continue;
                 }
 
-                FunctionInstance node = instance.nodes.get(vnfid);
-                logger.debug("Nodes "+ instance.nodes.get(vnfid));
-                assert node!=null : "Virtual Link "+link.getId()+" references unknown vnf with id "+vnfid;
-                linkInstance.nodeList.add(node);
-            }
+                // Get vnf instance created before
+                FunctionInstance functionInstance = instance.functions.get(vnfid);
+                assert functionInstance != null : "In Service " + service.getName() + " Virtual Link " + link.getId() + " references unknown vnf with id " + vnfid;
 
-            instance.links.add(linkInstance);
+                // Add units for vnf virtual link to new LinkInstance that connects vnfs
+                LinkInstance vnfLinkInstance = functionInstance.outerLinks.get(connectionPointName);
+                assert vnfLinkInstance != null : "In Service " + service.getName() + " Virtual Link " + link.getId() + " connects to function " + functionInstance.name + " that does not contain link for connection point " + connectionPointName;
+
+                for (UnitInstance unit: vnfLinkInstance.nodeList.keySet()) {
+                    linkInstance.nodeList.put(unit, conPoint);
+                    unit.aliasConnectionPoints.put(conPoint, vnfLinkInstance.nodeList.get(unit));
+                    unit.links.put(conPoint, linkInstance);
+                }
+            }
+            if(nsConnectionPointCount>0){
+                instance.connectionPoints.put(nsConnectionPointName, link.getId());
+                instance.outerLinks.put(link.getId(), linkInstance);
+            } else
+                instance.innerLinks.put(link.getId(), linkInstance);
         }
 
+        // Add LinkInstances for inner Vnf VirtualLinks and units
+        for(FunctionInstance functionInstance: instance.functions.values()) {
+            for(Map.Entry<String, LinkInstance> linkEntry: functionInstance.innerLinks.entrySet()) {
+                instance.innerLinks.put(linkEntry.getKey(), linkEntry.getValue());
+            }
+            instance.units.addAll(functionInstance.units.values());
+        }
 
+        return instance;
+    }
+
+    /**
+     * Creates instances of a function's units and virtual links
+     * @param function
+     * @param vnfd
+     */
+    protected FunctionInstance initVnf(NetworkFunction function, VnfDescriptor vnfd){
+
+        FunctionInstance instance = new FunctionInstance(function, vnfd, function.getVnfId());
+
+        // Create UnitInstances for VirtualDeploymentUnits
+        for(VirtualDeploymentUnit unit : vnfd.getVirtualDeploymentUnits()) {
+            instance.units.put(unit.getId(),new UnitInstance(instance, function, vnfd, unit, function.getVnfId()+":unit:"+unit.getId()));
+        }
+
+        // Create list of Vnf outer connection point names
+        List<String> vnfConPoints = new ArrayList<String>();
+        for(ConnectionPoint p:vnfd.getConnectionPoints()){
+            vnfConPoints.add(p.getId());
+        }
+
+        // Create LinkInstances for VirtualLinks
+        for(VnfVirtualLink link: vnfd.getVirtualLinks()){
+            // Create new VirtualLink
+            LinkInstance linkInstance = new LinkInstance(link, "vnflink:"+instance.name+":"+link.getId());
+            // Variables to check for Vnf outer connection point
+            int outerVnfConnection = 0;
+            String outVnfConnectionName = null;
+            // Add UnitInstances to LinkInstance
+            for(String ref: link.getConnectionPointsReference()){
+                String[] conPointParts = ref.split(":");
+                if("vnf".equals(conPointParts[0])) {
+                    outerVnfConnection++;
+                    outVnfConnectionName = conPointParts[1];
+                    // No UnitInstance for Vnf outer connection point
+                    continue;
+                }
+                UnitInstance unit = instance.units.get(conPointParts[0]);
+                assert unit != null : "In Vnfd "+vnfd.getName()+" virtual link "+link.getId()+" references an unknown connection point "+ref;
+                linkInstance.nodeList.put(unit, ref);
+                unit.links.put(ref, linkInstance);
+            }
+            assert outerVnfConnection<=1 : "In Vnfd "+vnfd.getName()+" virtual link "+link.getId()+" connects to more than one vnf outer connection";
+            if(outerVnfConnection>0) {
+                instance.connectionPoints.put(outVnfConnectionName, link.getId());
+                instance.outerLinks.put(link.getId(), linkInstance);
+            }
+            else
+                instance.innerLinks.put(link.getId(), linkInstance);
+
+        }
         return instance;
     }
 
@@ -118,11 +202,14 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
         // Warning: this lists will get consumed in the following steps!
 
         // Simply map the list of instance nodes to the lists of resource nodes
-        List<String> functionNodeNames = Lists.newArrayList(instance.nodes.keySet());
+        List<String> unitNodeNames = new ArrayList<String>();
+        for(UnitInstance unitInstance: instance.units) {
+            unitNodeNames.add(unitInstance.name);
+        }
 
-        assert availableNodeCounter >= functionNodeNames.size() : "Datacenter do not have enough nodes." ;
+        assert availableNodeCounter >= unitNodeNames.size() : "Datacenter do not have enough nodes." ;
         int currentDatacenterIndex = 0;
-        for(int i=0; i<functionNodeNames.size(); i++) {
+        for(int i=0; i<unitNodeNames.size(); i++) {
 
             List<String> availableNodes;
 
@@ -133,8 +220,8 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                     currentDatacenterIndex++;
             } while(availableNodes.isEmpty());
 
-            mapping.mapping.put(functionNodeNames.get(i), availableNodes.remove(0));
-            mapping.popMapping.put(functionNodeNames.get(i), resources.get(currentDatacenterIndex));
+            mapping.mapping.put(unitNodeNames.get(i), availableNodes.remove(0));
+            mapping.popMapping.put(unitNodeNames.get(i), resources.get(currentDatacenterIndex));
         }
 
         // TODO: Ignoring network resources for now
