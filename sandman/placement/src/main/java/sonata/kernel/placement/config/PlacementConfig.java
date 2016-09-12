@@ -8,7 +8,7 @@ public class PlacementConfig {
     public String placementPlugin;
     public ArrayList<PopResource> resources;
 
-    public ArrayList<PopResource> getResources() {
+	public ArrayList<PopResource> getResources() {
         return resources;
     }
 
