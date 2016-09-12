@@ -26,7 +26,6 @@
 
 package sonata.kernel.WimAdaptor.wrapper;
 
-import java.util.ArrayList;
 
 public class WrapperBay {
 

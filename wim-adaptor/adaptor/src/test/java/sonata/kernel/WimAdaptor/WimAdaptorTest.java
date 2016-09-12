@@ -30,7 +30,6 @@ package sonata.kernel.WimAdaptor;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
@@ -46,7 +45,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -79,8 +77,10 @@ public class WimAdaptorTest implements MessageReceiver {
         new InputStreamReader(new FileInputStream(new File("./YAML/DeployResponseExample.yml")),
             Charset.forName("UTF-8")));
     String line;
-    while ((line = in.readLine()) != null)
+    while ((line = in.readLine()) != null) {
       bodyBuilder.append(line + "\n\r");
+    }
+    in.close();
     this.mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
     mapper.registerModule(module);

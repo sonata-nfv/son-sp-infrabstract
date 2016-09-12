@@ -26,11 +26,11 @@
 
 package sonata.kernel.WimAdaptor.commons.vnfd;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.WimAdaptor.commons.nsd.ConnectionPoint;
-
-import java.util.ArrayList;
 
 public class VirtualDeploymentUnit {
 
