@@ -1,6 +1,5 @@
 package sonata.kernel.placement.service;
 
-import jdk.nashorn.internal.objects.annotations.Function;
 import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPoint;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.VimAdaptor.commons.vnfd.VirtualDeploymentUnit;
