@@ -32,6 +32,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.commons.VimResources;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.VimAdaptor.wrapper.ComputeWrapper;
@@ -42,6 +44,9 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 public class ListVimCallProcessor extends AbstractCallProcessor {
+  
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(ListVimCallProcessor.class);
 
   public ListVimCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
@@ -54,8 +59,10 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
 
   @Override
   public boolean process(ServicePlatformMessage message) {
-
+    Logger.info("Retrieving VIM list from vim repository");
     ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
+    Logger.info("Found "+vimList.size()+" VIMs");
+    Logger.info("Retrieving VIM(s) resource utilisation");
     ArrayList<VimResources> resList = new ArrayList<VimResources>();
     for (String vimUuid : vimList) {
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
@@ -82,6 +89,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
     mapper.setSerializationInclusion(Include.NON_NULL);
     String body;
     try {
+      Logger.info("Sending back response...");
       body = mapper.writeValueAsString(resList);
 
 
@@ -89,6 +97,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
           this.getMessage().getReplyTo(), this.getSid(), null);
 
       this.getMux().enqueue(response);
+      Logger.info("List VIM call completed.");
       return true;
     } catch (JsonProcessingException e) {
       ServicePlatformMessage response =
