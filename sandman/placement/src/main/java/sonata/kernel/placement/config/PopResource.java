@@ -6,6 +6,7 @@ public class PopResource {
 
     String popName;
     ArrayList<NodeResource> nodes;
+    ArrayList<NetworkResource> networks;
 
     public String getPopName() {
         return popName;
@@ -21,5 +22,13 @@ public class PopResource {
 
     public void setNodes(ArrayList<NodeResource> nodes) {
         this.nodes = nodes;
+    }
+
+    public ArrayList<NetworkResource> getNetworks() {
+        return networks;
+    }
+
+    public void setNetworks(ArrayList<NetworkResource> networks) {
+        this.networks = networks;
     }
 }
