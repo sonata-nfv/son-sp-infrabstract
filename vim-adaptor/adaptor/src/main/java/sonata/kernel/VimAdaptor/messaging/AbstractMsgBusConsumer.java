@@ -56,8 +56,7 @@ public abstract class AbstractMsgBusConsumer implements MsgBusConsumer {
    */
   void processMessage(String message, String contentType, String topic, String sid,
       String replyTo) {
-    // TODO process the string (or not, leaving the pre-processing to the
-    // dispatcher?)
+
     ServicePlatformMessage spMessage =
         new ServicePlatformMessage(message, contentType, topic, sid, replyTo);
     this.enqueue(spMessage);
