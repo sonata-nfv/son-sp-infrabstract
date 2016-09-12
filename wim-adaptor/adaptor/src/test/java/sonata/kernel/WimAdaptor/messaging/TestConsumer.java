@@ -29,9 +29,6 @@ package sonata.kernel.WimAdaptor.messaging;
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
-import sonata.kernel.WimAdaptor.messaging.AbstractMsgBusConsumer;
-import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
-
 public class TestConsumer extends AbstractMsgBusConsumer {
 
   public TestConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {

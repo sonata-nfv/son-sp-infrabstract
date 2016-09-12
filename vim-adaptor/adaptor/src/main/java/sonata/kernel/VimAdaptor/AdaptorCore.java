@@ -28,8 +28,8 @@ package sonata.kernel.VimAdaptor;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
-
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.messaging.AbstractMsgBusConsumer;
 import sonata.kernel.VimAdaptor.messaging.AbstractMsgBusProducer;
 import sonata.kernel.VimAdaptor.messaging.MsgBusConsumer;

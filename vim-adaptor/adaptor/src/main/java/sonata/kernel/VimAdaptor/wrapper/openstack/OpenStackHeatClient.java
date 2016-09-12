@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 
 import java.io.BufferedReader;

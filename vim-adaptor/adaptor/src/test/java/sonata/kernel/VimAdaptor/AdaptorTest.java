@@ -35,7 +35,6 @@ import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import sonata.kernel.VimAdaptor.AdaptorCore;
 import sonata.kernel.VimAdaptor.commons.VimResources;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.VimAdaptor.messaging.TestConsumer;

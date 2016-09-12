@@ -32,6 +32,7 @@ import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.AdaptorCore;
 
 import java.io.IOException;

@@ -26,6 +26,9 @@
 
 package sonata.kernel.WimAdaptor;
 
+import java.util.ArrayList;
+import java.util.Observable;
+
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -33,9 +36,6 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
-
-import java.util.ArrayList;
-import java.util.Observable;
 
 public class ListWimCallProcessor extends AbstractCallProcessor {
 

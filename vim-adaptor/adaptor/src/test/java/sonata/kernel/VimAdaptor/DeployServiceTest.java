@@ -40,7 +40,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import sonata.kernel.VimAdaptor.AdaptorCore;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.DeployServiceResponse;
 import sonata.kernel.VimAdaptor.commons.ResourceAvailabilityData;
@@ -48,9 +47,9 @@ import sonata.kernel.VimAdaptor.commons.Status;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
+import sonata.kernel.VimAdaptor.commons.vnfd.Unit.MemoryUnit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.VimAdaptor.commons.vnfd.Unit.MemoryUnit;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.VimAdaptor.messaging.TestConsumer;
 import sonata.kernel.VimAdaptor.messaging.TestProducer;

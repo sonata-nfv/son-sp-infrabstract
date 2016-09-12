@@ -26,6 +26,10 @@
 
 package sonata.kernel.WimAdaptor;
 
+import java.util.ArrayList;
+import java.util.Observable;
+import java.util.UUID;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -33,10 +37,6 @@ import org.json.JSONTokener;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
-
-import java.util.ArrayList;
-import java.util.Observable;
-import java.util.UUID;
 
 public class AddWimCallProcessor extends AbstractCallProcessor {
 
@@ -93,14 +93,14 @@ public class AddWimCallProcessor extends AbstractCallProcessor {
     return out;
   }
 
-  private void sendError(String message) {
-
-    String jsonError =
-        "{\"status\":\"error,\"sid\":\"" + this.getSid() + "\",\"message\":\"" + message + "\"}";
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError, "application/json",
-        this.getMessage().getTopic(), this.getMessage().getSid(), null);
-    this.sendToMux(spMessage);
-  }
+  // private void sendError(String message) {
+  //
+  // String jsonError =
+  // "{\"status\":\"error,\"sid\":\"" + this.getSid() + "\",\"message\":\"" + message + "\"}";
+  // ServicePlatformMessage spMessage = new ServicePlatformMessage(jsonError, "application/json",
+  // this.getMessage().getTopic(), this.getMessage().getSid(), null);
+  // this.sendToMux(spMessage);
+  // }
 
   private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
