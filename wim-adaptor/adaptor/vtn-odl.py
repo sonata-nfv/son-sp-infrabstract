@@ -92,9 +92,9 @@ if args.set_flow:
 		exit(1)
 
 	s_url = 'operations/vtn-flow-filter:set-flow-filter'
-	intf5 = 'if5' # needed for data 
-	intf3 = 'if3'
-	data = {"input": { "output": "false", "tenant-name":  vtn_name , "bridge-name": vbr, "interface-name":intf5, "vtn-flow-filter":[{"index": "1", "condition":cond, "vtn-redirect-filter":{"redirect-destination": {"bridge-name": vbr, "interface-name": intf3}, "output": "true"}}]}}
+	intf8 = 'if8' # needed for data 
+	intf10 = 'if10'
+	data = {"input": { "output": "false", "tenant-name":  vtn_name , "bridge-name": vbr, "interface-name":intf8, "vtn-flow-filter":[{"index": "1", "condition":cond, "vtn-redirect-filter":{"redirect-destination": {"bridge-name": vbr, "interface-name": intf10}, "output": "true"}}]}}
 	r = requests.post(url+s_url, headers=headers, auth=(username,password), json=data) # this: curl --user "username":"pass" -H "Content-type: application/json" -X POST http://localhost:8181/restconf/operations/vtn-flow-filter:set-flow-filter -d -d '{"input":{"output":"false","tenant-name":"vtn1", "bridge-name": "vbr1", "interface-name":"if5","vtn-flow-filter":[{"condition":"cond_1","index":"1","vtn-redirect-filter":{"redirect-destination":{"bridge-name":"vbr1","interface-name":"if3"},"output":"true"}}]}}'
 	if not r.status_code==200:
 		print 'FLOW FILTER ERROR '+str(r.status_code)

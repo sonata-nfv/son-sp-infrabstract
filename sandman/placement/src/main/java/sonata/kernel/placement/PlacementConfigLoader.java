@@ -20,7 +20,7 @@ public final class PlacementConfigLoader {
 	final static Logger logger = Logger.getLogger(PlacementConfigLoader.class);
     public final static String CONFIG_FILENAME = "placementd.yml";
 
-    public final static String[] CONFIG_FOLDERS = new String[]{""};
+    public final static String[] CONFIG_FOLDERS = new String[]{"sandman\\placement\\YAML", "sandman/placement/YAML", "YAML"};
 
     public static PlacementConfig loadPlacementConfig(){
     	logger.info("Placement config loader");
@@ -29,7 +29,7 @@ public final class PlacementConfigLoader {
         for (String configFolder : CONFIG_FOLDERS){
 
             File configFile = new File(Paths.get(configFolder,CONFIG_FILENAME).toString());
-            logger.debug("Config Folder is: "+ configFile.getPath());
+            logger.info("Config Folder is: "+ configFile.getPath());
             if (configFile.exists()) {
 
                 config = mapConfigFile(configFile);
