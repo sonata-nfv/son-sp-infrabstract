@@ -40,8 +40,6 @@ public class ServiceHeatTranslator {
             config.setTenantExtNet("decd89e2-1681-427e-ac24-6e9f1abb1715");
             config.setTenantExtRouter("20790da5-2dc1-4c7e-b9c3-a8d590517563");
 
-            OpenStackHeatWrapper wrapper = new OpenStackHeatWrapper(config);
-
             ArrayList<Flavor> vimFlavors = new ArrayList<Flavor>();
             vimFlavors.add(new Flavor("m1.small", 2, 2048, 20));
 
