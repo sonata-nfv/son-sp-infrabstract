@@ -26,17 +26,16 @@
 
 package sonata.kernel.WimAdaptor.messaging;
 
-import com.jcraft.jsch.Logger;
+import java.io.IOException;
+
+import org.slf4j.LoggerFactory;
+
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.DefaultConsumer;
 import com.rabbitmq.client.Envelope;
 
 import sonata.kernel.WimAdaptor.WimAdaptorCore;
-
-import java.io.IOException;
-
-import org.slf4j.LoggerFactory;
 
 
 public class AdaptorDefaultConsumer extends DefaultConsumer {

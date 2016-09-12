@@ -26,13 +26,11 @@
 
 package sonata.kernel.WimAdaptor.messaging;
 
-import sonata.kernel.WimAdaptor.MessageReceiver;
-import sonata.kernel.WimAdaptor.messaging.AbstractMsgBusProducer;
-import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
-
 import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
+
+import sonata.kernel.WimAdaptor.MessageReceiver;
 
 public class TestProducer extends AbstractMsgBusProducer {
 

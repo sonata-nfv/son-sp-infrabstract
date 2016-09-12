@@ -26,13 +26,13 @@
 
 package sonata.kernel.WimAdaptor;
 
+import java.util.Observable;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
-
-import java.util.Observable;
 
 public class RemoveWimCallProcessor extends AbstractCallProcessor {
 

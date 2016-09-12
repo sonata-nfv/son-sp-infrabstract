@@ -26,10 +26,6 @@
 
 package sonata.kernel.WimAdaptor.wrapper;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
@@ -42,6 +38,10 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Properties;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
 
 public class WimRepo {
 

@@ -27,7 +27,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
@@ -90,7 +89,7 @@ public class OdlWrapperTest {
     vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
     this.data = new DeployServiceData();
-    sd.setInstanceUuid(sd.getInstanceUuid()+"IASFCTEST");
+    sd.setInstanceUuid(sd.getInstanceUuid() + "IASFCTEST");
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);

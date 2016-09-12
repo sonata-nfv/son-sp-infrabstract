@@ -2,9 +2,6 @@ package sonata.kernel.WimAdaptor;
 
 import java.util.Observable;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -40,7 +37,7 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
 
     DeployServiceResponse response = null;
-    boolean out;
+    boolean out = true;;
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
     module.addDeserializer(sonata.kernel.WimAdaptor.commons.vnfd.Unit.class,
@@ -71,10 +68,10 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
     ServicePlatformMessage responseMessage = null;
     if (wim.configureNetwork(instanceId)) {
       response.setVimUuid(null);
-      // response.getNsr().setStatus(Status.normal_operation);
-      // for (VnfRecord vnfr:response.getVnfrs()){
-      // vnfr.setStatus(Status.normal_operation);
-      // }
+      response.getNsr().setStatus(Status.normal_operation);
+      for (VnfRecord vnfr : response.getVnfrs()) {
+        vnfr.setStatus(Status.normal_operation);
+      }
       String body;
       try {
         Logger.debug("Serialising deploy response...");
@@ -95,7 +92,7 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
           "{\"request_status\":\"ERROR\",\"module\":\"WimAdaptor\",\"message\":\"Unable to configure WAN\"}");
     }
 
-    return true;
+    return out;
   }
 
   private void sendResponse(String message) {

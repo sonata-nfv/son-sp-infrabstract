@@ -26,9 +26,6 @@
 
 package sonata.kernel.VimAdaptor.messaging;
 
-import sonata.kernel.VimAdaptor.messaging.AbstractMsgBusConsumer;
-import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
-
 import java.io.IOException;
 import java.util.concurrent.BlockingQueue;
 
