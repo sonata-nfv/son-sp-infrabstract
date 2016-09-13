@@ -32,7 +32,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 
-import sonata.kernel.VimAdaptor.wrapper.ResourceUtilisation;
 import sonata.kernel.VimAdaptor.wrapper.openstack.Flavor;
 import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackNovaClient;
 

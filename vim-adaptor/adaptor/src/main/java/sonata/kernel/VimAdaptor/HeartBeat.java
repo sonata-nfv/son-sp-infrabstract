@@ -27,6 +27,7 @@
 package sonata.kernel.VimAdaptor;
 
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 
 import java.util.UUID;

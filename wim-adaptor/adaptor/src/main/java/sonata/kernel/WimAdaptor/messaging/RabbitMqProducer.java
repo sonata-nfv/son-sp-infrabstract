@@ -26,18 +26,6 @@
 
 package sonata.kernel.WimAdaptor.messaging;
 
-import com.rabbitmq.client.AMQP.BasicProperties;
-
-import sonata.kernel.WimAdaptor.WimAdaptorCore;
-
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -49,6 +37,17 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
+
+import com.rabbitmq.client.AMQP.BasicProperties;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+
+import sonata.kernel.WimAdaptor.WimAdaptorCore;
 
 public class RabbitMqProducer extends AbstractMsgBusProducer {
 

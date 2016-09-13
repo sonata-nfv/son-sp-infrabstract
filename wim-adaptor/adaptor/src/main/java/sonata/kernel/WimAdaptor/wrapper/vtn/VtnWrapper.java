@@ -54,33 +54,30 @@ public class VtnWrapper extends WimWrapper {
     boolean out = true;
     VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
         this.config.getAuthPass());
-/**    Logger.info("Setting up the VTN for the service");
-  *  out = out && client.setupVtn(instanceId);
-  *  if (out){
-  *    Logger.info("VTN created");
-  *  } else {
-  *    Logger.error("Unable to create VTN");
-  *  }   Comment it out, as for the moment, new vtn will not be created
-*/ 
+    /**
+     * Logger.info("Setting up the VTN for the service"); out = out && client.setupVtn(instanceId);
+     * if (out){ Logger.info("VTN created"); } else { Logger.error("Unable to create VTN"); }
+     * Comment it out, as for the moment, new vtn will not be created
+     */
     Logger.info("Setting up the flow rules in the VTN");
     out = out && client.setupFlow("vtn7", "green");
-    if (out){
+    if (out) {
       Logger.info("Flow rules created");
     } else {
       Logger.error("Unable to create flow rules. GOING ON NONETHELESS");
     }
-    //FIXME This is a DEBUG edit! ! Remove me ASAP!
-    //return out;
+    // FIXME This is a DEBUG edit! ! Remove me ASAP!
+    // return out;
     return true;
   }
 
   @Override
   public boolean removeNetConfiguration(String instanceId) {
-	  String condition = "green";
-	  VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
+    String condition = "green";
+    VtnClient client = new VtnClient(this.config.getWimEndpoint(), this.config.getAuthUserName(),
         this.config.getAuthPass());
-    //return client.deleteVtn(instanceId);  commenting for clarity
-	  return client.modifyFlow(condition);
+    // return client.deleteVtn(instanceId); commenting for clarity
+    return client.modifyFlow(condition);
   }
 
 

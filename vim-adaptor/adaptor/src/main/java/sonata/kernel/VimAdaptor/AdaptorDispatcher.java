@@ -27,6 +27,7 @@
 package sonata.kernel.VimAdaptor;
 
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 
 import java.util.concurrent.BlockingQueue;
@@ -86,11 +87,11 @@ public class AdaptorDispatcher implements Runnable {
 
   private void handleMonitoringMessage(ServicePlatformMessage message) {
     if (message.getTopic().contains("compute")) {
-      Logger.info("Received a monitoring message on topic: " + message.getTopic());
+      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
     } else if (message.getTopic().contains("storage")) {
-      Logger.info("Received a monitoring message on topic: " + message.getTopic());
+      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
     } else if (message.getTopic().contains("network")) {
-      Logger.info("Received a monitoring message on topic: " + message.getTopic());
+      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
     }
   }
 
@@ -98,7 +99,7 @@ public class AdaptorDispatcher implements Runnable {
     if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
     } else if (message.getTopic().endsWith("remove")) {
-      Logger.info("Received a remove-service message on topic: " + message.getTopic());
+      Logger.info("Received a \"remove-service\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new RemoveServiceCallProcessor(message, message.getSid(), mux));
     }
   }
@@ -113,6 +114,7 @@ public class AdaptorDispatcher implements Runnable {
       } else if (message.getTopic().endsWith("resourceAvailability")) {
         myThreadPool.execute(new ResourceAvailabilityCallProcessor(message, message.getSid(), mux));
       } else if (message.getTopic().endsWith("list")) {
+        Logger.info("Received a \"List VIMs\" API call on topic: " + message.getTopic());
         myThreadPool.execute(new ListVimCallProcessor(message, message.getSid(), mux));
       }
     } else if (message.getTopic().contains("storage")) {
@@ -122,7 +124,7 @@ public class AdaptorDispatcher implements Runnable {
         myThreadPool.execute(new AddVimCallProcessor(message, message.getSid(), mux));
       }
     } else {
-      Logger.info("Received an unknown menagement message on topic: " + message.getTopic());
+      Logger.info("Received an unknown menagement API call on topic: " + message.getTopic());
     }
 
   }

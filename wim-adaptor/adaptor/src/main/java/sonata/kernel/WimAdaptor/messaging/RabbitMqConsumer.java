@@ -26,15 +26,6 @@
 
 package sonata.kernel.WimAdaptor.messaging;
 
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DefaultConsumer;
-
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -46,6 +37,15 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
+
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DefaultConsumer;
 
 public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
@@ -78,7 +78,7 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       channel = connection.createChannel();
       String exchangeName = brokerConfig.getProperty("exchange");
       channel.exchangeDeclare(exchangeName, "topic");
-      queueName = exchangeName + "." + "InfraAbstract";
+      queueName = exchangeName + "." + "WimAdaptor";
       channel.queueDeclare(queueName, true, false, false, null);
       Logger.info("[northbound] RabbitMqConsumer - binding queue to topics...");
       channel.queueBind(queueName, exchangeName, "platform.management.plugin.register");
