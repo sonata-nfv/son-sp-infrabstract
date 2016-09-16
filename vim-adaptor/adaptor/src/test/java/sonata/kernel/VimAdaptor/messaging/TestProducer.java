@@ -27,8 +27,6 @@
 package sonata.kernel.VimAdaptor.messaging;
 
 import sonata.kernel.VimAdaptor.MessageReceiver;
-import sonata.kernel.VimAdaptor.messaging.AbstractMsgBusProducer;
-import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 
 import java.io.IOException;
 import java.util.UUID;

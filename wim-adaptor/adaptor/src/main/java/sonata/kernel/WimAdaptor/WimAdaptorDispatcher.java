@@ -83,9 +83,9 @@ public class WimAdaptorDispatcher implements Runnable {
     } while (!stop);
   }
 
-  private void handleManagementMessage(ServicePlatformMessage message) {
-
-  }
+  // private void handleManagementMessage(ServicePlatformMessage message) {
+  //
+  // }
 
 
   private boolean isRegistrationResponse(ServicePlatformMessage message) {

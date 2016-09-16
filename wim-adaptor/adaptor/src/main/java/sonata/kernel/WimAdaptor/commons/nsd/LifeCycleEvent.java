@@ -26,9 +26,9 @@
 
 package sonata.kernel.WimAdaptor.commons.nsd;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.ArrayList;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class LifeCycleEvent {
 

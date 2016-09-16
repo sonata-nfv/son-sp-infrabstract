@@ -28,6 +28,7 @@
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.IpNetPool;
 import sonata.kernel.VimAdaptor.commons.heat.HeatModel;
@@ -228,8 +229,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
               vnfd.getName() + ":" + link.getId() + ":subnet:" + nsd.getInstanceUuid());
           cidr = subnets.get(subnetIndex);
           subnet.putProperty("cidr", cidr);
-          //TODO remove this static DNS allocation in future use and implement the DNS as a VIM config parameter
-          subnet.putProperty("dns_nameservers","[10.30.0.11,8,8,8,8]");
+          // TODO remove this static DNS allocation in future use and implement the DNS as a VIM
+          // config parameter
+          // String[] dnsArray = { "10.30.0.11", "8.8.8.8" };
+          String[] dnsArray = {"8.8.8.8"};
+          subnet.putProperty("dns_nameservers", dnsArray);
           // subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
           // subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
           // subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");

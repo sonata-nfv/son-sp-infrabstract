@@ -26,12 +26,12 @@
 
 package sonata.kernel.WimAdaptor.commons;
 
+import java.util.ArrayList;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.WimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.WimAdaptor.commons.vnfd.VnfDescriptor;
-
-import java.util.ArrayList;
 
 public class DeployServiceData {
 
