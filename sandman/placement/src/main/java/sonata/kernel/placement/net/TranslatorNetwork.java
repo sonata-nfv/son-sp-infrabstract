@@ -6,6 +6,7 @@ import org.openstack4j.api.OSClient.OSClientV2;
 import org.openstack4j.model.common.ActionResponse;
 import org.openstack4j.model.network.IPVersionType;
 import org.openstack4j.model.network.Network;
+import org.openstack4j.model.network.State;
 import org.openstack4j.model.network.Subnet;
 import org.openstack4j.openstack.OSFactory;
 
@@ -31,6 +32,37 @@ public class TranslatorNetwork {
         return os;
     }
 
+    public static void create_network(OSClientV2 os,
+                                      String name,
+                                      String network_id,
+                                      String tenant_id)
+    {
+        logger.info("Creating network");
+        logger.debug("Network name :"+ name);
+
+        Network network = os.networking().network()
+                .create(Builders.network().name(name).tenantId(tenant_id).build());
+
+        if(network.getStatus() == State.ERROR)
+            logger.error("Network creation failed: Network name: " + name + " endpoint: " + os.getEndpoint());
+
+        return;
+
+    }
+
+    public static void delete_network(OSClientV2 os,
+                                      String network_id)
+    {
+        Network network = os.networking().network().get(network_id);
+
+        if(network.getStatus() == State.ACTIVE)
+            os.networking().network().delete(network_id);
+        else
+            logger.error("Network deletion failed: Network Id: " + network_id + " endpoint: " + os.getEndpoint());
+
+        return;
+    }
+    
     public static void create_subnet( OSClientV2 os,
                                         String name,
                                         String network_id,
