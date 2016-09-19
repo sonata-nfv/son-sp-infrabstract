@@ -4,10 +4,12 @@ package sonata.kernel.placement;
 import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.nio.ByteBuffer;
+import java.nio.CharBuffer;
+import java.nio.charset.CharacterCodingException;
+import java.nio.charset.Charset;
+import java.nio.charset.CharsetDecoder;
+import java.util.*;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -169,57 +171,100 @@ class RestInterfaceClientApi implements Runnable{
 
     }
 }
-class RestInterfaceServerApi extends NanoHTTPD implements Runnable{
-	final Logger logger = Logger.getLogger(RestInterfaceServerApi.class);
-    public RestInterfaceServerApi()
-    {
+class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
+    final Logger logger = Logger.getLogger(RestInterfaceServerApi.class);
+
+    public RestInterfaceServerApi() {
         super(8080);
     }
+
     public RestInterfaceServerApi(String hostname, int port) throws IOException {
         super(hostname, port);
-        	logger.debug("Content Length is " +hostname+" "+ port);
-            System.out.println("RestInterfaceServerApi:: Started RESTful server Hostname: "
-                    + hostname + " Port: " + port);
+        logger.debug("Content Length is " + hostname + " " + port);
+        System.out.println("RestInterfaceServerApi:: Started RESTful server Hostname: "
+                + hostname + " Port: " + port);
 
 
     }
 
-    public void start_server() throws IOException
-    {
+    public void start_server() throws IOException {
         start(NanoHTTPD.SOCKET_READ_TIMEOUT, false);
     }
 
-    public void run()
-    {
-        try{
+    public void run() {
+        try {
             start_server();
         } catch (IOException ioe) {
             System.err.println("RestInterfaceServerApi::run : Failed to start server " + ioe);
         }
     }
+
     @Override
     public Response serve(IHTTPSession session) {
-    	final Logger logger = Logger.getLogger(RestInterfaceClientApi.class);
-      try{
-          session.getParms();
-          Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
-          logger.info("Content Length is " +contentLength);
-          byte[] buffer = new byte[contentLength];
-          session.getInputStream().read(buffer, 0, contentLength);
-          String base_dir = PackageLoader.processZipFile(buffer);
+        final Logger logger = Logger.getLogger(RestInterfaceClientApi.class);
+        try {
+            session.getParms();
+            Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
+            logger.info("Content Length is " + contentLength);
+            byte[] buffer = new byte[contentLength];
+            session.getInputStream().read(buffer, 0, contentLength);
+            buffer = stripMultiPartFormDataHeader(session, buffer);
+            String base_dir = PackageLoader.processZipFile(buffer);
 
-          MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
-          MessageQueue.get_rest_serverQ().put(q_data);
+            MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
+            MessageQueue.get_rest_serverQ().put(q_data);
 
 
+        } catch (IOException e) {
 
-      } catch (IOException e){
-
-      } catch (InterruptedException e) {
-          e.printStackTrace();
-      }
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
 
         return newFixedLengthResponse(Response.Status.OK, null, "OK");
+    }
+
+    public static byte[] stripMultiPartFormDataHeader(IHTTPSession session, byte[] buffer) {
+        // TODO: Maybe add a real multipart/form-data parser
+        // Check if POST request contains multipart/form-data
+        if (session.getMethod().compareTo(Method.POST) == 0 && session.getHeaders().containsKey("content-type") &&
+                session.getHeaders().get("content-type").startsWith("multipart/form-data")) {
+
+            // Assume UTF-8 encoding
+            CharsetDecoder dec = Charset.forName("UTF-8").newDecoder();
+
+            // Create comparison charbuffers
+            CharBuffer nlnl = CharBuffer.wrap("\n\n");
+            CharBuffer crnlcrnl = CharBuffer.wrap("\r\n\r\n");
+            int formDataBorder = -1;
+            ByteBuffer byteBuffer = ByteBuffer.wrap(buffer);
+
+            // Find border for first multipart/form-data boundary
+            // Assume there is only one part
+            for (int i = 0; i < buffer.length; i++) {
+
+                byteBuffer.position(0);
+                byteBuffer.limit(i);
+
+                try {
+                    CharBuffer charBuffer = dec.decode(byteBuffer);
+                    // Check if end of sequence is "\n\n" or "\r\n\r\n"
+                    if ((charBuffer.length() > 1 && charBuffer.subSequence(charBuffer.length() - 2, charBuffer.length()).compareTo(nlnl) == 0) ||
+                            (charBuffer.length() > 3 && charBuffer.subSequence(charBuffer.length() - 4, charBuffer.length()).compareTo(crnlcrnl) == 0)) {
+                        formDataBorder = i;
+                        break;
+                    }
+                } catch (CharacterCodingException e) {
+                    return buffer;
+                }
+
+            }
+            if (formDataBorder != -1)
+                return Arrays.copyOfRange(buffer, formDataBorder, buffer.length);
+            else
+                return buffer;
+        } else
+            return buffer;
     }
 }
 
