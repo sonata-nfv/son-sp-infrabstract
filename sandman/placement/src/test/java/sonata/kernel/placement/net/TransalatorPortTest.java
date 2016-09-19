@@ -18,7 +18,7 @@ public class TransalatorPortTest {
 		res.setTenantName("fc394f2ab2df4114bde39905f800dc57");
 		res.setPopName("Datacenter1");
 		OSClientV2 os = TranslatorNetwork.authenticate_instance(res);
-		TranslatorPort.create_port(os, "PortTest", "bd3711ee-fc31-4d65-802d-df6f9b071ab0", "192.0.1.1", "afc8013b-89ca-462b-909f-13f582dcd52e","fc394f2ab2df4114bde39905f800dc57");
+		TranslatorPort.create_port(os, "PortTest", "bd3711ee-fc31-4d65-802d-df6f9b071ab0", "192.0.1.1", "afc8013b-89ca-462b-909f-13f582dcd52e");
 		//wait(100000);
 		//TranslatorPort.delete_port(os, "1");
 	}
