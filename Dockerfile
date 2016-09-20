@@ -1,6 +1,6 @@
-FROM ubuntu:trusty
+FROM ubuntu:xenial
 
-# openjdk:7
+# openjdk:8
 RUN apt-get update && apt-get install -y --no-install-recommends \
         bzip2 \
         unzip \
@@ -17,14 +17,14 @@ RUN { \
     } > /usr/local/bin/docker-java-home \
     && chmod +x /usr/local/bin/docker-java-home
 
-ENV JAVA_HOME /usr/lib/jvm/java-7-openjdk-amd64
+ENV JAVA_HOME /usr/lib/jvm/java-8-openjdk-amd64
 
-ENV JAVA_VERSION 7u111
+ENV JAVA_VERSION 8u102
 
 RUN set -x \
     && apt-get update \
     && apt-get install -y \
-        curl openjdk-7-jdk \
+        curl openjdk-8-jdk \
     && rm -rf /var/lib/apt/lists/*
 
 # maven:3-jdk-7

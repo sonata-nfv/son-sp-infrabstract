@@ -55,4 +55,14 @@ public class FunctionInstance {
         this.outerLinks = new HashMap<String, LinkInstance>();
         this.innerLinks = new HashMap<String, LinkInstance>();
     }
+
+    public UnitInstance searchUnitInstanceByConnectionPointId(String conPointId){
+        for(UnitInstance unit: units.values()){
+            for(ConnectionPoint conPoint: unit.descriptor.getConnectionPoints()) {
+                if(conPoint.getId().equals(conPointId))
+                    return unit;
+            }
+        }
+        return null;
+    }
 }
