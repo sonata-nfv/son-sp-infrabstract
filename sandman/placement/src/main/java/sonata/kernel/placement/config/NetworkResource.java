@@ -6,6 +6,7 @@ public class NetworkResource {
 
     String name;
     String subnet;
+    String gateway;
     String prefer;
     ArrayList<String> available;
 
@@ -39,5 +40,13 @@ public class NetworkResource {
 
     public void setAvailable(ArrayList<String> available) {
         this.available = available;
+    }
+
+    public String getGateway() {
+        return gateway;
+    }
+
+    public void setGateway(String gateway) {
+        this.gateway = gateway;
     }
 }

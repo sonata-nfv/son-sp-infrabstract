@@ -44,16 +44,19 @@ public class ServiceHeatTranslator {
             vimFlavors.add(new Flavor("m1.small", 2, 2048, 20));
 
             // Create list of network resources
-            List<String> networkResources = new ArrayList<String>();
-            List<String> mgmtNetworkResources = new ArrayList<String>();
+            List<NetworkResourceUnit> networkResources = new ArrayList<NetworkResourceUnit>();
+            List<NetworkResourceUnit> mgmtNetworkResources = new ArrayList<NetworkResourceUnit>();
             for(NetworkResource nr: datacenter.getNetworks()){
-                List<String> nrlist;
+                String gateway = nr.getGateway();
+                String subnetCidr = nr.getSubnet();
+                List<NetworkResourceUnit> nrlist;
                 if ("mgmt".equals(nr.getPrefer()))
                     nrlist = mgmtNetworkResources;
                 else
                     nrlist = networkResources;
                 if(nr.getAvailable()!=null)
-                    nrlist.addAll(nr.getAvailable());
+                    for(String s:nr.getAvailable())
+                        nrlist.add(new NetworkResourceUnit().setGateway(gateway).setIp(s).setSubnetCidr(subnetCidr));
                 else {
                     SubnetUtilsV6 subnet = SubnetUtilsV6.createSubnet(nr.getSubnet());
                     String[] aa;
@@ -63,7 +66,7 @@ public class ServiceHeatTranslator {
                         aa = subnet.getInfo().getAllAddresses();
                     int subnetmaskcidr = subnet.getInfo().getCidrBits();
                     for(String s: aa)
-                        nrlist.add(s+"/"+subnetmaskcidr);
+                        nrlist.add(new NetworkResourceUnit().setGateway(gateway).setIp(s+"/"+subnetmaskcidr).setSubnetCidr(subnetCidr));
                 }
             }
             int subnetIndex = 0;
@@ -103,8 +106,10 @@ public class ServiceHeatTranslator {
                     subnet.setType("OS::Neutron::Subnet");
                     subnet.setName(unit.parentVnfd.getName() + ":" + link.getLinkId() + ":subnet:" + instance.service.getInstanceUuid());
                     subnet.putProperty("name", subnet.getResourceName());
-                    String cidr = networkResources.get(subnetIndex);
-                    subnet.putProperty("cidr", cidr);
+                    NetworkResourceUnit nru  = networkResources.get(subnetIndex);
+                    subnet.putProperty("cidr", nru.subnetCidr);
+                    if (nru.gateway != null)
+                        subnet.putProperty("gateway_ip", nru.gateway);
                     // subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
                     // subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
                     // subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
@@ -158,8 +163,10 @@ public class ServiceHeatTranslator {
                     subnet.setType("OS::Neutron::Subnet");
                     subnet.setName(unit.parentVnfd.getName() + ":" + link.getLinkId() + ":subnet:" + instance.service.getInstanceUuid());
                     subnet.putProperty("name", subnet.getResourceName());
-                    String cidr = networkResources.get(subnetIndex);
-                    subnet.putProperty("cidr", cidr);
+                    NetworkResourceUnit nru = networkResources.get(subnetIndex);
+                    subnet.putProperty("cidr", nru.subnetCidr);
+                    if (nru.gateway != null)
+                        subnet.putProperty("gateway_ip", nru.gateway);
                     // subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
                     // subnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
                     // subnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
@@ -202,9 +209,11 @@ public class ServiceHeatTranslator {
             mgmtSubnet.setType("OS::Neutron::Subnet");
             mgmtSubnet.setName(instance.service.getName() + ":mgmt:subnet:" + instance.service.getInstanceUuid());
             mgmtSubnet.putProperty("name", mgmtSubnet.getResourceName());
-            String cidr = networkResources.get(subnetIndex);
+            NetworkResourceUnit nru = networkResources.get(subnetIndex);
             subnetIndex++;
-            mgmtSubnet.putProperty("cidr", cidr);
+            mgmtSubnet.putProperty("cidr", nru.subnetCidr);
+            if(nru.gateway != null)
+                mgmtSubnet.putProperty("gateway_ip", nru.gateway);
             //mgmtSubnet.putProperty("gateway_ip", myPool.getGateway(cidr));
             HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
             mgmtNetMap.put("get_resource", mgmtNetwork.getResourceName());
@@ -252,7 +261,10 @@ public class ServiceHeatTranslator {
         for(ConnectionPoint connectionPoint: unit.descriptor.getConnectionPoints()){
 
             LinkInstance link = instance.findLinkInstanceByUnit(unit, connectionPoint.getId());
-            assert link!=null;
+
+            // Connection point not connected or something went wrong
+            if(link==null)
+                continue;
 
             boolean mgmtPort = "mgmt".equals(link.getLinkId());
 
@@ -285,6 +297,26 @@ public class ServiceHeatTranslator {
         }
         server.putProperty("networks", net);
         return server;
+    }
+
+    public static class NetworkResourceUnit {
+
+        public String ip;
+        public String subnetCidr;
+        public String gateway;
+
+        public NetworkResourceUnit setIp(String ip) {
+            this.ip = ip;
+            return this;
+        }
+        public NetworkResourceUnit setSubnetCidr(String subnetCidr) {
+            this.subnetCidr = subnetCidr;
+            return this;
+        }
+        public NetworkResourceUnit setGateway(String gateway) {
+            this.gateway = gateway;
+            return this;
+        }
     }
 
 }

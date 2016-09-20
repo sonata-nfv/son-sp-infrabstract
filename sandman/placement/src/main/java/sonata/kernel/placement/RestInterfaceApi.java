@@ -221,7 +221,7 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
             e.printStackTrace();
         }
 
-        return newFixedLengthResponse(Response.Status.OK, null, "OK");
+        return newFixedLengthResponse(Response.Status.CREATED, null, "OK");
     }
 
     public static byte[] stripMultiPartFormDataHeader(IHTTPSession session, byte[] buffer) {
