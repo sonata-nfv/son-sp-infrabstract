@@ -62,7 +62,7 @@ public class TranslatorNetwork {
 
         return;
     }
-    
+
     public static void create_subnet( OSClientV2 os,
                                         String name,
                                         String network_id,
@@ -109,9 +109,11 @@ public class TranslatorNetwork {
     }
 
     public static void delete_subnet(OSClientV2 os,
-                                        Subnet subnet)
+                                        String name)
     {
-        logger.info("Deleting subnet :" + subnet.getId() + " on " + os.getEndpoint());
+        logger.info("Deleting subnet :" + name + " on " + os.getEndpoint());
+
+        Subnet subnet = os.networking().subnet().get(name);
         logger.debug("Subnet name :"+ subnet.getName()
                 + " Subnet network id :" + subnet.getNetworkId()
                 + " Subnet tenant id :"+ subnet.getTenantId());

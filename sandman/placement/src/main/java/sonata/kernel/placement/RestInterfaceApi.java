@@ -4,26 +4,18 @@ package sonata.kernel.placement;
 import fi.iki.elonen.NanoHTTPD;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.heat.Stack;
 import org.openstack4j.openstack.OSFactory;
-import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
-import sonata.kernel.placement.net.TranslatorNet;
+import sonata.kernel.placement.net.TranslatorNetwork;
 import org.apache.log4j.Logger;
 
 class RestInterfaceClientApi implements Runnable{
@@ -117,8 +109,6 @@ class RestInterfaceClientApi implements Runnable{
                 .template(data)
                 .timeoutMins(5L).build());
 
-        TranslatorNet.create_subnet(os, "testNetwork", "testNetworkId", "testTenantId", "192.168.0.1",
-            "192.168.0.10");
 
 
        /* Stack stack2 = os.heat().stacks().getDetails(stack.getName(), stack.getId());
