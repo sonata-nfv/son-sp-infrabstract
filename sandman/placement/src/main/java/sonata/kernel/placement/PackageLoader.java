@@ -27,6 +27,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.apache.log4j.Logger;
+import sonata.kernel.placement.pd.SonataPackage;
 
 public final class PackageLoader {
 	final static Logger logger = Logger.getLogger(PackageLoader.class);
@@ -84,31 +85,17 @@ public final class PackageLoader {
         if (!packageFile.exists())
             return null;
 
-        List<byte[]> servicesDataList = new ArrayList<byte[]>();
-        List<byte[]> functionsDataList = new ArrayList<byte[]>();
-
-        List<ServiceDescriptor> services = new ArrayList<ServiceDescriptor>();
-        List<VnfDescriptor> functions = new ArrayList<VnfDescriptor>();
-
         byte[] data;
         DeployServiceData serviceData = new DeployServiceData();
 
         try {
 
             data = Files.readAllBytes(Paths.get(packagePath));
-            logger.debug("Data: "+ data.length);
-            processZipFileData(data, servicesDataList, functionsDataList);
 
-            for(byte[] serviceBytes : servicesDataList) {
-                services.add(byteArrayToServiceDescriptor(serviceBytes));
-            }
+            SonataPackage pack = zipByteArrayToSonataPackage(data);
 
-            for(byte[] functionBytes : functionsDataList) {
-                functions.add(byteArrayToVnfDescriptor(functionBytes));
-            }
-
-            serviceData.setServiceDescriptor(services.get(0));
-            for(VnfDescriptor function : functions)
+            serviceData.setServiceDescriptor(pack.services.get(0));
+            for(VnfDescriptor function : pack.functions)
                 serviceData.addVnfDescriptor(function);
 
             return serviceData;
@@ -120,8 +107,39 @@ public final class PackageLoader {
         return null;
     }
 
+    public static SonataPackage zipByteArrayToSonataPackage(byte[] data){
+
+        List<byte[]> servicesDataList = new ArrayList<byte[]>();
+        List<byte[]> functionsDataList = new ArrayList<byte[]>();
+
+        List<ServiceDescriptor> services = new ArrayList<ServiceDescriptor>();
+        List<VnfDescriptor> functions = new ArrayList<VnfDescriptor>();
+        PackageDescriptor pd = null;
+
+        try {
+            pd = processZipFileData(data, servicesDataList, functionsDataList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for(byte[] serviceBytes : servicesDataList) {
+            services.add(byteArrayToServiceDescriptor(serviceBytes));
+        }
+
+        for(byte[] functionBytes : functionsDataList) {
+            functions.add(byteArrayToVnfDescriptor(functionBytes));
+        }
+
+        if(pd == null)
+            return null;
+
+        SonataPackage pack = new SonataPackage(pd);
+        pack.functions.addAll(functions);
+        pack.services.addAll(services);
+        return pack;
+    }
+
     public static ServiceDescriptor byteArrayToServiceDescriptor(byte[] data){
-    	logger.info("Byte Array to Service Descriptor");
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         SimpleModule module = new SimpleModule();
 
@@ -150,7 +168,7 @@ public final class PackageLoader {
     }
 
     public static VnfDescriptor byteArrayToVnfDescriptor(byte[] data){
-    	logger.info("Byte array to VNF descriptor");
+    	logger.debug("Byte array to VNF descriptor");
         ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
         SimpleModule module = new SimpleModule();
 
@@ -176,12 +194,10 @@ public final class PackageLoader {
         return vnfd;
     }
 
-    public static void processZipFileData(byte[] data, List<byte[]> services, List<byte[]> functions) throws IOException {
+    public static PackageDescriptor processZipFileData(byte[] data, List<byte[]> services, List<byte[]> functions) throws IOException {
     	
     	logger.info("Processing zip file data");
         ByteArrayInputStream byteIn = new ByteArrayInputStream(data);
-
-        System.out.println("Start zip stuff");
 
         ZipInputStream zipstream;
         zipstream = new ZipInputStream(byteIn);
@@ -196,7 +212,7 @@ public final class PackageLoader {
                 byte[] fileData = readFile(zipstream, ze);
                 String filePath = ze.getName();
                 fileMap.put(filePath, fileData);
-                logger.debug("File data lenght: "+ fileData.length);
+                logger.debug("File data length: "+ fileData.length);
                 logger.debug("File Path: "+ filePath);
 
             }
@@ -208,13 +224,13 @@ public final class PackageLoader {
         zipstream.closeEntry();
         zipstream.close();
 
-        System.out.println("End zip stuff");
         logger.info("End of ZIP file");
         Set<String> files = fileMap.keySet();
+        PackageDescriptor pd = null;
 
         if (files.contains("META-INF/MANIFEST.MF")) {
 
-            PackageDescriptor pd;
+
 
             byte[] pfile = fileMap.get("META-INF/MANIFEST.MF");
 
@@ -256,13 +272,11 @@ public final class PackageLoader {
                 if (name.charAt(0)=='/')
                     name = name.substring(1);
 
-                System.out.println("Check out content file: "+name);
-                logger.debug("COntent file name: "+ name);
+                logger.debug("Content file name: "+ name);
                 // Get file data from map
                 byte[] fileData;
                 fileData = fileMap.get(name);
                 if (fileData==null) {
-                    System.out.println("No file data found for: "+name);
                     logger.info("No data found in: "+ name);
                     continue;
                 }
@@ -281,11 +295,9 @@ public final class PackageLoader {
                     String fileMd5 = pObj.getMd5();
                     if (fileMd5!=null) {
                         if (hashtext.toLowerCase().equals(fileMd5.toLowerCase()) == false) {
-                            System.out.println("MD5 mismatch for file "+name+" (given md5: "+fileMd5.toLowerCase()+", actual md5: "+hashtext.toLowerCase()+")");
-                            logger.debug("MD5 mismatch for file: "+ name);
+                            logger.debug("MD5 mismatch for file: "+ name+" (given md5: "+fileMd5.toLowerCase()+", actual md5: "+hashtext.toLowerCase()+")");
                         } else {
-                            System.out.println("MD5 matches "+hashtext.toLowerCase());
-                            logger.info("MD5 matches");
+                            logger.debug("MD5 matches "+hashtext.toLowerCase());
                         }
                     }
                 }
@@ -296,20 +308,18 @@ public final class PackageLoader {
                 if ("application/sonata.service_descriptors".equals(pObj.getContentType())) {
 
                     services.add(fileData);
-
-                    System.out.println("Found service descriptor: "+name);
                     logger.info("Service Descriptor found: "+name);
                 }
 
                 // It's a function descriptor
                 if ("application/sonata.function_descriptor".equals(pObj.getContentType())) {
-                    functions.add(fileData);
 
-                    System.out.println("Found function descriptor: "+name);
+                    functions.add(fileData);
                     logger.info("Function Descriptor found: "+name);
                 }
             }
         }
+        return pd;
     }
 
     public static byte[] readFile(ZipInputStream zipstream, ZipEntry ze) throws IOException {
