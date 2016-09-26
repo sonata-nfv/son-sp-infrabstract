@@ -28,7 +28,7 @@ public class TranslatorPort {
         return os;
     }
 
-    public static void create_port(OSClientV2 os,
+    public static Port create_port(OSClientV2 os,
                                    String port_name,
                                    String network_id,
                                    String ip_address,
@@ -52,7 +52,7 @@ public class TranslatorPort {
             logger.debug("Ports :"+ p);
         }
 
-        return;
+        return port;
     }
 
     public static void delete_port(OSClientV2 os,
