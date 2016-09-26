@@ -462,11 +462,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   @Override
   public ResourceUtilisation getResourceUtilisation() {
-
+    Logger.info("OpenStack wrapper - Getting resource utilisation...");
     OpenStackNovaClient client = new OpenStackNovaClient(config.getVimEndpoint(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
-
-    return client.getResourceUtilizasion();
+    ResourceUtilisation output = client.getResourceUtilizasion();
+    Logger.info("OpenStack wrapper - Resource utilisation retrieved.");
+    return output;
   }
 
 

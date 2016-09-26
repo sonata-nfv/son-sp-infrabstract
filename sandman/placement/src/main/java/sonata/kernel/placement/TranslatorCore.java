@@ -7,16 +7,12 @@ import sonata.kernel.placement.config.PlacementConfig;
 
 import java.io.File;
 
-import org.openstack4j.api.OSClient;
-import org.openstack4j.model.network.Subnet;
-import sonata.kernel.placement.net.TranslatorNet;
 import sonata.kernel.placement.service.PlacementPluginLoader;
 //import org.apache.log4j.Logger;
 
 
 
 import java.io.IOException;
-import java.util.Map;
 
 public class TranslatorCore {
 

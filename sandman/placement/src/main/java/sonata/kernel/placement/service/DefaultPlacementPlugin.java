@@ -153,7 +153,7 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                     // No UnitInstance for Vnf outer connection point
                     continue;
                 }
-                UnitInstance unit = instance.units.get(conPointParts[0]);
+                UnitInstance unit = instance.searchUnitInstanceByConnectionPointId(ref);
                 assert unit != null : "In Vnfd "+vnfd.getName()+" virtual link "+link.getId()+" references an unknown connection point "+ref;
                 linkInstance.nodeList.put(unit, ref);
                 unit.links.put(ref, linkInstance);
