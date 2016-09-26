@@ -1,6 +1,6 @@
 # Placement config file
 restApi:
-   serverIp: "localhost"
+   serverIp: "0.0.0.0"
    port: 8080
 
 pluginPath: "./sandman/placement/target/classes/sonata/kernel/placement/"
