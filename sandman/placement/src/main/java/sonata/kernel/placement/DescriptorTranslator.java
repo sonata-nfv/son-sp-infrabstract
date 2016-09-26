@@ -1,7 +1,9 @@
 package sonata.kernel.placement;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -31,6 +33,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import org.apache.log4j.Logger;
+import sonata.kernel.placement.config.PlacementConfig;
+import sonata.kernel.placement.service.*;
 
 class DescriptorTranslator		
 {
@@ -105,6 +109,13 @@ class DescriptorTranslator
             data.addVnfDescriptor(vnfd);
         }
 
+        PlacementConfig config = PlacementConfigLoader.loadPlacementConfig();
+        PlacementPlugin plugin = new DefaultPlacementPlugin();
+        ServiceInstance instance = plugin.initialScaling(data);
+        PlacementMapping mapping = plugin.initialPlacement(data, instance, config.getResources());
+        List<HeatTemplate> templates = ServiceHeatTranslator.translatePlacementMappingToHeat(instance, config.getResources(), mapping);
+
+/*
         WrapperConfiguration config = new WrapperConfiguration();
 
         config.setTenantExtNet("decd89e2-1681-427e-ac24-6e9f1abb1715");
@@ -141,6 +152,31 @@ class DescriptorTranslator
         } catch (Exception e) {
             System.out.println("Exception translating template.");
             e.printStackTrace();
+        }
+*/
+
+        for(HeatTemplate template: templates) {
+            HeatStackCreate createStack = new HeatStackCreate();
+            createStack.stackName = "MyLittleStack";
+            createStack.template = template;
+            ObjectMapper mapper2 = new ObjectMapper(new JsonFactory());
+            mapper2.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+            mapper2.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+            mapper2.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+            mapper2.enable(SerializationFeature.ORDER_MAP_ENTRIES_BY_KEYS);
+            mapper2.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+            module.addDeserializer(Unit.class, new UnitDeserializer());
+            mapper2.registerModule(module);
+            mapper2.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+            try {
+                String body = mapper2.writeValueAsString(template);
+                logger.debug("Template Resources: "+template.getResources());
+                logger.info("Body: "+body);
+                return body;
+            } catch (JsonProcessingException e) {
+                logger.error("Exception translating template.");
+                e.printStackTrace();
+            }
         }
 
         return null;
