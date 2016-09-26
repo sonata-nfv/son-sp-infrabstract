@@ -32,9 +32,8 @@ public class TranslatorNetwork {
         return os;
     }
 
-    public static void create_network(OSClientV2 os,
+    public static Network create_network(OSClientV2 os,
                                       String name,
-                                      String network_id,
                                       String tenant_id)
     {
         logger.info("Creating network");
@@ -46,7 +45,7 @@ public class TranslatorNetwork {
         if(network.getStatus() == State.ERROR)
             logger.error("Network creation failed: Network name: " + name + " endpoint: " + os.getEndpoint());
 
-        return;
+        return network;
 
     }
 
@@ -63,7 +62,7 @@ public class TranslatorNetwork {
         return;
     }
 
-    public static void create_subnet( OSClientV2 os,
+    public static Subnet create_subnet( OSClientV2 os,
                                         String name,
                                         String network_id,
                                         String tenant_id,
@@ -105,20 +104,21 @@ public class TranslatorNetwork {
                 .name("Stack Name")
                 .template("template")
                 .timeoutMins(5L).build()); */
-        return;
+        return subnet;
     }
 
     public static void delete_subnet(OSClientV2 os,
-                                        String name)
+                                        String subnetId)
     {
-        logger.info("Deleting subnet :" + name + " on " + os.getEndpoint());
+        logger.info("Deleting subnet :" + subnetId + " on " + os.getEndpoint());
 
-        Subnet subnet = os.networking().subnet().get(name);
-        logger.debug("Subnet name :"+ subnet.getName()
+        Subnet subnet = os.networking().subnet().get(subnetId);
+       /* logger.debug("Subnet name :"+ subnet.getName()
                 + " Subnet network id :" + subnet.getNetworkId()
-                + " Subnet tenant id :"+ subnet.getTenantId());
+                + " Subnet tenant id :"+ subnet.getTenantId());*/
 
-        ActionResponse response = os.networking().subnet().delete(subnet.getId());
+        ActionResponse response = os.networking().subnet().delete(subnetId);
+        System.out.println("Response is " +response);
 
         if(!response.isSuccess())
             logger.error("Subnet deletion failed with error cause :" + response.getFault());
