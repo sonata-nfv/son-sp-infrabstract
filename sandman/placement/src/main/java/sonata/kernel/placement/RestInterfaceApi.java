@@ -206,7 +206,18 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
                 Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
                 logger.info("Content Length is " + contentLength);
                 byte[] buffer = new byte[contentLength];
-                session.getInputStream().read(buffer, 0, contentLength);
+                int alreadyRead = 0;
+                int read = -1;
+                while(alreadyRead < contentLength) {
+                    read = session.getInputStream().read(buffer, alreadyRead, contentLength-alreadyRead);
+                    if(read > 0)
+                        alreadyRead += read;
+                    if(read == -1)
+                        break;
+                }
+                if(alreadyRead < contentLength) {
+                    return newFixedLengthResponse(Response.Status.INTERNAL_ERROR, null, "Please try again, but next time a little bit slower.");
+                }
 
                 List<MultiPartFormDataPart> parts = parseMultiPartFormData(session, buffer);
                 if(parts.size()==1) {
@@ -390,11 +401,15 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
 
             // Find next boundary start
             boolean foundBoundary = true;
-            if(data.length-i-1<boundary.length)
-                break;
             for(int boundaryI=0; boundaryI<boundary.length; boundaryI++) {
-                if(data[i+boundaryI] != boundary[boundaryI])
+                if(i+boundaryI>data.length-1) {
                     foundBoundary = false;
+                    break;
+                }
+                if(data[i+boundaryI] != boundary[boundaryI]) {
+                    foundBoundary = false;
+                    break;
+                }
             }
             if(foundBoundary == false)
                 continue;
@@ -431,6 +446,10 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
             for(int j=boundaryEnd1; j<data.length; j++) {
                 boolean crlfFound = true;
                 for (int crlfI = 0; crlfI<crlf.length; crlfI++){
+                    if(j+crlfI>data.length-1) {
+                        crlfFound = false;
+                        break;
+                    }
                     if(data[j+crlfI] != crlf[crlfI]) {
                         crlfFound = false;
                         break;
@@ -463,8 +482,15 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
             // Check for last part
             boolean foundBoundaryEnd = true;
             for(int boundaryI=0; boundaryI<boundaryEnd.length; boundaryI++) {
-                if(data[boundaryStart2+boundaryI] != boundaryEnd[boundaryI])
+                if(boundaryStart2+boundaryI>data.length-1) {
                     foundBoundaryEnd = false;
+                    break;
+                }
+                if(data[boundaryStart2+boundaryI] != boundaryEnd[boundaryI]) {
+                    foundBoundaryEnd = false;
+                    break;
+                }
+
             }
             if(foundBoundaryEnd) // that's it
                 break;
