@@ -2,6 +2,7 @@ package sonata.kernel.placement.service;
 
 import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPoint;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
+import sonata.kernel.VimAdaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.placement.TranslatorCore;
@@ -20,7 +21,11 @@ public class FunctionInstance {
 
     public final VnfDescriptor descriptor;
 
+    public final List<VirtualDeploymentUnit> deploymentUnits;
+
     public final String name;
+
+    public final Map<String,LinkInstance> links;
 
     /**
      * Maps connection point id to virtual link name
@@ -54,6 +59,8 @@ public class FunctionInstance {
         this.units = new HashMap<String, UnitInstance>();
         this.outerLinks = new HashMap<String, LinkInstance>();
         this.innerLinks = new HashMap<String, LinkInstance>();
+        this.links = new HashMap<String, LinkInstance>();
+        this.deploymentUnits = descriptor.getVirtualDeploymentUnits();
     }
 
     public UnitInstance searchUnitInstanceByConnectionPointId(String conPointId){

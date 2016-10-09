@@ -38,6 +38,7 @@ public class ServiceInstance {
         outerLinks = new HashMap<String, LinkInstance>();
         innerLinks = new HashMap<String, LinkInstance>();
         this.connectionPoints = new HashMap<String, String>();
+
     }
 
     public LinkInstance findLinkInstanceByUnit(UnitInstance unit, String conPoint){

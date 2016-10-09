@@ -5,7 +5,7 @@ import org.apache.log4j.Logger;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Credentials {
-	final Logger logger = Logger.getLogger(ArtifactDependency.class);
+	final Logger logger = Logger.getLogger(Credentials.class);
     // username_and_password case
     protected String username;
     protected String password;

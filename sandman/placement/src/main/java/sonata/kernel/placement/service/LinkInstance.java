@@ -15,11 +15,16 @@ public class LinkInstance {
 
     public final String name;
 
-    // VirtualLink or VnfVirtualLink
+    public String vnf_virtual;
+    public String vnf_real;
+
+        // VirtualLink or VnfVirtualLink
     public final Object link;
 
     // FunctionInstance or UnitInstance maps to connection point that is used of that instance
     public Map<UnitInstance, String> nodeList;
+
+    public Map<FunctionInstance, String> nodeList2;
 
     public LinkInstance(Object link, String name){
     	logger.info("Link Instance");
@@ -27,6 +32,7 @@ public class LinkInstance {
         this.name = name;
         assert link instanceof VirtualLink || link instanceof VnfVirtualLink : "LinkInstance is based on a VirtualLink or a VnfVirtualLink";
         nodeList = new HashMap<UnitInstance, String>();
+        nodeList2 = new HashMap<FunctionInstance, String>();
     }
 
     public String getLinkId(){
