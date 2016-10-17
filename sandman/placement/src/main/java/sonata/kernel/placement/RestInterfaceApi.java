@@ -237,6 +237,8 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
                 if(pack != null) {
                     int newIndex = Catalogue.addPackage(pack);
                     jsonPackage = Catalogue.getJsonPackageDescriptor(newIndex);
+                    
+                    logger.info("Json Package is "+jsonPackage);
                 }
                 return newFixedLengthResponse(Response.Status.CREATED, "application/json", jsonPackage);
             }
