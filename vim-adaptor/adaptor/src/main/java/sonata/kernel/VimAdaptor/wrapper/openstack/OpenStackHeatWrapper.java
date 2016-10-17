@@ -167,6 +167,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     // mgmtSubnet.putProperty("cidr", "192.168." + subnetIndex + ".0/24");
     // mgmtSubnet.putProperty("gateway_ip", "192.168." + subnetIndex + ".1");
+
     subnetIndex++;
     HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
     mgmtNetMap.put("get_resource", nsd.getName() + ":mgmt:net:" + nsd.getInstanceUuid());
