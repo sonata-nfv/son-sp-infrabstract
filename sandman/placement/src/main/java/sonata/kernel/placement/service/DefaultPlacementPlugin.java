@@ -56,7 +56,7 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
             //assert function.getVnfVendor().equals(descriptor.getVendor())==false;
 
             FunctionInstance functionInstance = initVnf(function, descriptor);
-
+            //FunctionInstance functionInstance = initialize_vnf(function, descriptor);
             //functionInstances.put(function.getVnfId(),functionInstance);
 
             instance.functions.put(function.getVnfId(),functionInstance);
@@ -116,6 +116,34 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
 
         return instance;
     }
+    //Assume every virtual network function to be realized by a singelton virtual deployment unit.
+    protected FunctionInstance initialize_vnf(NetworkFunction function, VnfDescriptor vnfd)
+    {
+        FunctionInstance instance = new FunctionInstance(function, vnfd, function.getVnfId());
+
+        //Associate with each instance the vnf_virtual and vnf_real network interface.
+        //Considering the assumption that each VNF is realized by a VDU.
+        for(VnfVirtualLink link: vnfd.getVirtualLinks()){
+            LinkInstance l_instance = new LinkInstance(link, "vnflink:"+instance.name+":"+link.getId());
+
+            for(String intf: link.getConnectionPointsReference()){
+                String[] temp = intf.split(":");
+                //Check if the interface is the vnf_virtual interface
+                if("vnf".equals(temp[0])) {
+                    l_instance.vnf_virtual = temp[1];
+                } else if(vnfd.getVirtualDeploymentUnits().get(0).getId().equals(temp[0])) //Interface is a vnf_real interface on the VDU
+                {
+                    l_instance.vnf_real = temp[1];
+                } else
+                {
+                    logger.error("FunctionInstance::initialize_vnf: Invalid connection point: " + intf);
+                }
+            }
+            instance.links.put(link.getId(), l_instance);
+        }
+        return instance;
+
+    }
 
     /**
      * Creates instances of a function's units and virtual links
@@ -153,10 +181,15 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                     // No UnitInstance for Vnf outer connection point
                     continue;
                 }
+
                 UnitInstance unit = instance.searchUnitInstanceByConnectionPointId(ref);
                 assert unit != null : "In Vnfd "+vnfd.getName()+" virtual link "+link.getId()+" references an unknown connection point "+ref;
                 linkInstance.nodeList.put(unit, ref);
                 unit.links.put(ref, linkInstance);
+
+                linkInstance.nodeList2.put(instance, ref);
+
+
             }
             assert outerVnfConnection<=1 : "In Vnfd "+vnfd.getName()+" virtual link "+link.getId()+" connects to more than one vnf outer connection";
             if(outerVnfConnection>0) {
