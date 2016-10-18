@@ -1,7 +1,7 @@
 version: '2'
 services:
   son-sp-infrabstract:
-    image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
+    build: .
     entrypoint: /test.sh
     links:
      - postgres 

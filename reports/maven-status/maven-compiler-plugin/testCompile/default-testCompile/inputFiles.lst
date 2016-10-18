@@ -1,0 +1,12 @@
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/MessageReceiver.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/IpNetPoolTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/VimRepoTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/HeatTemplateTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/ServiceDescriptorTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/wrapper/OpenStackHeatClientTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/AdaptorTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/messaging/TestConsumer.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/wrapper/OpenStackNovaClientTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/messaging/TestProducer.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/DeployServiceTest.java
+/adaptor/src/test/java/sonata/kernel/VimAdaptor/wrapper/OdlWrapperTest.java

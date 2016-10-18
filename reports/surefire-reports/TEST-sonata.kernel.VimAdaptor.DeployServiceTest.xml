@@ -1,0 +1,250 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuite failures="0" time="28.735" errors="1" skipped="0" tests="2" name="sonata.kernel.VimAdaptor.DeployServiceTest">
+  <properties>
+    <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
+    <property name="sun.boot.library.path" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/amd64"/>
+    <property name="java.vm.version" value="24.111-b01"/>
+    <property name="java.vm.vendor" value="Oracle Corporation"/>
+    <property name="maven.multiModuleProjectDirectory" value="/adaptor"/>
+    <property name="java.vendor.url" value="http://java.oracle.com/"/>
+    <property name="path.separator" value=":"/>
+    <property name="guice.disable.misplaced.annotation.check" value="true"/>
+    <property name="java.vm.name" value="OpenJDK 64-Bit Server VM"/>
+    <property name="file.encoding.pkg" value="sun.io"/>
+    <property name="sun.java.launcher" value="SUN_STANDARD"/>
+    <property name="sun.os.patch.level" value="unknown"/>
+    <property name="java.vm.specification.name" value="Java Virtual Machine Specification"/>
+    <property name="user.dir" value="/adaptor"/>
+    <property name="java.runtime.version" value="1.7.0_111-b01"/>
+    <property name="java.awt.graphicsenv" value="sun.awt.X11GraphicsEnvironment"/>
+    <property name="java.endorsed.dirs" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/endorsed"/>
+    <property name="os.arch" value="amd64"/>
+    <property name="java.io.tmpdir" value="/tmp"/>
+    <property name="line.separator" value="
+"/>
+    <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
+    <property name="os.name" value="Linux"/>
+    <property name="net.sourceforge.cobertura.datafile" value="/adaptor/target/cobertura/cobertura.ser"/>
+    <property name="classworlds.conf" value="/usr/share/maven/bin/m2.conf"/>
+    <property name="sun.jnu.encoding" value="UTF-8"/>
+    <property name="java.library.path" value="/usr/java/packages/lib/amd64:/usr/lib/x86_64-linux-gnu/jni:/lib/x86_64-linux-gnu:/usr/lib/x86_64-linux-gnu:/usr/lib/jni:/lib:/usr/lib"/>
+    <property name="checkstyle.config.location" value="google_checks.xml"/>
+    <property name="java.specification.name" value="Java Platform API Specification"/>
+    <property name="java.class.version" value="51.0"/>
+    <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
+    <property name="os.version" value="4.2.0-42-generic"/>
+    <property name="user.home" value="/root"/>
+    <property name="user.timezone" value="Etc/UTC"/>
+    <property name="java.awt.printerjob" value="sun.print.PSPrinterJob"/>
+    <property name="java.specification.version" value="1.7"/>
+    <property name="file.encoding" value="UTF-8"/>
+    <property name="user.name" value="root"/>
+    <property name="java.class.path" value="/usr/share/maven/boot/plexus-classworlds-2.5.2.jar"/>
+    <property name="org.slf4j.simpleLogger.defaultLogLevel" value="error"/>
+    <property name="java.vm.specification.version" value="1.7"/>
+    <property name="sun.arch.data.model" value="64"/>
+    <property name="java.home" value="/usr/lib/jvm/java-7-openjdk-amd64/jre"/>
+    <property name="sun.java.command" value="org.codehaus.plexus.classworlds.launcher.Launcher -q -Dcheckstyle.config.location=google_checks.xml checkstyle:checkstyle findbugs:findbugs cobertura:cobertura"/>
+    <property name="java.specification.vendor" value="Oracle Corporation"/>
+    <property name="user.language" value="en"/>
+    <property name="awt.toolkit" value="sun.awt.X11.XToolkit"/>
+    <property name="java.vm.info" value="mixed mode"/>
+    <property name="java.version" value="1.7.0_111"/>
+    <property name="java.ext.dirs" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/ext:/usr/java/packages/lib/ext"/>
+    <property name="securerandom.source" value="file:/dev/./urandom"/>
+    <property name="sun.boot.class.path" value="/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/resources.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rt.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/sunrsasign.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jsse.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jce.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/charsets.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/rhino.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/lib/jfr.jar:/usr/lib/jvm/java-7-openjdk-amd64/jre/classes"/>
+    <property name="java.vendor" value="Oracle Corporation"/>
+    <property name="maven.home" value="/usr/share/maven"/>
+    <property name="file.separator" value="/"/>
+    <property name="java.vendor.url.bug" value="http://bugreport.sun.com/bugreport/"/>
+    <property name="sun.cpu.endian" value="little"/>
+    <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
+    <property name="project.build.outputDirectory" value="/adaptor/target/generated-classes/cobertura"/>
+    <property name="sun.cpu.isalist" value=""/>
+  </properties>
+  <testcase time="14.563" classname="sonata.kernel.VimAdaptor.DeployServiceTest" name="testDeployServiceMock">
+    <error message="Unrecognized field &quot;message&quot; (class sonata.kernel.VimAdaptor.commons.DeployServiceResponse), not marked as ignorable (7 known properties: &quot;instanceName&quot;, &quot;request_status&quot;, &quot;vimUuid&quot;, &quot;nsr&quot;, &quot;vnfrs&quot;, &quot;instanceVimUuid&quot;, &quot;errorCode&quot;])
+ at [Source: java.io.StringReader@5622ca71; line: 1, column: 54] (through reference chain: sonata.kernel.VimAdaptor.commons.DeployServiceResponse[&quot;message&quot;])" type="com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException">com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException: Unrecognized field &quot;message&quot; (class sonata.kernel.VimAdaptor.commons.DeployServiceResponse), not marked as ignorable (7 known properties: &quot;instanceName&quot;, &quot;request_status&quot;, &quot;vimUuid&quot;, &quot;nsr&quot;, &quot;vnfrs&quot;, &quot;instanceVimUuid&quot;, &quot;errorCode&quot;])
+ at [Source: java.io.StringReader@5622ca71; line: 1, column: 54] (through reference chain: sonata.kernel.VimAdaptor.commons.DeployServiceResponse[&quot;message&quot;])
+	at com.fasterxml.jackson.databind.exc.UnrecognizedPropertyException.from(UnrecognizedPropertyException.java:62)
+	at com.fasterxml.jackson.databind.DeserializationContext.reportUnknownProperty(DeserializationContext.java:851)
+	at com.fasterxml.jackson.databind.deser.std.StdDeserializer.handleUnknownProperty(StdDeserializer.java:1085)
+	at com.fasterxml.jackson.databind.deser.BeanDeserializerBase.handleUnknownProperty(BeanDeserializerBase.java:1388)
+	at com.fasterxml.jackson.databind.deser.BeanDeserializerBase.handleUnknownVanilla(BeanDeserializerBase.java:1366)
+	at com.fasterxml.jackson.databind.deser.BeanDeserializer.vanillaDeserialize(BeanDeserializer.java:266)
+	at com.fasterxml.jackson.databind.deser.BeanDeserializer.deserialize(BeanDeserializer.java:125)
+	at com.fasterxml.jackson.databind.ObjectMapper._readMapAndClose(ObjectMapper.java:3807)
+	at com.fasterxml.jackson.databind.ObjectMapper.readValue(ObjectMapper.java:2797)
+	at sonata.kernel.VimAdaptor.DeployServiceTest.testDeployServiceMock(DeployServiceTest.java:337)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75)
+</error>
+    <system-out>[INFO] Connecting to postgresql at jdbc:postgresql://postgres:5432/postgres
+[ERROR] The connection attempt failed.
+org.postgresql.util.PSQLException: The connection attempt failed.
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:262)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:66)
+	at org.postgresql.jdbc.PgConnection.&lt;init&gt;(PgConnection.java:215)
+	at org.postgresql.Driver.makeConnection(Driver.java:406)
+	at org.postgresql.Driver.connect(Driver.java:274)
+	at java.sql.DriverManager.getConnection(DriverManager.java:571)
+	at java.sql.DriverManager.getConnection(DriverManager.java:215)
+	at sonata.kernel.VimAdaptor.wrapper.VimRepo.&lt;init&gt;(VimRepo.java:75)
+	at sonata.kernel.VimAdaptor.AdaptorCore.&lt;init&gt;(AdaptorCore.java:85)
+	at sonata.kernel.VimAdaptor.DeployServiceTest.testDeployServiceMock(DeployServiceTest.java:274)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.junit.runners.model.FrameworkMethod$1.runReflectiveCall(FrameworkMethod.java:50)
+	at org.junit.internal.runners.model.ReflectiveCallable.run(ReflectiveCallable.java:12)
+	at org.junit.runners.model.FrameworkMethod.invokeExplosively(FrameworkMethod.java:47)
+	at org.junit.internal.runners.statements.InvokeMethod.evaluate(InvokeMethod.java:17)
+	at org.junit.internal.runners.statements.RunBefores.evaluate(RunBefores.java:26)
+	at org.junit.runners.ParentRunner.runLeaf(ParentRunner.java:325)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:78)
+	at org.junit.runners.BlockJUnit4ClassRunner.runChild(BlockJUnit4ClassRunner.java:57)
+	at org.junit.runners.ParentRunner$3.run(ParentRunner.java:290)
+	at org.junit.runners.ParentRunner$1.schedule(ParentRunner.java:71)
+	at org.junit.runners.ParentRunner.runChildren(ParentRunner.java:288)
+	at org.junit.runners.ParentRunner.access$000(ParentRunner.java:58)
+	at org.junit.runners.ParentRunner$2.evaluate(ParentRunner.java:268)
+	at org.junit.runners.ParentRunner.run(ParentRunner.java:363)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.execute(JUnit4Provider.java:252)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.executeTestSet(JUnit4Provider.java:141)
+	at org.apache.maven.surefire.junit4.JUnit4Provider.invoke(JUnit4Provider.java:112)
+	at sun.reflect.NativeMethodAccessorImpl.invoke0(Native Method)
+	at sun.reflect.NativeMethodAccessorImpl.invoke(NativeMethodAccessorImpl.java:57)
+	at sun.reflect.DelegatingMethodAccessorImpl.invoke(DelegatingMethodAccessorImpl.java:43)
+	at java.lang.reflect.Method.invoke(Method.java:606)
+	at org.apache.maven.surefire.util.ReflectionUtils.invokeMethodWithArray(ReflectionUtils.java:189)
+	at org.apache.maven.surefire.booter.ProviderFactory$ProviderProxy.invoke(ProviderFactory.java:165)
+	at org.apache.maven.surefire.booter.ProviderFactory.invokeProvider(ProviderFactory.java:85)
+	at org.apache.maven.surefire.booter.ForkedBooter.runSuitesInProcess(ForkedBooter.java:115)
+	at org.apache.maven.surefire.booter.ForkedBooter.main(ForkedBooter.java:75)
+Caused by: java.net.UnknownHostException: postgres
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:579)
+	at org.postgresql.core.PGStream.&lt;init&gt;(PGStream.java:64)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:133)
+	... 39 common frames omitted
+[INFO] Errors creating the environment
+[TestProducer] Topic: platform.management.plugin.register - Message:{&quot;name&quot;:&quot;sonata.kernel.InfrAdaptor&quot;,&quot;version&quot;:&quot;0.0.1&quot;,&quot;description&quot;:&quot;Service Platform Infrastructure Adaptor&quot;}
+[TestConsumer] Topic: platform.management.plugin.register - Message:{&quot;status&quot;:&quot;OK&quot;,&quot;uuid&quot;:&quot;4fa62194-a4b1-4de9-8b28-fc8042b9995e&quot;,&quot;error&quot;:&quot;none&quot;}
+[INFO] Received the registration response from the pluginmanager
+[TestProducer] Topic: platform.management.plugin.4fa62194-a4b1-4de9-8b28-fc8042b9995e.heartbeat - Message:{&quot;uuid&quot;:&quot;4fa62194-a4b1-4de9-8b28-fc8042b9995e&quot;,&quot;state&quot;:&quot;RUNNING&quot;}
+[TestProducer] Topic: platform.management.plugin.4fa62194-a4b1-4de9-8b28-fc8042b9995e.heartbeat - Message:{&quot;uuid&quot;:&quot;4fa62194-a4b1-4de9-8b28-fc8042b9995e&quot;,&quot;state&quot;:&quot;RUNNING&quot;}
+[TestConsumer] Topic: infrastructure.management.compute.add - Message:{&quot;wr_type&quot;:&quot;compute&quot;,&quot;tenant_ext_net&quot;:&quot;ext-subnet&quot;,&quot;tenant_ext_router&quot;:&quot;ext-router&quot;,&quot;vim_type&quot;:&quot;Mock&quot;,&quot;vim_address&quot;:&quot;http://localhost:9999&quot;,&quot;username&quot;:&quot;Eve&quot;,&quot;pass&quot;:&quot;Operator&quot;,&quot;tenant&quot;:&quot;op_sonata&quot;}
+[INFO] Creating wrapper...
+[INFO] Wrapper created.
+[ERROR] The connection attempt failed.
+org.postgresql.util.PSQLException: The connection attempt failed.
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:262)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:66)
+	at org.postgresql.jdbc.PgConnection.&lt;init&gt;(PgConnection.java:215)
+	at org.postgresql.Driver.makeConnection(Driver.java:406)
+	at org.postgresql.Driver.connect(Driver.java:274)
+	at java.sql.DriverManager.getConnection(DriverManager.java:571)
+	at java.sql.DriverManager.getConnection(DriverManager.java:215)
+	at sonata.kernel.VimAdaptor.wrapper.VimRepo.writeVimEntry(VimRepo.java:195)
+	at sonata.kernel.VimAdaptor.wrapper.WrapperBay.registerComputeWrapper(WrapperBay.java:75)
+	at sonata.kernel.VimAdaptor.AddVimCallProcessor.process(AddVimCallProcessor.java:94)
+	at sonata.kernel.VimAdaptor.AbstractCallProcessor.run(AbstractCallProcessor.java:73)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.UnknownHostException: postgres
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:579)
+	at org.postgresql.core.PGStream.&lt;init&gt;(PGStream.java:64)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:133)
+	... 13 common frames omitted
+[INFO] Records created successfully
+[TestProducer] Topic: infrastructure.management.compute.add - Message:{&quot;status&quot;:&quot;COMPLETED&quot;,&quot;uuid&quot;:&quot;d15e5cad-0395-4155-8895-254c8a476d35&quot;}
+Mock Wrapper added, with uuid: d15e5cad-0395-4155-8895-254c8a476d35
+[TestConsumer] Topic: infrastructure.service.deploy - Message:---
+nsd:
+  vendor: &quot;eu.sonata-nfv.service-descriptor&quot;
+  uuid: &quot;9df6a98f-9e11-4cb7-b3c0-b1375e7ca1a1&quot;
+  name: &quot;sonata-demo-1&quot;
+  version: &quot;0.1&quot;
+  author: &quot;Felipe Vicens, Atos IT Solutions and Services Iberia&quot;
+  description: &quot;\n\&quot;The network service descriptor for the SONATA demo,\n\n comprising\
+    \ a Virtual Traffic Classifier\&quot;\n&quot;
+  descriptor_version: &quot;1.0&quot;
+  instance_uuid: &quot;9df6a98f-9e11-4cb7-b3c0-InAdUnitTest&quot;
+  network_functions:
+  - vnf_id: &quot;vnf_vtc&quot;
+    vnf_vendor: &quot;eu.sonata-nfv&quot;
+    vn
+...TRUNCATED
+[INFO] Call received...
+[INFO] Parsing payload...
+[INFO] payload parsed
+[ERROR] The connection attempt failed.
+org.postgresql.util.PSQLException: The connection attempt failed.
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:262)
+	at org.postgresql.core.ConnectionFactory.openConnection(ConnectionFactory.java:66)
+	at org.postgresql.jdbc.PgConnection.&lt;init&gt;(PgConnection.java:215)
+	at org.postgresql.Driver.makeConnection(Driver.java:406)
+	at org.postgresql.Driver.connect(Driver.java:274)
+	at java.sql.DriverManager.getConnection(DriverManager.java:571)
+	at java.sql.DriverManager.getConnection(DriverManager.java:215)
+	at sonata.kernel.VimAdaptor.wrapper.VimRepo.readVimEntry(VimRepo.java:376)
+	at sonata.kernel.VimAdaptor.wrapper.WrapperBay.getComputeWrapper(WrapperBay.java:129)
+	at sonata.kernel.VimAdaptor.DeployServiceCallProcessor.process(DeployServiceCallProcessor.java:80)
+	at sonata.kernel.VimAdaptor.AbstractCallProcessor.run(AbstractCallProcessor.java:73)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
+Caused by: java.net.UnknownHostException: postgres
+	at java.net.AbstractPlainSocketImpl.connect(AbstractPlainSocketImpl.java:178)
+	at java.net.SocksSocketImpl.connect(SocksSocketImpl.java:392)
+	at java.net.Socket.connect(Socket.java:579)
+	at org.postgresql.core.PGStream.&lt;init&gt;(PGStream.java:64)
+	at org.postgresql.core.v3.ConnectionFactoryImpl.openConnectionImpl(ConnectionFactoryImpl.java:133)
+	... 13 common frames omitted
+[INFO] Operation done successfully
+[ERROR] Error deploying the system: null
+java.lang.NullPointerException: null
+	at sonata.kernel.VimAdaptor.wrapper.WrapperBay.getComputeWrapper(WrapperBay.java:129)
+	at sonata.kernel.VimAdaptor.DeployServiceCallProcessor.process(DeployServiceCallProcessor.java:80)
+	at sonata.kernel.VimAdaptor.AbstractCallProcessor.run(AbstractCallProcessor.java:73)
+	at java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1145)
+	at java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:615)
+	at java.lang.Thread.run(Thread.java:745)
+[TestProducer] Topic: infrastructure.service.deploy - Message:{&quot;request_status&quot;:&quot;fail&quot;,&quot;message&quot;:&quot;Deployment Error&quot;}
+</system-out>
+  </testcase>
+  <testcase time="14.172" classname="sonata.kernel.VimAdaptor.DeployServiceTest" name="testCheckResources"/>
+</testsuite>
