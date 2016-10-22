@@ -45,23 +45,23 @@ public class UnitInstance {
         links = new HashMap<String, LinkInstance>();
     }
 
-    public boolean linkConnectsToUnit(LinkInstance link, String portname){
-        // direct connection
-        if(links.get(portname)==link)
-            return true;
-        // connection uses alias, but actually the given portname
-        // link --> alias --> portname --> unit
-        String linkPortname = link.nodeList.get(this);
-        String alias = aliasConnectionPoints.get(linkPortname);
-        for(Map.Entry<String, String> entryAlias: this.aliasConnectionPoints.entrySet())
-            if(entryAlias.getValue().equals(portname)) {
-                alias = entryAlias.getKey();
-                break;
-            }
-        if(linkPortname!=null && alias!=null && links.get(alias)==link)
-            return true;
-        return false;
-    }
+//    public boolean linkConnectsToUnit(LinkInstance link, String portname){
+//        // direct connection
+//        if(links.get(portname)==link)
+//            return true;
+//        // connection uses alias, but actually the given portname
+//        // link --> alias --> portname --> unit
+//        String linkPortname = link.nodeList.get(this);
+//        String alias = aliasConnectionPoints.get(linkPortname);
+//        for(Map.Entry<String, String> entryAlias: this.aliasConnectionPoints.entrySet())
+//            if(entryAlias.getValue().equals(portname)) {
+//                alias = entryAlias.getKey();
+//                break;
+//            }
+//        if(linkPortname!=null && alias!=null && links.get(alias)==link)
+//            return true;
+//        return false;
+//    }
 
 
 

@@ -93,11 +93,8 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                 LinkInstance vnfLinkInstance = functionInstance.outerLinks.get(connectionPointName);
                 assert vnfLinkInstance != null : "In Service " + service.getName() + " Virtual Link " + link.getId() + " connects to function " + functionInstance.name + " that does not contain link for connection point " + connectionPointName;
 
-                for (UnitInstance unit: vnfLinkInstance.nodeList.keySet()) {
-                    linkInstance.nodeList.put(unit, conPoint);
-                    unit.aliasConnectionPoints.put(conPoint, vnfLinkInstance.nodeList.get(unit));
-                    unit.links.put(conPoint, linkInstance);
-                }
+                linkInstance.nodeList2.put(functionInstance, conPoint);
+
             }
             if(nsConnectionPointCount>0){
                 instance.connectionPoints.put(nsConnectionPointName, link.getId());
@@ -111,39 +108,39 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
             for(Map.Entry<String, LinkInstance> linkEntry: functionInstance.innerLinks.entrySet()) {
                 instance.innerLinks.put(linkEntry.getKey(), linkEntry.getValue());
             }
-            instance.units.addAll(functionInstance.units.values());
+            //instance.units.addAll(functionInstance.units.values());
         }
 
         return instance;
     }
-    //Assume every virtual network function to be realized by a singelton virtual deployment unit.
-    protected FunctionInstance initialize_vnf(NetworkFunction function, VnfDescriptor vnfd)
-    {
-        FunctionInstance instance = new FunctionInstance(function, vnfd, function.getVnfId());
-
-        //Associate with each instance the vnf_virtual and vnf_real network interface.
-        //Considering the assumption that each VNF is realized by a VDU.
-        for(VnfVirtualLink link: vnfd.getVirtualLinks()){
-            LinkInstance l_instance = new LinkInstance(link, "vnflink:"+instance.name+":"+link.getId());
-
-            for(String intf: link.getConnectionPointsReference()){
-                String[] temp = intf.split(":");
-                //Check if the interface is the vnf_virtual interface
-                if("vnf".equals(temp[0])) {
-                    l_instance.vnf_virtual = temp[1];
-                } else if(vnfd.getVirtualDeploymentUnits().get(0).getId().equals(temp[0])) //Interface is a vnf_real interface on the VDU
-                {
-                    l_instance.vnf_real = temp[1];
-                } else
-                {
-                    logger.error("FunctionInstance::initialize_vnf: Invalid connection point: " + intf);
-                }
-            }
-            instance.links.put(link.getId(), l_instance);
-        }
-        return instance;
-
-    }
+//    //Assume every virtual network function to be realized by a singelton virtual deployment unit.
+//    protected FunctionInstance initialize_vnf(NetworkFunction function, VnfDescriptor vnfd)
+//    {
+//        FunctionInstance instance = new FunctionInstance(function, vnfd, function.getVnfId());
+//
+//        //Associate with each instance the vnf_virtual and vnf_real network interface.
+//        //Considering the assumption that each VNF is realized by a VDU.
+//        for(VnfVirtualLink link: vnfd.getVirtualLinks()){
+//            LinkInstance l_instance = new LinkInstance(link, "vnflink:"+instance.name+":"+link.getId());
+//
+//            for(String intf: link.getConnectionPointsReference()){
+//                String[] temp = intf.split(":");
+//                //Check if the interface is the vnf_virtual interface
+//                if("vnf".equals(temp[0])) {
+//                    l_instance.vnf_virtual = temp[1];
+//                } else if(vnfd.getVirtualDeploymentUnits().get(0).getId().equals(temp[0])) //Interface is a vnf_real interface on the VDU
+//                {
+//                    l_instance.vnf_real = temp[1];
+//                } else
+//                {
+//                    logger.error("FunctionInstance::initialize_vnf: Invalid connection point: " + intf);
+//                }
+//            }
+//            instance.links.put(link.getId(), l_instance);
+//        }
+//        return instance;
+//
+//    }
 
     /**
      * Creates instances of a function's units and virtual links
@@ -155,9 +152,11 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
         FunctionInstance instance = new FunctionInstance(function, vnfd, function.getVnfId());
 
         // Create UnitInstances for VirtualDeploymentUnits
+        //VVV
+        /*
         for(VirtualDeploymentUnit unit : vnfd.getVirtualDeploymentUnits()) {
             instance.units.put(unit.getId(),new UnitInstance(instance, function, vnfd, unit, function.getVnfId()+":unit:"+unit.getId()));
-        }
+        }*/
 
         // Create list of Vnf outer connection point names
         List<String> vnfConPoints = new ArrayList<String>();
@@ -181,11 +180,6 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                     // No UnitInstance for Vnf outer connection point
                     continue;
                 }
-
-                UnitInstance unit = instance.searchUnitInstanceByConnectionPointId(ref);
-                assert unit != null : "In Vnfd "+vnfd.getName()+" virtual link "+link.getId()+" references an unknown connection point "+ref;
-                linkInstance.nodeList.put(unit, ref);
-                unit.links.put(ref, linkInstance);
 
                 linkInstance.nodeList2.put(instance, ref);
 
@@ -236,8 +230,13 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
 
         // Simply map the list of instance nodes to the lists of resource nodes
         List<String> unitNodeNames = new ArrayList<String>();
-        for(UnitInstance unitInstance: instance.units) {
+/*        for(UnitInstance unitInstance: instance.units) {
             unitNodeNames.add(unitInstance.name);
+        }*/
+
+        for(Map.Entry<String, FunctionInstance> finst: instance.functions.entrySet())
+        {
+            unitNodeNames.add(finst.getValue().deploymentUnits.get(0).getId());
         }
 
         assert availableNodeCounter >= unitNodeNames.size() : "Datacenter do not have enough nodes." ;
