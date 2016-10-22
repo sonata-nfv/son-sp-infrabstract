@@ -22,7 +22,7 @@ public class ServiceInstance {
     // Maps unique vnf id from service descriptor to the vnf instance
     public final Map<String, FunctionInstance> functions;
 
-    public final List<UnitInstance> units;
+    //public final List<UnitInstance> units;
 
     // Maps virtual link id to LinkInstance
     // LinkInstances connect only units
@@ -34,13 +34,14 @@ public class ServiceInstance {
     public ServiceInstance(){
     	logger.info("Service Instance");
         functions = new HashMap<String,FunctionInstance>();
-        units = new ArrayList<UnitInstance>();
+        //units = new ArrayList<UnitInstance>();
         outerLinks = new HashMap<String, LinkInstance>();
         innerLinks = new HashMap<String, LinkInstance>();
         this.connectionPoints = new HashMap<String, String>();
 
     }
 
+    /*
     public LinkInstance findLinkInstanceByUnit(UnitInstance unit, String conPoint){
 
         LinkInstance link = null;
@@ -65,5 +66,5 @@ public class ServiceInstance {
             }
         }
         return link;
-    }
+    }*/
 }
