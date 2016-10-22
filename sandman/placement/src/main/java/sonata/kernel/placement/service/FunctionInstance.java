@@ -35,7 +35,7 @@ public class FunctionInstance {
     /**
      * Maps VirtualDeployUnitName to UnitInstance
      */
-    public final Map<String,UnitInstance> units;
+    //public final Map<String,UnitInstance> units;
 
     /**
      * Maps virtual link name to the virtual link
@@ -56,20 +56,20 @@ public class FunctionInstance {
         this.descriptor = descriptor;
         this.name = name;
         this.connectionPoints = new HashMap<String,String>();
-        this.units = new HashMap<String, UnitInstance>();
+        //this.units = new HashMap<String, UnitInstance>();
         this.outerLinks = new HashMap<String, LinkInstance>();
         this.innerLinks = new HashMap<String, LinkInstance>();
         this.links = new HashMap<String, LinkInstance>();
         this.deploymentUnits = descriptor.getVirtualDeploymentUnits();
     }
 
-    public UnitInstance searchUnitInstanceByConnectionPointId(String conPointId){
-        for(UnitInstance unit: units.values()){
-            for(ConnectionPoint conPoint: unit.descriptor.getConnectionPoints()) {
-                if(conPoint.getId().equals(conPointId))
-                    return unit;
-            }
-        }
-        return null;
-    }
+//    public UnitInstance searchUnitInstanceByConnectionPointId(String conPointId){
+//        for(UnitInstance unit: units.values()){
+//            for(ConnectionPoint conPoint: unit.descriptor.getConnectionPoints()) {
+//                if(conPoint.getId().equals(conPointId))
+//                    return unit;
+//            }
+//        }
+//        return null;
+//    }
 }
