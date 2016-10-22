@@ -41,13 +41,13 @@ public final class PlacementPluginLoader {
 
             // Check if Class implements PlacementPlugin interface
             if(!PlacementPlugin.class.isAssignableFrom(cls)) {
-                System.out.println(cls.getName()+" is not an instance of the PlacementPlugin interface!");
+                logger.error(cls.getName()+" is not an instance of the PlacementPlugin interface!");
                 return new DefaultPlacementPlugin();
             }
 
             // Check if Class can be instantiated
             if(Modifier.isInterface(cls.getModifiers()) || Modifier.isAbstract(cls.getModifiers())){
-                System.out.println(cls.getName()+" can not be instantiated!");
+                logger.error(cls.getName()+" can not be instantiated!");
                 return new DefaultPlacementPlugin();
             }
 

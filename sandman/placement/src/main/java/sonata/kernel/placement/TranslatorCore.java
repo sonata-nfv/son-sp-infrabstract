@@ -25,14 +25,14 @@ public class TranslatorCore {
 
         // Load configuration
     	logger.info("Loading Configurations");
-        System.out.println("Current path: "+new File("").getAbsolutePath());
+        logger.info("Current path: "+new File("").getAbsolutePath());
         PlacementConfig config = PlacementConfigLoader.loadPlacementConfig();
-
+        Catalogue.loadInternalFunctions();
 
         // Load placement plugin
         logger.info("Loading placement plugins");
         PlacementPluginLoader.loadPlacementPlugin(config.pluginPath,config.placementPlugin);
-        System.out.println("Loaded placement-plugin: "+PlacementPluginLoader.placementPlugin.getClass().getName());
+        logger.info("Loaded placement-plugin: "+PlacementPluginLoader.placementPlugin.getClass().getName());
 
         try {
             new Thread(new RestInterfaceClientApi()).start();
