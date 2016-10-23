@@ -93,7 +93,7 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                 LinkInstance vnfLinkInstance = functionInstance.outerLinks.get(connectionPointName);
                 assert vnfLinkInstance != null : "In Service " + service.getName() + " Virtual Link " + link.getId() + " connects to function " + functionInstance.name + " that does not contain link for connection point " + connectionPointName;
 
-                linkInstance.nodeList2.put(functionInstance, conPoint);
+                linkInstance.interfaceList.put(functionInstance, conPoint);
 
             }
             if(nsConnectionPointCount>0){
@@ -181,7 +181,7 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                     continue;
                 }
 
-                linkInstance.nodeList2.put(instance, ref);
+                linkInstance.interfaceList.put(instance, ref);
 
 
             }
