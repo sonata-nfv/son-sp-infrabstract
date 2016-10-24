@@ -7,7 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.sun.xml.internal.ws.api.wsdl.parser.ServiceDescriptor;
+//import com.sun.xml.internal.ws.api.wsdl.parser.ServiceDescriptor;
 
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
