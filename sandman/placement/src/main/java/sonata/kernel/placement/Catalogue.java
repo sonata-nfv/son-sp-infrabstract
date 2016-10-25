@@ -7,11 +7,13 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.apache.log4j.Logger;
+//import com.sun.xml.internal.ws.api.wsdl.parser.ServiceDescriptor;
+
+import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.placement.config.PlacementConfig;
+import sonata.kernel.placement.pd.PackageContentObject;
 import sonata.kernel.placement.pd.PackageDescriptor;
 import sonata.kernel.placement.pd.SonataPackage;
 
@@ -23,7 +25,7 @@ public class Catalogue {
 
     final static Logger logger = Logger.getLogger(Catalogue.class);
 
-    static public List<SonataPackage> packages = new ArrayList<SonataPackage>();
+    static public List<String> packages = new ArrayList<String>();
 
     // Maps Vnf name to VnfDescriptor
     static public Map<String,VnfDescriptor> functions = new HashMap<String,VnfDescriptor>();
@@ -32,12 +34,12 @@ public class Catalogue {
 
     public final static String[] INTERNAL_VNF_FOLDERS = new String[]{"sandman\\placement\\YAML\\internal", "sandman/placement/YAML/internal", "YAML/internal", "placement/YAML/internal"};
 
-    static public int addPackage(SonataPackage sPackage){
+    static public int addPackage(String sPackage){
         int newIndex = -1;
         int oldIndex = -1;
         for(int i=0; i<packages.size(); i++) {
-            SonataPackage existPackage = packages.get(i);
-            if(existPackage.descriptor.getName().equals(sPackage)) {
+        	String  existPackage = packages.get(i);
+            if(existPackage.equals(sPackage)) {
                 oldIndex = i;
                 break;
             }
@@ -53,32 +55,37 @@ public class Catalogue {
             newIndex = packages.size()-1;
         }
         // Replace or add Vnfs
-        for(VnfDescriptor newVnf:sPackage.functions) {
+        /*for(VnfDescriptor newVnf:sPackage.functions) {
             functions.put(newVnf.getName(),newVnf);
-        }
+        }*/
         return newIndex;
+    }
+    
+    static public DeployServiceData getPackagetoDeploy(int index) {
+    	    	
+    	return null;
     }
 
     static public String getJsonPackageDescriptor(int index){
         String jsonData = null;
         ObjectMapper mapper = getJsonMapper();
 
-        PackageDescriptor desc = packages.get(index).descriptor;
-
-        try {
+       // String package_dir = packages.get(index);
+        String pack_dir = packages.get(index);
+        /*try {
             jsonData = mapper.writeValueAsString(desc);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-        }
+        }*/
 
-        return jsonData;
+        return pack_dir;
     }
 
     static public String getJsonPackageList(){
-        String jsonList = null;
+       /* String jsonList = null;
 
         List<PackageDescriptor> packageList = new ArrayList<PackageDescriptor>();
-        for(SonataPackage p:packages)
+        for(String p:packages)
             packageList.add(p.descriptor);
 
         ObjectMapper mapper  = getJsonMapper();
@@ -86,9 +93,9 @@ public class Catalogue {
             jsonList = mapper.writeValueAsString(packageList);
         } catch (JsonProcessingException e) {
             e.printStackTrace();
-        }
-
-        return jsonList;
+        }*/
+		
+        return null;
     }
     static protected ObjectMapper getJsonMapper(){
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());

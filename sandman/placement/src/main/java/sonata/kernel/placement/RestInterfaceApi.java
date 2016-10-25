@@ -114,7 +114,7 @@ class RestInterfaceClientApi implements Runnable{
                 .authenticate();
 
         Stack stack = os.heat().stacks().create(Builders.stack()
-                .name("XYZ")
+                .name("PQR1")
                 .template(data)
                 .timeoutMins(5L).build());
 
@@ -229,13 +229,14 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
 
                 String base_dir = PackageLoader.processZipFile(buffer);
 
-                MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
-                MessageQueue.get_rest_serverQ().put(q_data);
+                /*MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
+                MessageQueue.get_rest_serverQ().put(q_data);*/
 
                 String jsonPackage = "OK";
                 SonataPackage pack = PackageLoader.zipByteArrayToSonataPackage(buffer);
+                
                 if(pack != null) {
-                    int newIndex = Catalogue.addPackage(pack);
+                    int newIndex = Catalogue.addPackage(base_dir);
                     jsonPackage = Catalogue.getJsonPackageDescriptor(newIndex);
                     
                     logger.info("Json Package is "+jsonPackage);
@@ -252,7 +253,7 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
             }
             else
             if("/requests".equals(uri) && session.getMethod().equals(Method.POST)) {
-                Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
+                /*Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
                 byte[] buffer = new byte[contentLength];
                 session.getInputStream().read(buffer, 0, contentLength);
                 List<MultiPartFormDataPart> parts = parseMultiPartFormData(session, buffer);
@@ -263,7 +264,15 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
                     requestIndexStr = requestIndexStr.substring(1);
                 int requestIndex = Integer.valueOf(requestIndexStr);
                 // TODO: add deploy code
-                return newFixedLengthResponse(Response.Status.CREATED, null, null);
+                return newFixedLengthResponse(Response.Status.CREATED, null, null);*/
+            	int newIndex = 0;
+            	//System.out.println("New Index is " + newIndex);
+            	//String package_descriptor = DescriptorTranslator.process_descriptor(newIndex);
+            	String package_dir = Catalogue.getJsonPackageDescriptor(newIndex);
+            	MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, package_dir);
+                //System.out.println("q_data is "+ q_data.data);
+                MessageQueue.get_rest_serverQ().put(q_data);
+                return newFixedLengthResponse(Response.Status.CREATED, "application/json", package_dir);
             }
             else
                 return newFixedLengthResponse(Response.Status.NOT_IMPLEMENTED, null, null);

@@ -134,7 +134,7 @@
 
                     LinkInstance link = null;
                     for(LinkInstance linkInstance: instance.outerLinks.values()) {
-                        for(Map.Entry<FunctionInstance, String> entry: linkInstance.nodeList2.entrySet()){
+                        for(Map.Entry<FunctionInstance, String> entry: linkInstance.interfaceList.entrySet()){
                             FunctionInstance entryUnit = entry.getKey();
                             String portname = entry.getValue();
                                 return linkInstance;
@@ -142,7 +142,7 @@
                     }
 
                     for(LinkInstance linkInstance: instance.innerLinks.values()) {
-                        for(Map.Entry<FunctionInstance, String> entry: linkInstance.nodeList2.entrySet()) {
+                        for(Map.Entry<FunctionInstance, String> entry: linkInstance.interfaceList.entrySet()) {
                             FunctionInstance entryUnit = entry.getKey();
                             String portname = entry.getValue();
                             return linkInstance;
@@ -235,7 +235,7 @@
                                         + instance.service.getInstanceUuid());
                         model.addResource(router);
 
-                        for(Map.Entry<FunctionInstance, String> entry: link.nodeList2.entrySet()){
+                        for(Map.Entry<FunctionInstance, String> entry: link.interfaceList.entrySet()){
                             FunctionInstance entryUnit = entry.getKey();
                             String portName = entry.getValue();
 
@@ -366,7 +366,7 @@
                         if(link.isMgmtLink())
                             continue;
 
-                        for(Map.Entry<FunctionInstance, String> entry: link.nodeList2.entrySet()){
+                        for(Map.Entry<FunctionInstance, String> entry: link.interfaceList.entrySet()){
                             FunctionInstance entryUnit = entry.getKey();
                             String portName = entry.getValue();
 
