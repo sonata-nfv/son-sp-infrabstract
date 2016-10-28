@@ -25,7 +25,7 @@ public class FunctionInstance {
 
     public final String name;
 
-    //public final Map<String,LinkInstance> links;
+    public final Map<String,LinkInstance> links;
 
     /**
      * Maps connection point id to virtual link name
@@ -42,13 +42,13 @@ public class FunctionInstance {
      * Contains links that connect to vnf connection points
      * e.g. name: "mgmt", not "vnf:mgmt"
      */
-    public final Map<String,LinkInstance> links;
+    public final Map<String,LinkInstance> outerLinks;
 
     /**
      * Maps virtual link name to the virtual link
      * Contains links that connect units only
      */
-    //public final Map<String, LinkInstance> innerLinks;
+    public final Map<String, LinkInstance> innerLinks;
 
     public FunctionInstance(NetworkFunction function, VnfDescriptor descriptor, String name){
     	logger.info("Function Instance Name: "+ name);
@@ -57,9 +57,9 @@ public class FunctionInstance {
         this.name = name;
         this.connectionPoints = new HashMap<String,String>();
         //this.units = new HashMap<String, UnitInstance>();
+        this.outerLinks = new HashMap<String, LinkInstance>();
+        this.innerLinks = new HashMap<String, LinkInstance>();
         this.links = new HashMap<String, LinkInstance>();
-        //this.innerLinks = new HashMap<String, LinkInstance>();
-        //this.links = new HashMap<String, LinkInstance>();
         this.deploymentUnits = descriptor.getVirtualDeploymentUnits();
     }
 
