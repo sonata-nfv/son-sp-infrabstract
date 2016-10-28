@@ -83,6 +83,7 @@ public class OpenStackHeatClient {
     this.password = password;
     this.tenantName = tenantName;
 
+    Logger.info(url + " " + userName + " " + password + " " + tenantName);
     mapper = new ObjectMapper();
 
     javaStack = JavaStackCore.getJavaStackCore();
@@ -93,7 +94,7 @@ public class OpenStackHeatClient {
 
     //Authenticate
     try {
-      javaStack.authenticateClient(url);
+      javaStack.authenticateClient();
     } catch (IOException e) {
       e.printStackTrace();
     }
@@ -110,7 +111,7 @@ public class OpenStackHeatClient {
 
     String uuid = null;
 
-    template = "heat_template_version: '2013-05-23'\n" +
+    template = "   heat_template_version: '2013-05-23'\n" +
             "  description: Simple template to test heat commands\n" +
             "  parameters:\n" +
             "    flavor:\n" +
@@ -159,6 +160,8 @@ public class OpenStackHeatClient {
     String status = null;
     String string = null;
     Logger.info("Getting status for stack: " + stackName);
+
+
 
     try {
       // Call the python client for the status of the stack

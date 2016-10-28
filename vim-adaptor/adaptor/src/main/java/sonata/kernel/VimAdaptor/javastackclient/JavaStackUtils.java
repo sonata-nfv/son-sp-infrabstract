@@ -16,7 +16,7 @@ import java.nio.file.Paths;
 
 public class JavaStackUtils {
 
-    public static String readFile(String filePath) throws IOException{
+    public static String readFile(String filePath) throws IOException {
         return new String(Files.readAllBytes(Paths.get(filePath)));
     }
 
@@ -30,15 +30,20 @@ public class JavaStackUtils {
 
     public static String convertHttpResponseToString(HttpResponse response) throws IOException {
 
-        StringBuilder sb = new StringBuilder();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        String statusCode = Integer.toString(response.getStatusLine().getStatusCode());
+        if (statusCode.startsWith("2")) {
+            System.out.println(response.getStatusLine().getStatusCode());
+            StringBuilder sb = new StringBuilder();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-        String line ;
-        while ((line = reader.readLine()) != null) {
-            sb.append(line);
+            String line;
+            while ((line = reader.readLine()) != null) {
+                sb.append(line);
+            }
+            return sb.toString();
+        } else {
+            throw new IOException("Failed Request with Status Code: " + statusCode);
         }
-
-        return sb.toString();
     }
-
 }
+

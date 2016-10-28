@@ -11,6 +11,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
         <!-- The versions of ALL the libraries used by this project. -->
         <powermock.all.version>1.6.5</powermock.all.version>
         <mockito.all.version>1.9.5</mockito.all.version>
@@ -21,6 +22,11 @@
         <jackson.all.version>2.7.5</jackson.all.version>
         <commons.io.version>1.3.2</commons.io.version>
         <logback.classic.version>1.1.7</logback.classic.version>
+        <jersy.core.version>2.23.2</jersy.core.version>
+        <httpcomponents.httpclient.version>4.5.2</httpcomponents.httpclient.version>
+        <httpcomponents.httpcore.version>4.4.4</httpcomponents.httpcore.version>
+        <org.yaml.version>1.17</org.yaml.version>
+
         <!-- The versions of ALL the plugins used by this project. -->
         <maven.surefire.report.version>2.19.1</maven.surefire.report.version>
         <maven.site.version>2.1</maven.site.version>
@@ -29,10 +35,6 @@
         <maven.assembly.version>2.6</maven.assembly.version>
         <maven.compiler.version>3.5.1</maven.compiler.version>
         <cobertura.maven.verion>2.7</cobertura.maven.verion>
-        <jersy.core.version>2.23.2</jersy.core.version>
-        <httpcomponents.httpclient.version>4.5.2</httpcomponents.httpclient.version>
-        <httpcomponents.httpcore.version>4.4.5</httpcomponents.httpcore.version>
-        <org.yaml.version>1.17</org.yaml.version>
     </properties>
 
     <build>
@@ -155,6 +157,12 @@
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>${httpcomponents.httpclient.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.yaml</groupId>

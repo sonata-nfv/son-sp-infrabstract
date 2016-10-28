@@ -2,6 +2,8 @@ package sonata.kernel.VimAdaptor.javastackclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
+import org.apache.http.HttpResponseFactory;
+import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -10,9 +12,10 @@ import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicStatusLine;
 import org.json.JSONObject;
-import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.javastackclient.models.authentication.AuthenticationData;
 
 
@@ -34,7 +37,7 @@ public class JavaStackCore {
         private final String constantValue;
 
         Constants(String constantValue) {
-            this.constantValue=constantValue;
+            this.constantValue = constantValue;
         }
 
         @Override
@@ -43,7 +46,7 @@ public class JavaStackCore {
         }
     }
     private static JavaStackCore _javaStackCore;
-    private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
+    private JavaStackCore(){}
 
     private String endpoint;
     private String username;
@@ -54,21 +57,14 @@ public class JavaStackCore {
     private String image_id;
 
 
-    private JavaStackCore(){}
-/*    public JavaStackCore(String endpoint, String username, String password, String tenant_name) {
-        this.username = username;
-        this.password = password;
-        this.tenant_id = tenant_name;
-        this.endpoint = endpoint;
-    }*/
+    private static class SingeltonJavaStackCoreHelper{
+        private static final JavaStackCore _javaStackCore = new JavaStackCore();
+    }
 
     public static JavaStackCore getJavaStackCore(){
-        if (_javaStackCore == null) {
-            _javaStackCore = new JavaStackCore();
-        }
-
-        return _javaStackCore;
+        return SingeltonJavaStackCoreHelper._javaStackCore;
     }
+
     public String getEndpoint() {
         return endpoint;
     }
@@ -97,10 +93,15 @@ public class JavaStackCore {
     public String getTenant_id(){
         return this.tenant_id;
     }
+    public String getToken_id(){
+        return this.token_id;
+    }
+
+
 
     private boolean isAuthenticated = false;
 
-    public void authenticateClient(String endpoint) throws IOException {
+    public synchronized  void  authenticateClient() throws IOException {
 
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpPost post;
@@ -109,7 +110,7 @@ public class JavaStackCore {
         if (!isAuthenticated) {
             StringBuilder buildUrl = new StringBuilder();
             buildUrl.append("http://");
-            buildUrl.append(endpoint);
+            buildUrl.append(this.endpoint);
             buildUrl.append(":");
             buildUrl.append(Constants.AUTH_PORT.toString());
             buildUrl.append(Constants.AUTH_URI.toString());
@@ -126,25 +127,31 @@ public class JavaStackCore {
 
             response = httpClient.execute(post);
             mapper = new ObjectMapper();
+
             AuthenticationData auth = mapper.readValue(
-                                                        JavaStackUtils.convertHttpResponseToString(response),
-                                                        AuthenticationData.class
+                    JavaStackUtils.convertHttpResponseToString(response),
+                    AuthenticationData.class
             );
+
             this.token_id = auth.getAccess().getToken().getId();
+            this.tenant_id = auth.getAccess().getToken().getTenant().getId();
             this.isAuthenticated = true;
 
         } else {
-            Logger.info("You are already authenticated");
+            System.out.println("You are already authenticated");
         }
     }
 
 
     public  HttpResponse listStacksRequest(String endpoint) throws IOException {
 
-        HttpGet getStack;
-        HttpClient httpClient = HttpClientBuilder.create().build();
 
-        if (isAuthenticated){
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponseFactory factory = new DefaultHttpResponseFactory();
+        HttpResponse response = null;
+        HttpGet listStacks = null;
+
+        if (this.isAuthenticated){
 
             StringBuilder buildUrl = new StringBuilder();
             buildUrl.append("http://");
@@ -154,12 +161,20 @@ public class JavaStackCore {
             buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(),this.tenant_id));
 
             System.out.println(buildUrl);
-            System.out.println(token_id);
+            System.out.println(this.token_id);
 
-            getStack = new HttpGet(buildUrl.toString());
-            getStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+            listStacks = new HttpGet(buildUrl.toString());
+            listStacks.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
-            return httpClient.execute(getStack);
+            response = httpClient.execute(listStacks);
+            int status_code = response.getStatusLine().getStatusCode();
+
+            return  (status_code == 200) ? response :  factory.newHttpResponse(
+                    new BasicStatusLine(
+                            HttpVersion.HTTP_1_1,
+                            status_code,
+                            "List Failed with Status: " + status_code),
+                    null);
 
         } else {
             throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
@@ -174,7 +189,7 @@ public class JavaStackCore {
         HttpPost createImage;
         HttpClient httpClient = HttpClientBuilder.create().build();
 
-        if (isAuthenticated) {
+        if (this.isAuthenticated) {
             StringBuilder buildUrl = new StringBuilder();
             buildUrl.append("http://");
             buildUrl.append(this.endpoint);
@@ -184,8 +199,8 @@ public class JavaStackCore {
 
             createImage = new HttpPost(buildUrl.toString());
             String requestBody =  String.format("{ \"container_format\": \"bare\"," +
-                                    "\"disk_format\": \"raw\"," +
-                                    " \"name\": \"%s\"}", name);
+                    "\"disk_format\": \"raw\"," +
+                    " \"name\": \"%s\"}", name);
 
             createImage.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
             createImage.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
@@ -201,7 +216,7 @@ public class JavaStackCore {
         HttpPut uploadImage;
         HttpClient httpClient = HttpClientBuilder.create().build();
 
-        if (isAuthenticated) {
+        if (this.isAuthenticated) {
             StringBuilder buildUrl = new StringBuilder();
             buildUrl.append("http://");
             buildUrl.append(endpoint);
@@ -221,16 +236,17 @@ public class JavaStackCore {
     }
     public  HttpResponse createStack(String template , String stackName) throws IOException {
 
-        HttpPost createStack;
         HttpClient httpClient = HttpClientBuilder.create().build();
-
+        HttpResponseFactory factory = new DefaultHttpResponseFactory();
+        HttpPost createStack = null;
+        HttpResponse response = null;
 
         String jsonTemplate = JavaStackUtils.convertYamlToJson(template);
         JSONObject modifiedObject = new JSONObject();
         modifiedObject.put("stack_name", stackName);
         modifiedObject.put("template", new JSONObject(jsonTemplate));
 
-        if (isAuthenticated) {
+        if (this.isAuthenticated) {
 
             StringBuilder buildUrl = new StringBuilder();
             buildUrl.append("http://");
@@ -239,11 +255,21 @@ public class JavaStackCore {
             buildUrl.append(Constants.HEAT_PORT.toString());
             buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString() ,tenant_id));
 
+            System.out.println(buildUrl.toString());
             createStack = new HttpPost(buildUrl.toString());
             createStack.setEntity(new StringEntity(modifiedObject.toString(), ContentType.APPLICATION_JSON));
+            System.out.println(this.token_id);
             createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
-            return httpClient.execute(createStack);
+            response = httpClient.execute(createStack);
+            int status_code = response.getStatusLine().getStatusCode();
+
+            return  (status_code == 201) ? response :  factory.newHttpResponse(
+                    new BasicStatusLine(
+                            HttpVersion.HTTP_1_1,
+                            status_code,
+                            "List Failed with Status: " + status_code),
+                    null);
         } else {
             throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
         }
@@ -253,7 +279,7 @@ public class JavaStackCore {
 
         HttpDelete deleteStack ;
         HttpClient httpClient = HttpClientBuilder.create().build();
-        if (isAuthenticated) {
+        if (this.isAuthenticated) {
 
             StringBuilder buildUrl = new StringBuilder();
             buildUrl.append("http://");
@@ -261,10 +287,10 @@ public class JavaStackCore {
             buildUrl.append(":");
             buildUrl.append(Constants.HEAT_PORT.toString());
             buildUrl.append(String.format("/%s/%s/stacks/%s/%s",
-                                            Constants.HEAT_VERSION.toString(),
-                                            tenant_id,
-                                            stackName,
-                                            stackId));
+                    Constants.HEAT_VERSION.toString(),
+                    tenant_id,
+                    stackName,
+                    stackId));
             deleteStack = new HttpDelete(buildUrl.toString());
             deleteStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
@@ -278,7 +304,7 @@ public class JavaStackCore {
         HttpGet findStack;
         HttpClient httpClient = HttpClientBuilder.create().build();
 
-        if (isAuthenticated){
+        if (this.isAuthenticated){
 
             StringBuilder buildUrl = new StringBuilder();
             buildUrl.append("http://");
