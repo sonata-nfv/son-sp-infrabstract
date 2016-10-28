@@ -1,20 +1,20 @@
 /**
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
- * 
+ *
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ *
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ *
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
- * 
+ *
  * Neither the name of the SONATA-NFV, UCL, NOKIA, NCSR Demokritos nor the names of its contributors
  * may be used to endorse or promote products derived from this software without specific prior
  * written permission.
- * 
+ *
  * This work has been performed in the framework of the SONATA project, funded by the European
  * Commission under Grant number 671517 through the Horizon 2020 and 5G-PPP programmes. The authors
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
@@ -23,7 +23,7 @@
  * @author Sharon Mendel Brin (Ph.D.), Nokia
  * @author Dario Valocchi (Ph.D.), UCL
  * @author Akis Kourtis, NCSR Demokritos
- * 
+ *
  */
 
 package sonata.kernel.VimAdaptor.wrapper.openstack;
@@ -32,11 +32,16 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.apache.http.HttpResponse;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
+import sonata.kernel.VimAdaptor.javastackclient.JavaStackCore;
+import sonata.kernel.VimAdaptor.javastackclient.JavaStackUtils;
+import sonata.kernel.VimAdaptor.javastackclient.models.stacks.StackData;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 
@@ -54,18 +59,19 @@ public class OpenStackHeatClient {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackHeatClient.class);
 
+  private JavaStackCore javaStack; // instance for calling OpenStack APIs
+
+  private ObjectMapper mapper;
+
   private String url; // url of the OpenStack Client
-
   private String userName; // OpenStack Client user
-
   private String password; // OpenStack Client password
-
   private String tenantName; // OpenStack tenant name
 
 
   /**
    * Construct a new Openstack Client.
-   * 
+   *
    * @param url of the OpenStack endpoint
    * @param userName to log into the OpenStack service
    * @param password to log into the OpenStack service
@@ -76,6 +82,21 @@ public class OpenStackHeatClient {
     this.userName = userName;
     this.password = password;
     this.tenantName = tenantName;
+
+    mapper = new ObjectMapper();
+
+    javaStack = JavaStackCore.getJavaStackCore();
+    javaStack.setEndpoint(url);
+    javaStack.setUsername(userName);
+    javaStack.setPassword(password);
+    javaStack.setTenant_id(tenantName);
+
+    //Authenticate
+    try {
+      javaStack.authenticateClient(url);
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -86,50 +107,40 @@ public class OpenStackHeatClient {
    * @return - the uuid of the created stack, if the process failed the returned value is null
    */
   public String createStack(String stackName, String template) {
+
     String uuid = null;
-    String string = null;
+
+    template = "heat_template_version: '2013-05-23'\n" +
+            "  description: Simple template to test heat commands\n" +
+            "  parameters:\n" +
+            "    flavor:\n" +
+            "      default: m1.tiny\n" +
+            "      type: string\n" +
+            "  resources:\n" +
+            "    my_instance:\n" +
+            "      type: OS::Nova::Server\n" +
+            "      properties:\n" +
+            "        image: 356d8e0f-3332-48bc-a306-8b51876ef3c5\n" +
+            "        flavor: m1.small\n" +
+            "        key_name: test\n" +
+            "        networks:\n" +
+            "        - network: sonata-subnet-one\n";
 
     Logger.info("Creating stack: " + stackName);
     Logger.debug("Template:\n" + template);
     // Logger.debug("User: " + userName);
     // Logger.debug("Tenant: " + tenantName);
     // Logger.debug("Pass: " + password);
+
     try {
 
-      // Call the python client for creating the stack
-
-      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
-          "--configuration", url, userName, password, tenantName, "--create", stackName, template);
-      Process process = processBuilder.start();
-
-      // Read the errors of creating the stack
-      BufferedReader stdError = new BufferedReader(
-          new InputStreamReader(process.getErrorStream(), Charset.forName("UTF-8")));
-      if (stdError.read() != -1) {
-        Logger.error("The errors of creating stack (if any):");
-        while ((string = stdError.readLine()) != null) {
-          Logger.error("  " + string);
-        }
-      }
-      stdError.close();
-      // Read the results of creating the stack
-      BufferedReader stdInput = new BufferedReader(
-          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-      Logger.info("The results of creating the stack:");
-      while ((string = stdInput.readLine()) != null) {
-        Logger.info("  " + string);
-        uuid = string;
-      }
-      stdInput.close();
-      process.destroy();
-
-      if (uuid != null) {
-        Logger.info("UUID of new stack: " + uuid);
-      }
+      String createStackResponse = JavaStackUtils.convertHttpResponseToString(javaStack.createStack(template, stackName));
+      StackData stack = mapper.readValue(createStackResponse, StackData.class);
+      uuid = stack.getStack().getId();
 
     } catch (Exception e) {
       Logger.error(
-          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+              "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
     }
 
     return uuid;
@@ -177,7 +188,7 @@ public class OpenStackHeatClient {
 
   /**
    * Delete Stack.
-   * 
+   *
    * @param stackName - used for logging, usually service tenant
    * @param uuid - OpenStack UUID of the stack
    * @return - if the operation was sent successfully to OpenStack - 'DELETED'
@@ -225,7 +236,7 @@ public class OpenStackHeatClient {
 
   /**
    * Get stack composition.
-   * 
+   *
    * @param stackName - used for logging, usually service tenant
    * @param uuid - OpenStack UUID of the stack
    * @return a StackComposition object representing the stack resources

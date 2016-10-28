@@ -421,7 +421,6 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    System.out.println("###########################################################")
     //Added a mock wrapper till the ODL wrapper becomes available
     String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"networkMock\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
