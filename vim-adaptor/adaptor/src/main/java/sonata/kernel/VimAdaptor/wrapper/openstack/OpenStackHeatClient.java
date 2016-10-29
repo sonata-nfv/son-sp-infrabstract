@@ -83,8 +83,7 @@ public class OpenStackHeatClient {
     this.password = password;
     this.tenantName = tenantName;
 
-    Logger.info(url + " " + userName + " " + password + " " + tenantName);
-    mapper = new ObjectMapper();
+    Logger.debug("User: " + userName + " Tenant: " + tenantName + " Pass: " + password);
 
     javaStack = JavaStackCore.getJavaStackCore();
     javaStack.setEndpoint(url);
@@ -108,9 +107,7 @@ public class OpenStackHeatClient {
    * @return - the uuid of the created stack, if the process failed the returned value is null
    */
   public String createStack(String stackName, String template) {
-
     String uuid = null;
-
     template = "   heat_template_version: '2013-05-23'\n" +
             "  description: Simple template to test heat commands\n" +
             "  parameters:\n" +
@@ -129,12 +126,9 @@ public class OpenStackHeatClient {
 
     Logger.info("Creating stack: " + stackName);
     Logger.debug("Template:\n" + template);
-    // Logger.debug("User: " + userName);
-    // Logger.debug("Tenant: " + tenantName);
-    // Logger.debug("Pass: " + password);
 
     try {
-
+      mapper = new ObjectMapper();
       String createStackResponse = JavaStackUtils.convertHttpResponseToString(javaStack.createStack(template, stackName));
       StackData stack = mapper.readValue(createStackResponse, StackData.class);
       uuid = stack.getStack().getId();
@@ -149,45 +143,28 @@ public class OpenStackHeatClient {
 
 
   /**
-   * Get the status of existing stack.
+   * Get the status of existing stack. Using Stack Name or Stack Id
    *
    * @param stackName used for logging, usually service tenant
    * @param uuid OpenStack UUID of the stack
    * @return the OpenStack status of the stack
    */
   public String getStackStatus(String stackName, String uuid) {
-
     String status = null;
-    String string = null;
     Logger.info("Getting status for stack: " + stackName);
-
-
-
     try {
-      // Call the python client for the status of the stack
-      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
-          "--configuration", url, userName, password, tenantName, "--status", uuid);
-      Process process = processBuilder.start();
+      mapper = new ObjectMapper();
+      String findStackResponse = JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
+      StackData stack = mapper.readValue(findStackResponse, StackData.class);
+      status = stack.getStack().getStack_status();
 
-      // Read the status of the stack
-      BufferedReader stdInput = new BufferedReader(
-          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-
-      while ((string = stdInput.readLine()) != null) {
-        Logger.info(string);
-        status = string;
-      }
-      stdInput.close();
-      process.destroy();
-      Logger.info("The status of stack: " + stackName + " with uuid: " + uuid + " : " + status);
     } catch (Exception e) {
-      Logger.error("Runtime error getting stack status for stack : " + stackName
-          + " error message: " + e.getMessage());
+      Logger.error(
+              "Runtime error getStackStatus: " + stackName + " error message: " + e.getMessage());
     }
-
     return status;
-
   }
+
 
   /**
    * Delete Stack.
@@ -199,36 +176,20 @@ public class OpenStackHeatClient {
   public String deleteStack(String stackName, String uuid) {
 
     String isDeleted = null;
-    String string = null;
-
     Logger.info("Deleting stack: " + stackName);
 
     try {
-      // Call the python client for deleting of the stack
-      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
-          "--configuration", url, userName, password, tenantName, "--delete", uuid);
-      Process process = processBuilder.start();
+      String stackIdToDelete = new ObjectMapper().readValue(
+              JavaStackUtils.convertHttpResponseToString(
+                      javaStack.findStack(stackName)), StackData.class).getStack().getId();
+      javaStack.deleteStack(stackName, stackIdToDelete);
+      isDeleted = "DELETED";
 
-      // Read the results
-      BufferedReader stdInput = new BufferedReader(
-          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-      while ((string = stdInput.readLine()) != null) {
-        // Logger.info(string);
-        isDeleted = string;
-      }
-      stdInput.close();
-      process.destroy();
-
-      Logger.info(
-          "Request was sent for stack: " + stackName + " with uuid: " + uuid + " : " + isDeleted);
-    } catch (Exception e) {
-      Logger.error(
-          "Runtime error when deleting stack : " + stackName + " error message: " + e.getMessage());
+    } catch (IOException e) {
+      e.printStackTrace();
     }
 
-
     return isDeleted;
-
   }
 
   @Override

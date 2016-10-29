@@ -16,7 +16,9 @@ import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicStatusLine;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.javastackclient.models.authentication.AuthenticationData;
+import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
 
 
 import java.io.File;
@@ -45,7 +47,8 @@ public class JavaStackCore {
             return this.constantValue;
         }
     }
-    private static JavaStackCore _javaStackCore;
+
+    private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
     private JavaStackCore(){}
 
     private String endpoint;
@@ -138,12 +141,12 @@ public class JavaStackCore {
             this.isAuthenticated = true;
 
         } else {
-            System.out.println("You are already authenticated");
+            Logger.info("You are already authenticated");
         }
     }
 
 
-    public  HttpResponse listStacksRequest(String endpoint) throws IOException {
+    public  synchronized HttpResponse listStacksRequest(String endpoint) throws IOException {
 
 
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -182,7 +185,7 @@ public class JavaStackCore {
 
     }
 
-    public  HttpResponse createImage( String template,
+    public synchronized HttpResponse createImage( String template,
                                       String containerFormat,
                                       String diskFormat,
                                       String name) throws IOException {
@@ -211,7 +214,7 @@ public class JavaStackCore {
         return httpClient.execute(createImage);
     }
 
-    public  HttpResponse uploadBinaryImageData(String endpoint, String imageId,String binaryImage) throws IOException {
+    public  synchronized HttpResponse uploadBinaryImageData(String endpoint, String imageId,String binaryImage) throws IOException {
 
         HttpPut uploadImage;
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -234,7 +237,7 @@ public class JavaStackCore {
         }
         return httpClient.execute(uploadImage);
     }
-    public  HttpResponse createStack(String template , String stackName) throws IOException {
+    public synchronized  HttpResponse createStack(String template , String stackName) throws IOException {
 
         HttpClient httpClient = HttpClientBuilder.create().build();
         HttpResponseFactory factory = new DefaultHttpResponseFactory();
@@ -275,7 +278,7 @@ public class JavaStackCore {
         }
     }
 
-    public  HttpResponse deleteStack(String stackName, String stackId) throws IOException {
+    public  synchronized HttpResponse deleteStack(String stackName, String stackId) throws IOException {
 
         HttpDelete deleteStack ;
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -300,7 +303,7 @@ public class JavaStackCore {
         }
     }
 
-    public  HttpResponse findStack(String stackIdentity) throws  IOException {
+    public synchronized  HttpResponse findStack(String stackIdentity) throws  IOException {
         HttpGet findStack;
         HttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -311,10 +314,10 @@ public class JavaStackCore {
             buildUrl.append(this.endpoint);
             buildUrl.append(":");
             buildUrl.append(Constants.HEAT_PORT.toString());
-            buildUrl.append(String.format("/%s/%s/stacks/%s", Constants.HEAT_VERSION.toString(),tenant_id, stackIdentity));
+            buildUrl.append(String.format("/%s/%s/stacks/%s", Constants.HEAT_VERSION.toString(), this.tenant_id, stackIdentity));
 
-            System.out.println(buildUrl);
-            System.out.println(token_id);
+            Logger.info("URL: " + buildUrl);
+            Logger.info("Token: " + this.token_id);
 
             findStack = new HttpGet(buildUrl.toString());
             findStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);

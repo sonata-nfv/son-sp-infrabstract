@@ -4,8 +4,10 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.apache.commons.logging.Log;
 import org.apache.http.HttpResponse;
 import org.json.JSONObject;
+import org.slf4j.LoggerFactory;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedReader;
@@ -15,6 +17,8 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class JavaStackUtils {
+
+    private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
 
     public static String readFile(String filePath) throws IOException {
         return new String(Files.readAllBytes(Paths.get(filePath)));
@@ -30,8 +34,10 @@ public class JavaStackUtils {
 
     public static String convertHttpResponseToString(HttpResponse response) throws IOException {
 
-        String statusCode = Integer.toString(response.getStatusLine().getStatusCode());
-        if (statusCode.startsWith("2")) {
+        int status = response.getStatusLine().getStatusCode();
+        String statusCode = Integer.toString(status);
+
+        if (statusCode.startsWith("2") || statusCode.startsWith("3")) {
             System.out.println(response.getStatusLine().getStatusCode());
             StringBuilder sb = new StringBuilder();
             BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
@@ -41,6 +47,10 @@ public class JavaStackUtils {
                 sb.append(line);
             }
             return sb.toString();
+        } else if (status == 403){
+            throw new IOException("Access forbidden, make sure you are using the correct credentials: " + statusCode);
+        } else if (status == 409) {
+            throw new IOException("Stack is already created, conflict detected " + statusCode);
         } else {
             throw new IOException("Failed Request with Status Code: " + statusCode);
         }
