@@ -22,6 +22,8 @@ import org.openstack4j.api.Builders;
 import org.openstack4j.api.OSClient;
 import org.openstack4j.model.heat.Stack;
 import org.openstack4j.openstack.OSFactory;
+
+import edu.umd.cs.findbugs.detect.StringConcatenation;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.placement.net.TranslatorNetwork;
 import org.apache.log4j.Logger;
@@ -195,12 +197,32 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
             System.err.println("RestInterfaceServerApi::run : Failed to start server " + ioe);
         }
     }
+    public static String extractNumber(String str) {                
+
+        if(str == null || str.isEmpty()) return "";
+
+        StringBuilder sb = new StringBuilder();
+        boolean found = false;
+        for(char c : str.toCharArray()){
+            if(Character.isDigit(c)){
+                sb.append(c);
+                found = true;
+            }
+        }
+        if (found == false) {
+        	return "";
+        }
+
+        return sb.toString();
+    }
 
     @Override
     public Response serve(IHTTPSession session) {
         final Logger logger = Logger.getLogger(RestInterfaceClientApi.class);
         try {
             String uri = session.getUri();
+            String req_index = extractNumber(uri);
+            String req_uri = uri;            
             if("/packages".equals(uri) && session.getMethod().equals(Method.POST)) {
                 session.getParms();
                 Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
@@ -229,8 +251,8 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
 
                 String base_dir = PackageLoader.processZipFile(buffer);
 
-                /*MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
-                MessageQueue.get_rest_serverQ().put(q_data);*/
+                //MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, base_dir);
+               // MessageQueue.get_rest_serverQ().put(q_data);
 
                 String jsonPackage = "OK";
                 SonataPackage pack = PackageLoader.zipByteArrayToSonataPackage(buffer);
@@ -252,7 +274,8 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
                     return newFixedLengthResponse(Response.Status.OK, "application/json", jsonPackageList);
             }
             else
-            if("/requests".equals(uri) && session.getMethod().equals(Method.POST)) {
+            if(req_uri.equals(uri) && session.getMethod().equals(Method.POST)) {
+            	int newIndex;
                 /*Integer contentLength = Integer.parseInt(session.getHeaders().get("content-length"));
                 byte[] buffer = new byte[contentLength];
                 session.getInputStream().read(buffer, 0, contentLength);
@@ -265,21 +288,37 @@ class RestInterfaceServerApi extends NanoHTTPD implements Runnable {
                 int requestIndex = Integer.valueOf(requestIndexStr);
                 // TODO: add deploy code
                 return newFixedLengthResponse(Response.Status.CREATED, null, null);*/
-            	int newIndex = 0;
-            	//System.out.println("New Index is " + newIndex);
+            	if (req_index.length() > 0) {
+                	newIndex = Integer.parseInt(req_index);
+                	try {
+                		String package_dir = Catalogue.getJsonPackageDescriptor(newIndex);
+                    	if (package_dir.length() != 0) {
+                    		MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, package_dir);
+                            MessageQueue.get_rest_serverQ().put(q_data);
+                            return newFixedLengthResponse(Response.Status.CREATED, "application/json", package_dir);
+                    	}
+                    	else {
+                    		logger.debug("package not found in the catalogue");
+                    	}
+                	}
+                	catch(Exception e){
+                		e.printStackTrace();
+                	}	
+                	
+                	
+                	//System.out.println("New_index "+new_index);
+                }
+            	else {
+            		return newFixedLengthResponse(Response.Status.NOT_IMPLEMENTED, null, null);
+            	}
             	//String package_descriptor = DescriptorTranslator.process_descriptor(newIndex);
-            	String package_dir = Catalogue.getJsonPackageDescriptor(newIndex);
-            	MessageQueueData q_data = new MessageQueueData(MessageType.TRANSLATE_DESC, package_dir);
-                //System.out.println("q_data is "+ q_data.data);
-                MessageQueue.get_rest_serverQ().put(q_data);
-                return newFixedLengthResponse(Response.Status.CREATED, "application/json", package_dir);
             }
             else
                 return newFixedLengthResponse(Response.Status.NOT_IMPLEMENTED, null, null);
 
         } catch (IOException e) {
 
-        } catch (InterruptedException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
