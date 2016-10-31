@@ -90,7 +90,7 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
                 assert functionInstance != null : "In Service " + service.getName() + " Virtual Link " + link.getId() + " references unknown vnf with id " + vnfid;
 
                 // Add units for vnf virtual link to new LinkInstance that connects vnfs
-                LinkInstance vnfLinkInstance = functionInstance.outerLinks.get(connectionPointName);
+                LinkInstance vnfLinkInstance = functionInstance.links.get(connectionPointName);
                 assert vnfLinkInstance != null : "In Service " + service.getName() + " Virtual Link " + link.getId() + " connects to function " + functionInstance.name + " that does not contain link for connection point " + connectionPointName;
 
                 linkInstance.interfaceList.put(functionInstance, conPoint);
@@ -104,12 +104,13 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
         }
 
         // Add LinkInstances for inner Vnf VirtualLinks and units
+        /*
         for(FunctionInstance functionInstance: instance.functions.values()) {
             for(Map.Entry<String, LinkInstance> linkEntry: functionInstance.innerLinks.entrySet()) {
                 instance.innerLinks.put(linkEntry.getKey(), linkEntry.getValue());
             }
             //instance.units.addAll(functionInstance.units.values());
-        }
+        }*/
 
         return instance;
     }
@@ -188,10 +189,12 @@ public class DefaultPlacementPlugin implements PlacementPlugin {
             assert outerVnfConnection<=1 : "In Vnfd "+vnfd.getName()+" virtual link "+link.getId()+" connects to more than one vnf outer connection";
             if(outerVnfConnection>0) {
                 instance.connectionPoints.put(outVnfConnectionName, link.getId());
-                instance.outerLinks.put(link.getId(), linkInstance);
+                instance.links.put(link.getId(), linkInstance);
             }
+            /*
             else
                 instance.innerLinks.put(link.getId(), linkInstance);
+            */
 
         }
         return instance;
