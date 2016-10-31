@@ -172,7 +172,7 @@ class DescriptorTranslator
                 String body = mapper2.writeValueAsString(template);
                 logger.debug("Template Resources: "+template.getResources());
                 logger.info("Body: "+body);
-                MessageQueueData c_data = new MessageQueueData(MessageType.POST_MESSAGE, body, "http://131.234.31.45:5001");
+                MessageQueueData c_data = new MessageQueueData(MessageType.POST_MESSAGE, body, "http://131.234.31.45:8080");
                 MessageQueue.get_rest_clientQ().put(c_data);
 
             } catch (JsonProcessingException e) {
