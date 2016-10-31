@@ -11,7 +11,7 @@ internalFunctionsPath: "./sandman/placement/YAML/internal"
 
 resources:
   - popName: "Datacenter1"
-    endpoint: "http://131.234.31.45:5001"
+    endpoint: "http://131.234.31.45:5001/v2.0"
     userName: "bla"
     password: "bla"
     tenantName: "fc394f2ab2df4114bde39905f800dc57"
