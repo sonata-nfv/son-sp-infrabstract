@@ -7,6 +7,7 @@
             import sonata.kernel.VimAdaptor.commons.heat.HeatTemplate;
             import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPoint;
             import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
+            import sonata.kernel.VimAdaptor.commons.nsd.VirtualLink;
             import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
             import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
             import sonata.kernel.VimAdaptor.wrapper.openstack.Flavor;
@@ -87,18 +88,22 @@
 
                         List<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
                         for(ConnectionPoint connectionPoint: finst.getValue().deploymentUnits.get(0).getConnectionPoints()) {
-                            LinkInstance link1 = findLinkInstance(instance, finst.getValue(),connectionPoint.getId());
+                            LinkInstance link1 = findLinkInstance(finst.getValue(),connectionPoint.getId());
 
                             // Connection point not connected or something went wrong
                             if(link1==null)
                                 continue;
+
 
                             boolean mgmtPort = "mgmt".equals(link1.getLinkId());
 
                             // Create port for connection point
                             HeatResource port = new HeatResource();
                             port.setType("OS::Neutron::Port");
-                            port.setName(finst.getValue().descriptor.getName() + ":" + connectionPoint.getId() + ":" + instance.service.getInstanceUuid());
+
+                            String[] conPointParts = connectionPoint.getId().split(":");
+                            port.setName(finst.getValue().descriptor.getName() + ":" + /*connectionPoint.getId()*/ conPointParts[1]
+                                    + ":" + link1.getLinkId() + ":" + instance.service.getInstanceUuid());
                             port.putProperty("name", port.getResourceName());
                             logger.debug("Neutron::Port \t\t\t\t"+port.getResourceName());
 
@@ -115,7 +120,8 @@
                             HashMap<String, Object> n1 = new HashMap<String, Object>();
                             HashMap<String, Object> portMap = new HashMap<String, Object>();
                             portMap.put("get_resource",
-                                    finst.getValue().descriptor.getName() + ":" + connectionPoint.getId() + ":" + instance.service.getInstanceUuid());
+                                    finst.getValue().descriptor.getName() + ":" + /*connectionPoint.getId()*/ conPointParts[1] + ":" +
+                                    link1.getLinkId() + ":" + instance.service.getInstanceUuid());
                             n1.put("port", portMap);
                             net.add(n1);
 
@@ -128,29 +134,17 @@
                                             }
                 }
 
-
-
-                protected static LinkInstance findLinkInstance(ServiceInstance instance, FunctionInstance unit, String conPoint){
-
-                    LinkInstance link = null;
-                    for(LinkInstance linkInstance: instance.outerLinks.values()) {
-                        for(Map.Entry<FunctionInstance, String> entry: linkInstance.interfaceList.entrySet()){
-                            FunctionInstance entryUnit = entry.getKey();
-                            String portname = entry.getValue();
-                                return linkInstance;
+                protected static LinkInstance findLinkInstance(FunctionInstance instance, String conPoint)
+                {
+                    for(Map.Entry<String,LinkInstance> entry: instance.links.entrySet())
+                    {
+                        if(entry.getValue().interfaceList.get(instance).equals(conPoint))
+                        {
+                            return entry.getValue();
                         }
                     }
-
-                    for(LinkInstance linkInstance: instance.innerLinks.values()) {
-                        for(Map.Entry<FunctionInstance, String> entry: linkInstance.interfaceList.entrySet()) {
-                            FunctionInstance entryUnit = entry.getKey();
-                            String portname = entry.getValue();
-                            return linkInstance;
-                        }
-                    }
-                    return link;
+                    return null;
                 }
-
 
 
 //                protected static void populate_nova_server1(ServiceInstance instance,
