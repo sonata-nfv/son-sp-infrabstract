@@ -79,8 +79,8 @@
 
 
                         server.setType("OS::Nova::Server");
-                        server.setName(finst.getValue().function.getVnfId()/*+":"+unit.name */+ ":" +instance.service.getInstanceUuid());
-                        server.putProperty("name", dataCenter.getPopName() + ":" + server.getResourceName());
+                        server.setName(finst.getValue().function.getVnfName() /*+":"+unit.name */+ ":" +instance.service.getInstanceUuid());
+                        server.putProperty("name", /*dataCenter.getPopName() + ":" + */server.getResourceName());
                         server.putProperty("flavor", vimFlavors.get(0));
                         server.putProperty("image", finst.getValue().deploymentUnits.get(0).getVmImage());
 
@@ -217,65 +217,68 @@
                                                                      List<NetworkResourceUnit> networkResources,
                                                                      int subnetIndex)
                 {
-                    for(LinkInstance link: instance.innerLinks.values())
-                    {
-                        HeatResource router = new HeatResource();
-                        router.setName(instance.service.getName() + ":"
-                                + link.getLinkId() + ":"
-                                + instance.service.getInstanceUuid());
-                        router.setType("OS::Neutron::Router");
-                        router.putProperty("name", instance.service.getName() + ":"
-                                        + link.getLinkId() + ":"
-                                        + instance.service.getInstanceUuid());
-                        model.addResource(router);
+                    for(Map.Entry<String, FunctionInstance> finst: instance.functions.entrySet()) {
+                        for (LinkInstance link : finst.getValue().links.values()) {
+                            if(link.isMgmtLink())
+                                continue;
+                            HeatResource router = new HeatResource();
+                            router.setName(instance.service.getName() + ":"
+                                    + link.getLinkId() + ":"
+                                    + instance.service.getInstanceUuid());
+                            router.setType("OS::Neutron::Router");
+                            router.putProperty("name", instance.service.getName() + ":"
+                                    + link.getLinkId() + ":"
+                                    + instance.service.getInstanceUuid());
+                            model.addResource(router);
 
-                        for(Map.Entry<FunctionInstance, String> entry: link.interfaceList.entrySet()){
-                            FunctionInstance entryUnit = entry.getKey();
-                            String portName = entry.getValue();
+                            for (Map.Entry<FunctionInstance, String> entry : link.interfaceList.entrySet()) {
+                                FunctionInstance entryUnit = entry.getKey();
+                                String portName = entry.getValue();
 
-                            HeatResource network = new HeatResource();
-                            network.setType("OS::Neutron::Net");
-                            network.setName(entryUnit.function.getVnfName() + ":" + link.getLinkId() + ":net:" + instance.service.getInstanceUuid());
-                            network.putProperty("name", network.getResourceName());
-                            model.addResource(network);
+                                HeatResource network = new HeatResource();
+                                network.setType("OS::Neutron::Net");
+                                network.setName(entryUnit.function.getVnfName() + ":" + link.getLinkId() + ":net:" + instance.service.getInstanceUuid());
+                                network.putProperty("name", network.getResourceName());
+                                model.addResource(network);
 
-                            HeatResource subnet = new HeatResource();
-                            subnet.setType("OS::Neutron::Subnet");
-                            subnet.setName(entryUnit.function.getVnfName() + ":" + link.getLinkId() + ":subnet:" + instance.service.getInstanceUuid());
-                            subnet.putProperty("name", subnet.getResourceName());
-                            NetworkResourceUnit nru  = networkResources.get(subnetIndex);
-                            subnet.putProperty("cidr", nru.subnetCidr);
-                            if (nru.gateway != null)
-                                subnet.putProperty("gateway_ip", nru.gateway);
-                            subnetIndex++;
+                                HeatResource subnet = new HeatResource();
+                                subnet.setType("OS::Neutron::Subnet");
+                                subnet.setName(entryUnit.function.getVnfName() + ":" + link.getLinkId() + ":subnet:" + instance.service.getInstanceUuid());
+                                subnet.putProperty("name", subnet.getResourceName());
+                                NetworkResourceUnit nru = networkResources.get(subnetIndex);
+                                subnet.putProperty("cidr", nru.subnetCidr);
+                                if (nru.gateway != null)
+                                    subnet.putProperty("gateway_ip", nru.gateway);
+                                subnetIndex++;
 
-                            HashMap<String, Object> netMap = new HashMap<String, Object>();
-                            netMap.put("get_resource", network.getResourceName());
-                            subnet.putProperty("network", netMap);
-                            model.addResource(subnet);
+                                HashMap<String, Object> netMap = new HashMap<String, Object>();
+                                netMap.put("get_resource", network.getResourceName());
+                                subnet.putProperty("network", netMap);
+                                model.addResource(subnet);
 
 
-                            // Create RouterInterface
-                            HeatResource routerInterface = new HeatResource();
-                            routerInterface.setType("OS::Neutron::RouterInterface");
-                            routerInterface.setName(entryUnit.function.getVnfName() + ":" + portName + ":" + instance.service.getInstanceUuid());
+                                // Create RouterInterface
+                                HeatResource routerInterface = new HeatResource();
+                                routerInterface.setType("OS::Neutron::RouterInterface");
+                                routerInterface.setName(entryUnit.function.getVnfName() + ":" + portName + ":" + instance.service.getInstanceUuid());
 
-                            HashMap<String, Object> subnetMap = new HashMap<String, Object>();
-                            subnetMap.put("get_resource", subnet.getResourceName());
-                            routerInterface.putProperty("subnet", subnetMap);
+                                HashMap<String, Object> subnetMap = new HashMap<String, Object>();
+                                subnetMap.put("get_resource", subnet.getResourceName());
+                                routerInterface.putProperty("subnet", subnetMap);
 
-                            // Attach to the virtual router
-                            HashMap<String, Object> routerMap = new HashMap<String, Object>();
-                            routerMap.put("get_resource", router.getResourceName());
-                            routerInterface.putProperty("router", routerMap);
+                                // Attach to the virtual router
+                                HashMap<String, Object> routerMap = new HashMap<String, Object>();
+                                routerMap.put("get_resource", router.getResourceName());
+                                routerInterface.putProperty("router", routerMap);
 
-                            model.addResource(routerInterface);
-                            logger.debug("Neutron::Net \t\t\t\t"+network.getResourceName());
-                            logger.debug("Neutron::Subnet \t\t\t"+subnet.getResourceName());
-                            logger.debug("Neutron::RouterInterface \t"+routerInterface.getResourceName());
+                                model.addResource(routerInterface);
+                                logger.debug("Neutron::Net \t\t\t\t" + network.getResourceName());
+                                logger.debug("Neutron::Subnet \t\t\t" + subnet.getResourceName());
+                                logger.debug("Neutron::RouterInterface \t" + routerInterface.getResourceName());
+
+                            }
 
                         }
-
                     }
                     return subnetIndex;
                 }
