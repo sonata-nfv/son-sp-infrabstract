@@ -29,8 +29,11 @@
 package sonata.kernel.WimAdaptor.wrapper.vtn;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.Properties;
 
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +48,8 @@ public class VtnClient {
   private static final String PYTHON2_7 = "python2.7";
 
   private static final String ADAPTOR_HEAT_API_PY = "/adaptor/vtn-odl.py";
+
+  private static final String ADAPTOR_SEGMENTS_CONF = "/adaptor/segments.conf";
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(VtnClient.class);
 
@@ -81,15 +86,16 @@ public class VtnClient {
     String string = null;
     vtnName = formatField(vtnName);
     condName = formatField(condName);
+    Properties segments = new Properties();
 
-    Logger.info("Creating Flow Rule: " + condName + " for vtn: " + vtnName);
 
     try {
-
+      segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
+      Logger.info("Creating Flow Rule: " + condName + " for vtn: " + vtnName);
       // Call the python client for creating the stack
-      ProcessBuilder processBuilder =
-          new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY, "--configuration", url, userName,
-              password, "-sf", condName, "10.100.16.40/32", "10.100.32.40/32", vtnName);
+      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
+          "--configuration", url, userName, password, "-sf", condName, segments.getProperty("in"),
+          segments.getProperty("out"), vtnName);
       Process process = processBuilder.start();
 
       // Read the errors of creating the stack
