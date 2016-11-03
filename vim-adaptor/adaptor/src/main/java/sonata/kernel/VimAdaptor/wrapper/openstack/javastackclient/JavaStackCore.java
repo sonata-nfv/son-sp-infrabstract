@@ -109,133 +109,40 @@ public class JavaStackCore {
         HttpPost post;
         HttpResponse response = null;
 
-        if (!isAuthenticated) {
-            StringBuilder buildUrl = new StringBuilder();
-            buildUrl.append("http://");
-            buildUrl.append(this.endpoint);
-            buildUrl.append(":");
-            buildUrl.append(Constants.AUTH_PORT.toString());
-            buildUrl.append(Constants.AUTH_URI.toString());
+        StringBuilder buildUrl = new StringBuilder();
+        buildUrl.append("http://");
+        buildUrl.append(this.endpoint);
+        buildUrl.append(":");
+        buildUrl.append(Constants.AUTH_PORT.toString());
+        buildUrl.append(Constants.AUTH_URI.toString());
 
-            post = new HttpPost(buildUrl.toString());
+        post = new HttpPost(buildUrl.toString());
 
-            String body = String.format(
-                    "{\"auth\": {\"tenantName\": \"%s\", \"passwordCredentials\": {\"username\": \"%s\", \"password\": \"%s\"}}}",
-                    this.tenant_id,
-                    this.username,
-                    this.password);
+        String body = String.format(
+                "{\"auth\": {\"tenantName\": \"%s\", \"passwordCredentials\": {\"username\": \"%s\", \"password\": \"%s\"}}}",
+                this.tenant_id,
+                this.username,
+                this.password);
 
-            post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+        post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
-            response = httpClient.execute(post);
-            mapper = new ObjectMapper();
+        response = httpClient.execute(post);
+        mapper = new ObjectMapper();
 
-            AuthenticationData auth = mapper.readValue(
-                    JavaStackUtils.convertHttpResponseToString(response),
-                    AuthenticationData.class
-            );
+        AuthenticationData auth = mapper.readValue(
+                JavaStackUtils.convertHttpResponseToString(response),
+                AuthenticationData.class
+        );
 
-            this.token_id = auth.getAccess().getToken().getId();
-            this.tenant_id = auth.getAccess().getToken().getTenant().getId();
-            this.isAuthenticated = true;
+        this.token_id = auth.getAccess().getToken().getId();
+        this.tenant_id = auth.getAccess().getToken().getTenant().getId();
+        this.isAuthenticated = true;
 
-        } else {
-            Logger.info("You are already authenticated");
-        }
+
     }
 
 
-    public  synchronized HttpResponse listStacksRequest(String endpoint) throws IOException {
 
-
-        HttpClient httpClient = HttpClientBuilder.create().build();
-        HttpResponseFactory factory = new DefaultHttpResponseFactory();
-        HttpResponse response = null;
-        HttpGet listStacks = null;
-
-        if (this.isAuthenticated){
-
-            StringBuilder buildUrl = new StringBuilder();
-            buildUrl.append("http://");
-            buildUrl.append(endpoint);
-            buildUrl.append(":");
-            buildUrl.append(Constants.HEAT_PORT.toString());
-            buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(),this.tenant_id));
-
-            System.out.println(buildUrl);
-            System.out.println(this.token_id);
-
-            listStacks = new HttpGet(buildUrl.toString());
-            listStacks.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
-
-            response = httpClient.execute(listStacks);
-            int status_code = response.getStatusLine().getStatusCode();
-
-            return  (status_code == 200) ? response :  factory.newHttpResponse(
-                    new BasicStatusLine(
-                            HttpVersion.HTTP_1_1,
-                            status_code,
-                            "List Failed with Status: " + status_code),
-                    null);
-
-        } else {
-            throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
-        }
-
-    }
-
-    public synchronized HttpResponse createImage( String template,
-                                      String containerFormat,
-                                      String diskFormat,
-                                      String name) throws IOException {
-        HttpPost createImage;
-        HttpClient httpClient = HttpClientBuilder.create().build();
-
-        if (this.isAuthenticated) {
-            StringBuilder buildUrl = new StringBuilder();
-            buildUrl.append("http://");
-            buildUrl.append(this.endpoint);
-            buildUrl.append(":");
-            buildUrl.append(Constants.IMAGE_PORT.toString());
-            buildUrl.append(String.format("/%s/images", Constants.IMAGE_VERSION.toString()));
-
-            createImage = new HttpPost(buildUrl.toString());
-            String requestBody =  String.format("{ \"container_format\": \"bare\"," +
-                    "\"disk_format\": \"raw\"," +
-                    " \"name\": \"%s\"}", name);
-
-            createImage.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-            createImage.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
-
-        } else {
-            throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
-        }
-        return httpClient.execute(createImage);
-    }
-
-    public  synchronized HttpResponse uploadBinaryImageData(String endpoint, String imageId,String binaryImage) throws IOException {
-
-        HttpPut uploadImage;
-        HttpClient httpClient = HttpClientBuilder.create().build();
-
-        if (this.isAuthenticated) {
-            StringBuilder buildUrl = new StringBuilder();
-            buildUrl.append("http://");
-            buildUrl.append(endpoint);
-            buildUrl.append(":");
-            buildUrl.append(Constants.IMAGE_PORT.toString());
-            buildUrl.append(String.format("/%s/images/%s/file", Constants.IMAGE_VERSION.toString(), imageId));
-
-            uploadImage = new HttpPut(buildUrl.toString());
-            uploadImage.setHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
-            uploadImage.setHeader("Content-Type", "application/octet-stream");
-            uploadImage.setEntity(new FileEntity(new File(binaryImage)));
-
-        } else {
-            throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
-        }
-        return httpClient.execute(uploadImage);
-    }
     public synchronized  HttpResponse createStack(String template , String stackName) throws IOException {
 
         HttpClient httpClient = HttpClientBuilder.create().build();
@@ -270,7 +177,7 @@ public class JavaStackCore {
                     new BasicStatusLine(
                             HttpVersion.HTTP_1_1,
                             status_code,
-                            "List Failed with Status: " + status_code),
+                            "Create Failed with Status: " + status_code),
                     null);
         } else {
             throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
@@ -328,6 +235,102 @@ public class JavaStackCore {
         }
 
     }
+
+
+
+    public  synchronized HttpResponse listStacks(String endpoint) throws IOException {
+
+
+        HttpClient httpClient = HttpClientBuilder.create().build();
+        HttpResponseFactory factory = new DefaultHttpResponseFactory();
+        HttpResponse response = null;
+        HttpGet listStacks = null;
+
+        if (this.isAuthenticated){
+
+            StringBuilder buildUrl = new StringBuilder();
+            buildUrl.append("http://");
+            buildUrl.append(endpoint);
+            buildUrl.append(":");
+            buildUrl.append(Constants.HEAT_PORT.toString());
+            buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(),this.tenant_id));
+
+            System.out.println(buildUrl);
+            System.out.println(this.token_id);
+
+            listStacks = new HttpGet(buildUrl.toString());
+            listStacks.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+            response = httpClient.execute(listStacks);
+            int status_code = response.getStatusLine().getStatusCode();
+
+            return  (status_code == 200) ? response :  factory.newHttpResponse(
+                    new BasicStatusLine(
+                            HttpVersion.HTTP_1_1,
+                            status_code,
+                            "List Failed with Status: " + status_code),
+                    null);
+
+        } else {
+            throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
+        }
+
+    }
+
+
+    public synchronized HttpResponse createImage( String template,
+                                                  String containerFormat,
+                                                  String diskFormat,
+                                                  String name) throws IOException {
+        HttpPost createImage;
+        HttpClient httpClient = HttpClientBuilder.create().build();
+
+        if (this.isAuthenticated) {
+            StringBuilder buildUrl = new StringBuilder();
+            buildUrl.append("http://");
+            buildUrl.append(this.endpoint);
+            buildUrl.append(":");
+            buildUrl.append(Constants.IMAGE_PORT.toString());
+            buildUrl.append(String.format("/%s/images", Constants.IMAGE_VERSION.toString()));
+
+            createImage = new HttpPost(buildUrl.toString());
+            String requestBody =  String.format("{ \"container_format\": \"bare\"," +
+                    "\"disk_format\": \"raw\"," +
+                    " \"name\": \"%s\"}", name);
+
+            createImage.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
+            createImage.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+        } else {
+            throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
+        }
+        return httpClient.execute(createImage);
+    }
+
+    public  synchronized HttpResponse uploadBinaryImageData(String endpoint, String imageId,String binaryImage) throws IOException {
+
+        HttpPut uploadImage;
+        HttpClient httpClient = HttpClientBuilder.create().build();
+
+        if (this.isAuthenticated) {
+            StringBuilder buildUrl = new StringBuilder();
+            buildUrl.append("http://");
+            buildUrl.append(endpoint);
+            buildUrl.append(":");
+            buildUrl.append(Constants.IMAGE_PORT.toString());
+            buildUrl.append(String.format("/%s/images/%s/file", Constants.IMAGE_VERSION.toString(), imageId));
+
+            uploadImage = new HttpPut(buildUrl.toString());
+            uploadImage.setHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+            uploadImage.setHeader("Content-Type", "application/octet-stream");
+            uploadImage.setEntity(new FileEntity(new File(binaryImage)));
+
+        } else {
+            throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
+        }
+        return httpClient.execute(uploadImage);
+    }
+
 
 
 }

@@ -164,7 +164,7 @@ public class DeployServiceTest implements MessageReceiver {
    * @throws IOException
    * @throws InterruptedException
    */
-  @Ignore
+  @Test
   public void testCheckResources() throws IOException, InterruptedException {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -260,7 +260,7 @@ public class DeployServiceTest implements MessageReceiver {
    * @throws IOException
    * @throws InterruptedException
    */
-  @Ignore
+  @Test
   public void testDeployServiceMock() throws IOException, InterruptedException {
 
 
@@ -368,7 +368,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployServiceOpenStack() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -396,10 +396,10 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     String addVimBody = "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", "
-        + "\"tenant_ext_router\":\"9d69150c-4547-4330-94de-18055b91b350\", "
-        + "\"tenant_ext_net\":\"0d0a09c1-24e9-4ebc-9c22-163523cc062e\","
-        + "\"vim_address\":\"10.10.243.1\",\"username\":\"admin\","
-        + "\"pass\":\"sonata\",\"tenant\":\"admin\"}";
+        + "\"tenant_ext_router\":\"4ac2b52e-8f6b-4af3-ad28-38ede9d71c83\", "
+        + "\"tenant_ext_net\":\"cbc5a4fa-59ed-4ec1-ad2d-adb270e21693\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
+        + "\"pass\":\"ii70mseq\",\"tenant\":\"admin\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -421,8 +421,7 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    //Added a mock wrapper till the ODL wrapper becomes available
-    String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"networkMock\", "
+    String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"odl\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.networking.add";

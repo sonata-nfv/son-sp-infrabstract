@@ -82,7 +82,7 @@ public class OpenStackHeatClient {
     this.password = password;
     this.tenantName = tenantName;
 
-    Logger.debug("User: " + userName + " Tenant: " + tenantName + " Pass: " + password);
+    Logger.debug("|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password);
 
     javaStack = JavaStackCore.getJavaStackCore();
     javaStack.setEndpoint(url);
@@ -178,10 +178,19 @@ public class OpenStackHeatClient {
     Logger.info("Deleting stack: " + stackName);
 
     try {
-      String stackIdToDelete = new ObjectMapper().readValue(
-              JavaStackUtils.convertHttpResponseToString(
-                      javaStack.findStack(stackName)), StackData.class).getStack().getId();
+
+      Logger.info("Fetching information about Stack...!");
+      mapper = new ObjectMapper();
+
+      String findStackResponse = JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
+      StackData stack = mapper.readValue(findStackResponse, StackData.class);
+      String stackIdToDelete = stack.getStack().getId();
+
+      Logger.info("Delete stack with ID: " + stackIdToDelete);
+
       javaStack.deleteStack(stackName, stackIdToDelete);
+      Logger.info("Delete request sent");
+
       isDeleted = "DELETED";
 
     } catch (IOException e) {
