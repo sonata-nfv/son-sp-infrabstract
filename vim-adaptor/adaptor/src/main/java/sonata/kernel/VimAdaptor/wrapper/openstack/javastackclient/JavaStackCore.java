@@ -1,4 +1,4 @@
-package sonata.kernel.VimAdaptor.javastackclient;
+package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
@@ -17,8 +17,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicStatusLine;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
-import sonata.kernel.VimAdaptor.javastackclient.models.authentication.AuthenticationData;
-import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatClient;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.authentication.AuthenticationData;
 
 
 import java.io.File;

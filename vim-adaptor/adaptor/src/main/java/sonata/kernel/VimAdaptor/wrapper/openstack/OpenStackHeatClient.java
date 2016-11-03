@@ -32,13 +32,12 @@ import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import org.apache.http.HttpResponse;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
-import sonata.kernel.VimAdaptor.javastackclient.JavaStackCore;
-import sonata.kernel.VimAdaptor.javastackclient.JavaStackUtils;
-import sonata.kernel.VimAdaptor.javastackclient.models.stacks.StackData;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackCore;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackUtils;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.stacks.StackData;
 
 import java.io.BufferedReader;
 import java.io.IOException;

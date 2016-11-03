@@ -1,4 +1,4 @@
-package sonata.kernel.VimAdaptor.javastackclient.models.authentication;
+package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.authentication;
 
 /**
  * Created by nle5220 on 20.10.2016.

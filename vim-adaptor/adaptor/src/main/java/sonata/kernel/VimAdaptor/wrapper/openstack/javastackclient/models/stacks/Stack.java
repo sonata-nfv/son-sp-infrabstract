@@ -1,4 +1,4 @@
-package sonata.kernel.VimAdaptor.javastackclient.models.stacks;
+package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.stacks;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 

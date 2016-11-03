@@ -1,14 +1,9 @@
-package sonata.kernel.VimAdaptor.javastackclient;
+package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient;
 
-import com.fasterxml.jackson.annotation.JsonValue;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import org.apache.commons.logging.Log;
 import org.apache.http.HttpResponse;
-import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
-import org.yaml.snakeyaml.Yaml;
 
 import java.io.BufferedReader;
 import java.io.IOException;
