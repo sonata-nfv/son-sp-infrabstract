@@ -1,0 +1,6 @@
+#surefire_0
+#Tue Oct 18 12:59:43 UTC 2016
+checkstyle.config.location=google_checks.xml
+basedir=/adaptor
+user.dir=/adaptor
+localRepository=/root/.m2/repository

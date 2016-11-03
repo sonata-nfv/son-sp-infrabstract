@@ -1,0 +1,12 @@
+sonata/kernel/VimAdaptor/ServiceDescriptorTest.class
+sonata/kernel/VimAdaptor/wrapper/OpenStackNovaClientTest.class
+sonata/kernel/VimAdaptor/AdaptorTest.class
+sonata/kernel/VimAdaptor/wrapper/OdlWrapperTest.class
+sonata/kernel/VimAdaptor/DeployServiceTest.class
+sonata/kernel/VimAdaptor/messaging/TestConsumer.class
+sonata/kernel/VimAdaptor/wrapper/OpenStackHeatClientTest.class
+sonata/kernel/VimAdaptor/MessageReceiver.class
+sonata/kernel/VimAdaptor/HeatTemplateTest.class
+sonata/kernel/VimAdaptor/IpNetPoolTest.class
+sonata/kernel/VimAdaptor/VimRepoTest.class
+sonata/kernel/VimAdaptor/messaging/TestProducer.class
