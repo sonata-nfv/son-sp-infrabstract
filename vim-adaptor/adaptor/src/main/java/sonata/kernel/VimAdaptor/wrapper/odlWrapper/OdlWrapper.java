@@ -36,6 +36,8 @@ import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.VimAdaptor.wrapper.NetworkingWrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 
+import java.io.File;
+import java.io.FileReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -43,11 +45,14 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Properties;
 
 
 public class OdlWrapper extends NetworkingWrapper {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OdlWrapper.class);
+
+  private static final String ADAPTOR_SEGMENTS_CONF = "/adaptor/segments.conf";
 
   private WrapperConfiguration config;
 
@@ -174,10 +179,12 @@ public class OdlWrapper extends NetworkingWrapper {
         }
       }
     }
+    Properties segments = new Properties();
+    segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
 
     Collections.sort(odlList);
     OdlPayload odlPayload = new OdlPayload("add", data.getNsd().getInstanceUuid(),
-        "10.100.16.40/32", "10.100.32.40/32", odlList);
+        segments.getProperty("in"), segments.getProperty("out"), odlList);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
