@@ -107,22 +107,7 @@ public class OpenStackHeatClient {
    */
   public String createStack(String stackName, String template) {
     String uuid = null;
-    template = "   heat_template_version: '2013-05-23'\n" +
-            "  description: Simple template to test heat commands\n" +
-            "  parameters:\n" +
-            "    flavor:\n" +
-            "      default: m1.tiny\n" +
-            "      type: string\n" +
-            "  resources:\n" +
-            "    my_instance:\n" +
-            "      type: OS::Nova::Server\n" +
-            "      properties:\n" +
-            "        image: 356d8e0f-3332-48bc-a306-8b51876ef3c5\n" +
-            "        flavor: m1.small\n" +
-            "        key_name: test\n" +
-            "        networks:\n" +
-            "        - network: sonata-subnet-one\n";
-
+    
     Logger.info("Creating stack: " + stackName);
     Logger.debug("Template:\n" + template);
 
