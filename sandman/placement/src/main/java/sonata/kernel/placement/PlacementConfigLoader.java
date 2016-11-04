@@ -22,9 +22,14 @@ public final class PlacementConfigLoader {
 
     public final static String[] CONFIG_FOLDERS = new String[]{"sandman\\placement\\YAML", "sandman/placement/YAML", "YAML", "placement/YAML"};
 
+    private static PlacementConfig config = null;
+
     public static PlacementConfig loadPlacementConfig(){
+
+        if(config!=null)
+            return config;
+
     	logger.info("Placement config loader");
-        PlacementConfig config = null;
 
         for (String configFolder : CONFIG_FOLDERS){
 

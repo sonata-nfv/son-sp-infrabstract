@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+import org.apache.commons.io.IOUtils;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
@@ -165,6 +166,15 @@ public final class PackageLoader {
             return null;
         }
         return sd;
+    }
+
+    public static VnfDescriptor fileToVnfDescriptor(File vnfFile){
+        try {
+            return byteArrayToVnfDescriptor(IOUtils.toByteArray(new FileInputStream(vnfFile)));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public static VnfDescriptor byteArrayToVnfDescriptor(byte[] data){

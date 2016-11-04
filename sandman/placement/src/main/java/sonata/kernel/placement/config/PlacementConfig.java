@@ -9,6 +9,8 @@ public class PlacementConfig {
     public ArrayList<PopResource> resources;
     public RestInterface restApi;
 
+    public String internalFunctionsPath;
+
 	public ArrayList<PopResource> getResources() {
         return resources;
     }
@@ -39,5 +41,13 @@ public class PlacementConfig {
 
     public void setRestApi(RestInterface restApi) {
         this.restApi = restApi;
+    }
+
+    public String getInternalFunctionsPath() {
+        return internalFunctionsPath;
+    }
+
+    public void setInternalFunctionsPath(String internalFunctionsPath) {
+        this.internalFunctionsPath = internalFunctionsPath;
     }
 }
