@@ -44,7 +44,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 
 public class ListVimCallProcessor extends AbstractCallProcessor {
-  
+
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(ListVimCallProcessor.class);
 
@@ -61,7 +61,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
     Logger.info("Retrieving VIM list from vim repository");
     ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
-    Logger.info("Found "+vimList.size()+" VIMs");
+    Logger.info("Found " + vimList.size() + " VIMs");
     Logger.info("Retrieving VIM(s) resource utilisation");
     ArrayList<VimResources> resList = new ArrayList<VimResources>();
     for (String vimUuid : vimList) {

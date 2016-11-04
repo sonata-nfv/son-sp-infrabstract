@@ -90,7 +90,7 @@ public class OpenStackHeatClient {
     javaStack.setPassword(password);
     javaStack.setTenant_id(tenantName);
 
-    //Authenticate
+    // Authenticate
     try {
       javaStack.authenticateClient();
     } catch (IOException e) {
@@ -107,19 +107,20 @@ public class OpenStackHeatClient {
    */
   public String createStack(String stackName, String template) {
     String uuid = null;
-    
+
     Logger.info("Creating stack: " + stackName);
     Logger.debug("Template:\n" + template);
 
     try {
       mapper = new ObjectMapper();
-      String createStackResponse = JavaStackUtils.convertHttpResponseToString(javaStack.createStack(template, stackName));
+      String createStackResponse =
+          JavaStackUtils.convertHttpResponseToString(javaStack.createStack(template, stackName));
       StackData stack = mapper.readValue(createStackResponse, StackData.class);
       uuid = stack.getStack().getId();
 
     } catch (Exception e) {
       Logger.error(
-              "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
     }
 
     return uuid;
@@ -138,13 +139,14 @@ public class OpenStackHeatClient {
     Logger.info("Getting status for stack: " + stackName);
     try {
       mapper = new ObjectMapper();
-      String findStackResponse = JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
+      String findStackResponse =
+          JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
       StackData stack = mapper.readValue(findStackResponse, StackData.class);
       status = stack.getStack().getStack_status();
 
     } catch (Exception e) {
       Logger.error(
-              "Runtime error getStackStatus: " + stackName + " error message: " + e.getMessage());
+          "Runtime error getStackStatus: " + stackName + " error message: " + e.getMessage());
     }
     return status;
   }
@@ -167,7 +169,8 @@ public class OpenStackHeatClient {
       Logger.info("Fetching information about Stack...!");
       mapper = new ObjectMapper();
 
-      String findStackResponse = JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
+      String findStackResponse =
+          JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
       StackData stack = mapper.readValue(findStackResponse, StackData.class);
       String stackIdToDelete = stack.getStack().getId();
 

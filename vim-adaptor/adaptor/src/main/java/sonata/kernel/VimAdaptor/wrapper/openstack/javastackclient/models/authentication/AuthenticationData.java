@@ -3,14 +3,14 @@ package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.authen
 public class AuthenticationData {
 
 
-    private Access access;
+  private Access access;
 
-    public Access getAccess(){
-        return this.access;
-    }
+  public Access getAccess() {
+    return this.access;
+  }
 
-    public void setAccess(Access access){
-        this.access = access;
-    }
+  public void setAccess(Access access) {
+    this.access = access;
+  }
 
 }

@@ -27,8 +27,7 @@
 package sonata.kernel.VimAdaptor.wrapper;
 
 enum NetworkingVimType {
-  OPENDAYLIGHT("odl"),
-  NETWORKMOCK("networkMock");
+  OPENDAYLIGHT("odl"), NETWORKMOCK("networkMock");
 
   private final String name;
 

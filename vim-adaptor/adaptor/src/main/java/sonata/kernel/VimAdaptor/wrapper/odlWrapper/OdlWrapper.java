@@ -180,12 +180,11 @@ public class OdlWrapper extends NetworkingWrapper {
       }
     }
     Properties segments = new Properties();
-    segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));    
-    
+    segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
+
     Collections.sort(odlList);
     OdlPayload odlPayload = new OdlPayload("add", data.getNsd().getInstanceUuid(),
-      segments.getProperty("in"),
-      segments.getProperty("out"), odlList);
+        segments.getProperty("in"), segments.getProperty("out"), odlList);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
