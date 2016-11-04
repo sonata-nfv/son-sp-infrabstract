@@ -171,7 +171,7 @@ public class DeployServiceFsm implements Runnable {
       }
 
       // Aux data structures for efficient mapping
-      Hashtable<String, VnfDescriptor> vnfTable = new Hashtable<String, VnfDescriptor>();
+      Hashtable<String, VnfDescriptor> vnfTable = new Hashtable<>();
       Hashtable<String, VirtualDeploymentUnit> vduTable =
           new Hashtable<String, VirtualDeploymentUnit>();
       Hashtable<String, VduRecord> vdurTable = new Hashtable<String, VduRecord>();
