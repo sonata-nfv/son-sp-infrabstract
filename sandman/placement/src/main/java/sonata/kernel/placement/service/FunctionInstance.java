@@ -23,7 +23,15 @@ public class FunctionInstance {
 
     public final List<VirtualDeploymentUnit> deploymentUnits;
 
-    public final String name;
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String name;
 
     //public final Map<String,LinkInstance> links;
 

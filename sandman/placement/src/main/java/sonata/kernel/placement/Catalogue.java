@@ -9,10 +9,12 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 //import com.sun.xml.internal.ws.api.wsdl.parser.ServiceDescriptor;
 
+import org.apache.log4j.Logger;
 import sonata.kernel.VimAdaptor.commons.DeployServiceData;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.placement.config.PlacementConfig;
 import sonata.kernel.placement.pd.PackageContentObject;
 import sonata.kernel.placement.pd.PackageDescriptor;
 import sonata.kernel.placement.pd.SonataPackage;
