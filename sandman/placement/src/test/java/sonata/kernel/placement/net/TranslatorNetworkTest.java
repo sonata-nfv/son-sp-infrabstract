@@ -33,17 +33,17 @@ public class TranslatorNetworkTest {
 
             Network network = TranslatorNetwork.create_network(os, "Test6", "fc394f2ab2df4114bde39905f800dc57");
             String netId = network.getId();
-            Thread.sleep(10000);
+            //Thread.sleep(10000);
             Subnet subnet = TranslatorNetwork.create_subnet(os, "Test2", netId, "fc394f2ab2df4114bde39905f800dc57", "10.0.1.0", "10.0.1.7", "10.0.1.0/29");
             String subId = subnet.getId();
-            Thread.sleep(30000);
+            //Thread.sleep(30000);
             Port port = TranslatorPort.create_port(os, "PortTest", netId, "192.0.1.1", subId);
             String portId = port.getId();
-            Thread.sleep(30000);
+            //Thread.sleep(30000);
             TranslatorPort.delete_port(os, portId);
-            Thread.sleep(30000);
+            //Thread.sleep(30000);
             TranslatorNetwork.delete_subnet(os, subId);
-            Thread.sleep(30000);
+            //Thread.sleep(30000);
             TranslatorNetwork.delete_network(os, netId);
 		}
 	}
