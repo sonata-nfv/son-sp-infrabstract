@@ -1,11 +1,9 @@
 package sonata.kernel.placement.net;
 
-//import org.apache.commons.httpclient.HttpClient;
-//import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpDelete;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.impl.client.CloseableHttpClient;
-//import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.log4j.Logger;
 import sonata.kernel.placement.config.PopResource;
@@ -16,18 +14,17 @@ public class TranslatorChain {
 
     final static Logger logger = Logger.getLogger(TranslatorChain.class);
 
-    public static void chain(PopResource popResource, String srcVnf, String srcInterface, String dstVnf, String dstInterface){
+    public static void chain(LinkChain chain){
 
-        String chainPath = getChainPath(popResource);
+        String chainPath = chain.popResource.getChainingEndpoint();
+        if(!chainPath.endsWith("/"))
+            chainPath += "/";
         String requestUri;
 
-        if(srcInterface == null || dstInterface == null)
-            requestUri = chainPath+"/v1/chain/"+srcVnf+"/"+dstVnf;
-        else
-            requestUri = chainPath+"/v1/chain/"+srcVnf+"/"+srcInterface+"/"+dstVnf+"/"+srcInterface;
+        requestUri = chainPath+"/v1/chain/"+chain.srcNode+"/"+chain.srcInterface+"/"+chain.dstNode+"/"+chain.srcInterface;
 
         CloseableHttpClient client = HttpClients.createDefault();
-        HttpGet getRequest = new HttpGet(requestUri);
+        HttpPut getRequest = new HttpPut(requestUri);
         CloseableHttpResponse response = null;
 
         logger.info("Chaining "+getRequest.getRequestLine().getUri());
@@ -45,13 +42,16 @@ public class TranslatorChain {
         }
     }
 
-    public static void unchain(PopResource popResource, String srcVnf, String dstVnf){
-        String chainPath = getChainPath(popResource);
+    public static void unchain(LinkChain chain){
+
+        String chainPath = chain.popResource.getChainingEndpoint();
+        if(!chainPath.endsWith("/"))
+            chainPath += "/";
 
         CloseableHttpClient client = HttpClients.createDefault();
-        String requestUri = chainPath+"/v1/unchain/"+srcVnf+"/"+dstVnf;
+        String requestUri = chainPath+"/v1/unchain/"+chain.srcNode+"/"+chain.srcNode;
 
-        HttpGet getRequest = new HttpGet(requestUri);
+        HttpDelete getRequest = new HttpDelete(requestUri);
         CloseableHttpResponse response = null;
 
         logger.info("Unchaining "+getRequest.getRequestLine().getUri());
@@ -69,19 +69,5 @@ public class TranslatorChain {
         }
     }
 
-
-
-    protected static String getChainPath(PopResource popResource){
-        // TODO: replace string operations with a proper definition in the configuration file
-        // infer chain path using keystone path
-        String keystone = popResource.getEndpoint();
-        int colonIndex = keystone.lastIndexOf(":");
-        String host = keystone.substring(0,colonIndex);
-        String portStr = keystone.substring(colonIndex+1);
-        int port = Integer.parseInt(portStr);
-
-        String chainPath = host+":"+(port-1000);
-        return chainPath;
-    }
-
 }
+
