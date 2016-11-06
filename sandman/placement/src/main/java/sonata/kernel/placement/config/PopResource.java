@@ -6,6 +6,7 @@ public class PopResource {
 
     String popName;
     String endpoint;
+    String chainingEndpoint;
     String tenantName;
     String userName;
     String password;
@@ -67,5 +68,13 @@ public class PopResource {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getChainingEndpoint() {
+        return chainingEndpoint;
+    }
+
+    public void setChainingEndpoint(String chainingEndpoint) {
+        this.chainingEndpoint = chainingEndpoint;
     }
 }
