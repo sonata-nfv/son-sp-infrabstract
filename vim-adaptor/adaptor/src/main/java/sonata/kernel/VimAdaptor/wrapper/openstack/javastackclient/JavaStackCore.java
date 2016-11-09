@@ -9,6 +9,7 @@ import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
+import org.apache.http.client.utils.URIBuilder;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.StringEntity;
@@ -21,13 +22,27 @@ import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.authent
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 
 public class JavaStackCore {
 
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
+  private String endpoint;
+  private String username;
+  private String password;
+  private String tenant_id;
+  private ObjectMapper mapper;
+  private String token_id;
+  private String image_id;
+  private boolean isAuthenticated = false;
+  private JavaStackCore() {}
+
   public enum Constants {
     AUTH_PORT("5000"), HEAT_PORT("8004"), IMAGE_PORT("9292"), HEAT_VERSION("v1"), IMAGE_VERSION(
-        "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
+            "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
 
     private final String constantValue;
 
@@ -40,19 +55,6 @@ public class JavaStackCore {
       return this.constantValue;
     }
   }
-
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
-
-  private JavaStackCore() {}
-
-  private String endpoint;
-  private String username;
-  private String password;
-  private String tenant_id;
-  private ObjectMapper mapper;
-  private String token_id;
-  private String image_id;
-
 
   private static class SingeltonJavaStackCoreHelper {
     private static final JavaStackCore _javaStackCore = new JavaStackCore();
@@ -86,21 +88,17 @@ public class JavaStackCore {
     this.username = username;
   }
 
-  public void setTenant_id(String tenant_id) {
-    this.tenant_id = tenant_id;
-  }
-
   public String getTenant_id() {
     return this.tenant_id;
+  }
+
+  public void setTenant_id(String tenant_id) {
+    this.tenant_id = tenant_id;
   }
 
   public String getToken_id() {
     return this.token_id;
   }
-
-
-
-  private boolean isAuthenticated = false;
 
   public synchronized void authenticateClient() throws IOException {
 
@@ -135,8 +133,6 @@ public class JavaStackCore {
 
 
   }
-
-
 
   public synchronized HttpResponse createStack(String template, String stackName)
       throws IOException {
@@ -233,8 +229,6 @@ public class JavaStackCore {
 
   }
 
-
-
   public synchronized HttpResponse listStacks(String endpoint) throws IOException {
 
 
@@ -274,6 +268,80 @@ public class JavaStackCore {
 
   }
 
+  public synchronized HttpResponse showResourceData(String stackName, String stackId, String resourceName) throws IOException, URISyntaxException {
+    HttpResponseFactory factory = new DefaultHttpResponseFactory();
+    HttpClient httpclient = HttpClientBuilder.create().build();
+    HttpGet showResourceData = null;
+    HttpResponse response = null;
+
+    if (isAuthenticated) {
+      URIBuilder builder = new URIBuilder();
+      String path = String.format("/%s/%s/stacks/%s/%s/resources/%s",
+              Constants.HEAT_VERSION.toString(),
+              this.tenant_id, stackName,stackId, resourceName);
+
+      builder.setScheme("http")
+              .setHost(endpoint)
+              .setPort(Integer.parseInt(Constants.HEAT_PORT.toString()))
+              .setPath(path);
+
+      URI uri = builder.build();
+
+      showResourceData = new HttpGet(uri);
+      showResourceData.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+      response = httpclient.execute(showResourceData);
+      int status_code = response.getStatusLine().getStatusCode();
+
+      return (status_code == 200) ? response : factory.newHttpResponse(
+              new BasicStatusLine(
+                      HttpVersion.HTTP_1_1,
+                      status_code,
+                      "List Failed with Status: " + status_code),
+              null);
+
+    } else {
+      throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
+    }
+  }
+
+  public synchronized HttpResponse listStackResources(String stackName, String stackId, ArrayList<String> resources) throws IOException, URISyntaxException {
+    HttpResponseFactory factory = new DefaultHttpResponseFactory();
+    HttpClient httpclient = HttpClientBuilder.create().build();
+    HttpGet listResources = null;
+    HttpResponse response = null;
+
+    if (isAuthenticated) {
+      URIBuilder builder = new URIBuilder();
+      String path = String.format("/%s/%s/stacks/%s/%s/resources",
+              Constants.HEAT_VERSION.toString(),
+              this.tenant_id, stackName, stackId);
+
+      builder.setScheme("http")
+              .setHost(endpoint)
+              .setPort(Integer.parseInt(Constants.HEAT_PORT.toString()))
+              .setPath(path);
+
+      URI uri = builder.build();
+
+      listResources = new HttpGet(uri);
+      listResources.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+
+      response = httpclient.execute(listResources);
+      int status_code = response.getStatusLine().getStatusCode();
+
+      return (status_code == 200) ? response : factory.newHttpResponse(
+              new BasicStatusLine(
+                      HttpVersion.HTTP_1_1,
+                      status_code,
+                      "List Failed with Status: " + status_code),
+              null);
+
+    } else {
+      throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
+    }
+  }
 
   public synchronized HttpResponse createImage(String template, String containerFormat,
       String diskFormat, String name) throws IOException {

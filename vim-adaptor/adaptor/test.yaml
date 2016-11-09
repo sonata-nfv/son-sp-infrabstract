@@ -1,0 +1,61 @@
+
+heat_template_version: '2013-05-23'
+description: Simple template to test heat commands
+
+parameters:
+  flavor:
+    default: m1.tiny
+    type: string
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      image: 356d8e0f-3332-48bc-a306-8b51876ef3c5
+      flavor: m1.small
+      key_name: test
+      networks:
+      - network: sonata-subnet-one
+
+  my_instance_two:
+    type: OS::Nova::Server
+    properties:
+      image: 356d8e0f-3332-48bc-a306-8b51876ef3c5
+      flavor: m1.small
+      key_name: test
+      networks:
+      - network: sonata-subnet-one
+
+  private_network:
+    type: OS::Neutron::Net
+
+  private_subnet:
+    type: OS::Neutron::Subnet
+    properties:
+      network_id: { get_resource: private_network }
+      cidr: 10.200.0.0/24
+      dns_nameservers:
+        - 8.8.8.8
+
+  router:
+    type: OS::Neutron::Router
+    properties:
+      external_gateway_info:
+        network: GATEWAY_NET
+
+  router-interface:
+    type: OS::Neutron::RouterInterface
+    properties:
+      router_id: { get_resource: router }
+      subnet: { get_resource: private_subnet }
+
+  neutron-port:
+      type: OS::Neutron::Port
+      properties:
+        network: { get_resource: private_network }
+
+  web_floating_IP:
+    type: OS::Neutron::FloatingIP
+    properties:
+      floating_network: GATEWAY_NET
+      port_id: { get_resource: neutron-port }

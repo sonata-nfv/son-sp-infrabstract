@@ -33,7 +33,8 @@ public class JavaStackUtils {
     String statusCode = Integer.toString(status);
 
     if (statusCode.startsWith("2") || statusCode.startsWith("3")) {
-      System.out.println(response.getStatusLine().getStatusCode());
+      Logger.info("Response Received with Status: " +response.getStatusLine().getStatusCode());
+
       StringBuilder sb = new StringBuilder();
       BufferedReader reader =
           new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
