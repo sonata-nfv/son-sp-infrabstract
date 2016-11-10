@@ -1,20 +1,20 @@
 /**
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
- *
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- *
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- *
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
- *
+ * <p>
  * Neither the name of the SONATA-NFV, UCL, NOKIA, NCSR Demokritos nor the names of its contributors
  * may be used to endorse or promote products derived from this software without specific prior
  * written permission.
- *
+ * <p>
  * This work has been performed in the framework of the SONATA project, funded by the European
  * Commission under Grant number 671517 through the Horizon 2020 and 5G-PPP programmes. The authors
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
@@ -23,26 +23,28 @@
  * @author Sharon Mendel Brin (Ph.D.), Nokia
  * @author Dario Valocchi (Ph.D.), UCL
  * @author Akis Kourtis, NCSR Demokritos
- *
  */
 
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
+import sonata.kernel.VimAdaptor.commons.heat.*;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackUtils;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.*;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.stacks.StackData;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 
 /**
  * Created by smendel on 4/20/16.
@@ -109,9 +111,10 @@ public class OpenStackHeatClient {
     String uuid = null;
 
     Logger.info("Creating stack: " + stackName);
-    Logger.debug("Template:\n" + template);
+    // Logger.debug("Template:\n" + template);
 
     try {
+
       mapper = new ObjectMapper();
       String createStackResponse =
           JavaStackUtils.convertHttpResponseToString(javaStack.createStack(template, stackName));
@@ -203,33 +206,108 @@ public class OpenStackHeatClient {
    */
   public StackComposition getStackComposition(String stackName, String uuid) {
 
-    StackComposition composition = null;
-    StringBuilder builder = new StringBuilder();
-    String line = null;
-    try {
-      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_HEAT_API_PY,
-          "--configuration", url, userName, password, tenantName, "--composition", uuid);
-      Process process = processBuilder.start();
+    StackComposition composition = new StackComposition();
 
-      // Read the status of the stack
-      BufferedReader stdInput = new BufferedReader(
-          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-      while ((line = stdInput.readLine()) != null) {
-        builder.append(line);
+    try {
+      // List Stack Resources
+      String listResources = JavaStackUtils
+          .convertHttpResponseToString(javaStack.listStackResources(stackName, uuid, null));
+      // Logger.debug(listResources);
+
+      ArrayList<Resource> resources =
+          mapper.readValue(listResources, Resources.class).getResources();
+
+      // Output lists
+      ArrayList<HeatServer> servers = new ArrayList<>();
+      ArrayList<HeatPort> ports = new ArrayList<>();
+      ArrayList<HeatNet> networks = new ArrayList<>();
+      ArrayList<HeatRouter> routers = new ArrayList<>();
+
+      // Helper lists
+      ArrayList<PortAttributes> portsAtts = new ArrayList<>();
+      ArrayList<FloatingIpAttributes> floatingIps = new ArrayList<>();
+
+      for (Resource resource : resources) {
+        HeatServer heatServer = new HeatServer();
+        HeatPort heatPort = new HeatPort();
+
+        // Logger.debug(resource.getResource_type());
+
+        // Show ResourceData
+        // Logger.debug("StackID: " + uuid);
+
+        String showResourceData = JavaStackUtils.convertHttpResponseToString(
+            javaStack.showResourceData(stackName, uuid, resource.getResource_name()));
+
+        switch (resource.getResource_type()) {
+
+          case "OS::Nova::Server":
+            ResourceData<ServerAttributes> serverResourceData = mapper.readValue(showResourceData,
+                new TypeReference<ResourceData<ServerAttributes>>() {});
+
+            // Set Server
+            heatServer.setServerId(serverResourceData.getResource().getPhysical_resource_id());
+            heatServer.setServerName(serverResourceData.getResource().getAttributes().getName());
+            servers.add(heatServer);
+            break;
+
+          case "OS::Neutron::Port":
+            ResourceData<PortAttributes> portResourceData = mapper.readValue(showResourceData,
+                new TypeReference<ResourceData<PortAttributes>>() {});
+
+            portsAtts.add(portResourceData.getResource().getAttributes());
+
+            // Set Port
+            heatPort.setIpAddress(portResourceData.getResource().getAttributes().getFixed_ips()
+                .get(0).get("ip_address"));
+            heatPort.setMacAddress(portResourceData.getResource().getAttributes().getMac_address());
+            heatPort.setPortName(portResourceData.getResource().getAttributes().getName());
+            ports.add(heatPort);
+            break;
+
+          case "OS::Neutron::FloatingIP":
+            ResourceData<FloatingIpAttributes> floatingIPResourceData = mapper.readValue(
+                showResourceData, new TypeReference<ResourceData<FloatingIpAttributes>>() {});
+            floatingIps.add(floatingIPResourceData.getResource().getAttributes());
+            String floatingIP =
+                floatingIPResourceData.getResource().getAttributes().getFloating_ip_address();
+            Logger.info("FloatingIP Resource Address: " + floatingIP);
+            break;
+
+          case "OS::Neutron::Net":
+            // TODO
+            break;
+          case "OS::Neutron::Subnet":
+            // TODO
+            break;
+          case "OS::Neutron::RouterInterface":
+            // TODO
+            break;
+          case "OS::Neutron::Router":
+            // TODO
+            break;
+          default:
+            Logger.error("Unhandled Resource Type: " + resource.getResource_type());
+        }
       }
-      stdInput.close();
-      process.destroy();
-      String compositionString = builder.toString();
-      compositionString = compositionString.replace("'", "\"");
-      compositionString = compositionString.replace(": u", " : ");
-      ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-      mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-      Logger.info(compositionString);
-      composition = mapper.readValue(compositionString, StackComposition.class);
+
+      for (int i = 0; i < ports.size(); i++) {
+        for (FloatingIpAttributes floatingIP : floatingIps) {
+          if (portsAtts.get(i).getId().equals(floatingIP.getPort_id())) {
+            ports.get(i).setFloatinIp(floatingIP.getFloating_ip_address());
+          }
+        }
+      }
+
+      // Create the composition object
+      composition.setServers(servers);
+      composition.setPorts(ports);
+      composition.setNets(networks);
+      composition.setRouters(routers);
 
     } catch (Exception e) {
-      Logger.error("Runtime error getting stack status for stack : " + stackName
-          + " error message: " + e.getMessage());
+      Logger.error("Runtime error getting composition for stack : " + stackName + " error message: "
+          + e.getMessage());
     }
 
     return composition;
