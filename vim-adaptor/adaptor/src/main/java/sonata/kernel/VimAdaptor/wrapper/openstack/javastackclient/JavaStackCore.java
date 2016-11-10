@@ -157,11 +157,11 @@ public class JavaStackCore {
       buildUrl.append(Constants.HEAT_PORT.toString());
       buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(), tenant_id));
 
-      System.out.println(buildUrl.toString());
+      //Logger.debug(buildUrl.toString());
       createStack = new HttpPost(buildUrl.toString());
       createStack
           .setEntity(new StringEntity(modifiedObject.toString(), ContentType.APPLICATION_JSON));
-      System.out.println(this.token_id);
+      //Logger.debug(this.token_id);
       createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
       response = httpClient.execute(createStack);
@@ -215,8 +215,8 @@ public class JavaStackCore {
       buildUrl.append(String.format("/%s/%s/stacks/%s", Constants.HEAT_VERSION.toString(),
           this.tenant_id, stackIdentity));
 
-      Logger.info("URL: " + buildUrl);
-      Logger.info("Token: " + this.token_id);
+      //Logger.debug("URL: " + buildUrl);
+      //Logger.debug("Token: " + this.token_id);
 
       findStack = new HttpGet(buildUrl.toString());
       findStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);

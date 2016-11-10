@@ -99,7 +99,7 @@ public class DeployServiceFsm implements Runnable {
     Logger.info("Serializing stack...");
     try {
       String stackString = mapper.writeValueAsString(stack);
-      Logger.info(stackString);
+      Logger.debug(stackString);
       String stackName = data.getNsd().getName() + data.getNsd().getInstanceUuid();
       Logger.info("Pushing stack to Heat...");
       String stackUuid = client.createStack(stackName, stackString);

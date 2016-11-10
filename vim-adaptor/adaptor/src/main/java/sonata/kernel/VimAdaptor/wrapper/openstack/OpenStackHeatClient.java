@@ -111,7 +111,7 @@ public class OpenStackHeatClient {
     String uuid = null;
 
     Logger.info("Creating stack: " + stackName);
-    Logger.debug("Template:\n" + template);
+    //Logger.debug("Template:\n" + template);
 
     try {
 
@@ -212,7 +212,7 @@ public class OpenStackHeatClient {
       // List Stack Resources
       String listResources = JavaStackUtils
           .convertHttpResponseToString(javaStack.listStackResources(stackName, uuid, null));
-      Logger.info(listResources);
+      // Logger.debug(listResources);
 
       ArrayList<Resource> resources =
           mapper.readValue(listResources, Resources.class).getResources();
@@ -231,10 +231,10 @@ public class OpenStackHeatClient {
         HeatServer heatServer = new HeatServer();
         HeatPort heatPort = new HeatPort();
 
-        Logger.info(resource.getResource_type());
+        // Logger.debug(resource.getResource_type());
 
         // Show ResourceData
-        Logger.info("StackID: " + uuid);
+        // Logger.debug("StackID: " + uuid);
 
         String showResourceData = JavaStackUtils.convertHttpResponseToString(
             javaStack.showResourceData(stackName, uuid, resource.getResource_name()));
@@ -277,7 +277,12 @@ public class OpenStackHeatClient {
           case "OS::Neutron::Net":
             // TODO
             break;
-
+          case "OS::Neutron::Subnet":
+            // TODO
+            break;
+          case "OS::Neutron::RouterInterface":
+            // TODO
+            break;
           case "OS::Neutron::Router":
             // TODO
             break;
