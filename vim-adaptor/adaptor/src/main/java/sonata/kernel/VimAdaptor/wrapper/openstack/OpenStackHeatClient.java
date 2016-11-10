@@ -111,7 +111,7 @@ public class OpenStackHeatClient {
     String uuid = null;
 
     Logger.info("Creating stack: " + stackName);
-    //Logger.debug("Template:\n" + template);
+    // Logger.debug("Template:\n" + template);
 
     try {
 
