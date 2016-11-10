@@ -2,17 +2,17 @@ package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.compos
 
 import java.util.ArrayList;
 
-public class Resources{
+public class Resources {
 
-    ArrayList<Resource> resources;
+  ArrayList<Resource> resources;
 
-    public ArrayList<Resource> getResources() {
-        return resources;
-    }
+  public ArrayList<Resource> getResources() {
+    return resources;
+  }
 
-    public void setResources(ArrayList<Resource> resources) {
-        this.resources = resources;
-    }
+  public void setResources(ArrayList<Resource> resources) {
+    this.resources = resources;
+  }
 
 
 }

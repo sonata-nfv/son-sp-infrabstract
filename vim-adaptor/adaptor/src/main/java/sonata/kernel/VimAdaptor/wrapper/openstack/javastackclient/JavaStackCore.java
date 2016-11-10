@@ -38,11 +38,12 @@ public class JavaStackCore {
   private String token_id;
   private String image_id;
   private boolean isAuthenticated = false;
+
   private JavaStackCore() {}
 
   public enum Constants {
     AUTH_PORT("5000"), HEAT_PORT("8004"), IMAGE_PORT("9292"), HEAT_VERSION("v1"), IMAGE_VERSION(
-            "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
+        "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
 
     private final String constantValue;
 
@@ -268,7 +269,8 @@ public class JavaStackCore {
 
   }
 
-  public synchronized HttpResponse showResourceData(String stackName, String stackId, String resourceName) throws IOException, URISyntaxException {
+  public synchronized HttpResponse showResourceData(String stackName, String stackId,
+      String resourceName) throws IOException, URISyntaxException {
     HttpResponseFactory factory = new DefaultHttpResponseFactory();
     HttpClient httpclient = HttpClientBuilder.create().build();
     HttpGet showResourceData = null;
@@ -277,13 +279,10 @@ public class JavaStackCore {
     if (isAuthenticated) {
       URIBuilder builder = new URIBuilder();
       String path = String.format("/%s/%s/stacks/%s/%s/resources/%s",
-              Constants.HEAT_VERSION.toString(),
-              this.tenant_id, stackName,stackId, resourceName);
+          Constants.HEAT_VERSION.toString(), this.tenant_id, stackName, stackId, resourceName);
 
-      builder.setScheme("http")
-              .setHost(endpoint)
-              .setPort(Integer.parseInt(Constants.HEAT_PORT.toString()))
-              .setPath(path);
+      builder.setScheme("http").setHost(endpoint)
+          .setPort(Integer.parseInt(Constants.HEAT_PORT.toString())).setPath(path);
 
       URI uri = builder.build();
 
@@ -293,19 +292,19 @@ public class JavaStackCore {
       response = httpclient.execute(showResourceData);
       int status_code = response.getStatusLine().getStatusCode();
 
-      return (status_code == 200) ? response : factory.newHttpResponse(
-              new BasicStatusLine(
-                      HttpVersion.HTTP_1_1,
-                      status_code,
-                      "List Failed with Status: " + status_code),
-              null);
+      return (status_code == 200)
+          ? response
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
+              "List Failed with Status: " + status_code), null);
 
     } else {
-      throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
+      throw new IOException(
+          "You must Authenticate before issuing this request, please re-authenticate. ");
     }
   }
 
-  public synchronized HttpResponse listStackResources(String stackName, String stackId, ArrayList<String> resources) throws IOException, URISyntaxException {
+  public synchronized HttpResponse listStackResources(String stackName, String stackId,
+      ArrayList<String> resources) throws IOException, URISyntaxException {
     HttpResponseFactory factory = new DefaultHttpResponseFactory();
     HttpClient httpclient = HttpClientBuilder.create().build();
     HttpGet listResources = null;
@@ -314,13 +313,10 @@ public class JavaStackCore {
     if (isAuthenticated) {
       URIBuilder builder = new URIBuilder();
       String path = String.format("/%s/%s/stacks/%s/%s/resources",
-              Constants.HEAT_VERSION.toString(),
-              this.tenant_id, stackName, stackId);
+          Constants.HEAT_VERSION.toString(), this.tenant_id, stackName, stackId);
 
-      builder.setScheme("http")
-              .setHost(endpoint)
-              .setPort(Integer.parseInt(Constants.HEAT_PORT.toString()))
-              .setPath(path);
+      builder.setScheme("http").setHost(endpoint)
+          .setPort(Integer.parseInt(Constants.HEAT_PORT.toString())).setPath(path);
 
       URI uri = builder.build();
 
@@ -331,15 +327,14 @@ public class JavaStackCore {
       response = httpclient.execute(listResources);
       int status_code = response.getStatusLine().getStatusCode();
 
-      return (status_code == 200) ? response : factory.newHttpResponse(
-              new BasicStatusLine(
-                      HttpVersion.HTTP_1_1,
-                      status_code,
-                      "List Failed with Status: " + status_code),
-              null);
+      return (status_code == 200)
+          ? response
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
+              "List Failed with Status: " + status_code), null);
 
     } else {
-      throw new IOException("You must Authenticate before issuing this request, please re-authenticate. ");
+      throw new IOException(
+          "You must Authenticate before issuing this request, please re-authenticate. ");
     }
   }
 
