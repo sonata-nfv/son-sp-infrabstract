@@ -48,138 +48,140 @@ import java.util.ArrayList;
  */
 public class OpenStackNovaClient {
 
-    private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
 
-    private String url; // url of the OpenStack Client
+  private String url; // url of the OpenStack Client
 
-    private String userName; // OpenStack Client user
+  private String userName; // OpenStack Client user
 
-    private String password; // OpenStack Client password
+  private String password; // OpenStack Client password
 
-    private String tenantName; // OpenStack tenant name
+  private String tenantName; // OpenStack tenant name
 
-    private JavaStackCore javaStack; // instance for calling OpenStack APIs
+  private JavaStackCore javaStack; // instance for calling OpenStack APIs
 
-    private ObjectMapper mapper;
+  private ObjectMapper mapper;
 
-    /**
-     * Construct a new Openstack Nova Client.
-     *
-     * @param url of the OpenStack endpoint
-     * @param userName to log into the OpenStack service
-     * @param password to log into the OpenStack service
-     * @param tenantName to log into the OpenStack service
-     */
-    public OpenStackNovaClient(String url, String userName, String password, String tenantName) {
-        this.url = url;
-        this.userName = userName;
-        this.password = password;
-        this.tenantName = tenantName;
+  /**
+   * Construct a new Openstack Nova Client.
+   *
+   * @param url of the OpenStack endpoint
+   * @param userName to log into the OpenStack service
+   * @param password to log into the OpenStack service
+   * @param tenantName to log into the OpenStack service
+   */
+  public OpenStackNovaClient(String url, String userName, String password, String tenantName) {
+    this.url = url;
+    this.userName = userName;
+    this.password = password;
+    this.tenantName = tenantName;
 
-        Logger.debug("URL:" + url + "|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password + "|");
+    Logger.debug(
+        "URL:" + url + "|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password + "|");
 
-        javaStack = JavaStackCore.getJavaStackCore();
-        javaStack.setEndpoint(url);
-        javaStack.setUsername(userName);
-        javaStack.setPassword(password);
-        javaStack.setTenant_id(tenantName);
+    javaStack = JavaStackCore.getJavaStackCore();
+    javaStack.setEndpoint(url);
+    javaStack.setUsername(userName);
+    javaStack.setPassword(password);
+    javaStack.setTenant_id(tenantName);
 
-        // Authenticate
-        try {
-            javaStack.authenticateClient();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    // Authenticate
+    try {
+      javaStack.authenticateClient();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Get the limits and utilisation.
+   *
+   * @return a ResourceUtilisation Object with the limits and utilization for this tenant
+   */
+  public ResourceUtilisation getResourceUtilizasion() {
+
+    int totalCores, usedCores, totalMemory, usedMemory;
+
+    ResourceUtilisation resources = new ResourceUtilisation();
+    Logger.info("Getting limits");
+    try {
+      String listLimits = JavaStackUtils.convertHttpResponseToString(javaStack.listComputeLimits());
+
+      mapper = new ObjectMapper();
+      LimitsData data = mapper.readValue(listLimits, LimitsData.class);
+
+      totalCores = Integer.parseInt(data.getLimits().getAbsolute().getMaxTotalCores());
+      Logger.debug("Total Core: " + totalCores);
+
+      usedCores = Integer.parseInt(data.getLimits().getAbsolute().getTotalCoresUsed());
+      Logger.debug("Used Cores: " + usedCores);
+
+      totalMemory = Integer.parseInt(data.getLimits().getAbsolute().getMaxTotalRAMSize());
+      Logger.debug("Total Memory:" + totalMemory);
+
+      usedMemory = Integer.parseInt(data.getLimits().getAbsolute().getTotalRAMUsed());
+      Logger.debug("Used Memory:" + usedMemory);
+
+
+      // Set the resources values
+      resources.setTotCores(totalCores);
+      resources.setUsedCores(usedCores);
+      resources.setTotMemory(totalMemory);
+      resources.setUsedMemory(usedMemory);
+
+    } catch (Exception e) {
+      Logger.error("Runtime error getting openstack limits" + " error message: " + e.getMessage(),
+          e);
     }
 
-    /**
-     * Get the limits and utilisation.
-     *
-     * @return a ResourceUtilisation Object with the limits and utilization for this tenant
-     */
-    public ResourceUtilisation getResourceUtilizasion() {
+    return resources;
+  }
 
-        int totalCores, usedCores, totalMemory, usedMemory;
+  /**
+   * Get the flavors.
+   *
+   * @return the flavors
+   */
+  public ArrayList<Flavor> getFlavors() {
 
-        ResourceUtilisation resources = new ResourceUtilisation();
-        Logger.info("Getting limits");
-        try {
-            String listLimits = JavaStackUtils.convertHttpResponseToString(javaStack.listComputeLimits());
+    Flavor output_flavor = null;
+    String flavorName = null;
+    int cpu, ram, disk;
 
-            mapper = new ObjectMapper();
-            LimitsData data = mapper.readValue(listLimits, LimitsData.class);
+    ArrayList<Flavor> output_flavors = new ArrayList<>();
+    Logger.info("Getting flavors");
+    try {
+      mapper = new ObjectMapper();
+      String listFlavors =
+          JavaStackUtils.convertHttpResponseToString(javaStack.listComputeFlavors());
+      System.out.println(listFlavors);
+      FlavorsData inputFlavors = mapper.readValue(listFlavors, FlavorsData.class);
+      System.out.println(inputFlavors.getFlavors());
+      for (FlavorProperties input_flavor : inputFlavors.getFlavors()) {
+        System.out.println(input_flavor.getId() + ": " + input_flavor.getName());
 
-            totalCores = Integer.parseInt(data.getLimits().getAbsolute().getMaxTotalCores());
-            Logger.debug("Total Core: " + totalCores);
+        flavorName = input_flavor.getName();
+        cpu = Integer.parseInt(input_flavor.getVcpus());
+        ram = Integer.parseInt(input_flavor.getRam());
+        disk = Integer.parseInt(input_flavor.getDisk());
 
-            usedCores = Integer.parseInt(data.getLimits().getAbsolute().getTotalCoresUsed());
-            Logger.debug("Used Cores: " + usedCores);
+        output_flavor = new Flavor(flavorName, cpu, ram, disk);
+        output_flavors.add(output_flavor);
+      }
 
-            totalMemory = Integer.parseInt(data.getLimits().getAbsolute().getMaxTotalRAMSize());
-            Logger.debug("Total Memory:" + totalMemory);
-
-            usedMemory = Integer.parseInt(data.getLimits().getAbsolute().getTotalRAMUsed());
-            Logger.debug("Used Memory:" + usedMemory);
-
-
-            //Set the resources values
-            resources.setTotCores(totalCores);
-            resources.setUsedCores(usedCores);
-            resources.setTotMemory(totalMemory);
-            resources.setUsedMemory(usedMemory);
-
-        } catch (Exception e) {
-            Logger.error("Runtime error getting openstack limits" + " error message: " + e.getMessage(),
-                    e);
-        }
-
-        return resources;
+    } catch (Exception e) {
+      Logger.error("Runtime error getting openstack flavors" + " error message: " + e.getMessage());
     }
 
-    /**
-     * Get the flavors.
-     *
-     * @return the flavors
-     */
-    public ArrayList<Flavor> getFlavors() {
+    return output_flavors;
 
-        Flavor output_flavor = null;
-        String flavorName = null;
-        int cpu, ram, disk;
-
-        ArrayList<Flavor> output_flavors = new ArrayList<>();
-        Logger.info("Getting flavors");
-        try {
-            mapper = new ObjectMapper();
-            String listFlavors = JavaStackUtils.convertHttpResponseToString(javaStack.listComputeFlavors());
-            System.out.println(listFlavors);
-            FlavorsData inputFlavors = mapper.readValue(listFlavors, FlavorsData.class);
-            System.out.println(inputFlavors.getFlavors());
-            for (FlavorProperties input_flavor : inputFlavors.getFlavors()) {
-                System.out.println(input_flavor.getId() + ": " + input_flavor.getName());
-
-                flavorName = input_flavor.getName();
-                cpu = Integer.parseInt(input_flavor.getVcpus());
-                ram = Integer.parseInt(input_flavor.getRam());
-                disk = Integer.parseInt(input_flavor.getDisk());
-
-                output_flavor = new Flavor(flavorName, cpu, ram, disk);
-                output_flavors.add(output_flavor);
-            }
-
-        } catch (Exception e) {
-            Logger.error("Runtime error getting openstack flavors" + " error message: " + e.getMessage());
-        }
-
-        return output_flavors;
-
-    }
+  }
 
 
-    @Override
-    public String toString() {
-        return "OpenStackNovaClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
-                + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
-    }
+  @Override
+  public String toString() {
+    return "OpenStackNovaClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
+        + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
+  }
 
 }

@@ -106,7 +106,7 @@ public class Flavor implements Comparable<Flavor> {
   }
 
 
-    public String getId() {
-        return id;
-    }
+  public String getId() {
+    return id;
+  }
 }

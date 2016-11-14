@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class LimitsData {
-    private Limits limits;
+  private Limits limits;
 
-    public Limits getLimits() {
-        return limits;
-    }
+  public Limits getLimits() {
+    return limits;
+  }
 
-    public void setLimits(Limits limits) {
-        this.limits = limits;
-    }
+  public void setLimits(Limits limits) {
+    this.limits = limits;
+  }
 }

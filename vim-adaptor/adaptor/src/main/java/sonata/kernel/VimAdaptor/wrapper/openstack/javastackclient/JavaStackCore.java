@@ -42,8 +42,9 @@ public class JavaStackCore {
   private JavaStackCore() {}
 
   public enum Constants {
-    AUTH_PORT("5000"), HEAT_PORT("8004"), IMAGE_PORT("9292"), COMPUTE_PORT("8774"), HEAT_VERSION("v1"), IMAGE_VERSION(
-        "v2"), COMPUTE_VERSION("v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
+    AUTH_PORT("5000"), HEAT_PORT("8004"), IMAGE_PORT("9292"), COMPUTE_PORT("8774"), HEAT_VERSION(
+        "v1"), IMAGE_VERSION("v2"), COMPUTE_VERSION(
+            "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
 
     private final String constantValue;
 
@@ -406,19 +407,18 @@ public class JavaStackCore {
       buildUrl.append(endpoint);
       buildUrl.append(":");
       buildUrl.append(Constants.COMPUTE_PORT.toString());
-      buildUrl.append(String.format("/%s/%s/limits", Constants.COMPUTE_VERSION.toString(), this.tenant_id));
+      buildUrl.append(
+          String.format("/%s/%s/limits", Constants.COMPUTE_VERSION.toString(), this.tenant_id));
 
       getLimits = new HttpGet(buildUrl.toString());
       getLimits.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
       response = httpClient.execute(getLimits);
       int status_code = response.getStatusLine().getStatusCode();
-      return (status_code == 200) ? response : factory.newHttpResponse(
-              new BasicStatusLine(
-                      HttpVersion.HTTP_1_1,
-                      status_code,
-                      "List Failed with Status: " + status_code),
-              null);
+      return (status_code == 200)
+          ? response
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
+              "List Failed with Status: " + status_code), null);
     }
     return response;
   }
@@ -436,19 +436,18 @@ public class JavaStackCore {
       buildUrl.append(endpoint);
       buildUrl.append(":");
       buildUrl.append(Constants.COMPUTE_PORT.toString());
-      buildUrl.append(String.format("/%s/%s/flavors/detail", Constants.COMPUTE_VERSION.toString(), this.tenant_id));
+      buildUrl.append(String.format("/%s/%s/flavors/detail", Constants.COMPUTE_VERSION.toString(),
+          this.tenant_id));
 
       getFlavors = new HttpGet(buildUrl.toString());
       getFlavors.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
       response = httpClient.execute(getFlavors);
       int status_code = response.getStatusLine().getStatusCode();
-      return (status_code == 200) ? response : factory.newHttpResponse(
-              new BasicStatusLine(
-                      HttpVersion.HTTP_1_1,
-                      status_code,
-                      "List Failed with Status: " + status_code),
-              null);
+      return (status_code == 200)
+          ? response
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
+              "List Failed with Status: " + status_code), null);
     }
     return response;
   }
