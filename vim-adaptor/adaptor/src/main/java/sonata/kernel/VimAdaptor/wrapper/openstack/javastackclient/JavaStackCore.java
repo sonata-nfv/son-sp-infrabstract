@@ -436,7 +436,7 @@ public class JavaStackCore {
       buildUrl.append(endpoint);
       buildUrl.append(":");
       buildUrl.append(Constants.COMPUTE_PORT.toString());
-      buildUrl.append(String.format("/%s/%s/flavors", Constants.COMPUTE_VERSION.toString(), this.tenant_id));
+      buildUrl.append(String.format("/%s/%s/flavors/detail", Constants.COMPUTE_VERSION.toString(), this.tenant_id));
 
       getFlavors = new HttpGet(buildUrl.toString());
       getFlavors.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);

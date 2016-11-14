@@ -102,7 +102,7 @@ public class OpenStackHeatClient {
         // Logger.debug("Template:\n" + template);
 
         try {
-            template = JavaStackUtils.readFile("./test.yml");
+            //template = JavaStackUtils.readFile("./test.yml");
             mapper = new ObjectMapper();
             String createStackResponse =
                     JavaStackUtils.convertHttpResponseToString(javaStack.createStack(template, stackName));

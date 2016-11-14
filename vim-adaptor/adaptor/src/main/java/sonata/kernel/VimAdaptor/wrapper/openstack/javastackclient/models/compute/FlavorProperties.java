@@ -50,4 +50,12 @@ public class FlavorProperties {
     public void setName(String name) {
         this.name = name;
     }
+    
+    public String toString(){
+      String out="";
+      
+      out+=id+"   "+name+"   "+vcpus+" vcpus   "+ram+" mem   "+disk+" disk";
+      
+      return out;
+    }
 }
