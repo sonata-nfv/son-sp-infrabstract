@@ -30,6 +30,8 @@ package sonata.kernel.VimAdaptor.wrapper.openstack;
 public class Flavor implements Comparable<Flavor> {
 
 
+  private String id;
+
   /**
    * Basic flavor constructor.
    * 
@@ -104,4 +106,7 @@ public class Flavor implements Comparable<Flavor> {
   }
 
 
+  public String getId() {
+    return id;
+  }
 }

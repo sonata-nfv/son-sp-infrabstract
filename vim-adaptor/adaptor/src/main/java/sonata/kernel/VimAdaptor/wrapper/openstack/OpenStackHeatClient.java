@@ -1,35 +1,28 @@
-/**
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
- * <p>
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
- * in compliance with the License. You may obtain a copy of the License at
- * <p>
- * http://www.apache.org/licenses/LICENSE-2.0
- * <p>
- * Unless required by applicable law or agreed to in writing, software distributed under the License
- * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
- * or implied. See the License for the specific language governing permissions and limitations under
- * the License.
- * <p>
- * Neither the name of the SONATA-NFV, UCL, NOKIA, NCSR Demokritos nor the names of its contributors
- * may be used to endorse or promote products derived from this software without specific prior
- * written permission.
- * <p>
+/*
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED. <p> Licensed
+ * under the Apache License, Version 2.0 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at <p>
+ * http://www.apache.org/licenses/LICENSE-2.0 <p> Unless required by applicable law or agreed to in
+ * writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+ * WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific
+ * language governing permissions and limitations under the License. <p> Neither the name of the
+ * SONATA-NFV, UCL, NOKIA, NCSR Demokritos nor the names of its contributors may be used to endorse
+ * or promote products derived from this software without specific prior written permission. <p>
  * This work has been performed in the framework of the SONATA project, funded by the European
  * Commission under Grant number 671517 through the Horizon 2020 and 5G-PPP programmes. The authors
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
- *
+ * 
  * @author Sharon Mendel Brin (Ph.D.), Nokia
+ * 
  * @author Dario Valocchi (Ph.D.), UCL
+ * 
  * @author Akis Kourtis, NCSR Demokritos
  */
 
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
@@ -40,10 +33,7 @@ import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackUtils
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.*;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.stacks.StackData;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 /**
@@ -54,16 +44,9 @@ import java.util.ArrayList;
  */
 public class OpenStackHeatClient {
 
-  private static final String PYTHON2_7 = "python2.7";
-
-  private static final String ADAPTOR_HEAT_API_PY = "/adaptor/heat-api.py";
-
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackHeatClient.class);
-
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
-
   private ObjectMapper mapper;
-
   private String url; // url of the OpenStack Client
   private String userName; // OpenStack Client user
   private String password; // OpenStack Client password
@@ -84,7 +67,8 @@ public class OpenStackHeatClient {
     this.password = password;
     this.tenantName = tenantName;
 
-    Logger.debug("|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password);
+    Logger.debug(
+        "URL: " + url + "|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password + "|");
 
     javaStack = JavaStackCore.getJavaStackCore();
     javaStack.setEndpoint(url);
@@ -114,7 +98,7 @@ public class OpenStackHeatClient {
     // Logger.debug("Template:\n" + template);
 
     try {
-
+      // template = JavaStackUtils.readFile("./test.yml");
       mapper = new ObjectMapper();
       String createStackResponse =
           JavaStackUtils.convertHttpResponseToString(javaStack.createStack(template, stackName));
@@ -139,7 +123,7 @@ public class OpenStackHeatClient {
    */
   public String getStackStatus(String stackName, String uuid) {
     String status = null;
-    Logger.info("Getting status for stack: " + stackName);
+    Logger.info("Getting status for stack: " + stackName + "Stack ID: " + uuid);
     try {
       mapper = new ObjectMapper();
       String findStackResponse =
@@ -165,7 +149,7 @@ public class OpenStackHeatClient {
   public String deleteStack(String stackName, String uuid) {
 
     String isDeleted = null;
-    Logger.info("Deleting stack: " + stackName);
+    Logger.info("Deleting stack: " + stackName + "Stack ID: " + uuid);
 
     try {
 

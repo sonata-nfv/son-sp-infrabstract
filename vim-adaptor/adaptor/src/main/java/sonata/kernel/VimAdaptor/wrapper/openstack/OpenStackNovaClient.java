@@ -1,20 +1,20 @@
 /**
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
- * 
+ * <p>
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
- * 
+ * <p>
  * http://www.apache.org/licenses/LICENSE-2.0
- * 
+ * <p>
  * Unless required by applicable law or agreed to in writing, software distributed under the License
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
- * 
+ * <p>
  * Neither the name of the SONATA-NFV, UCL, NOKIA, THALES NCSR Demokritos nor the names of its
  * contributors may be used to endorse or promote products derived from this software without
  * specific prior written permission.
- * 
+ * <p>
  * This work has been performed in the framework of the SONATA project, funded by the European
  * Commission under Grant number 671517 through the Horizon 2020 and 5G-PPP programmes. The authors
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
@@ -22,36 +22,31 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * @author Bruno Vidalenc (Ph.D.), THALES
- * 
  */
 
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
 
-
-import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.wrapper.ResourceUtilisation;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackCore;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackUtils;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.compute.FlavorProperties;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.compute.FlavorsData;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.compute.LimitsData;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.nio.charset.Charset;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
  * This class wraps a Nova Client written in python when instantiated the onnection details of the
  * OpenStack instance should be provided.
- * 
+ *
  */
 public class OpenStackNovaClient {
-
-  private static final String ADAPTOR_NOVA_API_PY = "/adaptor/nova-api.py";
-
-  private static final String PYTHON2_7 = "python2.7";
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
 
@@ -63,6 +58,9 @@ public class OpenStackNovaClient {
 
   private String tenantName; // OpenStack tenant name
 
+  private JavaStackCore javaStack; // instance for calling OpenStack APIs
+
+  private ObjectMapper mapper;
 
   /**
    * Construct a new Openstack Nova Client.
@@ -77,44 +75,59 @@ public class OpenStackNovaClient {
     this.userName = userName;
     this.password = password;
     this.tenantName = tenantName;
+
+    Logger.debug(
+        "URL:" + url + "|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password + "|");
+
+    javaStack = JavaStackCore.getJavaStackCore();
+    javaStack.setEndpoint(url);
+    javaStack.setUsername(userName);
+    javaStack.setPassword(password);
+    javaStack.setTenant_id(tenantName);
+
+    // Authenticate
+    try {
+      javaStack.authenticateClient();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
    * Get the limits and utilisation.
-   * 
+   *
    * @return a ResourceUtilisation Object with the limits and utilization for this tenant
    */
   public ResourceUtilisation getResourceUtilizasion() {
-    ResourceUtilisation resources = null;
 
+    int totalCores, usedCores, totalMemory, usedMemory;
+
+    ResourceUtilisation resources = new ResourceUtilisation();
     Logger.info("Getting limits");
-
     try {
-      // Call the python client for the flavors of the openstack instance
-      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_NOVA_API_PY,
-          "--configuration", url, userName, password, tenantName, "--limits");
+      String listLimits = JavaStackUtils.convertHttpResponseToString(javaStack.listComputeLimits());
 
-      Process process = processBuilder.start();
+      mapper = new ObjectMapper();
+      LimitsData data = mapper.readValue(listLimits, LimitsData.class);
 
-      BufferedReader stdInput = new BufferedReader(
-          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
+      totalCores = Integer.parseInt(data.getLimits().getAbsolute().getMaxTotalCores());
+      Logger.debug("Total Core: " + totalCores);
 
-      StringBuilder builder = new StringBuilder();
-      String string = null;
-      while ((string = stdInput.readLine()) != null) {
-        Logger.info("Line: " + string);
-        builder.append(string);
-      }
-      stdInput.close();
-      process.destroy();
-      String resourceString = builder.toString();
-      resourceString = resourceString.replace("'", "\"");
-      Logger.info("Resources: " + resourceString);
-      ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-      mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-      // Logger.info(compositionString);
-      resources = mapper.readValue(resourceString, ResourceUtilisation.class);
+      usedCores = Integer.parseInt(data.getLimits().getAbsolute().getTotalCoresUsed());
+      Logger.debug("Used Cores: " + usedCores);
 
+      totalMemory = Integer.parseInt(data.getLimits().getAbsolute().getMaxTotalRAMSize());
+      Logger.debug("Total Memory:" + totalMemory);
+
+      usedMemory = Integer.parseInt(data.getLimits().getAbsolute().getTotalRAMUsed());
+      Logger.debug("Used Memory:" + usedMemory);
+
+
+      // Set the resources values
+      resources.setTotCores(totalCores);
+      resources.setUsedCores(usedCores);
+      resources.setTotMemory(totalMemory);
+      resources.setUsedMemory(usedMemory);
 
     } catch (Exception e) {
       Logger.error("Runtime error getting openstack limits" + " error message: " + e.getMessage(),
@@ -131,45 +144,36 @@ public class OpenStackNovaClient {
    */
   public ArrayList<Flavor> getFlavors() {
 
-    String string = null;
-    Flavor flavor = null;
+    Flavor output_flavor = null;
     String flavorName = null;
-    int cpu;
-    int ram;
-    int disk;
-    ArrayList<Flavor> flavors = new ArrayList<Flavor>();
-    String[] flavorString;
+    int cpu, ram, disk;
 
+    ArrayList<Flavor> output_flavors = new ArrayList<>();
     Logger.info("Getting flavors");
-
     try {
-      // Call the python client for the flavors of the openstack instance
-      ProcessBuilder processBuilder = new ProcessBuilder(PYTHON2_7, ADAPTOR_NOVA_API_PY,
-          "--configuration", url, userName, password, tenantName, "--flavors");
-      Process process = processBuilder.start();
+      mapper = new ObjectMapper();
+      String listFlavors =
+          JavaStackUtils.convertHttpResponseToString(javaStack.listComputeFlavors());
+      System.out.println(listFlavors);
+      FlavorsData inputFlavors = mapper.readValue(listFlavors, FlavorsData.class);
+      System.out.println(inputFlavors.getFlavors());
+      for (FlavorProperties input_flavor : inputFlavors.getFlavors()) {
+        System.out.println(input_flavor.getId() + ": " + input_flavor.getName());
 
-      Logger.info("The available flavors are:");
+        flavorName = input_flavor.getName();
+        cpu = Integer.parseInt(input_flavor.getVcpus());
+        ram = Integer.parseInt(input_flavor.getRam());
+        disk = Integer.parseInt(input_flavor.getDisk());
 
-      // Read the flavors
-      BufferedReader stdInput = new BufferedReader(
-          new InputStreamReader(process.getInputStream(), Charset.forName("UTF-8")));
-      while ((string = stdInput.readLine()) != null) {
-        Logger.info(string);
-        flavorString = string.split(" ");
-        flavorName = flavorString[0];
-        cpu = Integer.parseInt(flavorString[2]);
-        ram = Integer.parseInt(flavorString[4]);
-        disk = Integer.parseInt(flavorString[6]);
-        flavor = new Flavor(flavorName, cpu, ram, disk);
-        flavors.add(flavor);
+        output_flavor = new Flavor(flavorName, cpu, ram, disk);
+        output_flavors.add(output_flavor);
       }
-      stdInput.close();
 
     } catch (Exception e) {
       Logger.error("Runtime error getting openstack flavors" + " error message: " + e.getMessage());
     }
 
-    return flavors;
+    return output_flavors;
 
   }
 
