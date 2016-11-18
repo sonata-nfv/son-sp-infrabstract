@@ -18,23 +18,23 @@ You can extend the set of available VIM wrappers creating a subpackage of sonata
 
 The agent can be run simply running the command:
 
-  python sfc-agent.py ...
+   python sfc-agent.py ...
 
 The SFC agent exposes two API call through a UDP socket listening on default port 55555
 It expects payloads formatted as JSON string, encoded in UTF-8, based on the following JSON schema:
 
-  {
-    action : String,
-    in_segment : String,
-    out_segment : String,
-    instance_id : String, 
-    port_list : [
-      {
-        port : String,
-        order : Integer
-      }
-    ]
-  }
+    {
+      action : String,
+      in_segment : String,
+      out_segment : String,
+      instance_id : String, 
+      port_list : [
+        {
+          port : String,
+          order : Integer
+        }
+      ]
+    }
 
 * action: this field can be "add" or "delete" and is used to indicate wether the following info are used to create a chain or to delete a chain.
 * in_segment: CIDR(x.x.x.x/n) of the source address of the flow to be steered through the chain
@@ -43,38 +43,38 @@ It expects payloads formatted as JSON string, encoded in UTF-8, based on the fol
 * port: a String with the MAC address of a virtual interface
 * order: an integer indicating the order of the port in the chain (starts with 0)
 
-EX
+### Example
 
-      ____    ____    ____
-     |    |  |    |  |    |
-     | F1 |  | F2 |  | F3 |
-     |____|  |____|  |____|
-      M1 M2   M3 M4   M5 M6
-  ____|  |____|  |____|  |_____
+        ____    ____    ____
+       |    |  |    |  |    |
+       | F1 |  | F2 |  | F3 |
+       |____|  |____|  |____|
+        M1 M2   M3 M4   M5 M6
+    ____|  |____|  |____|  |_____
 
 In order to set up a chain for the function chain shown above, the payload will look like:
 
-  {
-    "action":"add", 
-    "in_segment":"192.168.0.0/24", 
-    "out_segment":"172.16.0.0/24", 
-    "instance_id":"0000-00000000-00000000-0000", 
-    "port_list":[
-      {"port":"M1","order":0},
-      {"port":"M2","order":1},
-      {"port":"M3","order":2},
-      {"port":"M4","order":3},
-      {"port":"M5","order":4},
-      {"port":"M6","order":5}
-    ]
-  }
+    {
+      "action":"add", 
+      "in_segment":"192.168.0.0/24", 
+      "out_segment":"172.16.0.0/24", 
+      "instance_id":"0000-00000000-00000000-0000", 
+      "port_list":[
+        {"port":"M1","order":0},
+        {"port":"M2","order":1},
+        {"port":"M3","order":2},
+        {"port":"M4","order":3},
+        {"port":"M5","order":4},
+        {"port":"M6","order":5}
+      ]
+    }
 
 In order to remove it:
 
-  {
-    "action":"delete",
-    "instance_id":"0000-00000000-00000000-0000"
-  }
+    {
+      "action":"delete",
+      "instance_id":"0000-00000000-00000000-0000"
+    }
 
 ## License
 
