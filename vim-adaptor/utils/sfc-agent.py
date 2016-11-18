@@ -3,8 +3,9 @@ import sys
 import os
 import time
 import json
+import parser
 
-
+### Functions ###
 
 def findPort(mac):
    mac = mac[9:17]
@@ -20,10 +21,24 @@ def findPort(mac):
    return helping
    #return "ok"
 
+###   Main Part ###
 
-brexport = "2"
-brintport = "2"
-breth0port = "3"
+parser = argparse.ArgumentParser()   #handler for arguments passed 
+parser.add_argument("-s", "--server", nargs=1, help="pass the local server ip",
+                    required=True)  # option configurations, needs to be required
+parser.add_argument("-i", "--brint", nargs=1, help="pass the br-int port", required=True)
+parser.add_argument("-e", "--brex", narg=1, help="pass the br-ex port", required=True)
+parser.add_argument("-t", "--breth", narg=1, help="pass the br-eth0 port", required=True)
+args = parser.parse_args()  # pass the arguments to the parser
+
+if args.server:  # parse the server adress passed
+    server = args.server
+if args.brint:
+    brintport = args.brint
+if args.brex:
+    brexport = args.brex
+if args.breth:
+    breth0port = args.breth
 
 print ""
 print ""
@@ -36,7 +51,7 @@ print ""
 sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 # Bind the socket to the port
-server_address = ('10.100.32.200', 55555)
+server_address = (server, 55555)
 print >>sys.stderr, 'starting up on %s port %s' % server_address
 sock.bind(server_address)
 
@@ -52,6 +67,7 @@ while True:
     jsonResponse=json.loads(data)
     returnflag = "SUCCESS"
     jsonMANA = jsonResponse["action"] # Check json request type 
+
     if (jsonMANA=="add"):
         jsonData0 = jsonResponse["instance_id"]
         jsonData = jsonResponse["in_segment"]
@@ -117,8 +133,8 @@ while True:
         # Reply Success or Error 
         print returnflag
         sock.sendto(returnflag, address)
-        fo.close()
-        #if request is to delete, then:
+        fo.close()       
+    #if request is to delete, then:      
     elif (jsonMANA=="delete"):
         jsonData0 = jsonResponse["instance_id"]
         print "DELETING-> "+jsonData0
