@@ -1,26 +1,20 @@
 # OVS-SFC 
 This software implements an experimental and test version of a Networking VIM, able to receive commands from the IA to enforce SFC on a Virtual Network Service deployment.
-
-
-### Building
-
+The SFC agent is based on the use of OpenVSwitch on a Neutron Controller node, within the context of a standard OpenStack deployment. 
 
 ### Dependencies
 
-
-### Contributing
-
-You can contribute to this repository extending the set VIM supported by the adaptor.
-The VIM Adaptor architecture is based on VIM wrappers that implement technology dependant processes for deploying and managing VNFs. 
-You can extend the set of available VIM wrappers creating a subpackage of sonata.kernel.VimAdaptor.wrapper and extending the interfaces therein. 
+* [OpenVSwitch](http://www.openvswitch.org/) >=2, Apache2.0
 
 ## Usage
 
-The agent can be run simply running the command:
+The agent can be executed simply running the command:
 
-   python sfc-agent.py ...
+   python sfc-agent.py -s x.x.x.x -i br_int -e br_ext -t br-eth
 
-The SFC agent exposes two API call through a UDP socket listening on default port 55555
+The SFC agent will use ovs-ofctl to install flow in the target server, using the specified internal(br_int) and external(br_ext) bridges used by the neutron controller, plus the bridge connected to the controller physical network interface br-eth. 
+
+The SFC agent exposes two API calls through a UDP socket listening on default port 55555
 It expects payloads formatted as JSON string, encoded in UTF-8, based on the following JSON schema:
 
     {
@@ -36,9 +30,9 @@ It expects payloads formatted as JSON string, encoded in UTF-8, based on the fol
       ]
     }
 
-* action: this field can be "add" or "delete" and is used to indicate wether the following info are used to create a chain or to delete a chain.
-* in_segment: CIDR(x.x.x.x/n) of the source address of the flow to be steered through the chain
-* out_segment: CIDR(x.x.x.x/n) of the destination address of the flow to be steered through the chain
+* action: this field can be "add" or "delete" and is used to indicate wether the agent should create a new chain or delete an existing one.
+* in_segment: CIDR (x.x.x.x/n) of the source address of the flow to be steered through the chain
+* out_segment: CIDR (x.x.x.x/n) of the destination address of the flow to be steered through the chain
 * instance_id: an identifier for the chain
 * port: a String with the MAC address of a virtual interface
 * order: an integer indicating the order of the port in the chain (starts with 0)
@@ -52,7 +46,7 @@ It expects payloads formatted as JSON string, encoded in UTF-8, based on the fol
         M1 M2   M3 M4   M5 M6
     ____|  |____|  |____|  |_____
 
-In order to set up a chain for the function chain shown above, the payload will look like:
+In order to set up a chain for the function chain shown above, where M1...M6 are the MAC addresses of the six virtual interfaces, the payload will look like:
 
     {
       "action":"add", 
@@ -69,12 +63,14 @@ In order to set up a chain for the function chain shown above, the payload will 
       ]
     }
 
-In order to remove it:
+In order to remove the create chain the payload will look like:
 
     {
       "action":"delete",
       "instance_id":"0000-00000000-00000000-0000"
     }
+
+The agent will return a String "SUCCESS", encoded with UTF-8 charset, after a successful chain setup or delete, an error message othewise.  
 
 ## License
 
@@ -83,17 +79,8 @@ This Software is published under Apache 2.0 license. Please see the LICENSE file
 ## Useful Links
 
 * https://www.openstack.org/ the OpenStack project homepage
-* https://pypi.python.org/pypi/pip Python Package Index
-* https://maven.apache.org/ Java Maven 
-* https://www.docker.com/ The Docker project
-* https://docs.docker.com/compose/ Docker-compose documentation
-
----
-#### Lead Developers
-
-The following lead developers are responsible for this repository and have admin rights. They can, for example, merge pull requests.
-
-* [Dario Valocchi](https://github.com/DarioValocchi) 
+* http://openvswitch.org the OpenVSwitch hompage
+* http://openvswitch.org/support/dist-docs/ovs-ofctl.8.txt documentation for ovs-ofctl
 
 #### Feedback-Channel
 
