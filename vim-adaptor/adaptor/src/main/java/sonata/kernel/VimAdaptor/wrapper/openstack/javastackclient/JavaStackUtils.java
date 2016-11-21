@@ -31,6 +31,7 @@ public class JavaStackUtils {
 
     int status = response.getStatusLine().getStatusCode();
     String statusCode = Integer.toString(status);
+    String reasonPhrase = response.getStatusLine().getReasonPhrase();
 
     if (statusCode.startsWith("2") || statusCode.startsWith("3")) {
       // Logger.debug("Response Received with Status: " + response.getStatusLine().getStatusCode());
@@ -47,11 +48,11 @@ public class JavaStackUtils {
 
     } else if (status == 403) {
       throw new IOException(
-          "Access forbidden, make sure you are using the correct credentials: " + statusCode);
+          "Access forbidden, make sure you are using the correct credentials: "+ reasonPhrase);
     } else if (status == 409) {
-      throw new IOException("Stack is already created, conflict detected " + statusCode);
+      throw new IOException("Stack is already created, conflict detected: "+ reasonPhrase);
     } else {
-      throw new IOException("Failed Request with Status Code: " + statusCode);
+      throw new IOException("Failed Request: "+ reasonPhrase);
     }
   }
 }
