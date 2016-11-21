@@ -260,7 +260,7 @@ public class DeployServiceTest implements MessageReceiver {
    * @throws IOException
    * @throws InterruptedException
    */
-  @Ignore
+  @Test
   public void testDeployServiceMock() throws IOException, InterruptedException {
 
 
@@ -559,7 +559,7 @@ public class DeployServiceTest implements MessageReceiver {
    * the @test annotation
    * @throws Exception 
    */
-  @Test
+  @Ignore
   public void testDeployTwoServicesOpenStack() throws Exception {
 
 
