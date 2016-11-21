@@ -10,7 +10,7 @@ The SFC agent is based on the use of OpenVSwitch on a Neutron Controller node, w
 
 The agent can be executed simply running the command:
 
-   python sfc-agent.py -s x.x.x.x -i br_int -e br_ext -t br-eth
+    python sfc-agent.py -s x.x.x.x -i br_int -e br_ext -t br-eth
 
 The SFC agent will use ovs-ofctl to install flow in the target server, using the specified internal(br_int) and external(br_ext) bridges used by the neutron controller, plus the bridge connected to the controller physical network interface br-eth. 
 
