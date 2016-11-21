@@ -160,6 +160,16 @@ public class WrapperBay {
     return repository;
   }
 
+  /**
+   * @param uuid
+   * @return
+   */
+  public String removeNetworkingWrapper(String uuid) {
+    this.repository.rempoveNetworkVimLink(uuid);
+    this.repository.removeVimEntry(uuid);
+    return "{\"status\":\"COMPLETED\"}";
+  }
+
 
 
 }

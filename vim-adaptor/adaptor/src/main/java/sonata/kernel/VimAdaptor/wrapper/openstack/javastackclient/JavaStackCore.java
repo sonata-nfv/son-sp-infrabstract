@@ -150,7 +150,7 @@ public class JavaStackCore {
     modifiedObject.put("template", new JSONObject(jsonTemplate));
 
     if (this.isAuthenticated) {
-
+      Logger.debug("");
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
       buildUrl.append(this.endpoint);
@@ -166,12 +166,13 @@ public class JavaStackCore {
       createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
       response = httpClient.execute(createStack);
-      int status_code = response.getStatusLine().getStatusCode();
+      int statusCode = response.getStatusLine().getStatusCode();
+      String responsePhrase = response.getStatusLine().getReasonPhrase();
 
-      return (status_code == 201)
+      return (statusCode == 201)
           ? response
-          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
-              "Create Failed with Status: " + status_code), null);
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, statusCode,
+              responsePhrase+". Create Failed with Status: " + statusCode), null);
     } else {
       throw new IOException(
           "You must Authenticate before issuing this request, please re-authenticate. ");

@@ -998,6 +998,54 @@ public class VimRepo {
 
   }
 
+  /**
+   * @param uuid
+   */
+  public boolean rempoveNetworkVimLink(String networkingUuid) {
+    boolean out = true;
+
+    Connection connection = null;
+    PreparedStatement stmt = null;
+    try {
+      Class.forName("org.postgresql.Driver");
+      connection =
+          DriverManager.getConnection(
+              "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+                  + prop.getProperty("repo_port") + "/" + "vimregistry",
+              prop.getProperty("user"), prop.getProperty("pass"));
+      connection.setAutoCommit(false);
+
+      String sql = "DELETE FROM LINK_VIM WHERE NETWORKING_UUID=?;";
+      stmt = connection.prepareStatement(sql);
+      stmt.setString(1, networkingUuid);
+      stmt.executeUpdate();
+      connection.commit();
+    } catch (SQLException e) {
+      Logger.error(e.getMessage(), e);
+      out = false;
+    } catch (ClassNotFoundException e) {
+      Logger.error(e.getMessage(), e);
+      out = false;
+    } finally {
+      try {
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        Logger.error(e.getMessage(), e);
+        out = false;
+      }
+    }
+    if (!out) {
+      Logger.info("Records created successfully");
+    }
+
+    return out;
+  }
+
   private Properties parseConfigFile() {
     Properties prop = new Properties();
     try {
@@ -1022,5 +1070,7 @@ public class VimRepo {
 
     return prop;
   }
+
+
 
 }

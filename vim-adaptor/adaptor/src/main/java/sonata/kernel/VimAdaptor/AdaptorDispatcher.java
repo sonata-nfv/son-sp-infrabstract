@@ -122,9 +122,11 @@ public class AdaptorDispatcher implements Runnable {
     } else if (message.getTopic().contains("network")) {
       if (message.getTopic().endsWith("add")) {
         myThreadPool.execute(new AddVimCallProcessor(message, message.getSid(), mux));
+      } else if (message.getTopic().endsWith("remove")) {
+        myThreadPool.execute(new RemoveVimCallProcessor(message, message.getSid(), mux));
+      } else {
+        Logger.info("Received an unknown menagement API call on topic: " + message.getTopic());
       }
-    } else {
-      Logger.info("Received an unknown menagement API call on topic: " + message.getTopic());
     }
 
   }

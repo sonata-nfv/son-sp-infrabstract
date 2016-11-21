@@ -1,7 +1,7 @@
 FROM maven:3.3.9-jdk-7
 MAINTAINER D.Valocchi <d.valocchi@ucl.ac.uk>
 
-RUN apt-get update && apt-get install -y python-pip \
+RUN apt-get update && apt-get upgrade -y && apt-get install -y python-pip \
   python-dev \
   build-essential \
   libcurl4-gnutls-dev \
@@ -42,7 +42,8 @@ ENV repo_port 5432
 ENV repo_user sonatatest
 ENV repo_pass sonata
 
-RUN mvn -q compile assembly:single;
+RUN mvn -e -q compile assembly:single;
+#RUN mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true clean compile assembly:single;
 
 CMD ["/docker-entrypoint.sh","/test.sh"]
 
