@@ -1,0 +1,16 @@
+#!/bin/bash
+
+case $1 in
+    start)
+        /bin/bash /usr/local/bin/sandman-placement-start.sh
+    ;;  
+    stop)
+        /bin/bash /usr/local/bin/sandman-placement-stop.sh
+    ;;  
+    restart)
+        /bin/bash /usr/local/bin/sandman-placement-stop.sh
+        /bin/bash /usr/local/bin/sandman-placement-start.sh
+    ;;  
+esac
+exit 0
+

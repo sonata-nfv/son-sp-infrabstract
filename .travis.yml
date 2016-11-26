@@ -1,0 +1,8 @@
+language: java
+jdk:
+  - oraclejdk8
+script:
+- cd vim-adaptor/adaptor
+- mvn -Dmaven.test.skip=true -q install
+- cd ../../sandman/placement
+- mvn clean install verify
