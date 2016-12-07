@@ -27,7 +27,7 @@
 package sonata.kernel.VimAdaptor.wrapper;
 
 enum ComputeVimType {
-  VLSP("VLSP"), OPENSTACK("OpenStack"), OPENSTACKHEAT("Heat"), OPENMANO("OpenMANO"), MOCK(
+  OPENSTACK("OpenStack"), OPENSTACKHEAT("Heat"), OPENMANO("OpenMANO"), MOCK(
       "Mock"), OPENVIM("OpenVIM");
 
   private final String name;

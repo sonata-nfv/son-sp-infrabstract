@@ -99,8 +99,11 @@ public class AdaptorDispatcher implements Runnable {
     if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
     } else if (message.getTopic().endsWith("remove")) {
-      Logger.info("Received a \"remove-service\" API call on topic: " + message.getTopic());
+      Logger.info("Received a \"service.remove\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new RemoveServiceCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("prepare")) {
+      Logger.info("Received a \"service.prepare\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new PrepareServiceCallProcessor(message, message.getSid(), mux));
     }
   }
 

@@ -26,7 +26,7 @@
 
 package sonata.kernel.VimAdaptor.wrapper;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 
 public abstract class NetworkingWrapper extends AbstractWrapper implements Wrapper {
@@ -47,7 +47,7 @@ public abstract class NetworkingWrapper extends AbstractWrapper implements Wrapp
    * @throws Exception
    * 
    */
-  public abstract void configureNetworking(DeployServiceData data, StackComposition composition)
+  public abstract void configureNetworking(ServiceDeployPayload data, StackComposition composition)
       throws Exception;
 
 }

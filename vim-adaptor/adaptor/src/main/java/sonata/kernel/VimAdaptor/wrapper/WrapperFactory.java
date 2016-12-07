@@ -29,8 +29,8 @@ package sonata.kernel.VimAdaptor.wrapper;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.wrapper.mock.NetworkMockWrapper;
-import sonata.kernel.VimAdaptor.wrapper.odlWrapper.OdlWrapper;
 import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatWrapper;
+import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OvsWrapper;
 
 public class WrapperFactory {
 
@@ -66,9 +66,7 @@ public class WrapperFactory {
   private static ComputeWrapper createComputeWrapper(WrapperConfiguration config) {
     ComputeWrapper output = null;
 
-    if (config.getVimVendor().equals(ComputeVimType.VLSP.toString())) {
-      output = new VlspWrapper(config);
-    } else if (config.getVimVendor().equals(ComputeVimType.MOCK.toString())) {
+    if (config.getVimVendor().equals(ComputeVimType.MOCK.toString())) {
       output = new MockWrapper(config);
     } else if (config.getVimVendor().equals(ComputeVimType.OPENSTACKHEAT.toString())) {
       output = new OpenStackHeatWrapper(config);
@@ -81,8 +79,8 @@ public class WrapperFactory {
 
   private static NetworkingWrapper createNetworkingWrapper(WrapperConfiguration config) {
     NetworkingWrapper output = null;
-    if (config.getVimVendor().equals(NetworkingVimType.OPENDAYLIGHT.toString())) {
-      output = new OdlWrapper(config);
+    if (config.getVimVendor().equals(NetworkingVimType.OPENVSWITCH.toString())) {
+      output = new OvsWrapper(config);
     } else if (config.getVimVendor().equals(NetworkingVimType.NETWORKMOCK.toString())) {
       output = new NetworkMockWrapper(config);
     }

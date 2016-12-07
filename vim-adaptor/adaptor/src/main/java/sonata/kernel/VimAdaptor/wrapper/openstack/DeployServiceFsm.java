@@ -33,8 +33,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
-import sonata.kernel.VimAdaptor.commons.DeployServiceResponse;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ServiceRecord;
 import sonata.kernel.VimAdaptor.commons.Status;
 import sonata.kernel.VimAdaptor.commons.VduRecord;
@@ -59,7 +59,7 @@ import java.util.Hashtable;
 public class DeployServiceFsm implements Runnable {
 
   private String sid;
-  private DeployServiceData data;
+  private ServiceDeployPayload data;
   private OpenStackHeatWrapper wrapper;
   private OpenStackHeatClient client;
   private HeatTemplate stack;
@@ -77,7 +77,7 @@ public class DeployServiceFsm implements Runnable {
    * @param stack the HeatStack result of the translation
    */
   public DeployServiceFsm(OpenStackHeatWrapper wrapper, OpenStackHeatClient client, String sid,
-      DeployServiceData data, HeatTemplate stack) {
+      ServiceDeployPayload data, HeatTemplate stack) {
 
     this.wrapper = wrapper;
     this.client = client;
@@ -88,7 +88,7 @@ public class DeployServiceFsm implements Runnable {
 
   @Override
   public void run() {
-    DeployServiceResponse response = new DeployServiceResponse();
+    ServiceDeployResponse response = new ServiceDeployResponse();
 
     Logger.info("Deploying new stack");
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -274,7 +274,7 @@ public class DeployServiceFsm implements Runnable {
       Logger.info("Response created");
       // Logger.info("body");
 
-      WrapperBay.getInstance().getVimRepo().writeInstanceEntry(response.getNsr().getId(),
+      WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(response.getNsr().getId(),
           response.getInstanceVimUuid(), response.getInstanceName(), data.getVimUuid());
 
       WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);

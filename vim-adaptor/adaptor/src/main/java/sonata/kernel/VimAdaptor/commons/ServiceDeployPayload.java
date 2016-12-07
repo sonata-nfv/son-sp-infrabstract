@@ -24,36 +24,57 @@
  * 
  */
 
-package sonata.kernel.VimAdaptor.wrapper;
+package sonata.kernel.VimAdaptor.commons;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class VlspWrapper extends ComputeWrapper {
+import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 
-  public VlspWrapper(WrapperConfiguration config) {
-    super();
+import java.util.ArrayList;
+
+public class ServiceDeployPayload {
+
+  @JsonProperty("vim_uuid")
+  private String vimUuid;
+  private ServiceDescriptor nsd;
+  private ArrayList<VnfDescriptor> vnfds;
+
+  public ServiceDeployPayload() {
+    this.vnfds = new ArrayList<VnfDescriptor>();
   }
 
-  @Override
-  public boolean deployService(DeployServiceData data, String callSid) {
-    // TODO Auto-generated method stub
-    return false;
+  public void setServiceDescriptor(ServiceDescriptor descriptor) {
+    this.nsd = descriptor;
   }
 
-  public boolean removeService(String instanceUuid, String callSid) {
-    return false;
+  public void addVnfDescriptor(VnfDescriptor descriptor) {
+    this.vnfds.add(descriptor);
   }
 
-  @Override
-  public ResourceUtilisation getResourceUtilisation() {
-
-    ResourceUtilisation resources = new ResourceUtilisation();
-    resources.setTotCores(10);
-    resources.setUsedCores(0);
-    resources.setTotMemory(10000);
-    resources.setUsedMemory(0);
-
-    return resources;
+  public ServiceDescriptor getNsd() {
+    return nsd;
   }
+
+  public ArrayList<VnfDescriptor> getVnfdList() {
+    return vnfds;
+  }
+
+  public String getVimUuid() {
+    return vimUuid;
+  }
+
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
+  }
+
+  public void setNsd(ServiceDescriptor nsd) {
+    this.nsd = nsd;
+  }
+
+  public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
+    this.vnfds = vnfds;
+  }
+
 
 }

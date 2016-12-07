@@ -34,8 +34,8 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
-import sonata.kernel.VimAdaptor.commons.DeployServiceResponse;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ServiceRecord;
 import sonata.kernel.VimAdaptor.commons.Status;
 import sonata.kernel.VimAdaptor.commons.VduRecord;
@@ -51,7 +51,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
    * suitable object with these fields, able to handle the API call asynchronously, generate a
    * response and update the observer
    */
-  private DeployServiceData data;
+  private ServiceDeployPayload data;
   private String sid;
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(MockWrapper.class);
@@ -67,7 +67,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
   }
 
   @Override
-  public boolean deployService(DeployServiceData data, String callSid) {
+  public boolean deployService(ServiceDeployPayload data, String callSid) {
     this.data = data;
     this.sid = callSid;
     // This is a mock compute wrapper.
@@ -92,7 +92,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       Logger.error(e.getMessage(), e);
     }
     Logger.info("Service DEPLOYED. Creating response");
-    DeployServiceResponse response = new DeployServiceResponse();
+    ServiceDeployResponse response = new ServiceDeployResponse();
     response.setRequestStatus("DEPLOYED");;
     ServiceRecord sr = new ServiceRecord();
     sr.setStatus(Status.normal_operation);
@@ -161,6 +161,14 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     resources.setUsedMemory(0);
 
     return resources;
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
+   */
+  @Override
+  public boolean prepareService(String instanceId) {
+    return true;
   }
 
 }

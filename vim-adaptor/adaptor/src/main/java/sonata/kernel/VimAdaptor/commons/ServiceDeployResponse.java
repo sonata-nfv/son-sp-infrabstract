@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
-public class DeployServiceResponse {
+public class ServiceDeployResponse {
 
   private String instanceName;
   private String instanceVimUuid;
@@ -41,7 +41,7 @@ public class DeployServiceResponse {
   private ArrayList<VnfRecord> vnfrs;
   private String errorCode;
 
-  public DeployServiceResponse() {
+  public ServiceDeployResponse() {
     this.vnfrs = new ArrayList<VnfRecord>();
   }
 

@@ -1,6 +1,6 @@
 package sonata.kernel.VimAdaptor.wrapper.mock;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.wrapper.NetworkingWrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
@@ -16,7 +16,7 @@ public class NetworkMockWrapper extends NetworkingWrapper {
   }
 
   @Override
-  public void configureNetworking(DeployServiceData data, StackComposition composition)
+  public void configureNetworking(ServiceDeployPayload data, StackComposition composition)
       throws Exception {
     return;
   }

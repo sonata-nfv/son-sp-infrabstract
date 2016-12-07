@@ -40,10 +40,14 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
-import sonata.kernel.VimAdaptor.commons.DeployServiceResponse;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ResourceAvailabilityData;
+import sonata.kernel.VimAdaptor.commons.ServicePreparePayload;
 import sonata.kernel.VimAdaptor.commons.Status;
+import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
+import sonata.kernel.VimAdaptor.commons.FunctionDeployResponse;
+import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
@@ -54,7 +58,7 @@ import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.VimAdaptor.messaging.TestConsumer;
 import sonata.kernel.VimAdaptor.messaging.TestProducer;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.VimAdaptor.wrapper.odlWrapper.OdlWrapper;
+import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OvsWrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -62,6 +66,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -76,8 +81,8 @@ public class DeployServiceTest implements MessageReceiver {
   private Object mon = new Object();
   private TestConsumer consumer;
   private String lastHeartbeat;
-  private DeployServiceData data;
-  private DeployServiceData data1;
+  private ServiceDeployPayload data;
+  private ServiceDeployPayload data1;
   private ObjectMapper mapper;
 
   /**
@@ -125,7 +130,7 @@ public class DeployServiceTest implements MessageReceiver {
     vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
 
-    this.data = new DeployServiceData();
+    this.data = new ServiceDeployPayload();
 
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
@@ -151,11 +156,11 @@ public class DeployServiceTest implements MessageReceiver {
       bodyBuilder.append(line + "\n\r");
     vnfd1 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-    this.data1 = new DeployServiceData();
+    this.data1 = new ServiceDeployPayload();
 
     data1.setServiceDescriptor(sd);
     data1.addVnfDescriptor(vnfd1);
-   
+
   }
 
   /**
@@ -334,7 +339,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     Assert.assertTrue("No Deploy service response received", retry < maxRetry);
 
-    DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
+    ServiceDeployResponse response = mapper.readValue(output, ServiceDeployResponse.class);
     Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
     Assert.assertTrue(response.getNsr().getStatus() == Status.normal_operation);
 
@@ -363,12 +368,12 @@ public class DeployServiceTest implements MessageReceiver {
 
   /**
    * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody
-   * and addNetVimBody String Member to match your OpenStack and ODL configuration and substitute
+   * and addNetVimBody String Member to match your OpenStack and ovs configuration and substitute
    * the @Ignore annotation with the @Test annotation
    *
    * @throws Exception
    */
-  @Ignore 
+  @Ignore
   public void testDeployServiceOpenStack() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -421,7 +426,7 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"odl\", "
+    String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"ovs\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.networking.add";
@@ -439,7 +444,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("status");
     String netWrUuid = jsonObject.getString("uuid");
-    Assert.assertTrue("Failed to add the Odl wrapper. Status " + status,
+    Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
         status.equals("COMPLETED"));
     System.out.println("OpenDaylight Wrapper added, with uuid: " + netWrUuid);
 
@@ -471,10 +476,10 @@ public class DeployServiceTest implements MessageReceiver {
         retry++;
       }
 
-    System.out.println("DeployServiceResponse: ");
+    System.out.println("ServiceDeployResponse: ");
     System.out.println(output);
     Assert.assertTrue("No Deploy service response received", retry < maxRetry);
-    DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
+    ServiceDeployResponse response = mapper.readValue(output, ServiceDeployResponse.class);
     Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
     Assert.assertTrue(response.getNsr().getStatus() == Status.offline);
 
@@ -537,17 +542,17 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
+
     core.stop();
 
-    
+
     // clean the SFC engine
     System.out.println("Cleaning the SFC environment...");
     WrapperConfiguration config = new WrapperConfiguration();
 
     config.setVimEndpoint("10.100.32.200");
 
-    OdlWrapper wrapper = new OdlWrapper(config);
+    OvsWrapper wrapper = new OvsWrapper(config);
     wrapper.deconfigureNetworking(data.getNsd().getInstanceUuid());
 
 
@@ -557,7 +562,8 @@ public class DeployServiceTest implements MessageReceiver {
    * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody
    * String Member to match your OpenStack configuration and substitute the @ignore annotation with
    * the @test annotation
-   * @throws Exception 
+   * 
+   * @throws Exception
    */
   @Ignore
   public void testDeployTwoServicesOpenStack() throws Exception {
@@ -613,7 +619,7 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"odl\", "
+    String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"ovs\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.networking.add";
@@ -631,9 +637,9 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("status");
     String netWrUuid = jsonObject.getString("uuid");
-    Assert.assertTrue("Failed to add the Odl wrapper. Status " + status,
+    Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
         status.equals("COMPLETED"));
-    System.out.println("OpenDaylight Wrapper added, with uuid: " + netWrUuid);
+    System.out.println("Openvswitch Wrapper added, with uuid: " + netWrUuid);
 
 
     output = null;
@@ -664,10 +670,10 @@ public class DeployServiceTest implements MessageReceiver {
         retry++;
       }
 
-    System.out.println("DeployServiceResponse: ");
+    System.out.println("ServiceDeployResponse: ");
     System.out.println(output);
     Assert.assertTrue("No Deploy service response received", retry < maxRetry);
-    DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
+    ServiceDeployResponse response = mapper.readValue(output, ServiceDeployResponse.class);
     Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
     Assert.assertTrue(response.getNsr().getStatus() == Status.offline);
 
@@ -702,10 +708,10 @@ public class DeployServiceTest implements MessageReceiver {
         retry++;
       }
 
-    System.out.println("DeployServiceResponse: ");
+    System.out.println("ServiceDeployResponse: ");
     System.out.println(output);
     Assert.assertTrue("No Deploy service response received", retry < maxRetry);
-    response = mapper.readValue(output, DeployServiceResponse.class);
+    response = mapper.readValue(output, ServiceDeployResponse.class);
     Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
     Assert.assertTrue(response.getNsr().getStatus() == Status.offline);
     for (VnfRecord vnfr : response.getVnfrs())
@@ -729,7 +735,8 @@ public class DeployServiceTest implements MessageReceiver {
     // Service removal
     output = null;
     String instanceUuid = baseInstanceUuid + "-01";
-    String message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + computeWrUuid + "\"}";
+    String message =
+        "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.service.remove";
     ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -803,17 +810,17 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
+
     core.stop();
 
-    
+
     // clean the SFC engine
     System.out.println("Cleaning the SFC environment...");
     WrapperConfiguration config = new WrapperConfiguration();
 
     config.setVimEndpoint("10.100.32.200");
 
-    OdlWrapper wrapper = new OdlWrapper(config);
+    OvsWrapper wrapper = new OvsWrapper(config);
     wrapper.deconfigureNetworking(data.getNsd().getInstanceUuid());
   }
 
@@ -888,9 +895,9 @@ public class DeployServiceTest implements MessageReceiver {
    * output.contains("Vim Added") && retry < maxRetry) synchronized (mon) { mon.wait(1000); retry++;
    * }
    *
-   * System.out.println("DeployServiceResponse: "); System.out.println(output);
-   * assertTrue("No Deploy service response received", retry < maxRetry); DeployServiceResponse
-   * response = mapper.readValue(output, DeployServiceResponse.class);
+   * System.out.println("ServiceDeployResponse: "); System.out.println(output);
+   * assertTrue("No Deploy service response received", retry < maxRetry); ServiceDeployResponse
+   * response = mapper.readValue(output, ServiceDeployResponse.class);
    * assertTrue(response.getRequestStatus().equals("DEPLOYED"));
    * assertTrue(response.getNsr().getStatus() == Status.offline);
    *
@@ -913,9 +920,9 @@ public class DeployServiceTest implements MessageReceiver {
    * output.contains("Vim Added") && retry < maxRetry) synchronized (mon) { mon.wait(1000); retry++;
    * }
    *
-   * System.out.println("DeployServiceResponse: "); System.out.println(output);
+   * System.out.println("ServiceDeployResponse: "); System.out.println(output);
    * assertTrue("No Deploy service response received", retry < maxRetry); response =
-   * mapper.readValue(output, DeployServiceResponse.class);
+   * mapper.readValue(output, ServiceDeployResponse.class);
    * assertTrue(response.getRequestStatus().equals("DEPLOYED"));
    * assertTrue(response.getNsr().getStatus() == Status.offline); for (VnfRecord vnfr :
    * response.getVnfrs()) assertTrue(vnfr.getStatus() == Status.offline);
@@ -964,6 +971,192 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * }
    */
+
+  @Ignore
+  public void testDeployServiceIncremental() throws Exception {
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.1);
+
+    core.start();
+    int counter = 0;
+
+    try {
+      while (counter < 2) {
+        synchronized (mon) {
+          mon.wait();
+          if (lastHeartbeat.contains("RUNNING")) counter++;
+        }
+      }
+    } catch (Exception e) {
+      Assert.assertTrue(false);
+    }
+
+
+    String addVimBody = "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", "
+        + "\"tenant_ext_router\":\"4ac2b52e-8f6b-4af3-ad28-38ede9d71c83\", "
+        + "\"tenant_ext_net\":\"cbc5a4fa-59ed-4ec1-ad2d-adb270e21693\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
+        + "\"pass\":\"ii70mseq\",\"tenant\":\"admin\"}";
+    String topic = "infrastructure.management.compute.add";
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+
+
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String status = jsonObject.getString("status");
+    String computeWrUuid = jsonObject.getString("uuid");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid);
+
+
+    output = null;
+    String addNetVimBody = "{\"wr_type\":\"networking\",\"vim_type\":\"ovs\", "
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
+        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
+    topic = "infrastructure.management.networking.add";
+    ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addNetVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("status");
+    String netWrUuid = jsonObject.getString("uuid");
+    Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
+        status.equals("COMPLETED"));
+    System.out.println("OVS Wrapper added, with uuid: " + netWrUuid);
+
+
+    output = null;
+
+    // Prepare the system for a service deployment
+
+    ServicePreparePayload payload = new ServicePreparePayload();
+
+    payload.setInstanceId(data.getNsd().getInstanceUuid());
+    ArrayList<String> vims = new ArrayList<String>();
+    vims.add(computeWrUuid);
+
+
+    String body = mapper.writeValueAsString(payload);
+
+    topic = "infrastructure.service.prepare";
+    ServicePlatformMessage servicePrepareMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(servicePrepareMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("status");
+    String message = jsonObject.getString("message");
+    Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status+" - message: "+message,
+        status.equals("COMPLETED"));
+    System.out.println("Service " + payload.getInstanceId() + " ready for deployment");
+
+    output = null;
+
+    // Send a VNF instantiation request for each VNFD linked by the NSD
+
+    for (VnfDescriptor vnfd : data.getVnfdList()) {
+
+      FunctionDeployPayload vnfPayload = new FunctionDeployPayload();
+      vnfPayload.setVnfd(vnfd);
+      vnfPayload.setVimUuid(computeWrUuid);
+
+      body = mapper.writeValueAsString(vnfPayload);
+
+      topic = "infrastructure.function.deploy";
+      ServicePlatformMessage functionDeployMessage = new ServicePlatformMessage(body,
+          "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+      consumer.injectMessage(functionDeployMessage);
+
+      Thread.sleep(2000);
+      while (output == null)
+        synchronized (mon) {
+          mon.wait(1000);
+        }
+      Assert.assertNotNull(output);
+      int retry = 0;
+      int maxRetry = 60;
+      while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry)
+        synchronized (mon) {
+          mon.wait(1000);
+          retry++;
+        }
+
+      System.out.println("FunctionDeployResponse: ");
+      System.out.println(output);
+      Assert.assertTrue("No response received after function deployment", retry < maxRetry);
+      FunctionDeployResponse response = mapper.readValue(output, FunctionDeployResponse.class);
+      Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+      Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
+    }
+
+    // Finally configure Networking in each NFVi-PoP (VIMs)
+
+    output = null;
+
+    // Prepare the system for a service deployment
+
+    NetworkConfigurePayload netPayload = new NetworkConfigurePayload();
+    netPayload.setForwardingGraph(data.getNsd().getForwardingGraphs().get(0));
+    
+
+    body = mapper.writeValueAsString(netPayload);
+
+    topic = "infrastructure.network.configure";
+    ServicePlatformMessage networkConfigureMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(networkConfigureMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("status");
+    Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
+        status.equals("COMPLETED"));
+    System.out.println(
+        "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
+
+    output = null;
+
+  }
 
   public void receiveHeartbeat(ServicePlatformMessage message) {
     synchronized (mon) {

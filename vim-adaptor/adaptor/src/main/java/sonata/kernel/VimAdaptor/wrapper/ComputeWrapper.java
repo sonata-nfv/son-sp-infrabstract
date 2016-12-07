@@ -26,7 +26,7 @@
 
 package sonata.kernel.VimAdaptor.wrapper;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
@@ -40,6 +40,15 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   }
 
   /**
+   * Prepare a service instance in this VIM for the given instance ID.
+   * 
+   * @param instanceId the ID of the instance used as reference for the prepared environment in the VIM
+   * 
+   * @return true if the remove process has started correctly, false otherwise
+   */
+  public abstract boolean prepareService(String instanceId) throws Exception;
+  
+  /**
    * Remove a service instance from this VIM.
    * 
    * @param data the payload containing the service descriptors and the metadata for this service
@@ -48,7 +57,7 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * 
    * @return true if the remove process has started correctly, false otherwise
    */
-  public abstract boolean deployService(DeployServiceData data, String callSid) throws Exception;
+  public abstract boolean deployService(ServiceDeployPayload data, String callSid) throws Exception;
 
   /**
    * Remove a service instance from this VIM.

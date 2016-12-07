@@ -34,7 +34,7 @@ import sonata.kernel.VimAdaptor.wrapper.MockWrapper;
 import sonata.kernel.VimAdaptor.wrapper.VimRepo;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperRecord;
-import sonata.kernel.VimAdaptor.wrapper.odlWrapper.OdlWrapper;
+import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OvsWrapper;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -133,12 +133,12 @@ public class VimRepoTest {
 
     repoInstance = new VimRepo();
 
-    boolean out =
-        repoInstance.writeInstanceEntry("1", "1-1", "stack1-1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
+    boolean out = repoInstance.writeServiceInstanceEntry("1", "1-1", "stack1-1",
+        "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while writing the instance", out);
 
-    out = repoInstance.removeInstanceEntry("1");
+    out = repoInstance.removeServiceInstanceEntry("1");
 
     Assert.assertTrue("Errors while removing the instance", out);
 
@@ -149,16 +149,16 @@ public class VimRepoTest {
 
     repoInstance = new VimRepo();
 
-    boolean out =
-        repoInstance.writeInstanceEntry("1", "1-1", "stack1-1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
+    boolean out = repoInstance.writeServiceInstanceEntry("1", "1-1", "stack1-1",
+        "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while writing the instance", out);
 
-    String vimUuid = repoInstance.getServiceVimUuid("1");
+    String vimUuid = repoInstance.getServiceInstanceVimUuid("1");
 
     Assert.assertTrue("Retrieved vim UUID different from the stored UUID", vimUuid.equals("1-1"));
 
-    out = repoInstance.removeInstanceEntry("1");
+    out = repoInstance.removeServiceInstanceEntry("1");
 
     Assert.assertTrue("Errors while removing the instance", out);
   }
@@ -168,19 +168,58 @@ public class VimRepoTest {
 
     repoInstance = new VimRepo();
 
-    boolean out =
-        repoInstance.writeInstanceEntry("1", "1-1", "stack1-1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
+    boolean out = repoInstance.writeServiceInstanceEntry("1", "1-1", "stack1-1",
+        "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while writing the instance", out);
 
-    String vimName = repoInstance.getServiceVimName("1");
+    String vimName = repoInstance.getServiceInstanceVimName("1");
 
     Assert.assertTrue("Retrieved vim Name different from the stored Name",
         vimName.equals("stack1-1"));
 
-    out = repoInstance.removeInstanceEntry("1");
+    out = repoInstance.removeServiceInstanceEntry("1");
 
     Assert.assertTrue("Errors while removing the instance", out);
+
+  }
+
+  @Test
+  public void testFunctionInstance() {
+    repoInstance = new VimRepo();
+    boolean out = repoInstance.writeServiceInstanceEntry("1", "1-1", "stack1-1", "xxxx-xxxx");
+    Assert.assertTrue("Errors while writing the service instance", out);
+    out = repoInstance.writeServiceInstanceEntry("1", "a-1", "stacka-1", "yyyy-yyyy");
+    Assert.assertTrue("Errors while writing the service instance", out);
+    out = repoInstance.writeFunctionInstanceEntry("0001", "1", "xxxx-xxxx");
+    Assert.assertTrue("Errors while writing the function instance", out);
+    out = repoInstance.writeFunctionInstanceEntry("0002", "1", "xxxx-xxxx");
+    Assert.assertTrue("Errors while writing the function instance", out);
+    out = repoInstance.writeFunctionInstanceEntry("0003", "1", "yyyy-yyyy");
+    Assert.assertTrue("Errors while writing the function instance", out);
+    out = repoInstance.writeFunctionInstanceEntry("0004", "1", "yyyy-yyyy");
+    Assert.assertTrue("Errors while writing the function instance", out);
+
+    String vimUuid = repoInstance.getComputeVimUuidByFunctionInstanceId("0003");
+
+    String stackId = repoInstance.getServiceInstanceVimUuidByFunction("0003");
+    System.out.println("Function Instance 0003 is at VIM " + vimUuid + " with stack id " + stackId);
+    Assert.assertTrue(vimUuid.equals("yyyy-yyyy"));
+    Assert.assertTrue(stackId.equals("a-1"));
+
+    out = repoInstance.writeFunctionInstanceEntry("0005", "1", "zzzz-zzzz");
+
+    Assert.assertFalse(out);
+
+    repoInstance.removeServiceInstanceEntry("1");
+    stackId = repoInstance.getServiceInstanceVimUuidByFunction("0001");
+    Assert.assertNull(stackId);
+    stackId = repoInstance.getServiceInstanceVimUuidByFunction("0002");
+    Assert.assertNull(stackId);
+    stackId = repoInstance.getServiceInstanceVimUuidByFunction("0003");
+    Assert.assertNull(stackId);
+    stackId = repoInstance.getServiceInstanceVimUuidByFunction("0004");
+    Assert.assertNull(stackId);
 
   }
 
@@ -215,7 +254,7 @@ public class VimRepoTest {
     config.setWrapperType("networking");
     config.setTenantExtNet(null);
     config.setTenantExtRouter(null);
-    record = new WrapperRecord(new OdlWrapper(config), config, null);
+    record = new WrapperRecord(new OvsWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write the networking vim", out);
 
@@ -228,6 +267,12 @@ public class VimRepoTest {
         netRecord.getConfig().getWrapperType().equals("networking"));
     Assert.assertTrue("Unexpected networking vim uuid",
         netRecord.getConfig().getUuid().equals(networkingUuid));
+
+    out = repoInstance.writeNetworkVimLink("zxyz", networkingUuid);
+    Assert.assertFalse("Error. I managed to link the net VIM to a-non existing compute VIM", out);
+
+    out = repoInstance.writeNetworkVimLink(computeUuid, "hhhhh");
+    Assert.assertFalse("Error. I managed to link the compute VIM to a-non existing net VIM", out);
 
     out = repoInstance.removeVimEntry(config.getUuid());
     Assert.assertTrue("unable to remove vim", out);
