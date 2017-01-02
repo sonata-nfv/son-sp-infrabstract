@@ -28,6 +28,7 @@ package sonata.kernel.VimAdaptor.wrapper;
 
 import org.slf4j.LoggerFactory;
 
+import sonata.kernel.VimAdaptor.wrapper.mock.ComputeMockWrapper;
 import sonata.kernel.VimAdaptor.wrapper.mock.NetworkMockWrapper;
 import sonata.kernel.VimAdaptor.wrapper.openstack.OpenStackHeatWrapper;
 import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OvsWrapper;
@@ -67,7 +68,7 @@ public class WrapperFactory {
     ComputeWrapper output = null;
 
     if (config.getVimVendor().equals(ComputeVimType.MOCK.toString())) {
-      output = new MockWrapper(config);
+      output = new ComputeMockWrapper(config);
     } else if (config.getVimVendor().equals(ComputeVimType.OPENSTACKHEAT.toString())) {
       output = new OpenStackHeatWrapper(config);
     }

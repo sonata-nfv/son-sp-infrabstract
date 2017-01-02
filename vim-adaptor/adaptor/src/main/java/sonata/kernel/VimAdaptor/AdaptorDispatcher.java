@@ -76,6 +76,8 @@ public class AdaptorDispatcher implements Runnable {
           handleManagementMessage(message);
         } else if (isServiceMsg(message)) {
           this.handleServiceMsg(message);
+        } else if (isFunctionMessage(message)) {
+          handleFunctionMessage(message);
         } else if (isMonitoringMessage(message)) {
           this.handleMonitoringMessage(message);
         }
@@ -104,6 +106,12 @@ public class AdaptorDispatcher implements Runnable {
     } else if (message.getTopic().endsWith("prepare")) {
       Logger.info("Received a \"service.prepare\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new PrepareServiceCallProcessor(message, message.getSid(), mux));
+    }
+  }
+  
+  private void handleFunctionMessage(ServicePlatformMessage message){
+    if (message.getTopic().endsWith("deploy")) {
+      myThreadPool.execute(new DeployFunctionServiceCallProcessor(message,message.getSid(),mux));
     }
   }
 
@@ -144,6 +152,10 @@ public class AdaptorDispatcher implements Runnable {
 
   private boolean isMonitoringMessage(ServicePlatformMessage message) {
     return message.getTopic().contains("infrastructure.monitoring");
+  }
+
+  private boolean isFunctionMessage(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.function");
   }
 
   private boolean isRegistrationResponse(ServicePlatformMessage message) {

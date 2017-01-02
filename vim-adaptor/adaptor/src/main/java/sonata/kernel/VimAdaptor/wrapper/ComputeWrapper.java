@@ -26,6 +26,7 @@
 
 package sonata.kernel.VimAdaptor.wrapper;
 
+import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
@@ -75,5 +76,13 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * @return the ResourceUtilisation object representing the status of this VIM
    */
   public abstract ResourceUtilisation getResourceUtilisation();
+
+  /**
+   * Deploy a the VNF described in the payload in this compute VIM
+   * 
+   * @param data the payload of a Function.Deploy call
+   * @param sid the session ID for this Adaptor call.
+   */
+  public abstract void deployFunction(FunctionDeployPayload data, String sid);
 
 }

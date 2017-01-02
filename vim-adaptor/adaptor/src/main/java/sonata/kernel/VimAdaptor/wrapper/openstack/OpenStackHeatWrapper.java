@@ -34,9 +34,9 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
-import sonata.kernel.VimAdaptor.commons.ServicePreparePayload;
+import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
 import sonata.kernel.VimAdaptor.commons.IpNetPool;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.heat.HeatModel;
 import sonata.kernel.VimAdaptor.commons.heat.HeatResource;
 import sonata.kernel.VimAdaptor.commons.heat.HeatTemplate;
@@ -272,8 +272,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
       }
 
-      WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(instanceId, stackUuid, stackName,
-          this.config.getUuid());
+      WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(instanceId, stackUuid,
+          stackName, this.config.getUuid());
 
     } catch (Exception e) {
       Logger.error("Error during stack creation.");
@@ -619,6 +619,36 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       model.addResource(floatingIp);
     }
     model.prepare();
+    return model;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#deployFunction(sonata.kernel.VimAdaptor.commons
+   * .FunctionDeployPayload, java.lang.String)
+   */
+  @Override
+  public void deployFunction(FunctionDeployPayload data, String sid) {
+    OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+
+    OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
+    Collections.sort(vimFlavors);
+    HeatModel stack;
+    try {
+      stack = translate(data.getVnfd(), vimFlavors);
+    } catch (Exception e) {
+      // TODO: handle exception
+    }
+  }
+  
+  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors){
+    HeatModel model = new HeatModel();
+    
     return model;
   }
 

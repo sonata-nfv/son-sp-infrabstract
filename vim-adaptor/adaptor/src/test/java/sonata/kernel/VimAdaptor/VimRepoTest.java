@@ -30,10 +30,10 @@ package sonata.kernel.VimAdaptor;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sonata.kernel.VimAdaptor.wrapper.MockWrapper;
 import sonata.kernel.VimAdaptor.wrapper.VimRepo;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperRecord;
+import sonata.kernel.VimAdaptor.wrapper.mock.ComputeMockWrapper;
 import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OvsWrapper;
 
 import java.io.IOException;
@@ -74,7 +74,7 @@ public class VimRepoTest {
     config.setWrapperType("mock");
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
-    WrapperRecord record = new WrapperRecord(new MockWrapper(config), config, null);
+    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
 
 
@@ -99,17 +99,17 @@ public class VimRepoTest {
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
 
-    WrapperRecord record = new WrapperRecord(new MockWrapper(config), config, null);
+    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write a vim", out);
 
     config.setUuid("2");
-    record = new WrapperRecord(new MockWrapper(config), config, null);
+    record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write a vim", out);
 
     config.setUuid("3");
-    record = new WrapperRecord(new MockWrapper(config), config, null);
+    record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write a vim", out);
 
@@ -240,7 +240,7 @@ public class VimRepoTest {
     config.setWrapperType("compute");
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
-    WrapperRecord record = new WrapperRecord(new MockWrapper(config), config, null);
+    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write the compute vim", out);
 
