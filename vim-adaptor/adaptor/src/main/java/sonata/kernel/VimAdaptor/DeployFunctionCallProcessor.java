@@ -34,11 +34,11 @@ import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
 
 import java.util.Observable;
 
-public class DeployFunctionServiceCallProcessor extends AbstractCallProcessor {
+public class DeployFunctionCallProcessor extends AbstractCallProcessor {
 
   private FunctionDeployPayload data;
   private static final org.slf4j.Logger Logger =
-      LoggerFactory.getLogger(DeployFunctionServiceCallProcessor.class);
+      LoggerFactory.getLogger(DeployFunctionCallProcessor.class);
 
   /**
    * Basic constructor for the call processor.
@@ -47,7 +47,7 @@ public class DeployFunctionServiceCallProcessor extends AbstractCallProcessor {
    * @param sid
    * @param mux
    */
-  public DeployFunctionServiceCallProcessor(ServicePlatformMessage message, String sid,
+  public DeployFunctionCallProcessor(ServicePlatformMessage message, String sid,
       AdaptorMux mux) {
     super(message, sid, mux);
   }
@@ -96,7 +96,7 @@ public class DeployFunctionServiceCallProcessor extends AbstractCallProcessor {
   @Override
   public boolean process(ServicePlatformMessage message) {
     boolean out = true;
-    Logger.info("Call received...");
+    Logger.info("Deploy function call received by call processor.");
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
     Logger.info("Parsing payload...");
     data = null;

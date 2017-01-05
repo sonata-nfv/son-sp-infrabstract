@@ -78,6 +78,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   }
 
   private HeatTemplate createInitStackTemplate(String instanceId) throws Exception {
+    Logger.debug("Creating init stack template");
+    
     HeatModel model = new HeatModel();
     int subnetIndex = 0;
     ArrayList<String> subnets = myPool.reserveSubnets(instanceId, 2);
@@ -139,7 +141,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     dataSubnet.putProperty("network", dataNetMap);
     model.addResource(dataSubnet);
 
+    model.prepare();
+    
     HeatTemplate template = new HeatTemplate();
+    Logger.debug("Created " + model.getResources().size()+ " resurces.");
     for (HeatResource resource : model.getResources()) {
       template.putResource(resource.getResourceName(), resource);
     }
@@ -180,7 +185,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   }
 
   /**
-   * Returns a heat template translated from the given descriptors.
+   * Returns a heat template translated from the given descriptors. Mainly used for unit testing
+   * scope
    * 
    * @param data the service descriptors to translate
    * @param vimFlavors the list of available compute flavors
@@ -622,6 +628,71 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return model;
   }
 
+  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors, String instanceUuid) {
+    HeatModel model = new HeatModel();
+
+    ArrayList<String> publicPortNames = new ArrayList<String>();
+
+    for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
+      HeatResource server = new HeatResource();
+      server.setType("OS::Nova::Server");
+      server.setName(vnfd.getName() + ":" + vdu.getId() + ":" + instanceUuid);
+      server.putProperty("name", vnfd.getName() + ":" + vdu.getId() + ":" + instanceUuid);
+      server.putProperty("image", vdu.getVmImage());
+      int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
+      double memory = vdu.getResourceRequirements().getMemory().getSize();
+      double storage = vdu.getResourceRequirements().getStorage().getSize();
+      String flavorName = this.selectFlavor(vcpu, memory, storage, flavors);
+      server.putProperty("flavor", flavorName);
+      ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
+      for (ConnectionPoint cp : vdu.getConnectionPoints()) {
+        // create the port resource
+        HeatResource port = new HeatResource();
+        port.setType("OS::Neutron::Port");
+        port.setName(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
+        port.putProperty("name", vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
+        HashMap<String, Object> netMap = new HashMap<String, Object>();
+        if (cp.getType().equals("internal")) {
+          netMap.put("get_resource", "SonataService:data:net:" + instanceUuid);
+        } else if (cp.getType().equals("external")) {
+          netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
+        } else if (cp.getType().equals("public")) {
+          netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
+          publicPortNames.add(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
+        }
+        port.putProperty("network", netMap);
+        model.addResource(port);
+
+        // add the port to the server
+        HashMap<String, Object> n1 = new HashMap<String, Object>();
+        HashMap<String, Object> portMap = new HashMap<String, Object>();
+        portMap.put("get_resource", vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
+        n1.put("port", portMap);
+        net.add(n1);
+
+      }
+      model.addResource(server);
+    }
+
+    for (String portName : publicPortNames) {
+      // allocate floating IP
+      HeatResource floatingIp = new HeatResource();
+      floatingIp.setType("OS::Neutron::FloatingIP");
+      floatingIp.setName("floating:" + portName);
+
+
+      floatingIp.putProperty("floating_network_id", this.config.getTenantExtNet());
+
+      HashMap<String, Object> floatMapPort = new HashMap<String, Object>();
+      floatMapPort.put("get_resource", portName);
+      floatingIp.putProperty("port_id", floatMapPort);
+
+      model.addResource(floatingIp);
+    }
+    model.prepare();
+    return model;
+  }
+
   /*
    * (non-Javadoc)
    * 
@@ -636,22 +707,68 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
         config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+
+    String stackUuid = WrapperBay.getInstance().getVimRepo()
+        .getServiceInstanceVimUuid(data.getServiceInstanceId());
+    String stackName = WrapperBay.getInstance().getVimRepo()
+        .getServiceInstanceVimName(data.getServiceInstanceId());
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     Collections.sort(vimFlavors);
-    HeatModel stack;
+    HeatModel stackAddendum;
+
+    HeatTemplate template = client.getStackTemplate(stackName, stackUuid);
+
+    stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
+
+    for (HeatResource resource : stackAddendum.getResources()) {
+      template.putResource(resource.getResourceName(), resource);
+    }
+
+    Logger.info("Deploying new stack for service preparation.");
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    Logger.info("Serializing updated stack...");
     try {
-      stack = translate(data.getVnfd(), vimFlavors);
+      String stackString = mapper.writeValueAsString(template);
+      Logger.debug(stackString);
+      client.updateStack(stackName, stackUuid, stackString);
+
+      int counter = 0;
+      int wait = 1000;
+      int maxCounter = 10;
+      String status = null;
+      while ((status == null || !status.equals("UPDATE_COMPLETE")
+          || !status.equals("UPDATE_FAILED")) && counter < maxCounter) {
+        status = client.getStackStatus(stackName, stackUuid);
+        Logger.info("Status of stack " + stackUuid + ": " + status);
+        if (status != null
+            && (status.equals("UPDATE_COMPLETE") || status.equals("UPDATE_FAILED"))) {
+          break;
+        }
+        try {
+          Thread.sleep(wait);
+        } catch (InterruptedException e) {
+          Logger.error(e.getMessage(), e);
+        }
+        counter++;
+        wait *= 2;
+      }
+
+      if (status == null) {
+        Logger.error("unable to contact the VIM to check the update status");
+        return;
+      }
+      if (status.equals("UPDATE_FAILED")) {
+        Logger.error("Heat Stack update process failed on the VIM side.");
+        return;
+      }
+
     } catch (Exception e) {
       // TODO: handle exception
     }
   }
-  
-  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors){
-    HeatModel model = new HeatModel();
-    
-    return model;
-  }
-
-
 
 }

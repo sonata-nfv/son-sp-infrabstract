@@ -373,7 +373,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceOpenStack() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -972,7 +972,7 @@ public class DeployServiceTest implements MessageReceiver {
    * }
    */
 
-  @Ignore
+  @Test
   public void testDeployServiceIncremental() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1056,7 +1056,7 @@ public class DeployServiceTest implements MessageReceiver {
     payload.setInstanceId(data.getNsd().getInstanceUuid());
     ArrayList<String> vims = new ArrayList<String>();
     vims.add(computeWrUuid);
-
+    payload.setVimList(vims);
 
     String body = mapper.writeValueAsString(payload);
 

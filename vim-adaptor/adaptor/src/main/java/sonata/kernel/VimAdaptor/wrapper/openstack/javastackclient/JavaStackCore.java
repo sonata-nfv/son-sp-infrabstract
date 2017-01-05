@@ -36,7 +36,7 @@ public class JavaStackCore {
   private String tenant_id;
   private ObjectMapper mapper;
   private String token_id;
-  private String image_id;
+  // private String image_id;
   private boolean isAuthenticated = false;
 
   private JavaStackCore() {}
@@ -150,13 +150,13 @@ public class JavaStackCore {
     modifiedObject.put("template", new JSONObject(jsonTemplate));
 
     if (this.isAuthenticated) {
-      Logger.debug("");
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Constants.HEAT_PORT.toString());
       buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(), tenant_id));
+      //Logger.debug("POST body: " + modifiedObject.toString());
 
       // Logger.debug(buildUrl.toString());
       createStack = new HttpPost(buildUrl.toString());
@@ -165,14 +165,62 @@ public class JavaStackCore {
       // Logger.debug(this.token_id);
       createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
+      Logger.debug("Request:" + createStack.toString());
+      
       response = httpClient.execute(createStack);
+      int statusCode = response.getStatusLine().getStatusCode();
+      String responsePhrase = response.getStatusLine().getReasonPhrase();
+
+      Logger.debug("Response:" + response.toString());
+      
+      return (statusCode == 201)
+          ? response
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, statusCode,
+              responsePhrase + ". Create Failed with Status: " + statusCode), null);
+    } else {
+      throw new IOException(
+          "You must Authenticate before issuing this request, please re-authenticate. ");
+    }
+  }
+
+  public synchronized HttpResponse updateStack(String stackName, String stackUuid, String template)
+      throws IOException {
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpResponseFactory factory = new DefaultHttpResponseFactory();
+    HttpPut updateStack = null;
+    HttpResponse response = null;
+
+    String jsonTemplate = JavaStackUtils.convertYamlToJson(template);
+    JSONObject modifiedObject = new JSONObject();
+    modifiedObject.put("stack_name", stackName);
+    modifiedObject.put("template", new JSONObject(jsonTemplate));
+
+    if (this.isAuthenticated) {
+      Logger.debug("");
+      StringBuilder buildUrl = new StringBuilder();
+      buildUrl.append("http://");
+      buildUrl.append(this.endpoint);
+      buildUrl.append(":");
+      buildUrl.append(Constants.HEAT_PORT.toString());
+      buildUrl.append(String.format("/%s/%s/stacks/%s/%s", Constants.HEAT_VERSION.toString(),
+          tenant_id, stackName, stackUuid));
+
+      // Logger.debug(buildUrl.toString());
+      updateStack = new HttpPut(buildUrl.toString());
+      updateStack
+          .setEntity(new StringEntity(modifiedObject.toString(), ContentType.APPLICATION_JSON));
+      // Logger.debug(this.token_id);
+      updateStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+      response = httpClient.execute(updateStack);
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
 
       return (statusCode == 201)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, statusCode,
-              responsePhrase+". Create Failed with Status: " + statusCode), null);
+              responsePhrase + ". Create Failed with Status: " + statusCode), null);
     } else {
       throw new IOException(
           "You must Authenticate before issuing this request, please re-authenticate. ");
@@ -257,6 +305,43 @@ public class JavaStackCore {
       listStacks.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
       response = httpClient.execute(listStacks);
+      int status_code = response.getStatusLine().getStatusCode();
+
+      return (status_code == 200)
+          ? response
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
+              "List Failed with Status: " + status_code), null);
+
+    } else {
+      throw new IOException(
+          "You must Authenticate before issuing this request, please re-authenticate. ");
+    }
+
+  }
+
+  public synchronized HttpResponse getStackTemplate(String stackName, String stackId)
+      throws IOException, URISyntaxException {
+
+    HttpResponseFactory factory = new DefaultHttpResponseFactory();
+    HttpClient httpclient = HttpClientBuilder.create().build();
+    HttpGet getStackTemplate = null;
+    HttpResponse response = null;
+
+    if (isAuthenticated) {
+
+      URIBuilder builder = new URIBuilder();
+      String path = String.format("/%s/%s/stacks/%s/%s/template", Constants.HEAT_VERSION.toString(),
+          this.tenant_id, stackName, stackId);
+
+      builder.setScheme("http").setHost(endpoint)
+          .setPort(Integer.parseInt(Constants.HEAT_PORT.toString())).setPath(path);
+
+      URI uri = builder.build();
+
+      getStackTemplate = new HttpGet(uri);
+      getStackTemplate.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+      response = httpclient.execute(getStackTemplate);
       int status_code = response.getStatusLine().getStatusCode();
 
       return (status_code == 200)

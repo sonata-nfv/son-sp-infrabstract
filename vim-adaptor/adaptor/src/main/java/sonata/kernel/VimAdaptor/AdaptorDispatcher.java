@@ -111,7 +111,7 @@ public class AdaptorDispatcher implements Runnable {
   
   private void handleFunctionMessage(ServicePlatformMessage message){
     if (message.getTopic().endsWith("deploy")) {
-      myThreadPool.execute(new DeployFunctionServiceCallProcessor(message,message.getSid(),mux));
+      myThreadPool.execute(new DeployFunctionCallProcessor(message,message.getSid(),mux));
     }
   }
 
