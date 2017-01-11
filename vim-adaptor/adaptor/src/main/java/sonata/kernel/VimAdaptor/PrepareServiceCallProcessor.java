@@ -93,7 +93,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         }
         
       }
-      String responseJson = "{\"status\":\"COMPLETED\",\"message\":null}";
+      String responseJson = "{\"status\":\"COMPLETED\",\"message\":\"\"}";
       ServicePlatformMessage responseMessage = new ServicePlatformMessage(responseJson, "application/json", message.getReplyTo(), message.getSid(), null);
       this.sendToMux(responseMessage);
       

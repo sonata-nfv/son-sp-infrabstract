@@ -122,7 +122,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatResource dataNetwork = new HeatResource();
     dataNetwork.setType("OS::Neutron::Net");
     dataNetwork.setName("SonataService:data:net:" + instanceId);
-    dataNetwork.putProperty("name", "SonatService" + ":data:net:" + instanceId);
+    dataNetwork.putProperty("name", "SonatService:data:net:" + instanceId);
     model.addResource(dataNetwork);
 
     // Create the data subnet
@@ -134,7 +134,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     cidr = subnets.get(subnetIndex);
     dataSubnet.putProperty("cidr", cidr);
     dataSubnet.putProperty("gateway_ip", myPool.getGateway(cidr));
-
     subnetIndex++;
     HashMap<String, Object> dataNetMap = new HashMap<String, Object>();
     dataNetMap.put("get_resource", "SonataService:data:net:" + instanceId);
@@ -239,7 +238,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     try {
       String stackString = mapper.writeValueAsString(template);
       Logger.debug(stackString);
-      String stackName = "SonataService:" + instanceId;
+      String stackName = "SonataService-" + instanceId;
       Logger.info("Pushing stack to Heat...");
       String stackUuid = client.createStack(stackName, stackString);
 
@@ -277,7 +276,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         return false;
 
       }
-
+      Logger.info("VIM prepared succesfully. Creating record in Infra Repo.");
       WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(instanceId, stackUuid,
           stackName, this.config.getUuid());
 
@@ -740,12 +739,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       int wait = 1000;
       int maxCounter = 10;
       String status = null;
-      while ((status == null || !status.equals("UPDATE_COMPLETE")
-          || !status.equals("UPDATE_FAILED")) && counter < maxCounter) {
+      while ((status == null || !status.equals("CREATE_COMPLETE")
+          || !status.equals("CREATE_FAILED")) && counter < maxCounter) {
         status = client.getStackStatus(stackName, stackUuid);
         Logger.info("Status of stack " + stackUuid + ": " + status);
         if (status != null
-            && (status.equals("UPDATE_COMPLETE") || status.equals("UPDATE_FAILED"))) {
+            && (status.equals("CREATE_COMPLETE") || status.equals("CREATE_FAILED"))) {
           break;
         }
         try {
@@ -761,7 +760,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         Logger.error("unable to contact the VIM to check the update status");
         return;
       }
-      if (status.equals("UPDATE_FAILED")) {
+      if (status.equals("CREATE_FAILED")) {
         Logger.error("Heat Stack update process failed on the VIM side.");
         return;
       }

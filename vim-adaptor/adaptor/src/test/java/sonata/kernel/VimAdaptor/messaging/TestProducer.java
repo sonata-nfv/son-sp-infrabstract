@@ -59,6 +59,15 @@ public class TestProducer extends AbstractMsgBusProducer {
     if (message.getTopic().equals("infrastructure.service.deploy")) {
       output.receive(message);
     }
+    if (message.getTopic().equals("infrastructure.service.prepare")) {
+      output.receive(message);
+    }
+    if (message.getTopic().equals("infrastructure.function.deploy")) {
+      output.receive(message);
+    }
+    if (message.getTopic().equals("infrastructure.network.configure")) {
+      output.receive(message);
+    }
     if (message.getTopic().equals("infrastructure.wan.configure")) {
       output.receive(message);
     }

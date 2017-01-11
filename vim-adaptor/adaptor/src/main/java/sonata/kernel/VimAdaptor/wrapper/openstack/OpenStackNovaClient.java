@@ -154,11 +154,11 @@ public class OpenStackNovaClient {
       mapper = new ObjectMapper();
       String listFlavors =
           JavaStackUtils.convertHttpResponseToString(javaStack.listComputeFlavors());
-      System.out.println(listFlavors);
+      //System.out.println(listFlavors);
       FlavorsData inputFlavors = mapper.readValue(listFlavors, FlavorsData.class);
-      System.out.println(inputFlavors.getFlavors());
+      //System.out.println(inputFlavors.getFlavors());
       for (FlavorProperties input_flavor : inputFlavors.getFlavors()) {
-        System.out.println(input_flavor.getId() + ": " + input_flavor.getName());
+        //System.out.println(input_flavor.getId() + ": " + input_flavor.getName());
 
         flavorName = input_flavor.getName();
         cpu = Integer.parseInt(input_flavor.getVcpus());

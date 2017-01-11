@@ -20,8 +20,11 @@ import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.authentication.AuthenticationData;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -42,9 +45,15 @@ public class JavaStackCore {
   private JavaStackCore() {}
 
   public enum Constants {
-    AUTH_PORT("5000"), HEAT_PORT("8004"), IMAGE_PORT("9292"), COMPUTE_PORT("8774"), HEAT_VERSION(
-        "v1"), IMAGE_VERSION("v2"), COMPUTE_VERSION(
-            "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
+    AUTH_PORT("5000"), 
+    HEAT_PORT("8004"), 
+    IMAGE_PORT("9292"), 
+    COMPUTE_PORT("8774"),
+    HEAT_VERSION("v1"),
+    IMAGE_VERSION("v2"),
+    COMPUTE_VERSION("v2"),
+    AUTHTOKEN_HEADER("X-AUTH-TOKEN"),
+    AUTH_URI("/v2.0/tokens");
 
     private final String constantValue;
 
@@ -156,7 +165,6 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Constants.HEAT_PORT.toString());
       buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(), tenant_id));
-      //Logger.debug("POST body: " + modifiedObject.toString());
 
       // Logger.debug(buildUrl.toString());
       createStack = new HttpPost(buildUrl.toString());
@@ -165,13 +173,24 @@ public class JavaStackCore {
       // Logger.debug(this.token_id);
       createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
-      Logger.debug("Request:" + createStack.toString());
-      
+      Logger.debug("Request: " + createStack.toString());
+      Logger.debug("Request body: " + modifiedObject.toString());
+
       response = httpClient.execute(createStack);
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
-
-      Logger.debug("Response:" + response.toString());
+      
+      Logger.debug("Response: " + response.toString());
+      Logger.debug("Response body:");
+      
+      if (statusCode != 201){
+        BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        String line=null;
+        
+        while((line=in.readLine())!=null)
+          Logger.debug(line);
+      }
+        
       
       return (statusCode == 201)
           ? response
@@ -217,6 +236,14 @@ public class JavaStackCore {
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
 
+      if (statusCode != 201){
+        BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        String line=null;
+        
+        while((line=in.readLine())!=null)
+          Logger.debug(line);
+      }
+      
       return (statusCode == 201)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, statusCode,
@@ -340,14 +367,18 @@ public class JavaStackCore {
 
       getStackTemplate = new HttpGet(uri);
       getStackTemplate.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
-
+      
+      Logger.debug("Request: "+getStackTemplate.toString());
+      
       response = httpclient.execute(getStackTemplate);
       int status_code = response.getStatusLine().getStatusCode();
 
+      Logger.debug("Response: "+response.toString());
+      
       return (status_code == 200)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
-              "List Failed with Status: " + status_code), null);
+              "Get Template Failed with Status: " + status_code), null);
 
     } else {
       throw new IOException(

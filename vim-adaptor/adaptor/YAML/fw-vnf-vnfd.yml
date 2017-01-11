@@ -28,11 +28,11 @@ virtual_deployment_units:
         size_unit: "GB"
     connection_points:
       - id: "vdu01:eth0"
-        type: "interface"
+        type: "public"
       - id: "vdu01:eth1"
-        type: "interface"
+        type: "internal"
       - id: "vdu01:eth2"
-        type: "interface"
+        type: "internal"
 
 ##
 ## The virtual links that interconnect
