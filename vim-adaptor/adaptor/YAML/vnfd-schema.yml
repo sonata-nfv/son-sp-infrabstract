@@ -52,6 +52,8 @@ definitions:
   interfaces:
     enum:
       - "interface"
+      - "external"
+      - "public"
   monitoring:
     type: "object"
     properties:

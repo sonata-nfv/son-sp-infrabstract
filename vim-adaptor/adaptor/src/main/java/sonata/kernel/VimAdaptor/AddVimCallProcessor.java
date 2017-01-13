@@ -61,7 +61,13 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     WrapperConfiguration config = new WrapperConfiguration();
 
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String wrapperType = jsonObject.getString("wr_type");
+
+    String wrapperType = null;
+    if (message.getTopic().contains("compute")) {
+      wrapperType = "compute";
+    } else if (message.getTopic().contains("networking")){
+      wrapperType = "networking";
+    }
     String vimVendor = jsonObject.getString("vim_type");
     String vimEndpoint = jsonObject.getString("vim_address");
     String authUser = jsonObject.getString("username");

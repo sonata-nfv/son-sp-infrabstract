@@ -28,6 +28,7 @@
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
@@ -35,12 +36,22 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
+import sonata.kernel.VimAdaptor.commons.FunctionDeployResponse;
 import sonata.kernel.VimAdaptor.commons.IpNetPool;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
+import sonata.kernel.VimAdaptor.commons.Status;
+import sonata.kernel.VimAdaptor.commons.VduRecord;
+import sonata.kernel.VimAdaptor.commons.VnfRecord;
+import sonata.kernel.VimAdaptor.commons.VnfcInstance;
 import sonata.kernel.VimAdaptor.commons.heat.HeatModel;
+import sonata.kernel.VimAdaptor.commons.heat.HeatPort;
 import sonata.kernel.VimAdaptor.commons.heat.HeatResource;
+import sonata.kernel.VimAdaptor.commons.heat.HeatServer;
 import sonata.kernel.VimAdaptor.commons.heat.HeatTemplate;
+import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPoint;
+import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPointRecord;
+import sonata.kernel.VimAdaptor.commons.nsd.InterfaceRecord;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.nsd.VirtualLink;
@@ -57,6 +68,7 @@ import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Hashtable;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
@@ -79,7 +91,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private HeatTemplate createInitStackTemplate(String instanceId) throws Exception {
     Logger.debug("Creating init stack template");
-    
+
     HeatModel model = new HeatModel();
     int subnetIndex = 0;
     ArrayList<String> subnets = myPool.reserveSubnets(instanceId, 2);
@@ -141,9 +153,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     model.addResource(dataSubnet);
 
     model.prepare();
-    
+
     HeatTemplate template = new HeatTemplate();
-    Logger.debug("Created " + model.getResources().size()+ " resurces.");
+    Logger.debug("Created " + model.getResources().size() + " resurces.");
     for (HeatResource resource : model.getResources()) {
       template.putResource(resource.getResourceName(), resource);
     }
@@ -651,11 +663,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         port.setName(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         port.putProperty("name", vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         HashMap<String, Object> netMap = new HashMap<String, Object>();
-        if (cp.getType().equals("internal")) {
+        if (cp.getType().equals(ConnectionPoint.Interface.INT)) {
           netMap.put("get_resource", "SonataService:data:net:" + instanceUuid);
-        } else if (cp.getType().equals("external")) {
+        } else if (cp.getType().equals(ConnectionPoint.Interface.EXT)) {
           netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
-        } else if (cp.getType().equals("public")) {
+        } else if (cp.getType().equals(ConnectionPoint.Interface.PUBLIC)) {
           netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
           publicPortNames.add(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         }
@@ -668,8 +680,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         portMap.put("get_resource", vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         n1.put("port", portMap);
         net.add(n1);
-
       }
+      server.putProperty("networks", net);
       model.addResource(server);
     }
 
@@ -730,44 +742,200 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
     Logger.info("Serializing updated stack...");
+    String stackString = null;
     try {
-      String stackString = mapper.writeValueAsString(template);
-      Logger.debug(stackString);
-      client.updateStack(stackName, stackUuid, stackString);
-
-      int counter = 0;
-      int wait = 1000;
-      int maxCounter = 10;
-      String status = null;
-      while ((status == null || !status.equals("CREATE_COMPLETE")
-          || !status.equals("CREATE_FAILED")) && counter < maxCounter) {
-        status = client.getStackStatus(stackName, stackUuid);
-        Logger.info("Status of stack " + stackUuid + ": " + status);
-        if (status != null
-            && (status.equals("CREATE_COMPLETE") || status.equals("CREATE_FAILED"))) {
-          break;
-        }
-        try {
-          Thread.sleep(wait);
-        } catch (InterruptedException e) {
-          Logger.error(e.getMessage(), e);
-        }
-        counter++;
-        wait *= 2;
-      }
-
-      if (status == null) {
-        Logger.error("unable to contact the VIM to check the update status");
-        return;
-      }
-      if (status.equals("CREATE_FAILED")) {
-        Logger.error("Heat Stack update process failed on the VIM side.");
-        return;
-      }
-
-    } catch (Exception e) {
-      // TODO: handle exception
+      stackString = mapper.writeValueAsString(template);
+    } catch (JsonProcessingException e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
     }
+    Logger.debug(stackString);
+    client.updateStack(stackName, stackUuid, stackString);
+
+    int counter = 0;
+    int wait = 1000;
+    int maxCounter = 10;
+    String status = null;
+    while ((status == null || !status.equals("UPDATE_COMPLETE") || !status.equals("UPDATE_FAILED"))
+        && counter < maxCounter) {
+      status = client.getStackStatus(stackName, stackUuid);
+      Logger.info("Status of stack " + stackUuid + ": " + status);
+      if (status != null && (status.equals("UPDATE_COMPLETE") || status.equals("UPDATE_FAILED"))) {
+        break;
+      }
+      try {
+        Thread.sleep(wait);
+      } catch (InterruptedException e) {
+        Logger.error(e.getMessage(), e);
+      }
+      counter++;
+      wait *= 2;
+    }
+
+    if (status == null) {
+      Logger.error("unable to contact the VIM to check the update status");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Functiono deployment process failed. Can't get update status.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+    if (status.equals("UPDATE_FAILED")) {
+      Logger.error("Heat Stack update process failed on the VIM side.");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Function deployment process failed on the VIM side.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+
+
+    counter = 0;
+    wait = 1000;
+    StackComposition composition = null;
+    while (composition == null && counter < maxCounter) {
+      Logger.info("Getting composition of stack " + stackUuid);
+      composition = client.getStackComposition(stackName, stackUuid);
+      try {
+        Thread.sleep(wait);
+      } catch (InterruptedException e) {
+        Logger.error(e.getMessage(), e);
+      }
+      counter++;
+      wait *= 2;
+    }
+
+    if (composition == null) {
+      Logger.error("unable to contact the VIM to get the stack composition");
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Unable to get updated stack composition");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+
+    Logger.info("Creating function deploy response");
+    // Aux data structures for efficient mapping
+    Hashtable<String, VirtualDeploymentUnit> vduTable =
+        new Hashtable<String, VirtualDeploymentUnit>();
+    Hashtable<String, VduRecord> vdurTable = new Hashtable<String, VduRecord>();
+
+    // Create the response
+
+    FunctionDeployResponse response = new FunctionDeployResponse();
+    VnfDescriptor vnfd = data.getVnfd();
+    response.setRequestStatus("DEPLOYED");
+    response.setInstanceVimUuid(stackUuid);
+    response.setInstanceName(stackName);
+    response.setVimUuid(this.config.getUuid());
+
+    VnfRecord vnfr = new VnfRecord();
+    vnfr.setDescriptorVersion("vnfr-schema-01");
+    vnfr.setDescriptorReference(vnfd.getUuid());
+    // vnfr.setDescriptorReferenceName(vnf.getName());
+    // vnfr.setDescriptorReferenceVendor(vnf.getVendor());
+    // vnfr.setDescriptorReferenceVersion(vnf.getVersion());
+    vnfr.setStatus(Status.offline);
+    // TODO addresses are added next step
+    // vnfr.setVnfAddress("0.0.0.0");
+
+    vnfr.setId(vnfd.getInstanceUuid());
+    for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
+      Logger.debug("Inspecting VDU " + vdu.getId());
+      VduRecord vdur = new VduRecord();
+      vdur.setId(vdu.getId());
+      vdur.setNumberOfInstances(1);
+      vdur.setVduReference(vnfd.getName() + ":" + vdu.getId());
+      vdur.setVmImage(vdu.getVmImage());
+      vdurTable.put(vdur.getVduReference(), vdur);
+      vnfr.addVdu(vdur);
+      Logger.debug("VDU table created: " + vduTable.toString());
+
+      HeatServer matchingServer = null;
+      for (HeatServer server : composition.getServers()) {
+        String[] identifiers = server.getServerName().split(":");
+        String vnfName = identifiers[0];
+        String vduName = identifiers[1];
+        String instanceId = identifiers[2];
+        if (vdu.getId().equals(vduName)) {
+          VnfcInstance vnfc = new VnfcInstance();
+          vnfc.setId(instanceId);
+          vnfc.setVimId(data.getVimUuid());
+          vnfc.setVcId(server.getServerId());
+          ArrayList<ConnectionPointRecord> cpRecords = new ArrayList<ConnectionPointRecord>();
+          for (ConnectionPoint cp : vdu.getConnectionPoints()) {
+            Logger.debug("Mapping CP " + cp.getId());
+            Logger.debug("Looking for port " + vnfd.getName() + ":" + cp.getId() + ":"
+                + data.getServiceInstanceId());
+            ConnectionPointRecord cpr = new ConnectionPointRecord();
+            cpr.setId(cp.getId());
+
+
+            // add each composition.ports information in the response. The IP, the netmask (and
+            // maybe
+            // MAC address)
+            boolean found = false;
+            for (HeatPort port : composition.getPorts()) {
+              Logger.debug("port " + port.getPortName());
+              if (port.getPortName()
+                  .equals(vnfd.getName() + ":" + cp.getId() + ":" + data.getServiceInstanceId())) {
+                found = true;
+                Logger.debug("Found! Filling VDUR parameters");
+                InterfaceRecord ip = new InterfaceRecord();
+                if (port.getFloatinIp() != null) {
+                  ip.setAddress(port.getFloatinIp());
+                  // Logger.info("Port:" + port.getPortName() + "- Addr: " +
+                  // port.getFloatinIp());
+                } else {
+                  ip.setAddress(port.getIpAddress());
+                  // Logger.info("Port:" + port.getPortName() + "- Addr: " +
+                  // port.getFloatinIp());
+                  ip.setNetmask("255.255.255.248");
+
+                }
+                cpr.setType(ip);
+                break;
+              }
+            }
+            if (!found) {
+              Logger.error("Can't find the VIM port that maps to this CP");
+            }
+            cpRecords.add(cpr);
+          }
+          vnfc.setConnectionPoints(cpRecords);
+          VduRecord referenceVdur = vdurTable.get(vnfd.getName() + ":" + vdu.getId());
+          referenceVdur.addVnfcInstance(vnfc);
+
+        }
+      }
+
+    }
+
+    response.setVnfrs(vnfr);
+    String body = null;
+    try {
+      body = mapper.writeValueAsString(response);
+    } catch (JsonProcessingException e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+    Logger.info("Response created");
+    // Logger.info("body");
+
+    WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnfd.getInstanceUuid(),
+        data.getServiceInstanceId(), this.config.getUuid());
+    WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "SUCCESS", body);
+    this.markAsChanged();
+    this.notifyObservers(update);
+
   }
 
 }

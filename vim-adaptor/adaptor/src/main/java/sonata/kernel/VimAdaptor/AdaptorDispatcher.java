@@ -80,11 +80,19 @@ public class AdaptorDispatcher implements Runnable {
           handleFunctionMessage(message);
         } else if (isMonitoringMessage(message)) {
           this.handleMonitoringMessage(message);
+        } else if (isNetworkMsg(message)) {
+          this.handleNetworkingMessage(message);
         }
       } catch (InterruptedException e) {
         Logger.error(e.getMessage(), e);
       }
     } while (!stop);
+  }
+
+  private void handleNetworkingMessage(ServicePlatformMessage message) {
+    if (message.getTopic().endsWith("configure")) {
+      myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
+    }
   }
 
   private void handleMonitoringMessage(ServicePlatformMessage message) {
@@ -108,10 +116,10 @@ public class AdaptorDispatcher implements Runnable {
       myThreadPool.execute(new PrepareServiceCallProcessor(message, message.getSid(), mux));
     }
   }
-  
-  private void handleFunctionMessage(ServicePlatformMessage message){
+
+  private void handleFunctionMessage(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("deploy")) {
-      myThreadPool.execute(new DeployFunctionCallProcessor(message,message.getSid(),mux));
+      myThreadPool.execute(new DeployFunctionCallProcessor(message, message.getSid(), mux));
     }
   }
 
@@ -148,6 +156,10 @@ public class AdaptorDispatcher implements Runnable {
 
   private boolean isServiceMsg(ServicePlatformMessage message) {
     return message.getTopic().contains("infrastructure.service");
+  }
+
+  private boolean isNetworkMsg(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.network");
   }
 
   private boolean isMonitoringMessage(ServicePlatformMessage message) {

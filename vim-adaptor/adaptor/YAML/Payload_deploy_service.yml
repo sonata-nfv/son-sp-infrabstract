@@ -28,11 +28,11 @@ nsd:
     vnf_version: "0.1"
   connection_points:
   - id: "ns:mgmt"
-    type: "interface"
+    type: "public"
   - id: "ns:input"
-    type: "interface"
+    type: "internal"
   - id: "ns:output"
-    type: "interface"
+    type: "internal"
   virtual_links:
   - id: "mgmt"
     access: false
@@ -133,18 +133,18 @@ vnfdList:
         size_unit: "GB"
     connection_points:
     - id: "vdu01:cp01"
-      type: "interface"
+      type: "public"
     - id: "vdu01:cp02"
-      type: "interface"
+      type: "internal"
     - id: "vdu01:cp03"
-      type: "interface"
+      type: "internal"
   connection_points:
   - id: "vnf:mgmt"
-    type: "interface"
+    type: "public"
   - id: "vnf:input"
-    type: "interface"
+    type: "internal"
   - id: "vnf:output"
-    type: "interface"
+    type: "internal"
   virtual_links:
   - id: "mgmt"
     access: false
@@ -197,18 +197,18 @@ vnfdList:
         size_unit: "GB"
     connection_points:
     - id: "vdu01:cp01"
-      type: "interface"
+      type: "public"
     - id: "vdu01:cp02"
-      type: "interface"
+      type: "internal"
     - id: "vdu01:cp03"
-      type: "interface"
+      type: "internal"
   connection_points:
   - id: "vnf:mgmt"
-    type: "interface"
+    type: "public"
   - id: "vnf:input"
-    type: "interface"
+    type: "internal"
   - id: "vnf:output"
-    type: "interface"
+    type: "internal"
   virtual_links:
   - id: "mgmt"
     access: false
@@ -262,18 +262,18 @@ vnfdList:
         size_unit: "GB"
     connection_points:
     - id: "vdu01:cp01"
-      type: "interface"
+      type: "public"
     - id: "vdu01:cp02"
-      type: "interface"
+      type: "internal"
     - id: "vdu01:cp03"
-      type: "interface"
+      type: "internal"
   connection_points:
   - id: "vnf:mgmt"
-    type: "interface"
+    type: "public"
   - id: "vnf:input"
-    type: "interface"
+    type: "internal"
   - id: "vnf:output"
-    type: "interface"
+    type: "internal"
   virtual_links:
   - id: "mgmt"
     access: false

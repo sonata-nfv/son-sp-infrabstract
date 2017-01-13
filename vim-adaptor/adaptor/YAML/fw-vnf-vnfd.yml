@@ -61,10 +61,10 @@ virtual_links:
 ##
 connection_points:
   - id: "vnf:mgmt"
-    type: "interface"
+    type: "public"
   - id: "vnf:input"
-    type: "interface"
+    type: "internal"
   - id: "vnf:output"
-    type: "interface"
+    type: "internal"
 uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f5678
 instance_uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f0000

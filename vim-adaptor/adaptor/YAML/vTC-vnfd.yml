@@ -49,7 +49,7 @@ virtual_deployment_units:
         unit: "Mbps"
     connection_points:
       - id: "vdu01:eth0"
-        type: "interface"
+        type: "public"
   - id: "vdu02"
     vm_image: "pfring_api_module"
     description: "VNFC for the DPI functionality"
@@ -74,11 +74,11 @@ virtual_deployment_units:
         unit: "Mbps"
     connection_points:
       - id: "vdu02:eth0"
-        type: "interface" 
+        type: "public" 
       - id: "vdu02:eth1"
-        type: "interface"
+        type: "internal"
       - id: "vdu02:eth2"
-        type: "interface"
+        type: "internal"
 
 virtual_links:
   - id: "mgmt"
@@ -103,11 +103,11 @@ virtual_links:
 
 connection_points:
 - id: "vnf:mgmt"
-  type: interface
+  type: public
 - id: "vnf:input"
-  type: interface
+  type: internal
 - id: "vnf:output"
-  type: interface
+  type: internal
 
 monitoring_rules:
   - name: "mon:rule:vm_cpu_perc"

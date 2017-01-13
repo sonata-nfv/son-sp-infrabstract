@@ -170,6 +170,15 @@ public class WrapperBay {
     return "{\"status\":\"COMPLETED\"}";
   }
 
+  /**
+   * Return a generic Vim Wrapper for the given Vim UUID
+   * @param uuid
+   * @return
+   */
+  public Wrapper getWrapper(String uuid) {
+    return this.repository.readVimEntry(uuid).getVimWrapper();
+  }
+
 
 
 }

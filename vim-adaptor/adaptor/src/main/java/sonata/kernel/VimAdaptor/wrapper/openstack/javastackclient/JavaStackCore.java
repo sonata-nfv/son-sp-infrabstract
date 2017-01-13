@@ -7,6 +7,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.utils.URIBuilder;
@@ -207,7 +208,7 @@ public class JavaStackCore {
 
     HttpClient httpClient = HttpClientBuilder.create().build();
     HttpResponseFactory factory = new DefaultHttpResponseFactory();
-    HttpPut updateStack = null;
+    HttpPatch updateStack = null;
     HttpResponse response = null;
 
     String jsonTemplate = JavaStackUtils.convertYamlToJson(template);
@@ -226,17 +227,24 @@ public class JavaStackCore {
           tenant_id, stackName, stackUuid));
 
       // Logger.debug(buildUrl.toString());
-      updateStack = new HttpPut(buildUrl.toString());
+      updateStack = new HttpPatch(buildUrl.toString());
       updateStack
           .setEntity(new StringEntity(modifiedObject.toString(), ContentType.APPLICATION_JSON));
       // Logger.debug(this.token_id);
       updateStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
+      Logger.debug("Request: " + updateStack.toString());
+      Logger.debug("Request body: " + modifiedObject.toString());
+      
       response = httpClient.execute(updateStack);
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
 
-      if (statusCode != 201){
+      Logger.debug("Response: " + response.toString());
+      Logger.debug("Response body:");
+
+      
+      if (statusCode != 202){
         BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
         String line=null;
         
@@ -244,7 +252,7 @@ public class JavaStackCore {
           Logger.debug(line);
       }
       
-      return (statusCode == 201)
+      return (statusCode == 202)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, statusCode,
               responsePhrase + ". Create Failed with Status: " + statusCode), null);
