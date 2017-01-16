@@ -28,13 +28,13 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.VimAdaptor.wrapper.odlWrapper.OdlWrapper;
+import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OvsWrapper;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -44,7 +44,7 @@ import java.nio.charset.Charset;
 
 public class OdlWrapperTest {
 
-  private DeployServiceData data;
+  private ServiceDeployPayload data;
   private ObjectMapper mapper;
   private StackComposition composition;
 
@@ -88,7 +88,7 @@ public class OdlWrapperTest {
       bodyBuilder.append(line + "\n\r");
     vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-    this.data = new DeployServiceData();
+    this.data = new ServiceDeployPayload();
     sd.setInstanceUuid(sd.getInstanceUuid() + "IASFCTEST");
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
@@ -112,7 +112,7 @@ public class OdlWrapperTest {
 
     config.setVimEndpoint("10.100.32.200");
 
-    OdlWrapper wrapper = new OdlWrapper(config);
+    OvsWrapper wrapper = new OvsWrapper(config);
     try {
       wrapper.configureNetworking(data, composition);
     } catch (Exception e) {

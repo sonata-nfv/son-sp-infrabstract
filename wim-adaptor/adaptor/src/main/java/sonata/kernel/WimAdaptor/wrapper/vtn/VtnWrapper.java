@@ -29,7 +29,7 @@ package sonata.kernel.WimAdaptor.wrapper.vtn;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.WimAdaptor.ConfigureWimCallProcessor;
-import sonata.kernel.WimAdaptor.WimWrapper;
+import sonata.kernel.WimAdaptor.wrapper.WimWrapper;
 import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
 
 public class VtnWrapper extends WimWrapper {

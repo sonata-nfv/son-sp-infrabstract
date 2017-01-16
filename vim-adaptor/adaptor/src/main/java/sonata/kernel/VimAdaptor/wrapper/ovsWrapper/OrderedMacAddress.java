@@ -15,7 +15,7 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.VimAdaptor.wrapper.odlWrapper;
+package sonata.kernel.VimAdaptor.wrapper.ovsWrapper;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -33,7 +33,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
@@ -48,7 +48,7 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(DeployServiceCallProcessor.class);
 
-  private DeployServiceData data;
+  private ServiceDeployPayload data;
 
   /**
    * Create a CallProcessor to process a DeployService API call.
@@ -75,7 +75,7 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     try {
-      data = mapper.readValue(message.getBody(), DeployServiceData.class);
+      data = mapper.readValue(message.getBody(), ServiceDeployPayload.class);
       Logger.info("payload parsed");
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(data.getVimUuid());
       Logger.info("Wrapper retrieved");

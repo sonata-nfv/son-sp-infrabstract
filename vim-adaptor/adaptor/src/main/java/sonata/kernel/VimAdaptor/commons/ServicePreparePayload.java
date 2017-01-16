@@ -15,41 +15,35 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.VimAdaptor.wrapper.odlWrapper;
+package sonata.kernel.VimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
-public class OdlPayload {
+public class ServicePreparePayload {
 
-  /**
-   * @param string
-   * @param string2
-   * @param odlList2
-   */
-  public OdlPayload(String action, String instanceId, String inSeg, String outSeg,
-      ArrayList<OrderedMacAddress> odlList2) {
-    this.inputSegment = inSeg;
-    this.outputSegment = outSeg;
-    if (odlList2 != null) {
-      @SuppressWarnings("unchecked")
-      ArrayList<OrderedMacAddress> clone = (ArrayList<OrderedMacAddress>) odlList2.clone();
-      this.odlList = clone;
-    }
-    this.instanceId = instanceId;
-    this.action = action;
+  @JsonProperty("instance_id")
+  private String instanceId;
+  @JsonProperty("vim_list")
+  private ArrayList<String> vimList;
+
+  public String getInstanceId() {
+    return instanceId;
   }
 
-  @JsonProperty("action")
-  String action;
-  @JsonProperty("port_list")
-  ArrayList<OrderedMacAddress> odlList;
-  @JsonProperty("in_segment")
-  String inputSegment;
-  @JsonProperty("out_segment")
-  String outputSegment;
-  @JsonProperty("instance_id")
-  String instanceId;
+  public ArrayList<String> getVimList() {
+    return vimList;
+  }
+
+  public void setInstanceId(String instanceId) {
+    this.instanceId = instanceId;
+  }
+
+  public void setVimList(ArrayList<String> vimList) {
+    this.vimList = vimList;
+  }
+
+
 
 }

@@ -17,6 +17,7 @@ import sonata.kernel.WimAdaptor.commons.Status;
 import sonata.kernel.WimAdaptor.commons.VnfRecord;
 import sonata.kernel.WimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.WimAdaptor.wrapper.WimWrapper;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 
 public class ConfigureWimCallProcessor extends AbstractCallProcessor {

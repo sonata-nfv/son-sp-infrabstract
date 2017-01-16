@@ -38,7 +38,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.heat.HeatResource;
 import sonata.kernel.VimAdaptor.commons.heat.HeatTemplate;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
@@ -102,7 +102,7 @@ public class HeatTemplateTest {
 
 
 
-    DeployServiceData data = new DeployServiceData();
+    ServiceDeployPayload data = new ServiceDeployPayload();
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);
