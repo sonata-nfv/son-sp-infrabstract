@@ -824,8 +824,14 @@ public class DeployServiceTest implements MessageReceiver {
     wrapper.deconfigureNetworking(data.getNsd().getInstanceUuid());
   }
 
-
-  @Test
+  /**
+   * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody
+   * String Member to match your OpenStack configuration and substitute the @ignore annotation with
+   * the @test annotation
+   * 
+   * @throws Exception
+   */
+  @Ignore
   public void testDeployServiceIncremental() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
