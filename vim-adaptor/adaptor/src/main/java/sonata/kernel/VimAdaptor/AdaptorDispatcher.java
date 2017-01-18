@@ -81,7 +81,7 @@ public class AdaptorDispatcher implements Runnable {
         } else if (isMonitoringMessage(message)) {
           this.handleMonitoringMessage(message);
         } else if (isNetworkMsg(message)) {
-          this.handleNetworkingMessage(message);
+          this.handleNetworkMessage(message);
         }
       } catch (InterruptedException e) {
         Logger.error(e.getMessage(), e);
@@ -89,8 +89,9 @@ public class AdaptorDispatcher implements Runnable {
     } while (!stop);
   }
 
-  private void handleNetworkingMessage(ServicePlatformMessage message) {
+  private void handleNetworkMessage(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("configure")) {
+      Logger.info("Received a \"Network\" API call on topic: "+message.getTopic());
       myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
     }
   }

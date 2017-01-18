@@ -49,8 +49,8 @@ public class WrapperFactory {
     if (config.getWrapperType().equals("compute")) {
       output = createComputeWrapper(config);
     }
-    if (config.getWrapperType().equals("networking")) {
-      output = createNetworkingWrapper(config);
+    if (config.getWrapperType().equals("network")) {
+      output = createNetworkWrapper(config);
     }
     if (config.getWrapperType().equals("storage")) {
       output = createStorageWrapper(config);
@@ -78,11 +78,11 @@ public class WrapperFactory {
     return output;
   }
 
-  private static NetworkingWrapper createNetworkingWrapper(WrapperConfiguration config) {
-    NetworkingWrapper output = null;
-    if (config.getVimVendor().equals(NetworkingVimType.OPENVSWITCH.toString())) {
+  private static NetworkWrapper createNetworkWrapper(WrapperConfiguration config) {
+    NetworkWrapper output = null;
+    if (config.getVimVendor().equals(NetworkVimType.OPENVSWITCH.toString())) {
       output = new OvsWrapper(config);
-    } else if (config.getVimVendor().equals(NetworkingVimType.NETWORKMOCK.toString())) {
+    } else if (config.getVimVendor().equals(NetworkVimType.NETWORKMOCK.toString())) {
       output = new NetworkMockWrapper(config);
     }
     return output;

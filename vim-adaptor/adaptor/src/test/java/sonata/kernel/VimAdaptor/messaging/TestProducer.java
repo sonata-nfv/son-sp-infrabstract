@@ -53,7 +53,7 @@ public class TestProducer extends AbstractMsgBusProducer {
     if (message.getTopic().contains("infrastructure.management.compute")) {
       output.receive(message);
     }
-    if (message.getTopic().contains("infrastructure.management.networking")) {
+    if (message.getTopic().contains("infrastructure.management.network")) {
       output.receive(message);
     }
     if (message.getTopic().equals("infrastructure.service.deploy")) {

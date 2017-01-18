@@ -49,7 +49,7 @@ import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPointRecord;
 import sonata.kernel.VimAdaptor.commons.nsd.InterfaceRecord;
 import sonata.kernel.VimAdaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.VimAdaptor.wrapper.NetworkingWrapper;
+import sonata.kernel.VimAdaptor.wrapper.NetworkWrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperBay;
 import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
 
@@ -261,7 +261,7 @@ public class DeployServiceFsm implements Runnable {
         referenceVdur.addVnfcInstance(vnfc);
       }
 
-      NetworkingWrapper netVim = (NetworkingWrapper) WrapperBay.getInstance().getVimRepo()
+      NetworkWrapper netVim = (NetworkWrapper) WrapperBay.getInstance().getVimRepo()
           .getNetworkVim(this.data.getVimUuid()).getVimWrapper();
 
       netVim.configureNetworking(data, composition);

@@ -59,7 +59,12 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     if(uuid==null)
       this.sendResponse("{\"status\":\"ERROR\",\"message\":\"Malformed request\"}");
     Wrapper wrapper= WrapperBay.getInstance().getWrapper(uuid);
-    String type = wrapper.getType();
+    String type =null;
+    if (message.getTopic().contains("compute")) {
+     type = "compute";
+    } else if (message.getTopic().contains("network")){
+      type = "network";
+    }
     String output = null;
     if (type.equals("compute")) {
       output = WrapperBay.getInstance().removeComputeWrapper(uuid);

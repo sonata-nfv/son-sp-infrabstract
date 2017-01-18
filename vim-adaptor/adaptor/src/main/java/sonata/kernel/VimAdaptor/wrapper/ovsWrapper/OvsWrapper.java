@@ -33,7 +33,7 @@ import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.ConnectionPointReference;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
-import sonata.kernel.VimAdaptor.wrapper.NetworkingWrapper;
+import sonata.kernel.VimAdaptor.wrapper.NetworkWrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 
 import java.io.File;
@@ -48,7 +48,7 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-public class OvsWrapper extends NetworkingWrapper {
+public class OvsWrapper extends NetworkWrapper {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OvsWrapper.class);
 

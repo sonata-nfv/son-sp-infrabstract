@@ -136,12 +136,12 @@ public class WrapperBay {
    * @param computeVimRef
    * @return
    */
-  public String registerNetworkingWrapper(WrapperConfiguration config, String computeVimRef) {
+  public String registerNetworkWrapper(WrapperConfiguration config, String computeVimRef) {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
       output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
-    } else if (newWrapper.getType().equals("networking")) {
+    } else if (newWrapper.getType().equals("network")) {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.repository.writeVimEntry(config.getUuid(), record);
       this.repository.writeNetworkVimLink(computeVimRef, config.getUuid());

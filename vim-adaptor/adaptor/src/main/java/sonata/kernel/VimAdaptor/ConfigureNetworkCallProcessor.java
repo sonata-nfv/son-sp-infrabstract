@@ -54,11 +54,6 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
     super(message, sid, mux);
   }
 
-  @Override
-  public void run() {
-
-  }
-
   /*
    * (non-Javadoc)
    * 

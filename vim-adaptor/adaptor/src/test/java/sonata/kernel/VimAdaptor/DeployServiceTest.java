@@ -429,7 +429,7 @@ public class DeployServiceTest implements MessageReceiver {
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
-    topic = "infrastructure.management.networking.add";
+    topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addNetVimMessage);
@@ -622,7 +622,7 @@ public class DeployServiceTest implements MessageReceiver {
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
-    topic = "infrastructure.management.networking.add";
+    topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addNetVimMessage);
@@ -880,7 +880,7 @@ public class DeployServiceTest implements MessageReceiver {
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
-    topic = "infrastructure.management.networking.add";
+    topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addNetVimMessage);
@@ -982,6 +982,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     NetworkConfigurePayload netPayload = new NetworkConfigurePayload();
     netPayload.setForwardingGraph(data.getNsd().getForwardingGraphs().get(0));
+    netPayload.setServiceInstanceId(data.getNsd().getInstanceUuid());
     
 
     body = mapper.writeValueAsString(netPayload);
@@ -1035,7 +1036,7 @@ public class DeployServiceTest implements MessageReceiver {
     //3. De-register VIMs.
     
     output = null;
-    message = "{\"wr_type\":\"compute\",\"uuid\":\"" + computeWrUuid + "\"}";
+    message = "{\"uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1051,9 +1052,10 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
+    
     output = null;
-    message = "{\"wr_type\":\"network\",\"uuid\":\"" + netWrUuid + "\"}";
-    topic = "infrastructure.management.compute.remove";
+    message = "{\"uuid\":\"" + netWrUuid + "\"}";
+    topic = "infrastructure.management.network.remove";
     ServicePlatformMessage removeNetVimMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeNetVimMessage);

@@ -502,7 +502,7 @@ public class VimRepo {
   }
 
   /**
-   * Write the association between NetworkingWrapper and ComputeWrapper.
+   * Write the association between NetworkWrapper and ComputeWrapper.
    * 
    * @param computeUuid the uuid of the compute wrapper
    * @param networkingUuid the uuid of the networking wrapper
@@ -555,7 +555,7 @@ public class VimRepo {
   }
 
   /**
-   * Get the NetworkingWrapper associated to the given computeVim.
+   * Get the NetworkWrapper associated to the given computeVim.
    * 
    * @param computeUuid the uuid of the computeVim
    * @return
