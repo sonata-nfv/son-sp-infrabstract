@@ -15,7 +15,7 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.VimAdaptor.wrapper.odlWrapper;
+package sonata.kernel.VimAdaptor.wrapper.ovsWrapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonFactory;
@@ -23,7 +23,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.heat.HeatPort;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.commons.nsd.ForwardingGraph;
@@ -33,7 +33,7 @@ import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.ConnectionPointReference;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
-import sonata.kernel.VimAdaptor.wrapper.NetworkingWrapper;
+import sonata.kernel.VimAdaptor.wrapper.NetworkWrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 
 import java.io.File;
@@ -48,9 +48,9 @@ import java.util.HashMap;
 import java.util.Properties;
 
 
-public class OdlWrapper extends NetworkingWrapper {
+public class OvsWrapper extends NetworkWrapper {
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OdlWrapper.class);
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OvsWrapper.class);
 
   private static final String ADAPTOR_SEGMENTS_CONF = "/adaptor/segments.conf";
 
@@ -61,13 +61,13 @@ public class OdlWrapper extends NetworkingWrapper {
    * 
    * @param config the configuration object of this wrapper.
    */
-  public OdlWrapper(WrapperConfiguration config) {
+  public OvsWrapper(WrapperConfiguration config) {
     super();
     this.config = config;
   }
 
   @Override
-  public void configureNetworking(DeployServiceData data, StackComposition composition)
+  public void configureNetworking(ServiceDeployPayload data, StackComposition composition)
       throws Exception {
     if (data.getNsd().getForwardingGraphs().size() <= 0)
       throw new Exception("No Forwarding Graph specified in the descriptor");
@@ -183,7 +183,7 @@ public class OdlWrapper extends NetworkingWrapper {
     segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
 
     Collections.sort(odlList);
-    OdlPayload odlPayload = new OdlPayload("add", data.getNsd().getInstanceUuid(),
+    OvsPayload odlPayload = new OvsPayload("add", data.getNsd().getInstanceUuid(),
         segments.getProperty("in"), segments.getProperty("out"), odlList);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
@@ -217,7 +217,7 @@ public class OdlWrapper extends NetworkingWrapper {
 
   public void deconfigureNetworking(String instanceId) throws Exception {
 
-    OdlPayload odlPayload = new OdlPayload("delete", instanceId, null, null, null);
+    OvsPayload odlPayload = new OvsPayload("delete", instanceId, null, null, null);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);

@@ -76,13 +76,24 @@ public class AdaptorDispatcher implements Runnable {
           handleManagementMessage(message);
         } else if (isServiceMsg(message)) {
           this.handleServiceMsg(message);
+        } else if (isFunctionMessage(message)) {
+          handleFunctionMessage(message);
         } else if (isMonitoringMessage(message)) {
           this.handleMonitoringMessage(message);
+        } else if (isNetworkMsg(message)) {
+          this.handleNetworkMessage(message);
         }
       } catch (InterruptedException e) {
         Logger.error(e.getMessage(), e);
       }
     } while (!stop);
+  }
+
+  private void handleNetworkMessage(ServicePlatformMessage message) {
+    if (message.getTopic().endsWith("configure")) {
+      Logger.info("Received a \"Network\" API call on topic: "+message.getTopic());
+      myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
+    }
   }
 
   private void handleMonitoringMessage(ServicePlatformMessage message) {
@@ -99,8 +110,17 @@ public class AdaptorDispatcher implements Runnable {
     if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
     } else if (message.getTopic().endsWith("remove")) {
-      Logger.info("Received a \"remove-service\" API call on topic: " + message.getTopic());
+      Logger.info("Received a \"service.remove\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new RemoveServiceCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("prepare")) {
+      Logger.info("Received a \"service.prepare\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new PrepareServiceCallProcessor(message, message.getSid(), mux));
+    }
+  }
+
+  private void handleFunctionMessage(ServicePlatformMessage message) {
+    if (message.getTopic().endsWith("deploy")) {
+      myThreadPool.execute(new DeployFunctionCallProcessor(message, message.getSid(), mux));
     }
   }
 
@@ -139,8 +159,16 @@ public class AdaptorDispatcher implements Runnable {
     return message.getTopic().contains("infrastructure.service");
   }
 
+  private boolean isNetworkMsg(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.network");
+  }
+
   private boolean isMonitoringMessage(ServicePlatformMessage message) {
     return message.getTopic().contains("infrastructure.monitoring");
+  }
+
+  private boolean isFunctionMessage(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.function");
   }
 
   private boolean isRegistrationResponse(ServicePlatformMessage message) {

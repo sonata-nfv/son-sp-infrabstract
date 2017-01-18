@@ -26,17 +26,28 @@
 
 package sonata.kernel.VimAdaptor.wrapper;
 
-enum NetworkingVimType {
-  OPENDAYLIGHT("odl"), NETWORKMOCK("networkMock");
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
+import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 
-  private final String name;
+public abstract class NetworkWrapper extends AbstractWrapper implements Wrapper {
 
-  NetworkingVimType(String name) {
-    this.name = name;
+
+
+  public NetworkWrapper() {
+
+    this.setType("network");
+
   }
 
-  @Override
-  public String toString() {
-    return this.name;
-  }
+  /**
+   * Configure the SFC and networking aspects of the service
+   * 
+   * @param data the service deployment descriptors
+   * @param composition the composition of the deployed service
+   * @throws Exception
+   * 
+   */
+  public abstract void configureNetworking(ServiceDeployPayload data, StackComposition composition)
+      throws Exception;
+
 }

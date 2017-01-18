@@ -1,7 +1,4 @@
-package sonata.kernel.WimAdaptor;
-
-import sonata.kernel.WimAdaptor.wrapper.AbstractWrapper;
-import sonata.kernel.WimAdaptor.wrapper.Wrapper;
+package sonata.kernel.WimAdaptor.wrapper;
 
 public abstract class WimWrapper extends AbstractWrapper implements Wrapper {
 

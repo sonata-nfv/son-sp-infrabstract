@@ -24,7 +24,7 @@
  * 
  */
 
-package sonata.kernel.VimAdaptor.wrapper;
+package sonata.kernel.VimAdaptor.wrapper.mock;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -34,30 +34,35 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
-import sonata.kernel.VimAdaptor.commons.DeployServiceResponse;
+import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ServiceRecord;
 import sonata.kernel.VimAdaptor.commons.Status;
 import sonata.kernel.VimAdaptor.commons.VduRecord;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
 import sonata.kernel.VimAdaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.VimAdaptor.wrapper.ComputeWrapper;
+import sonata.kernel.VimAdaptor.wrapper.ResourceUtilisation;
+import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
 
 
-public class MockWrapper extends ComputeWrapper implements Runnable {
+public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
 
   /*
    * Utility fields to implement the mock response creation. A real wrapper should instantiate a
    * suitable object with these fields, able to handle the API call asynchronously, generate a
    * response and update the observer
    */
-  private DeployServiceData data;
+  private ServiceDeployPayload data;
   private String sid;
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(MockWrapper.class);
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComputeMockWrapper.class);
   private static final long THREAD_SLEEP = 1000;
 
-  public MockWrapper(WrapperConfiguration config) {
+  public ComputeMockWrapper(WrapperConfiguration config) {
     super();
   }
 
@@ -67,7 +72,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
   }
 
   @Override
-  public boolean deployService(DeployServiceData data, String callSid) {
+  public boolean deployService(ServiceDeployPayload data, String callSid) {
     this.data = data;
     this.sid = callSid;
     // This is a mock compute wrapper.
@@ -85,6 +90,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
 
   @Override
   public void run() {
+    
     Logger.info("Deploying Service...");
     try {
       Thread.sleep(THREAD_SLEEP);
@@ -92,7 +98,7 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
       Logger.error(e.getMessage(), e);
     }
     Logger.info("Service DEPLOYED. Creating response");
-    DeployServiceResponse response = new DeployServiceResponse();
+    ServiceDeployResponse response = new ServiceDeployResponse();
     response.setRequestStatus("DEPLOYED");;
     ServiceRecord sr = new ServiceRecord();
     sr.setStatus(Status.normal_operation);
@@ -161,6 +167,23 @@ public class MockWrapper extends ComputeWrapper implements Runnable {
     resources.setUsedMemory(0);
 
     return resources;
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
+   */
+  @Override
+  public boolean prepareService(String instanceId) {
+    return true;
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#deployFunction(sonata.kernel.VimAdaptor.commons.FunctionDeployPayload, java.lang.String)
+   */
+  @Override
+  public void deployFunction(FunctionDeployPayload data, String sid) {
+    // TODO Auto-generated method stub
+    
   }
 
 }

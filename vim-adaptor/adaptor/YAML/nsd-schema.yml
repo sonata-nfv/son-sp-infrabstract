@@ -9,7 +9,9 @@ description: "The core scheme for RECUSRIVE service descriptors (many details le
 definitions:
   interfaces:
     enum:
-      - "interface"
+      - "external"
+      - "internal"
+      - "public"
 
 ##
 ## The actual document description.

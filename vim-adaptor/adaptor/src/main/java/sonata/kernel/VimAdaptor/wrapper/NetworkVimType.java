@@ -26,34 +26,17 @@
 
 package sonata.kernel.VimAdaptor.wrapper;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+enum NetworkVimType {
+  OPENVSWITCH("ovs"), NETWORKMOCK("networkMock");
 
-public class VlspWrapper extends ComputeWrapper {
+  private final String name;
 
-  public VlspWrapper(WrapperConfiguration config) {
-    super();
+  NetworkVimType(String name) {
+    this.name = name;
   }
 
   @Override
-  public boolean deployService(DeployServiceData data, String callSid) {
-    // TODO Auto-generated method stub
-    return false;
+  public String toString() {
+    return this.name;
   }
-
-  public boolean removeService(String instanceUuid, String callSid) {
-    return false;
-  }
-
-  @Override
-  public ResourceUtilisation getResourceUtilisation() {
-
-    ResourceUtilisation resources = new ResourceUtilisation();
-    resources.setTotCores(10);
-    resources.setUsedCores(0);
-    resources.setTotMemory(10000);
-    resources.setUsedMemory(0);
-
-    return resources;
-  }
-
 }

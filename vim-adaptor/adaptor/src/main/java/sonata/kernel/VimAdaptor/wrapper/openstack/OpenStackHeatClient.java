@@ -87,7 +87,7 @@ public class OpenStackHeatClient {
   /**
    * Create stack.
    *
-   * @param stackName - usually service tenant
+   * @param stackName - the name of the stack
    * @param template - the content of the hot template that describes the file
    * @return - the uuid of the created stack, if the process failed the returned value is null
    */
@@ -113,6 +113,48 @@ public class OpenStackHeatClient {
     return uuid;
   }
 
+  public void updateStack(String stackName, String stackUuid, String template) {
+
+    Logger.info("Creating stack: " + stackName);
+    // Logger.debug("Template:\n" + template);
+
+    try {
+
+      String response = JavaStackUtils
+          .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
+
+    } catch (Exception e) {
+      Logger.error(
+          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+    }
+
+    return;
+  }
+
+  /**
+   * Get the heat template used to create the stack.
+   *
+   * @param stackName - the name of the stack in Heat
+   * @param stackUuid - the UUID of the stack in Heat
+   * @return - the HeatTemplate object representing the heat template.
+   */
+  public HeatTemplate getStackTemplate(String stackName, String stackUuid) {
+    HeatTemplate template = null;
+
+    try {
+      // template = JavaStackUtils.readFile("./test.yml");
+      mapper = new ObjectMapper();
+      String getStackTemplateResponse = JavaStackUtils
+          .convertHttpResponseToString(javaStack.getStackTemplate(stackName, stackUuid));
+      template = mapper.readValue(getStackTemplateResponse, HeatTemplate.class);
+
+    } catch (Exception e) {
+      Logger.error(
+          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+    }
+
+    return template;
+  }
 
   /**
    * Get the status of existing stack. Using Stack Name or Stack Id

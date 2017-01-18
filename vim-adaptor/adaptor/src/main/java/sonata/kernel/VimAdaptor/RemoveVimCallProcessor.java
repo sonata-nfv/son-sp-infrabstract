@@ -30,6 +30,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.VimAdaptor.wrapper.Wrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperBay;
 
 import java.util.Observable;
@@ -55,7 +56,15 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String uuid = jsonObject.getString("uuid");
-    String type = jsonObject.getString("wr_type");
+    if(uuid==null)
+      this.sendResponse("{\"status\":\"ERROR\",\"message\":\"Malformed request\"}");
+    Wrapper wrapper= WrapperBay.getInstance().getWrapper(uuid);
+    String type =null;
+    if (message.getTopic().contains("compute")) {
+     type = "compute";
+    } else if (message.getTopic().contains("network")){
+      type = "network";
+    }
     String output = null;
     if (type.equals("compute")) {
       output = WrapperBay.getInstance().removeComputeWrapper(uuid);

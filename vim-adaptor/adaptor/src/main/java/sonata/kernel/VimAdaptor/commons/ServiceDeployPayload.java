@@ -24,30 +24,57 @@
  * 
  */
 
-package sonata.kernel.VimAdaptor.wrapper;
+package sonata.kernel.VimAdaptor.commons;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
-import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public abstract class NetworkingWrapper extends AbstractWrapper implements Wrapper {
+import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 
+import java.util.ArrayList;
 
+public class ServiceDeployPayload {
 
-  public NetworkingWrapper() {
+  @JsonProperty("vim_uuid")
+  private String vimUuid;
+  private ServiceDescriptor nsd;
+  private ArrayList<VnfDescriptor> vnfds;
 
-    this.setType("networking");
-
+  public ServiceDeployPayload() {
+    this.vnfds = new ArrayList<VnfDescriptor>();
   }
 
-  /**
-   * Configure the SFC and networking aspects of the service
-   * 
-   * @param data the service deployment descriptors
-   * @param composition the composition of the deployed service
-   * @throws Exception
-   * 
-   */
-  public abstract void configureNetworking(DeployServiceData data, StackComposition composition)
-      throws Exception;
+  public void setServiceDescriptor(ServiceDescriptor descriptor) {
+    this.nsd = descriptor;
+  }
+
+  public void addVnfDescriptor(VnfDescriptor descriptor) {
+    this.vnfds.add(descriptor);
+  }
+
+  public ServiceDescriptor getNsd() {
+    return nsd;
+  }
+
+  public ArrayList<VnfDescriptor> getVnfdList() {
+    return vnfds;
+  }
+
+  public String getVimUuid() {
+    return vimUuid;
+  }
+
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
+  }
+
+  public void setNsd(ServiceDescriptor nsd) {
+    this.nsd = nsd;
+  }
+
+  public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
+    this.vnfds = vnfds;
+  }
+
 
 }

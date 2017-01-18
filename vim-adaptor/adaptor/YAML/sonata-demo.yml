@@ -35,11 +35,11 @@ network_functions:
 ##
 connection_points:
   - id: "ns:mgmt"
-    type: "interface"
+    type: "public"
   - id: "ns:input"
-    type: "interface"
+    type: "internal"
   - id: "ns:output"
-    type: "interface"
+    type: "internal"
 
 ##
 ## The virtual links that interconnect

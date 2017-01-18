@@ -36,7 +36,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
-import sonata.kernel.VimAdaptor.commons.DeployServiceData;
+import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
@@ -98,7 +98,7 @@ public class ServiceDescriptorTest {
       bodyBuilder.append(line + "\n\r");
     vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-    DeployServiceData data = new DeployServiceData();
+    ServiceDeployPayload data = new ServiceDeployPayload();
     data.setServiceDescriptor(sd);
     data.addVnfDescriptor(vnfd1);
     data.addVnfDescriptor(vnfd2);

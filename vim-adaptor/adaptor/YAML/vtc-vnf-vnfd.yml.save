@@ -1,4 +1,4 @@
-descriptor_version: "vnfd-schema-01"
+escriptor_version: "vnfd-schema-01"
 vendor: "eu.sonata-nfv"
 name: "vtc-vnf"
 version: "0.1"
@@ -77,11 +77,11 @@ virtual_links:
 
 connection_points:
 - id: "vnf:mgmt"
-  type: public
+  type: interface
 - id: "vnf:input"
-  type: internal
+  type: interface
 - id: "vnf:output"
-  type: internal
+  type: interface
 
 monitoring_rules:
   - name: "mon:rule:vm_cpu_perc"

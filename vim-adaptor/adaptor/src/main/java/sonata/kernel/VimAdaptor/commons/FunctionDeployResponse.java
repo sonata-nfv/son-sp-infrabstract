@@ -28,36 +28,58 @@ package sonata.kernel.VimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
-
 import java.util.ArrayList;
 
-public class DeployServiceData {
+public class FunctionDeployResponse {
 
-  @JsonProperty("vim_uuid")
+  private String instanceName;
+  private String instanceVimUuid;
   private String vimUuid;
-  private ServiceDescriptor nsd;
-  private ArrayList<VnfDescriptor> vnfds;
+  @JsonProperty("request_status")
+  private String requestStatus;
+  private VnfRecord vnfr;
+  private String errorCode;
 
-  public DeployServiceData() {
-    this.vnfds = new ArrayList<VnfDescriptor>();
+
+  public String getInstanceName() {
+    return instanceName;
   }
 
-  public void setServiceDescriptor(ServiceDescriptor descriptor) {
-    this.nsd = descriptor;
+  public String getInstanceVimUuid() {
+    return instanceVimUuid;
   }
 
-  public void addVnfDescriptor(VnfDescriptor descriptor) {
-    this.vnfds.add(descriptor);
+  public String getRequestStatus() {
+    return requestStatus;
   }
 
-  public ServiceDescriptor getNsd() {
-    return nsd;
+  public VnfRecord getVnfr() {
+    return vnfr;
   }
 
-  public ArrayList<VnfDescriptor> getVnfdList() {
-    return vnfds;
+  public String getErrorCode() {
+    return errorCode;
+  }
+
+  public void setInstanceName(String instanceName) {
+    this.instanceName = instanceName;
+  }
+
+  public void setInstanceVimUuid(String instanceVimUuid) {
+    this.instanceVimUuid = instanceVimUuid;
+  }
+
+  public void setRequestStatus(String requestStatus) {
+    this.requestStatus = requestStatus;
+  }
+
+
+  public void setVnfrs(VnfRecord vnfr) {
+    this.vnfr = vnfr;
+  }
+
+  public void setErrorCode(String errorCode) {
+    this.errorCode = errorCode;
   }
 
   public String getVimUuid() {
@@ -68,13 +90,6 @@ public class DeployServiceData {
     this.vimUuid = vimUuid;
   }
 
-  public void setNsd(ServiceDescriptor nsd) {
-    this.nsd = nsd;
-  }
-
-  public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
-    this.vnfds = vnfds;
-  }
 
 
 }
