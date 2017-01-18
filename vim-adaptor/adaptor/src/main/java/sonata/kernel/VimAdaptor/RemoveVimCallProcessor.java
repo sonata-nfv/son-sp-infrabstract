@@ -75,7 +75,7 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     }
     if (type.equals("network")) {
       // TODO
-      output = WrapperBay.getInstance().removeNetworkingWrapper(uuid);
+      output = WrapperBay.getInstance().removeNetworkWrapper(uuid);
     }
     this.sendResponse(output);
     boolean out = true;
