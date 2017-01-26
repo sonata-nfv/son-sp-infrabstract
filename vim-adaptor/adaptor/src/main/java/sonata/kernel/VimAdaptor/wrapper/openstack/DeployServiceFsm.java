@@ -33,6 +33,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
+import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ServiceRecord;
@@ -111,13 +112,14 @@ public class DeployServiceFsm implements Runnable {
         wrapper.notifyObservers(update);
         return;
       }
+      Logger.info("Stack pushed. Getting deployment status...");
       int counter = 0;
       int wait = 1000;
       String status = null;
       while ((status == null || !status.equals("CREATE_COMPLETE")
           || !status.equals("CREATE_FAILED")) && counter < DeployServiceFsm.maxCounter) {
         status = client.getStackStatus(stackName, stackUuid);
-        Logger.info("Status of stack " + stackUuid + ": " + status);
+        Logger.debug("Status of stack " + stackUuid + ": " + status);
         if (status != null
             && (status.equals("CREATE_COMPLETE") || status.equals("CREATE_FAILED"))) {
           break;
@@ -146,7 +148,7 @@ public class DeployServiceFsm implements Runnable {
         wrapper.notifyObservers(update);
         return;
       }
-
+      Logger.info("Stack deployment complete");
       counter = 0;
       wait = 1000;
       StackComposition composition = null;
@@ -239,10 +241,12 @@ public class DeployServiceFsm implements Runnable {
               InterfaceRecord ip = new InterfaceRecord();
               if (port.getFloatinIp() != null) {
                 ip.setAddress(port.getFloatinIp());
+                ip.setHardwareAddress(port.getMacAddress());
                 // Logger.info("Port:" + port.getPortName() + "- Addr: " +
                 // port.getFloatinIp());
               } else {
                 ip.setAddress(port.getIpAddress());
+                ip.setHardwareAddress(port.getMacAddress());
                 // Logger.info("Port:" + port.getPortName() + "- Addr: " +
                 // port.getFloatinIp());
                 ip.setNetmask("255.255.255.248");
@@ -264,16 +268,22 @@ public class DeployServiceFsm implements Runnable {
       NetworkWrapper netVim = (NetworkWrapper) WrapperBay.getInstance().getVimRepo()
           .getNetworkVim(this.data.getVimUuid()).getVimWrapper();
 
-      netVim.configureNetworking(data, composition);
-
       response.setVimUuid(data.getVimUuid());
       response.setInstanceName(stackName);
       response.setInstanceVimUuid(stackUuid);
       response.setRequestStatus("DEPLOYED");
       String body = mapper.writeValueAsString(response);
       Logger.info("Response created");
-      // Logger.info("body");
+      Logger.info(body);
 
+      NetworkConfigurePayload netData = new NetworkConfigurePayload();
+      netData.setNsd(data.getNsd());
+      netData.setServiceInstanceId(data.getNsd().getInstanceUuid());
+      netData.setVnfds(data.getVnfdList());
+      netData.setVnfrs(response.getVnfrs());
+      netVim.configureNetworking(netData);
+
+      
       WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(response.getNsr().getId(),
           response.getInstanceVimUuid(), response.getInstanceName(), data.getVimUuid());
 

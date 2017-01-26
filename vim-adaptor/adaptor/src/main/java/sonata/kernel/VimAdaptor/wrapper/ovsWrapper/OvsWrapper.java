@@ -23,9 +23,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
-import sonata.kernel.VimAdaptor.commons.heat.HeatPort;
-import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
+import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
+import sonata.kernel.VimAdaptor.commons.VduRecord;
+import sonata.kernel.VimAdaptor.commons.VnfRecord;
+import sonata.kernel.VimAdaptor.commons.VnfcInstance;
+import sonata.kernel.VimAdaptor.commons.nsd.ConnectionPointRecord;
 import sonata.kernel.VimAdaptor.commons.nsd.ForwardingGraph;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkForwardingPath;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
@@ -67,8 +69,7 @@ public class OvsWrapper extends NetworkWrapper {
   }
 
   @Override
-  public void configureNetworking(ServiceDeployPayload data, StackComposition composition)
-      throws Exception {
+  public void configureNetworking(NetworkConfigurePayload data) throws Exception{
     if (data.getNsd().getForwardingGraphs().size() <= 0)
       throw new Exception("No Forwarding Graph specified in the descriptor");
 
@@ -79,7 +80,8 @@ public class OvsWrapper extends NetworkWrapper {
 
 
     ServiceDescriptor nsd = data.getNsd();
-
+    ArrayList<VnfRecord> vnfrs = data.getVnfrs();
+    ArrayList<VnfDescriptor> vnfds = data.getVnfds();
     ForwardingGraph graph = nsd.getForwardingGraphs().get(0);
 
     NetworkForwardingPath path = graph.getNetworkForwardingPaths().get(0);
@@ -99,8 +101,13 @@ public class OvsWrapper extends NetworkWrapper {
     }
 
     HashMap<String, VnfDescriptor> nameToVnfdMap = new HashMap<String, VnfDescriptor>();
-    for (VnfDescriptor vnfd : data.getVnfdList()) {
+    for (VnfDescriptor vnfd : vnfds) {
       nameToVnfdMap.put(vnfd.getName(), vnfd);
+    }
+
+    HashMap<String, VnfRecord> vnfdToVnfrMap = new HashMap<String, VnfRecord>();
+    for (VnfRecord vnfr : vnfrs) {
+      vnfdToVnfrMap.put(vnfr.getDescriptorReference(), vnfr);
     }
 
     for (ConnectionPointReference cpr : pathCp) {
@@ -123,6 +130,11 @@ public class OvsWrapper extends NetworkWrapper {
         VnfDescriptor vnfd = nameToVnfdMap.get(vnfName);
         if (vnfd == null) {
           throw new Exception("Illegal Format: Unable to bind VNFD to the vnfName: " + vnfName);
+        }
+
+        VnfRecord vnfr = vnfdToVnfrMap.get(vnfd.getUuid());
+        if (vnfr == null) {
+          throw new Exception("Illegal Format: Unable to bind VNFD to the VNFR: " + vnfName);
         }
 
         VnfVirtualLink inputLink = null;
@@ -156,22 +168,37 @@ public class OvsWrapper extends NetworkWrapper {
           throw new Exception(
               "Illegal Format: Unable to find the VNFC Cp name connected to this in/out VNF VL");
         }
-        String qualifiedName = vnfName + ":" + vnfcCpName + ":" + nsd.getInstanceUuid();
-        HeatPort connectedPort = null;
-        for (HeatPort port : composition.getPorts()) {
-          if (port.getPortName().equals(qualifiedName)) {
-            connectedPort = port;
-            break;
+        
+        Logger.debug("Searching for CpRecord of Cp: " + vnfcCpName);
+        ConnectionPointRecord matchingCpRec = null;
+        for (VduRecord vdu : vnfr.getVirtualDeploymentUnits()) {
+          for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
+            for (ConnectionPointRecord cpRec : vnfc.getConnectionPoints()) {
+              Logger.debug("Checking " + cpRec.getId());
+              if (vnfcCpName.equals(cpRec.getId())) {
+                matchingCpRec = cpRec;
+                break;
+              }
+            }
           }
+
         }
 
-        if (connectedPort == null) {
+        String qualifiedName = vnfName + ":" + vnfcCpName + ":" + nsd.getInstanceUuid();
+        // HeatPort connectedPort = null;
+        // for (HeatPort port : composition.getPorts()) {
+        // if (port.getPortName().equals(qualifiedName)) {
+        // connectedPort = port;
+        // break;
+        // }
+        // }
+        if (matchingCpRec == null) {
           throw new Exception(
-              "Illegal Format: cannot find the Heat port with name: " + qualifiedName);
+              "Illegal Format: cannot find the VNFR:VDU:VNFC:CPR matching: " + vnfcCpName);
         } else {
           // Eureka!
           OrderedMacAddress mac = new OrderedMacAddress();
-          mac.setMac(connectedPort.getMacAddress());
+          mac.setMac(matchingCpRec.getType().getHardwareAddress());
           mac.setPosition(portIndex);
           mac.setReferenceCp(qualifiedName);
           portIndex++;
@@ -189,7 +216,7 @@ public class OvsWrapper extends NetworkWrapper {
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
     String payload = mapper.writeValueAsString(odlPayload);
-    Logger.info(payload);
+    Logger.debug(payload);
 
     int sfcAgentPort = 55555;
     DatagramSocket clientSocket = new DatagramSocket(sfcAgentPort);

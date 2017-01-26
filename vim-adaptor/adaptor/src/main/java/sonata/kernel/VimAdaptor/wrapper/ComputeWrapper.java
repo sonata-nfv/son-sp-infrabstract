@@ -78,11 +78,31 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   public abstract ResourceUtilisation getResourceUtilisation();
 
   /**
-   * Deploy a the VNF described in the payload in this compute VIM
+   * Deploy a the VNF described in the payload in this compute VIM.
    * 
    * @param data the payload of a Function.Deploy call
    * @param sid the session ID for this Adaptor call.
    */
   public abstract void deployFunction(FunctionDeployPayload data, String sid);
 
+  /**
+   * Upload the given image to this compute VIM image repository.
+   * 
+   * @param imageUrl the URL from which the image can be downloded.
+   */
+  public abstract void uploadImage(String imageUrl);
+  
+  /**
+   * Check if given image is stored in this compute VIM image repository.
+   * 
+   * @param imageName the name of the image
+   */
+  public abstract boolean isImageStored(String imageName);
+  
+  /**
+   * Remove the given image from this compute VIM image repository.
+   * 
+   * @param imageName the name of the image to remove
+   */
+  public abstract void removeImage(String imageName);
 }

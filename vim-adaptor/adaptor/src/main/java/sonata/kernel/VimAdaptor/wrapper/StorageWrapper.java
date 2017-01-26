@@ -28,4 +28,8 @@ package sonata.kernel.VimAdaptor.wrapper;
 
 abstract class StorageWrapper implements Wrapper {
 
+  
+  
+  
+  
 }

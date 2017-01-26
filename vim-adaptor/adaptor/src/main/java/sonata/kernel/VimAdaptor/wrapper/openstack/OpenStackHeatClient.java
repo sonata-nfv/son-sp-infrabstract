@@ -165,7 +165,7 @@ public class OpenStackHeatClient {
    */
   public String getStackStatus(String stackName, String uuid) {
     String status = null;
-    Logger.info("Getting status for stack: " + stackName + "Stack ID: " + uuid);
+    Logger.debug("Getting status for stack: " + stackName + "Stack ID: " + uuid);
     try {
       mapper = new ObjectMapper();
       String findStackResponse =

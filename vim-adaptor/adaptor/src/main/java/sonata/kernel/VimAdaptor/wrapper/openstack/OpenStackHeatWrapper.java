@@ -337,7 +337,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private String selectFlavor(int vcpu, double memory, double storage,
       ArrayList<Flavor> vimFlavors) {
-    // TODO Implement a method to select the best flavor respecting the resource constraints.
     for (Flavor flavor : vimFlavors) {
       if (vcpu <= flavor.getVcpu() && (memory * 1024) <= flavor.getRam()
           && storage <= flavor.getStorage()) {
@@ -455,7 +454,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
               vnfd.getName() + ":" + link.getId() + ":subnet:" + nsd.getInstanceUuid());
           cidr = subnets.get(subnetIndex);
           subnet.putProperty("cidr", cidr);
-          // TODO remove this static DNS allocation in future use and implement the DNS as a VIM
           // config parameter
           // String[] dnsArray = { "10.30.0.11", "8.8.8.8" };
           String[] dnsArray = {"8.8.8.8"};
@@ -472,7 +470,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         }
       }
       // One virtual machine for each VDU
-      // TODO revise after seeing flavour definition in SON-SCHEMA
 
       for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
         HeatResource server = new HeatResource();
@@ -835,15 +832,13 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     VnfRecord vnfr = new VnfRecord();
     vnfr.setDescriptorVersion("vnfr-schema-01");
+    vnfr.setId(vnfd.getInstanceUuid());
     vnfr.setDescriptorReference(vnfd.getUuid());
+    vnfr.setStatus(Status.offline);
     // vnfr.setDescriptorReferenceName(vnf.getName());
     // vnfr.setDescriptorReferenceVendor(vnf.getVendor());
     // vnfr.setDescriptorReferenceVersion(vnf.getVersion());
-    vnfr.setStatus(Status.offline);
-    // TODO addresses are added next step
-    // vnfr.setVnfAddress("0.0.0.0");
-
-    vnfr.setId(vnfd.getInstanceUuid());
+    
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Inspecting VDU " + vdu.getId());
       VduRecord vdur = new VduRecord();
@@ -876,8 +871,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
 
             // add each composition.ports information in the response. The IP, the netmask (and
-            // maybe
-            // MAC address)
+            // maybe MAC address)
             boolean found = false;
             for (HeatPort port : composition.getPorts()) {
               Logger.debug("port " + port.getPortName());
@@ -888,10 +882,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
                 InterfaceRecord ip = new InterfaceRecord();
                 if (port.getFloatinIp() != null) {
                   ip.setAddress(port.getFloatinIp());
+                  ip.setHardwareAddress(port.getMacAddress());
                   // Logger.info("Port:" + port.getPortName() + "- Addr: " +
                   // port.getFloatinIp());
                 } else {
                   ip.setAddress(port.getIpAddress());
+                  ip.setHardwareAddress(port.getMacAddress());
                   // Logger.info("Port:" + port.getPortName() + "- Addr: " +
                   // port.getFloatinIp());
                   ip.setNetmask("255.255.255.248");
@@ -936,6 +932,33 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     this.markAsChanged();
     this.notifyObservers(update);
 
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#uploadImage(java.lang.String)
+   */
+  @Override
+  public void uploadImage(String imageUrl) {
+    // TODO Auto-generated method stub
+    
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
+   */
+  @Override
+  public boolean isImageStored(String imageName) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#removeImage(java.lang.String)
+   */
+  @Override
+  public void removeImage(String imageName) {
+    // TODO Auto-generated method stub
+    
   }
 
 }

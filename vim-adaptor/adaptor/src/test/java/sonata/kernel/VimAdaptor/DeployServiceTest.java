@@ -373,7 +373,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceOpenStack() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -942,7 +942,7 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     // Send a VNF instantiation request for each VNFD linked by the NSD
-
+    ArrayList<VnfRecord> records = new ArrayList<VnfRecord>();
     for (VnfDescriptor vnfd : data.getVnfdList()) {
 
       output = null;
@@ -980,6 +980,7 @@ public class DeployServiceTest implements MessageReceiver {
       FunctionDeployResponse response = mapper.readValue(output, FunctionDeployResponse.class);
       Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
       Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
+      records.add(response.getVnfr());
     }
 
     // Finally configure Networking in each NFVi-PoP (VIMs)
@@ -987,7 +988,9 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
 
     NetworkConfigurePayload netPayload = new NetworkConfigurePayload();
-    netPayload.setForwardingGraph(data.getNsd().getForwardingGraphs().get(0));
+    netPayload.setNsd(data.getNsd());
+    netPayload.setVnfds(data.getVnfdList());
+    netPayload.setVnfrs(records);
     netPayload.setServiceInstanceId(data.getNsd().getInstanceUuid());
     
 

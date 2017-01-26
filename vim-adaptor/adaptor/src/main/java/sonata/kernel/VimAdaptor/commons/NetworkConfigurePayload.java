@@ -20,21 +20,21 @@ package sonata.kernel.VimAdaptor.commons;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.VimAdaptor.commons.nsd.ForwardingGraph;
+import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
+
+import java.util.ArrayList;
 
 public class NetworkConfigurePayload {
 
   @JsonProperty("service_instance_id")
   private String serviceInstanceId;
-  @JsonProperty("forwarding_graph")
-  private ForwardingGraph forwardingGraph;
-
-  public ForwardingGraph getForwardingGraph() {
-    return forwardingGraph;
-  }
-
-  public void setForwardingGraph(ForwardingGraph forwardingGraph) {
-    this.forwardingGraph = forwardingGraph;
-  }
+  @JsonProperty("nsd")
+  private ServiceDescriptor nsd;
+  @JsonProperty("vfnds")
+  private ArrayList<VnfDescriptor> vnfds;
+  @JsonProperty("vnfrs")
+  private ArrayList<VnfRecord> vnfrs;
 
   public String getServiceInstanceId() {
     return serviceInstanceId;
@@ -42,6 +42,30 @@ public class NetworkConfigurePayload {
 
   public void setServiceInstanceId(String serviceInstanceId) {
     this.serviceInstanceId = serviceInstanceId;
+  }
+
+  public ServiceDescriptor getNsd() {
+    return nsd;
+  }
+
+  public ArrayList<VnfDescriptor> getVnfds() {
+    return vnfds;
+  }
+
+  public ArrayList<VnfRecord> getVnfrs() {
+    return vnfrs;
+  }
+
+  public void setNsd(ServiceDescriptor nsd) {
+    this.nsd = nsd;
+  }
+
+  public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
+    this.vnfds = vnfds;
+  }
+
+  public void setVnfrs(ArrayList<VnfRecord> vnfrs) {
+    this.vnfrs = vnfrs;
   }
 
 }

@@ -183,7 +183,40 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
     // TODO Auto-generated method stub
-    
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#uploadImage(java.lang.String)
+   */
+  @Override
+  public void uploadImage(String imageUrl) {
+    // TODO Auto-generated method stub.
+    this.setChanged();
+    String body = "{\"status\":\"SUCCESS\"}";
+    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+    this.notifyObservers(update);
+
+    return;
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
+   */
+  @Override
+  public boolean isImageStored(String imageName) {
+    boolean out = true;
+    return out;
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#removeImage(java.lang.String)
+   */
+  @Override
+  public void removeImage(String imageName) {
+    this.setChanged();
+    String body = "{\"status\":\"SUCCESS\"}";
+    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+    this.notifyObservers(update);
   }
 
 }

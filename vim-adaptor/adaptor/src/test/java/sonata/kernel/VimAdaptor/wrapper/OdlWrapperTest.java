@@ -28,6 +28,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.Before;
 import org.junit.Ignore;
 
+import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
@@ -111,10 +112,10 @@ public class OdlWrapperTest {
     WrapperConfiguration config = new WrapperConfiguration();
 
     config.setVimEndpoint("10.100.32.200");
-
+    NetworkConfigurePayload netData = new NetworkConfigurePayload();
     OvsWrapper wrapper = new OvsWrapper(config);
     try {
-      wrapper.configureNetworking(data, composition);
+      wrapper.configureNetworking(netData);
     } catch (Exception e) {
       System.out.println("Expected exception thrown when setting SFC for non existing service");
     }

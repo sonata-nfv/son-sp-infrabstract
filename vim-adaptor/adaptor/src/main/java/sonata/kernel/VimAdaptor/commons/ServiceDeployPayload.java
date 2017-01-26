@@ -30,6 +30,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
+import sonata.kernel.VimAdaptor.wrapper.mock.ComputeMockWrapper;
 
 import java.util.ArrayList;
 
@@ -75,6 +77,5 @@ public class ServiceDeployPayload {
   public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
     this.vnfds = vnfds;
   }
-
 
 }
