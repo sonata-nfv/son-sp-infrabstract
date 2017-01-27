@@ -261,7 +261,7 @@ public class VimRepoTest {
     out = repoInstance.writeNetworkVimLink(computeUuid, networkingUuid);
     Assert.assertTrue("Unable to write compute/networking association", out);
 
-    WrapperRecord netRecord = repoInstance.getNetworkVim(computeUuid);
+    WrapperRecord netRecord = repoInstance.getNetworkVimFromComputeVimUuid(computeUuid);
 
     Assert.assertTrue("The retrieved vim is not a networking vim",
         netRecord.getConfig().getWrapperType().equals("networking"));

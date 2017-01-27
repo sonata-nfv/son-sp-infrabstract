@@ -66,6 +66,15 @@ public class VnfDescriptor {
   @JsonProperty("function_specific_managers")
   private ArrayList<FunctionSpecificManager> functionSpecificManagers;
 
+  @Override
+  public boolean equals(Object obj){
+    if (obj instanceof VnfDescriptor){
+      VnfDescriptor temp = (VnfDescriptor)obj;
+      return temp.getUuid().equals(this.getUuid());
+    }else{
+      return false;
+    }
+  }
 
 
   public void setDescriptorVersion(String descriptorVersion) {

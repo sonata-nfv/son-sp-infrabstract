@@ -266,7 +266,7 @@ public class DeployServiceFsm implements Runnable {
       }
 
       NetworkWrapper netVim = (NetworkWrapper) WrapperBay.getInstance().getVimRepo()
-          .getNetworkVim(this.data.getVimUuid()).getVimWrapper();
+          .getNetworkVimFromComputeVimUuid(this.data.getVimUuid()).getVimWrapper();
 
       response.setVimUuid(data.getVimUuid());
       response.setInstanceName(stackName);

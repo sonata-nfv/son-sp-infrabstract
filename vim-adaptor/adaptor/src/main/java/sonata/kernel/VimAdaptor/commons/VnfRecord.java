@@ -28,6 +28,8 @@ package sonata.kernel.VimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
+
 import java.util.ArrayList;
 
 public class VnfRecord {
@@ -52,6 +54,14 @@ public class VnfRecord {
   private ArrayList<VduRecord> virtualDeploymentUnits;
 
 
+  public boolean equals(Object obj){
+    if (obj instanceof VnfRecord){
+      VnfRecord temp = (VnfRecord)obj;
+      return temp.getId().equals(this.getId());
+    }else{
+      return false;
+    }
+  }
   public VnfRecord() {
     this.virtualDeploymentUnits = new ArrayList<VduRecord>();
   }

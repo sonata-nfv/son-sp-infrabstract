@@ -19,7 +19,11 @@ package sonata.kernel.VimAdaptor.wrapper.ovsWrapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonFactory;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
@@ -33,6 +37,8 @@ import sonata.kernel.VimAdaptor.commons.nsd.NetworkForwardingPath;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.ConnectionPointReference;
+import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
+import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.VimAdaptor.wrapper.NetworkWrapper;
@@ -69,7 +75,7 @@ public class OvsWrapper extends NetworkWrapper {
   }
 
   @Override
-  public void configureNetworking(NetworkConfigurePayload data) throws Exception{
+  public void configureNetworking(NetworkConfigurePayload data) throws Exception {
     if (data.getNsd().getForwardingGraphs().size() <= 0)
       throw new Exception("No Forwarding Graph specified in the descriptor");
 
@@ -83,7 +89,7 @@ public class OvsWrapper extends NetworkWrapper {
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
     ArrayList<VnfDescriptor> vnfds = data.getVnfds();
     ForwardingGraph graph = nsd.getForwardingGraphs().get(0);
-
+    
     NetworkForwardingPath path = graph.getNetworkForwardingPaths().get(0);
 
     ArrayList<ConnectionPointReference> pathCp = path.getConnectionPoints();
@@ -168,13 +174,13 @@ public class OvsWrapper extends NetworkWrapper {
           throw new Exception(
               "Illegal Format: Unable to find the VNFC Cp name connected to this in/out VNF VL");
         }
-        
-        Logger.debug("Searching for CpRecord of Cp: " + vnfcCpName);
+
+        //Logger.debug("Searching for CpRecord of Cp: " + vnfcCpName);
         ConnectionPointRecord matchingCpRec = null;
         for (VduRecord vdu : vnfr.getVirtualDeploymentUnits()) {
           for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
             for (ConnectionPointRecord cpRec : vnfc.getConnectionPoints()) {
-              Logger.debug("Checking " + cpRec.getId());
+              //Logger.debug("Checking " + cpRec.getId());
               if (vnfcCpName.equals(cpRec.getId())) {
                 matchingCpRec = cpRec;
                 break;
@@ -216,6 +222,7 @@ public class OvsWrapper extends NetworkWrapper {
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
     String payload = mapper.writeValueAsString(odlPayload);
+    Logger.debug(this.config.getUuid());
     Logger.debug(payload);
 
     int sfcAgentPort = 55555;

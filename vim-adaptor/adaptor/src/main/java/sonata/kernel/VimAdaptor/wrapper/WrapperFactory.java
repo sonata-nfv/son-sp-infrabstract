@@ -45,7 +45,7 @@ public class WrapperFactory {
    */
   public static Wrapper createWrapper(WrapperConfiguration config) {
     Wrapper output = null;
-    Logger.info("Creating wrapper...");
+    Logger.debug("Creating wrapper...");
     if (config.getWrapperType().equals("compute")) {
       output = createComputeWrapper(config);
     }
@@ -56,9 +56,9 @@ public class WrapperFactory {
       output = createStorageWrapper(config);
     }
     if (output != null) {
-      Logger.info("Wrapper created.");
+      Logger.debug("Wrapper created.");
     } else {
-      Logger.info("Unable to create wrapper.");
+      Logger.debug("Unable to create wrapper.");
 
     }
     return output;

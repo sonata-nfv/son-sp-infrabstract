@@ -56,4 +56,9 @@ public class ConnectionPointReference implements Comparable<ConnectionPointRefer
     return (int) Math.signum(position - o.getPosition());
   }
 
+  @Override
+  public String toString(){
+    return "["+connectionPointRef+","+position+"]";
+  }
+  
 }
