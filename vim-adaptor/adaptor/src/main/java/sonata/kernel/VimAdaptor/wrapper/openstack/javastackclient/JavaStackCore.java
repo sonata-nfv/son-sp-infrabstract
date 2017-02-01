@@ -519,6 +519,38 @@ public class JavaStackCore {
     return httpClient.execute(uploadImage);
   }
 
+  public HttpResponse listImages() throws IOException {
+
+    HttpGet listImages = null;
+    HttpResponse response = null;
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpResponseFactory factory = new DefaultHttpResponseFactory();
+
+    if (isAuthenticated) {
+
+      StringBuilder buildUrl = new StringBuilder();
+      buildUrl.append("http://");
+      buildUrl.append(endpoint);
+      buildUrl.append(":");
+      buildUrl.append(Constants.IMAGE_PORT.toString());
+      buildUrl.append(String.format("/%s/images", Constants.IMAGE_VERSION.toString()));
+
+      listImages = new HttpGet(buildUrl.toString());
+      listImages.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+      response = httpClient.execute(listImages);
+      int status_code = response.getStatusLine().getStatusCode();
+      return (status_code ==  200) ? response : factory.newHttpResponse(
+              new BasicStatusLine(
+                      HttpVersion.HTTP_1_1,
+                      status_code,
+                      "Listing Images Failed with Status: " + status_code),
+              null);
+    }
+    return response;
+  }
+
   public synchronized HttpResponse listComputeLimits() throws IOException {
     HttpGet getLimits = null;
     HttpResponse response = null;
@@ -543,7 +575,7 @@ public class JavaStackCore {
       return (status_code == 200)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
-              "List Failed with Status: " + status_code), null);
+              "List Limits Failed with Status: " + status_code), null);
     }
     return response;
   }
@@ -572,7 +604,7 @@ public class JavaStackCore {
       return (status_code == 200)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
-              "List Failed with Status: " + status_code), null);
+              "List Flavors  Failed with Status: " + status_code), null);
     }
     return response;
   }
