@@ -21,35 +21,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
 
-public class ServicePreparePayload {
+public class VimPreDeploymentList {
 
-  @JsonProperty("instance_id")
-  private String instanceId;
-  @JsonProperty("vim_list")
-  private ArrayList<VimPreDeploymentList> vimList;
-
-  public String getInstanceId() {
-    return instanceId;
+  @JsonProperty("uuid")
+  private String uuid;
+  @JsonProperty("vm_images")
+  private ArrayList<VnfImage> images;
+  public String getUuid() {
+    return uuid;
   }
-
-
-  public void setInstanceId(String instanceId) {
-    this.instanceId = instanceId;
+  public ArrayList<VnfImage> getImages() {
+    return images;
   }
-
-
-
-  public ArrayList<VimPreDeploymentList> getVimList() {
-    return vimList;
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
-
-
-
-  public void setVimList(ArrayList<VimPreDeploymentList> vimList) {
-    this.vimList = vimList;
+  public void setImages(ArrayList<VnfImage> images) {
+    this.images = images;
   }
-
-
-
-
+  
 }

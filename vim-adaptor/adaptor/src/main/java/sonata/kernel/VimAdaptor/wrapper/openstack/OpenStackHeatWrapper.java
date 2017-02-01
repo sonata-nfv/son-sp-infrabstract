@@ -41,6 +41,7 @@ import sonata.kernel.VimAdaptor.commons.IpNetPool;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.Status;
 import sonata.kernel.VimAdaptor.commons.VduRecord;
+import sonata.kernel.VimAdaptor.commons.VnfImage;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
 import sonata.kernel.VimAdaptor.commons.VnfcInstance;
 import sonata.kernel.VimAdaptor.commons.heat.HeatModel;
@@ -947,8 +948,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
    */
   @Override
-  public boolean isImageStored(String imageName) {
-    // TODO Auto-generated method stub
+  public boolean isImageStored(VnfImage image) {
+    
+    
+    
     return false;
   }
 
@@ -956,7 +959,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#removeImage(java.lang.String)
    */
   @Override
-  public void removeImage(String imageName) {
+  public void removeImage(VnfImage image) {
     // TODO Auto-generated method stub
     
   }

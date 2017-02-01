@@ -19,36 +19,37 @@ package sonata.kernel.VimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
+public class VnfImage {
 
-public class ServicePreparePayload {
+  @JsonProperty("image_uuid")
+  private String uuid;
+  @JsonProperty("image_url")
+  private String url;
 
-  @JsonProperty("instance_id")
-  private String instanceId;
-  @JsonProperty("vim_list")
-  private ArrayList<VimPreDeploymentList> vimList;
-
-  public String getInstanceId() {
-    return instanceId;
+  /**
+   * @param uuid
+   * @param url
+   */
+  public VnfImage(String uuid, String url) {
+    this.uuid = uuid;
+    this.url = url;
   }
 
-
-  public void setInstanceId(String instanceId) {
-    this.instanceId = instanceId;
+  public String getUuid() {
+    return uuid;
   }
 
-
-
-  public ArrayList<VimPreDeploymentList> getVimList() {
-    return vimList;
+  public String getUrl() {
+    return url;
   }
 
-
-
-  public void setVimList(ArrayList<VimPreDeploymentList> vimList) {
-    this.vimList = vimList;
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
+  public void setUrl(String url) {
+    this.url = url;
+  }
 
 
 

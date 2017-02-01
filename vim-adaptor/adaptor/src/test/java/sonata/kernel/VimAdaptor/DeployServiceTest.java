@@ -27,6 +27,7 @@
 package sonata.kernel.VimAdaptor;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -45,6 +46,8 @@ import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.VimAdaptor.commons.ServicePreparePayload;
 import sonata.kernel.VimAdaptor.commons.Status;
+import sonata.kernel.VimAdaptor.commons.VimPreDeploymentList;
+import sonata.kernel.VimAdaptor.commons.VnfImage;
 import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
 import sonata.kernel.VimAdaptor.commons.FunctionDeployResponse;
 import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
@@ -913,8 +916,17 @@ public class DeployServiceTest implements MessageReceiver {
     ServicePreparePayload payload = new ServicePreparePayload();
 
     payload.setInstanceId(data.getNsd().getInstanceUuid());
-    ArrayList<String> vims = new ArrayList<String>();
-    vims.add(computeWrUuid);
+    ArrayList<VimPreDeploymentList> vims = new ArrayList<VimPreDeploymentList>();
+    VimPreDeploymentList vimDepList = new VimPreDeploymentList();
+    vimDepList.setUuid(computeWrUuid);
+    ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
+    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1","file:///test_images/sonata-vtc");
+    vnfImages.add(vtcImgade);
+    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv:vfw-vnf:0.1:1","file:///test_images/sonata-vfw");
+    vnfImages.add(vfwImgade);
+    vimDepList.setImages(vnfImages);
+    vims.add(vimDepList);
+    
     payload.setVimList(vims);
 
     String body = mapper.writeValueAsString(payload);
@@ -1085,6 +1097,231 @@ public class DeployServiceTest implements MessageReceiver {
 
   }
 
+  
+  @Ignore
+  public void testDeployServiceIncrementalMultiPoP() throws Exception {
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.1);
+
+    core.start();
+    int counter = 0;
+
+    try {
+      while (counter < 2) {
+        synchronized (mon) {
+          mon.wait();
+          if (lastHeartbeat.contains("RUNNING")) counter++;
+        }
+      }
+    } catch (Exception e) {
+      Assert.assertTrue(false);
+    }
+
+
+    //Add first PoP
+    String addVimBody = "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", "
+        + "\"tenant_ext_router\":\"4ac2b52e-8f6b-4af3-ad28-38ede9d71c83\", "
+        + "\"tenant_ext_net\":\"cbc5a4fa-59ed-4ec1-ad2d-adb270e21693\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
+        + "\"pass\":\"ii70mseq\",\"tenant\":\"admin\"}";
+    String topic = "infrastructure.management.compute.add";
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+
+
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String status = jsonObject.getString("status");
+    String computeWrUuid1 = jsonObject.getString("uuid");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid1);
+
+
+    output = null;
+    String addNetVimBody = "{\"vim_type\":\"ovs\", "
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
+        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid1 + "\"}";
+    topic = "infrastructure.management.network.add";
+    ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addNetVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("status");
+    String netWrUuid1 = jsonObject.getString("uuid");
+    Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
+        status.equals("COMPLETED"));
+    System.out.println("OVS Wrapper added, with uuid: " + netWrUuid1);
+
+
+    output = null;
+    
+    //Add second PoP
+    addVimBody = "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", "
+        + "\"tenant_ext_router\":\"4ac2b52e-8f6b-4af3-ad28-38ede9d71c83\", "
+        + "\"tenant_ext_net\":\"cbc5a4fa-59ed-4ec1-ad2d-adb270e21693\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
+        + "\"pass\":\"ii70mseq\",\"tenant\":\"admin\"}";
+    topic = "infrastructure.management.compute.add";
+    addVimMessage = new ServicePlatformMessage(addVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("status");
+    String computeWrUuid2 = jsonObject.getString("uuid");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid2);
+
+
+    output = null;
+    addNetVimBody = "{\"vim_type\":\"ovs\", "
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
+        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid2 + "\"}";
+    topic = "infrastructure.management.network.add";
+    addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addNetVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("status");
+    String netWrUuid2 = jsonObject.getString("uuid");
+    Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
+        status.equals("COMPLETED"));
+    System.out.println("OVS Wrapper added, with uuid: " + netWrUuid2);
+
+
+    output = null;
+
+    // Prepare the system for a service deployment
+
+    ServicePreparePayload payload = new ServicePreparePayload();
+
+    payload.setInstanceId(data.getNsd().getInstanceUuid());
+    ArrayList<VimPreDeploymentList> vims = new ArrayList<VimPreDeploymentList>();
+    VimPreDeploymentList vimDepList = new VimPreDeploymentList();
+    vimDepList.setUuid(computeWrUuid1);
+    ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
+    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1","file:///test_images/sonata-vtc");
+    vnfImages.add(vtcImgade);
+    vimDepList.setImages(vnfImages);
+    vims.add(vimDepList);
+    
+    
+    
+    vimDepList = new VimPreDeploymentList();
+    vimDepList.setUuid(computeWrUuid2);
+    vnfImages = new ArrayList<VnfImage>();
+    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv:fw-vnf:0.1:1","file:///test_images/sonata-vfw");
+    vnfImages.add(vfwImgade);
+    vimDepList.setImages(vnfImages);
+    vims.add(vimDepList);
+
+    payload.setVimList(vims);
+    
+    String body = mapper.writeValueAsString(payload);
+
+    topic = "infrastructure.service.prepare";
+    ServicePlatformMessage servicePrepareMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(servicePrepareMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("status");
+    String message = jsonObject.getString("message");
+    Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status+" - message: "+message,
+        status.equals("COMPLETED"));
+    System.out.println("Service " + payload.getInstanceId() + " ready for deployment");
+    
+    
+    
+  }
+  
+  
+  
+  @Test
+  public void testPrepareServicePayload() throws JsonProcessingException{
+    
+    ServicePreparePayload payload = new ServicePreparePayload();
+    
+    payload.setInstanceId(data.getNsd().getInstanceUuid());
+    ArrayList<VimPreDeploymentList> vims = new ArrayList<VimPreDeploymentList>();
+    VimPreDeploymentList vimDepList = new VimPreDeploymentList();
+    vimDepList.setUuid("aaaa-aaaaaaaaaaaaa-aaaaaaaaaaaaa-aaaaaaaa");
+    ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
+    VnfImage Image1 = new VnfImage("eu.sonata-nfv:1-vnf:0.1:1","file:///test_images/sonata-1");
+    VnfImage Image2 = new VnfImage("eu.sonata-nfv:2-vnf:0.1:1","file:///test_images/sonata-2");
+    VnfImage Image3 = new VnfImage("eu.sonata-nfv:3-vnf:0.1:1","file:///test_images/sonata-3");
+    VnfImage Image4 = new VnfImage("eu.sonata-nfv:4-vnf:0.1:1","file:///test_images/sonata-4");
+    vnfImages.add(Image1);
+    vnfImages.add(Image2);
+    vnfImages.add(Image3);
+    vnfImages.add(Image4);
+    vimDepList.setImages(vnfImages);
+    vims.add(vimDepList);
+    
+
+    vimDepList = new VimPreDeploymentList();
+    vimDepList.setUuid("bbbb-bbbbbbbbbbbb-bbbbbbbbbbbb-bbbbbbbbb");
+    vnfImages = new ArrayList<VnfImage>();
+    VnfImage Image5 = new VnfImage("eu.sonata-nfv:5-vnf:0.1:1","file:///test_images/sonata-5");
+    VnfImage Image6 = new VnfImage("eu.sonata-nfv:6-vnf:0.1:1","file:///test_images/sonata-6");
+    VnfImage Image7 = new VnfImage("eu.sonata-nfv:7-vnf:0.1:1","file:///test_images/sonata-7");
+    vnfImages.add(Image5);
+    vnfImages.add(Image6);
+    vnfImages.add(Image7);
+    vimDepList.setImages(vnfImages);
+    vims.add(vimDepList);
+    
+    payload.setVimList(vims);
+    
+    System.out.println(mapper.writeValueAsString(payload));
+  }
+  
   public void receiveHeartbeat(ServicePlatformMessage message) {
     synchronized (mon) {
       this.lastHeartbeat = message.getBody();

@@ -40,6 +40,7 @@ import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ServiceRecord;
 import sonata.kernel.VimAdaptor.commons.Status;
 import sonata.kernel.VimAdaptor.commons.VduRecord;
+import sonata.kernel.VimAdaptor.commons.VnfImage;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
 import sonata.kernel.VimAdaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
@@ -203,7 +204,7 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
    */
   @Override
-  public boolean isImageStored(String imageName) {
+  public boolean isImageStored(VnfImage image) {
     boolean out = true;
     return out;
   }
@@ -212,7 +213,7 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#removeImage(java.lang.String)
    */
   @Override
-  public void removeImage(String imageName) {
+  public void removeImage(VnfImage image) {
     this.setChanged();
     String body = "{\"status\":\"SUCCESS\"}";
     WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);

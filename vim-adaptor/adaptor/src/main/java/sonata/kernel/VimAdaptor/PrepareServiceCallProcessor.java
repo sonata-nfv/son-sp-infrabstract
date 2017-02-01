@@ -26,6 +26,8 @@ import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.ServicePreparePayload;
+import sonata.kernel.VimAdaptor.commons.VimPreDeploymentList;
+import sonata.kernel.VimAdaptor.commons.VnfImage;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
@@ -83,13 +85,20 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
       payload = mapper.readValue(message.getBody(), ServicePreparePayload.class);
       Logger.info("payload parsed. Configuring VIMs");
 
-      for (String vimUuid : payload.getVimList()) {
-        ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
+      for (VimPreDeploymentList vim: payload.getVimList()) {
+        ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vim.getUuid());
         Logger.info("Wrapper retrieved");
+        
+        for(VnfImage vnfImage : vim.getImages()){
+          if(!wr.isImageStored(vnfImage)){
+            wr.uploadImage(vnfImage.getUrl());
+          }
+        }
+        
         boolean success = wr.prepareService(payload.getInstanceId());
         if (!success) {
           throw new Exception("Unable to prepare the environment for instance: "
-              + payload.getInstanceId() + " on VIM " + vimUuid);
+              + payload.getInstanceId() + " on VIM " + vim.getUuid());
         }
         
       }

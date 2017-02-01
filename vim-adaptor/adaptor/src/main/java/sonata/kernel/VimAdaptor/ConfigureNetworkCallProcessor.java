@@ -17,19 +17,14 @@
  */
 package sonata.kernel.VimAdaptor;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import org.glassfish.hk2.api.DescriptorType;
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
 import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
-import sonata.kernel.VimAdaptor.commons.SFCPoint;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
 import sonata.kernel.VimAdaptor.commons.nsd.ForwardingGraph;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkForwardingPath;
@@ -40,10 +35,8 @@ import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.VimAdaptor.wrapper.ComputeWrapper;
 import sonata.kernel.VimAdaptor.wrapper.NetworkWrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperBay;
-import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OrderedMacAddress;
 
 import java.io.IOException;
 import java.util.ArrayList;

@@ -28,6 +28,7 @@ package sonata.kernel.VimAdaptor.wrapper;
 
 import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
+import sonata.kernel.VimAdaptor.commons.VnfImage;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
@@ -95,14 +96,17 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   /**
    * Check if given image is stored in this compute VIM image repository.
    * 
-   * @param imageName the name of the image
+   * @param image the object representing the VNF image 
    */
-  public abstract boolean isImageStored(String imageName);
+  public abstract boolean isImageStored(VnfImage image);
   
   /**
    * Remove the given image from this compute VIM image repository.
    * 
-   * @param imageName the name of the image to remove
+   * @param image the object representing the VNF image 
    */
-  public abstract void removeImage(String imageName);
+  public void removeImage(VnfImage image) {
+    // TODO Auto-generated method stub
+    
+  }
 }
