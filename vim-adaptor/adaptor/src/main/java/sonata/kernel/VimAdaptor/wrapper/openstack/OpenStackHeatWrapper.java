@@ -65,7 +65,14 @@ import sonata.kernel.VimAdaptor.wrapper.VimRepo;
 import sonata.kernel.VimAdaptor.wrapper.WrapperBay;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.Image.Image;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -839,7 +846,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // vnfr.setDescriptorReferenceName(vnf.getName());
     // vnfr.setDescriptorReferenceVendor(vnf.getVendor());
     // vnfr.setDescriptorReferenceVersion(vnf.getVersion());
-    
+
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Inspecting VDU " + vdu.getId());
       VduRecord vdur = new VduRecord();
@@ -935,33 +942,69 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#uploadImage(java.lang.String)
    */
   @Override
-  public void uploadImage(String imageUrl) {
+  public void uploadImage(VnfImage image) throws IOException {
     // TODO Auto-generated method stub
-    
+    OpenStackGlanceClient glance = new OpenStackGlanceClient(config.getVimEndpoint().toString(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+
+
+    String imageUuid = glance.createImage(image.getUuid());
+
+    URL website = new URL(image.getUrl());
+    String fileName = website.getPath().substring(website.getPath().lastIndexOf("/"));
+    ReadableByteChannel rbc = Channels.newChannel(website.openStream());
+    String fileAbsolutePath = "/tmp/" + fileName;
+    FileOutputStream fos = new FileOutputStream(fileAbsolutePath);
+    fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
+
+    glance.uploadImage(imageUuid, fileAbsolutePath);
+
+    File f = new File(fileAbsolutePath);
+    if (f.delete()) {
+      Logger.debug("temporary image file deleted succesfully from local environment.");
+    } else {
+      Logger.error("Error deleting the temporary image file " + fileName
+          + " from local environment. Relevant VNF: " + image.getUuid());
+      throw new IOException("Error deleting the temporary image file " + fileName
+          + " from local environment. Relevant VNF: " + image.getUuid());
+    }
+
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
    */
   @Override
   public boolean isImageStored(VnfImage image) {
-    
-    
-    
+    OpenStackGlanceClient glance = new OpenStackGlanceClient(config.getVimEndpoint().toString(),
+        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+    ArrayList<Image> glanceImages = glance.listImages();
+
+    for (Image glanceImage : glanceImages) {
+      if (glanceImage.getName().equals(image.getUuid())) {
+        return true;
+      }
+    }
     return false;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#removeImage(java.lang.String)
    */
   @Override
   public void removeImage(VnfImage image) {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

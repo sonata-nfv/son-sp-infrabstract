@@ -69,8 +69,8 @@ public class WrapperBay {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
-    } else if (newWrapper.getType().equals("compute")) {
+      output = "{\"status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
+    } else if (newWrapper.getType().equals(WrapperType.COMPUTE)) {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.repository.writeVimEntry(config.getUuid(), record);
       output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
@@ -140,7 +140,7 @@ public class WrapperBay {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
+      output = "{\"status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
     } else if (newWrapper.getType().equals("network")) {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.repository.writeVimEntry(config.getUuid(), record);
@@ -172,6 +172,7 @@ public class WrapperBay {
 
   /**
    * Return a generic Vim Wrapper for the given Vim UUID
+   * 
    * @param uuid
    * @return
    */

@@ -30,6 +30,8 @@ import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.VnfImage;
 
+import java.io.IOException;
+
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
   /**
@@ -37,19 +39,20 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    */
   public ComputeWrapper() {
 
-    this.setType("compute");
+    this.setType(WrapperType.COMPUTE);
 
   }
 
   /**
    * Prepare a service instance in this VIM for the given instance ID.
    * 
-   * @param instanceId the ID of the instance used as reference for the prepared environment in the VIM
+   * @param instanceId the ID of the instance used as reference for the prepared environment in the
+   *        VIM
    * 
    * @return true if the remove process has started correctly, false otherwise
    */
   public abstract boolean prepareService(String instanceId) throws Exception;
-  
+
   /**
    * Remove a service instance from this VIM.
    * 
@@ -91,22 +94,22 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * 
    * @param imageUrl the URL from which the image can be downloded.
    */
-  public abstract void uploadImage(String imageUrl);
-  
+  public abstract void uploadImage(VnfImage image) throws IOException;
+
   /**
    * Check if given image is stored in this compute VIM image repository.
    * 
-   * @param image the object representing the VNF image 
+   * @param image the object representing the VNF image
    */
   public abstract boolean isImageStored(VnfImage image);
-  
+
   /**
    * Remove the given image from this compute VIM image repository.
    * 
-   * @param image the object representing the VNF image 
+   * @param image the object representing the VNF image
    */
   public void removeImage(VnfImage image) {
     // TODO Auto-generated method stub
-    
+
   }
 }

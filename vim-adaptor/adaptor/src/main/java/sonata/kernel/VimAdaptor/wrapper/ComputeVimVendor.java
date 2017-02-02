@@ -26,18 +26,31 @@
 
 package sonata.kernel.VimAdaptor.wrapper;
 
-enum ComputeVimType {
-  OPENSTACK("OpenStack"), OPENSTACKHEAT("Heat"), OPENMANO("OpenMANO"), MOCK(
-      "Mock"), OPENVIM("OpenVIM");
+public enum ComputeVimVendor implements VimVendor {
+  OPENSTACK("OpenStack"), HEAT("Heat"), OPENMANO("OpenMANO"), MOCK("Mock"), OPENVIM("OpenVIM");
 
   private final String name;
 
-  ComputeVimType(String name) {
+  ComputeVimVendor(String name) {
     this.name = name;
   }
 
   @Override
   public String toString() {
     return this.name;
+  }
+
+  private String getName() {
+    return this.toString();
+  }
+
+  public static ComputeVimVendor getByName(String name) {
+    for (ComputeVimVendor vendor : values()) {
+      if (vendor.getName().toUpperCase().equals(name.toUpperCase())) {
+        return vendor;
+      }
+    }
+
+    throw new IllegalArgumentException(name + " is not a valid ComputeVimVendor");
   }
 }

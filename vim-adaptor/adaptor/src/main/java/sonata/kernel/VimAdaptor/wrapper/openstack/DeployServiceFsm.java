@@ -283,7 +283,7 @@ public class DeployServiceFsm implements Runnable {
       netData.setVnfrs(response.getVnfrs());
       netVim.configureNetworking(netData);
 
-      
+
       WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(response.getNsr().getId(),
           response.getInstanceVimUuid(), response.getInstanceName(), data.getVimUuid());
 

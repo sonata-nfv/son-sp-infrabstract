@@ -57,8 +57,8 @@ public class ConnectionPointReference implements Comparable<ConnectionPointRefer
   }
 
   @Override
-  public String toString(){
-    return "["+connectionPointRef+","+position+"]";
+  public String toString() {
+    return "[" + connectionPointRef + "," + position + "]";
   }
-  
+
 }

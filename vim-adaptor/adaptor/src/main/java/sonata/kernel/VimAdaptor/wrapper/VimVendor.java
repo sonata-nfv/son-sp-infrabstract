@@ -15,40 +15,8 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.VimAdaptor.commons;
+package sonata.kernel.VimAdaptor.wrapper;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
-import java.util.ArrayList;
-
-public class ServicePreparePayload {
-
-  @JsonProperty("instance_id")
-  private String instanceId;
-  @JsonProperty("vim_list")
-  private ArrayList<VimPreDeploymentList> vimList;
-
-  public String getInstanceId() {
-    return instanceId;
-  }
-
-
-  public void setInstanceId(String instanceId) {
-    this.instanceId = instanceId;
-  }
-
-
-
-  public ArrayList<VimPreDeploymentList> getVimList() {
-    return vimList;
-  }
-
-
-
-  public void setVimList(ArrayList<VimPreDeploymentList> vimList) {
-    this.vimList = vimList;
-  }
-
-
+public interface VimVendor {
 
 }

@@ -30,18 +30,18 @@ import java.util.Observable;
 
 public abstract class AbstractWrapper extends Observable {
 
-  private String type;
+  private WrapperType type;
 
-  protected void setType(String type) {
+  protected void setType(WrapperType type) {
     this.type = type;
   }
 
   /**
    * return the type of this wrapper.
    * 
-   * @return a String in {"compute","storage","network"}
+   * @return a WrapperType object in {"compute","storage","network"}
    */
-  public String getType() {
+  public WrapperType getType() {
     return type;
   }
 

@@ -48,11 +48,11 @@ public class JavaStackUtils {
 
     } else if (status == 403) {
       throw new IOException(
-          "Access forbidden, make sure you are using the correct credentials: "+ reasonPhrase);
+          "Access forbidden, make sure you are using the correct credentials: " + reasonPhrase);
     } else if (status == 409) {
-      throw new IOException("Stack is already created, conflict detected: "+ reasonPhrase);
+      throw new IOException("Stack is already created, conflict detected: " + reasonPhrase);
     } else {
-      throw new IOException("Failed Request: "+ reasonPhrase);
+      throw new IOException("Failed Request: " + reasonPhrase);
     }
   }
 }

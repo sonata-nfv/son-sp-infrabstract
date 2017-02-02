@@ -67,11 +67,11 @@ public class VnfDescriptor {
   private ArrayList<FunctionSpecificManager> functionSpecificManagers;
 
   @Override
-  public boolean equals(Object obj){
-    if (obj instanceof VnfDescriptor){
-      VnfDescriptor temp = (VnfDescriptor)obj;
+  public boolean equals(Object obj) {
+    if (obj instanceof VnfDescriptor) {
+      VnfDescriptor temp = (VnfDescriptor) obj;
       return temp.getUuid().equals(this.getUuid());
-    }else{
+    } else {
       return false;
     }
   }

@@ -31,7 +31,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ConnectionPoint {
 
   public enum Interface {
-    PUBLIC("public"),EXT("external"),INT("internal"),INTERFACE("interface");
+    PUBLIC("public"), EXT("external"), INT("internal"), INTERFACE("interface");
     private final String name;
 
     Interface(String name) {

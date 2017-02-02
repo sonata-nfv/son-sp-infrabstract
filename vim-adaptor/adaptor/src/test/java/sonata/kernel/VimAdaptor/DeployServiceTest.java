@@ -920,13 +920,15 @@ public class DeployServiceTest implements MessageReceiver {
     VimPreDeploymentList vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
-    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1","file:///test_images/sonata-vtc");
+    VnfImage vtcImgade =
+        new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1", "file:///test_images/sonata-vtc");
     vnfImages.add(vtcImgade);
-    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv:vfw-vnf:0.1:1","file:///test_images/sonata-vfw");
+    VnfImage vfwImgade =
+        new VnfImage("eu.sonata-nfv:vfw-vnf:0.1:1", "file:///test_images/sonata-vfw");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
-    
+
     payload.setVimList(vims);
 
     String body = mapper.writeValueAsString(payload);
@@ -948,8 +950,8 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("status");
     String message = jsonObject.getString("message");
-    Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status+" - message: "+message,
-        status.equals("COMPLETED"));
+    Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status
+        + " - message: " + message, status.equals("COMPLETED"));
     System.out.println("Service " + payload.getInstanceId() + " ready for deployment");
 
 
@@ -958,7 +960,7 @@ public class DeployServiceTest implements MessageReceiver {
     for (VnfDescriptor vnfd : data.getVnfdList()) {
 
       output = null;
-      
+
       FunctionDeployPayload vnfPayload = new FunctionDeployPayload();
       vnfPayload.setVnfd(vnfd);
       vnfPayload.setVimUuid(computeWrUuid);
@@ -979,7 +981,7 @@ public class DeployServiceTest implements MessageReceiver {
       Assert.assertNotNull(output);
       int retry = 0;
       int maxRetry = 60;
-      while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry){
+      while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry) {
         synchronized (mon) {
           mon.wait(1000);
           retry++;
@@ -1004,7 +1006,7 @@ public class DeployServiceTest implements MessageReceiver {
     netPayload.setVnfds(data.getVnfdList());
     netPayload.setVnfrs(records);
     netPayload.setServiceInstanceId(data.getNsd().getInstanceUuid());
-    
+
 
     body = mapper.writeValueAsString(netPayload);
 
@@ -1029,10 +1031,10 @@ public class DeployServiceTest implements MessageReceiver {
         status.equals("COMPLETED"));
     System.out.println(
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
-    
-    //Clean everything:
-    //1. De-configure SFC
-    //2. Remove Service
+
+    // Clean everything:
+    // 1. De-configure SFC
+    // 2. Remove Service
     // Service removal (Still the old way)
     output = null;
     String instanceUuid = data.getNsd().getInstanceUuid();
@@ -1053,9 +1055,9 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
-    
-    //3. De-register VIMs.
-    
+
+    // 3. De-register VIMs.
+
     output = null;
     message = "{\"uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
@@ -1073,7 +1075,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
+
     output = null;
     message = "{\"uuid\":\"" + netWrUuid + "\"}";
     topic = "infrastructure.management.network.remove";
@@ -1092,12 +1094,12 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
-    core.stop();  
-    
+    core.stop();
+
 
   }
 
-  
+
   @Ignore
   public void testDeployServiceIncrementalMultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -1124,7 +1126,7 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
 
-    //Add first PoP
+    // Add first PoP
     String addVimBody = "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", "
         + "\"tenant_ext_router\":\"4ac2b52e-8f6b-4af3-ad28-38ede9d71c83\", "
         + "\"tenant_ext_net\":\"cbc5a4fa-59ed-4ec1-ad2d-adb270e21693\","
@@ -1175,16 +1177,16 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    
-    //Add second PoP
+
+    // Add second PoP
     addVimBody = "{\"wr_type\":\"compute\",\"vim_type\":\"Heat\", "
         + "\"tenant_ext_router\":\"4ac2b52e-8f6b-4af3-ad28-38ede9d71c83\", "
         + "\"tenant_ext_net\":\"cbc5a4fa-59ed-4ec1-ad2d-adb270e21693\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
         + "\"pass\":\"ii70mseq\",\"tenant\":\"admin\"}";
     topic = "infrastructure.management.compute.add";
-    addVimMessage = new ServicePlatformMessage(addVimBody,
-        "application/json", topic, UUID.randomUUID().toString(), topic);
+    addVimMessage = new ServicePlatformMessage(addVimBody, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -1207,8 +1209,8 @@ public class DeployServiceTest implements MessageReceiver {
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid2 + "\"}";
     topic = "infrastructure.management.network.add";
-    addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
-        "application/json", topic, UUID.randomUUID().toString(), topic);
+    addNetVimMessage = new ServicePlatformMessage(addNetVimBody, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addNetVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -1237,23 +1239,25 @@ public class DeployServiceTest implements MessageReceiver {
     VimPreDeploymentList vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid(computeWrUuid1);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
-    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1","file:///test_images/sonata-vtc");
+    VnfImage vtcImgade =
+        new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1", "file:///test_images/sonata-vtc");
     vnfImages.add(vtcImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
-    
-    
-    
+
+
+
     vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid(computeWrUuid2);
     vnfImages = new ArrayList<VnfImage>();
-    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv:fw-vnf:0.1:1","file:///test_images/sonata-vfw");
+    VnfImage vfwImgade =
+        new VnfImage("eu.sonata-nfv:fw-vnf:0.1:1", "file:///test_images/sonata-vfw");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
 
     payload.setVimList(vims);
-    
+
     String body = mapper.writeValueAsString(payload);
 
     topic = "infrastructure.service.prepare";
@@ -1273,55 +1277,55 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("status");
     String message = jsonObject.getString("message");
-    Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status+" - message: "+message,
-        status.equals("COMPLETED"));
+    Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status
+        + " - message: " + message, status.equals("COMPLETED"));
     System.out.println("Service " + payload.getInstanceId() + " ready for deployment");
-    
-    
-    
+
+
+
   }
-  
-  
-  
+
+
+
   @Test
-  public void testPrepareServicePayload() throws JsonProcessingException{
-    
+  public void testPrepareServicePayload() throws JsonProcessingException {
+
     ServicePreparePayload payload = new ServicePreparePayload();
-    
+
     payload.setInstanceId(data.getNsd().getInstanceUuid());
     ArrayList<VimPreDeploymentList> vims = new ArrayList<VimPreDeploymentList>();
     VimPreDeploymentList vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid("aaaa-aaaaaaaaaaaaa-aaaaaaaaaaaaa-aaaaaaaa");
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
-    VnfImage Image1 = new VnfImage("eu.sonata-nfv:1-vnf:0.1:1","file:///test_images/sonata-1");
-    VnfImage Image2 = new VnfImage("eu.sonata-nfv:2-vnf:0.1:1","file:///test_images/sonata-2");
-    VnfImage Image3 = new VnfImage("eu.sonata-nfv:3-vnf:0.1:1","file:///test_images/sonata-3");
-    VnfImage Image4 = new VnfImage("eu.sonata-nfv:4-vnf:0.1:1","file:///test_images/sonata-4");
+    VnfImage Image1 = new VnfImage("eu.sonata-nfv:1-vnf:0.1:1", "file:///test_images/sonata-1");
+    VnfImage Image2 = new VnfImage("eu.sonata-nfv:2-vnf:0.1:1", "file:///test_images/sonata-2");
+    VnfImage Image3 = new VnfImage("eu.sonata-nfv:3-vnf:0.1:1", "file:///test_images/sonata-3");
+    VnfImage Image4 = new VnfImage("eu.sonata-nfv:4-vnf:0.1:1", "file:///test_images/sonata-4");
     vnfImages.add(Image1);
     vnfImages.add(Image2);
     vnfImages.add(Image3);
     vnfImages.add(Image4);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
-    
+
 
     vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid("bbbb-bbbbbbbbbbbb-bbbbbbbbbbbb-bbbbbbbbb");
     vnfImages = new ArrayList<VnfImage>();
-    VnfImage Image5 = new VnfImage("eu.sonata-nfv:5-vnf:0.1:1","file:///test_images/sonata-5");
-    VnfImage Image6 = new VnfImage("eu.sonata-nfv:6-vnf:0.1:1","file:///test_images/sonata-6");
-    VnfImage Image7 = new VnfImage("eu.sonata-nfv:7-vnf:0.1:1","file:///test_images/sonata-7");
+    VnfImage Image5 = new VnfImage("eu.sonata-nfv:5-vnf:0.1:1", "file:///test_images/sonata-5");
+    VnfImage Image6 = new VnfImage("eu.sonata-nfv:6-vnf:0.1:1", "file:///test_images/sonata-6");
+    VnfImage Image7 = new VnfImage("eu.sonata-nfv:7-vnf:0.1:1", "file:///test_images/sonata-7");
     vnfImages.add(Image5);
     vnfImages.add(Image6);
     vnfImages.add(Image7);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
-    
+
     payload.setVimList(vims);
-    
+
     System.out.println(mapper.writeValueAsString(payload));
   }
-  
+
   public void receiveHeartbeat(ServicePlatformMessage message) {
     synchronized (mon) {
       this.lastHeartbeat = message.getBody();

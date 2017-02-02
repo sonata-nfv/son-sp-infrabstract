@@ -39,15 +39,18 @@ public class NetworkMockWrapper extends NetworkWrapper {
     this.config = config;
   }
 
-  /* (non-Javadoc)
-   * @see sonata.kernel.VimAdaptor.wrapper.NetworkWrapper#configureNetworking(sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.VimAdaptor.wrapper.NetworkWrapper#configureNetworking(sonata.kernel.VimAdaptor.
+   * commons.NetworkConfigurePayload)
    */
   @Override
   public void configureNetworking(NetworkConfigurePayload data) throws Exception {
     return;
   }
 
-  
 
 
 }

@@ -54,14 +54,15 @@ public class VnfRecord {
   private ArrayList<VduRecord> virtualDeploymentUnits;
 
 
-  public boolean equals(Object obj){
-    if (obj instanceof VnfRecord){
-      VnfRecord temp = (VnfRecord)obj;
+  public boolean equals(Object obj) {
+    if (obj instanceof VnfRecord) {
+      VnfRecord temp = (VnfRecord) obj;
       return temp.getId().equals(this.getId());
-    }else{
+    } else {
       return false;
     }
   }
+
   public VnfRecord() {
     this.virtualDeploymentUnits = new ArrayList<VduRecord>();
   }

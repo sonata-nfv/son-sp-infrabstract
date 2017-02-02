@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
+import java.net.NetworkInterface;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -136,8 +137,7 @@ public class VimRepo {
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE service_instances " + "(" + "INSTANCE_UUID TEXT NOT NULL,"
             + " VIM_INSTANCE_UUID TEXT NOT NULL," + " VIM_INSTANCE_NAME TEXT NOT NULL,"
-            + " VIM_UUID TEXT NOT NULL,"
-            + " PRIMARY KEY (INSTANCE_UUID, VIM_UUID)" + ");";
+            + " VIM_UUID TEXT NOT NULL," + " PRIMARY KEY (INSTANCE_UUID, VIM_UUID)" + ");";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE function_instances " + "(" + "INSTANCE_UUID TEXT PRIMARY KEY NOT NULL,"
             + " SERVICE_INSTANCE_UUID TEXT NOT NULL," + " VIM_UUID TEXT NOT NULL,"
@@ -211,8 +211,8 @@ public class VimRepo {
           + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
-      stmt.setString(2, record.getConfig().getWrapperType());
-      stmt.setString(3, record.getConfig().getVimVendor());
+      stmt.setString(2, record.getConfig().getWrapperType().toString());
+      stmt.setString(3, record.getConfig().getVimVendor().toString());
       stmt.setString(4, record.getConfig().getVimEndpoint().toString());
       stmt.setString(5, record.getConfig().getAuthUserName());
       stmt.setString(6, record.getConfig().getTenantName());
@@ -324,8 +324,8 @@ public class VimRepo {
           + "VALUES (?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
 
       stmt = connection.prepareStatement(sql);
-      stmt.setString(1, record.getConfig().getWrapperType());
-      stmt.setString(2, record.getConfig().getVimVendor());
+      stmt.setString(1, record.getConfig().getWrapperType().toString());
+      stmt.setString(2, record.getConfig().getVimVendor().toString());
       stmt.setString(3, record.getConfig().getVimEndpoint().toString());
       stmt.setString(4, record.getConfig().getAuthUserName());
       stmt.setString(5, record.getConfig().getTenantName());
@@ -392,27 +392,35 @@ public class VimRepo {
       rs = stmt.executeQuery();
 
       if (rs.next()) {
-        String wrapperType = rs.getString("TYPE");
-        String vendor = rs.getString("VENDOR");
+        String stringWrapperType = rs.getString("TYPE");
+        WrapperType wrapperType = WrapperType.getByName(stringWrapperType);
+        String vendorString = rs.getString("VENDOR");
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
         String tenant = rs.getString("TENANT");
         String key = rs.getString("AUTHKEY");
-        String tenantExtNet = rs.getString("TENANT_EXT_NET");
-        String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
+
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
-        config.setVimVendor(vendor);
+
         config.setVimEndpoint(urlString);
         config.setTenantName(tenant);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
         config.setAuthKey(key);
-        config.setTenantExtNet(tenantExtNet);
-        config.setTenantExtRouter(tenantExtRouter);
-
+        if (wrapperType.equals(WrapperType.COMPUTE)) {
+          String tenantExtNet = rs.getString("TENANT_EXT_NET");
+          String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
+          config.setTenantExtNet(tenantExtNet);
+          config.setTenantExtRouter(tenantExtRouter);
+          VimVendor vendor = ComputeVimVendor.getByName(vendorString);
+          config.setVimVendor(vendor);
+        } else if (wrapperType.equals(WrapperType.NETWORK)) {
+          VimVendor vendor = NetworkVimVendor.getByName(vendorString);
+          config.setVimVendor(vendor);
+        }
         Wrapper wrapper = WrapperFactory.createWrapper(config);
         output = new WrapperRecord(wrapper, config, null);
 
@@ -579,7 +587,7 @@ public class VimRepo {
 
       if (rs.next()) {
         String uuid = rs.getString("UUID");
-        String wrapperType = rs.getString("TYPE");
+        WrapperType wrapperType = WrapperType.getByName(rs.getString("TYPE"));
         String vendor = rs.getString("VENDOR");
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
@@ -591,7 +599,7 @@ public class VimRepo {
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
-        config.setVimVendor(vendor);
+        config.setVimVendor(NetworkVimVendor.getByName(vendor));
         config.setVimEndpoint(urlString);
         config.setTenantName(tenant);
         config.setAuthUserName(user);
@@ -654,15 +662,21 @@ public class VimRepo {
               prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      stmt = connection.prepareStatement(
-          "SELECT * FROM vim WHERE vim.UUID=? AND vim.TYPE='network';");
+      stmt =
+          connection.prepareStatement("SELECT * FROM vim WHERE vim.UUID=? AND vim.TYPE='network';");
       stmt.setString(1, vimUuid);
       rs = stmt.executeQuery();
 
       if (rs.next()) {
         String uuid = rs.getString("UUID");
-        String wrapperType = rs.getString("TYPE");
-        String vendor = rs.getString("VENDOR");
+        WrapperType wrapperType = WrapperType.getByName(rs.getString("TYPE"));
+        String vendorString = rs.getString("VENDOR");
+        VimVendor vendor = null;
+        if (wrapperType.equals(WrapperType.COMPUTE)) {
+          vendor = ComputeVimVendor.getByName(vendorString);
+        } else if (wrapperType.equals(WrapperType.NETWORK)) {
+          vendor = NetworkVimVendor.getByName(vendorString);
+        }
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
@@ -715,7 +729,7 @@ public class VimRepo {
     return output;
 
   }
-  
+
   /**
    * Get the UUID used by the VIM to identify the given service instance.
    * 
@@ -1134,7 +1148,7 @@ public class VimRepo {
     }
     return output;
   }
-  
+
 
   /**
    * Get the UUID used to reference the service in the scope of the VIM where given VNF is deployed.

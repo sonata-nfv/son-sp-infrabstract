@@ -56,13 +56,12 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String uuid = jsonObject.getString("uuid");
-    if(uuid==null)
-      this.sendResponse("{\"status\":\"ERROR\",\"message\":\"Malformed request\"}");
-    Wrapper wrapper= WrapperBay.getInstance().getWrapper(uuid);
-    String type =null;
+    if (uuid == null) this.sendResponse("{\"status\":\"ERROR\",\"message\":\"Malformed request\"}");
+    Wrapper wrapper = WrapperBay.getInstance().getWrapper(uuid);
+    String type = null;
     if (message.getTopic().contains("compute")) {
-     type = "compute";
-    } else if (message.getTopic().contains("network")){
+      type = "compute";
+    } else if (message.getTopic().contains("network")) {
       type = "network";
     }
     String output = null;

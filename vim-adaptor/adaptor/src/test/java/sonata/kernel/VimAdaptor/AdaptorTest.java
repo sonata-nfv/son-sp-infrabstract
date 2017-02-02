@@ -104,7 +104,7 @@ public class AdaptorTest implements MessageReceiver {
   @Test
   public void testCreateMOCKWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+        "{\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -183,7 +183,7 @@ public class AdaptorTest implements MessageReceiver {
 
     for (int i = 0; i < 3; i++) {
       String message =
-          "{\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://vim"
+          "{\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"mock\",\"vim_address\":\"http://vim"
               + i + ":9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
       ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
           topic, UUID.randomUUID().toString(), topic);
@@ -195,7 +195,7 @@ public class AdaptorTest implements MessageReceiver {
           mon.wait(1000);
         }
       }
-
+      System.out.println(output);
       tokener = new JSONTokener(output);
       jsonObject = (JSONObject) tokener.nextValue();
       uuid = jsonObject.getString("uuid");

@@ -29,8 +29,8 @@ package sonata.kernel.VimAdaptor.wrapper;
 public class WrapperConfiguration {
 
   private String vimEndpoint;
-  private String vimVendor;
-  private String wrapperType;
+  private VimVendor vimVendor;
+  private WrapperType wrapperType;
   private String authUserName;
   private String tenantName;
   private String authPass;
@@ -40,11 +40,11 @@ public class WrapperConfiguration {
   private String tenantExtRouter;
 
 
-  public String getWrapperType() {
+  public WrapperType getWrapperType() {
     return wrapperType;
   }
 
-  public void setWrapperType(String wrapperType) {
+  public void setWrapperType(WrapperType wrapperType) {
     this.wrapperType = wrapperType;
   }
 
@@ -56,12 +56,12 @@ public class WrapperConfiguration {
     this.vimEndpoint = vimEndpoint2;
   }
 
-  public String getVimVendor() {
+  public VimVendor getVimVendor() {
     return vimVendor;
   }
 
-  public void setVimVendor(String vimType) {
-    this.vimVendor = vimType;
+  public void setVimVendor(VimVendor vimVendor) {
+    this.vimVendor = vimVendor;
   }
 
   public String getAuthUserName() {
@@ -99,10 +99,9 @@ public class WrapperConfiguration {
   @Override
   public String toString() {
     String out = "";
-
     out += "sid: " + uuid + "\n\r";
-    out += "WrapperType: " + wrapperType + "\n\r";
-    out += "VimType: " + vimVendor + "\n\r";
+    out += "WrapperType: " + wrapperType.toString() + "\n\r";
+    out += "VimVendor: " + vimVendor.toString() + "\n\r";
     out += "VimEndpount: " + vimEndpoint + "\n\r";
     out += "User: " + authUserName + "\n\r";
     out += "pass: " + authPass + "\n\r";

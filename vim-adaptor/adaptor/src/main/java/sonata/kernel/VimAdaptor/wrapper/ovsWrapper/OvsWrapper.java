@@ -89,7 +89,7 @@ public class OvsWrapper extends NetworkWrapper {
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
     ArrayList<VnfDescriptor> vnfds = data.getVnfds();
     ForwardingGraph graph = nsd.getForwardingGraphs().get(0);
-    
+
     NetworkForwardingPath path = graph.getNetworkForwardingPaths().get(0);
 
     ArrayList<ConnectionPointReference> pathCp = path.getConnectionPoints();
@@ -175,12 +175,12 @@ public class OvsWrapper extends NetworkWrapper {
               "Illegal Format: Unable to find the VNFC Cp name connected to this in/out VNF VL");
         }
 
-        //Logger.debug("Searching for CpRecord of Cp: " + vnfcCpName);
+        // Logger.debug("Searching for CpRecord of Cp: " + vnfcCpName);
         ConnectionPointRecord matchingCpRec = null;
         for (VduRecord vdu : vnfr.getVirtualDeploymentUnits()) {
           for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
             for (ConnectionPointRecord cpRec : vnfc.getConnectionPoints()) {
-              //Logger.debug("Checking " + cpRec.getId());
+              // Logger.debug("Checking " + cpRec.getId());
               if (vnfcCpName.equals(cpRec.getId())) {
                 matchingCpRec = cpRec;
                 break;

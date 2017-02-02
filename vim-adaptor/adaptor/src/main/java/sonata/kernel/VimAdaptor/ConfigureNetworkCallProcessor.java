@@ -129,11 +129,10 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
         HashMap<String, ArrayList<ConnectionPointReference>> netVim2SubGraphMap =
             new HashMap<String, ArrayList<ConnectionPointReference>>();
 
-        HashMap<String, VnfDescriptor> cpRef2VnfdMap =
-            new HashMap<String, VnfDescriptor>();
-        
-        HashMap<String, VnfRecord> cpRef2VnfrMap = new HashMap<String,VnfRecord>();
-        
+        HashMap<String, VnfDescriptor> cpRef2VnfdMap = new HashMap<String, VnfDescriptor>();
+
+        HashMap<String, VnfRecord> cpRef2VnfrMap = new HashMap<String, VnfRecord>();
+
         for (ConnectionPointReference cpr : pathCp) {
           String name = cpr.getConnectionPointRef();
           if (name.startsWith("ns")) {
@@ -155,12 +154,12 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             VnfDescriptor vnfd = vnfName2VnfdMap.get(vnfName);
             cpRef2VnfdMap.put(name, vnfd);
             cpRef2VnfrMap.put(name, vnfd2VnfrMap.get(vnfd.getUuid()));
-            //Logger.debug("Getting id for vnf: " + vnfName);
+            // Logger.debug("Getting id for vnf: " + vnfName);
             String vnfInstanceUuid = vnfd.getInstanceUuid();
             String computeVimUuid = WrapperBay.getInstance().getVimRepo()
                 .getComputeVimUuidByFunctionInstanceId(vnfInstanceUuid);
-            String netVimUuid = WrapperBay.getInstance().getVimRepo().getNetworkVimFromComputeVimUuid(computeVimUuid)
-                .getConfig().getUuid();
+            String netVimUuid = WrapperBay.getInstance().getVimRepo()
+                .getNetworkVimFromComputeVimUuid(computeVimUuid).getConfig().getUuid();
             if (netVim2SubGraphMap.containsKey(netVimUuid)) {
               netVim2SubGraphMap.get(netVimUuid).add(cpr);
             } else {
@@ -169,14 +168,14 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             }
           }
         }
-        
-        
-        
+
+
+
         for (String netVimUuid : netVim2SubGraphMap.keySet()) {
           ArrayList<VnfDescriptor> descriptorsSublist = new ArrayList<VnfDescriptor>();
           ArrayList<VnfRecord> recordsSublist = new ArrayList<VnfRecord>();
-          
-          
+
+
           ServiceDescriptor partialNsd = new ServiceDescriptor();
           partialNsd.setConnectionPoints(nsd.getConnectionPoints());
           partialNsd.setNetworkFunctions(nsd.getNetworkFunctions());
@@ -190,33 +189,31 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           ArrayList<ForwardingGraph> tempGraph = new ArrayList<ForwardingGraph>();
           tempGraph.add(partialGraph);
           partialNsd.setForwardingGraphs(tempGraph);
-          
-          for(ConnectionPointReference cpr : connectionPoints){
+
+          for (ConnectionPointReference cpr : connectionPoints) {
             VnfDescriptor vnfd = cpRef2VnfdMap.get(cpr.getConnectionPointRef());
             VnfRecord vnfr = cpRef2VnfrMap.get(cpr.getConnectionPointRef());
-            if(!descriptorsSublist.contains(vnfd))
-              descriptorsSublist.add(vnfd);
-            if(!recordsSublist.contains(vnfr))
-              recordsSublist.add(vnfr);
+            if (!descriptorsSublist.contains(vnfd)) descriptorsSublist.add(vnfd);
+            if (!recordsSublist.contains(vnfr)) recordsSublist.add(vnfr);
           }
-          
+
           NetworkConfigurePayload wrapperPayload = new NetworkConfigurePayload();
           wrapperPayload.setNsd(partialNsd);
           wrapperPayload.setVnfds(descriptorsSublist);
           wrapperPayload.setVnfrs(recordsSublist);
           wrapperPayload.setServiceInstanceId(nsd.getInstanceUuid());
-          
+
           NetworkWrapper netWr = (NetworkWrapper) WrapperBay.getInstance().getWrapper(netVimUuid);
           try {
             netWr.configureNetworking(wrapperPayload);
           } catch (Exception e) {
-            Logger.error("Unable to configure networking on VIM: "+ netVimUuid,e);
-            String responseJson =
-                "{\"status\":\"ERROR\",\"message\":\""+e.getMessage()+"\"}";
+            Logger.error("Unable to configure networking on VIM: " + netVimUuid, e);
+            String responseJson = "{\"status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
             this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
                 message.getReplyTo(), message.getSid(), null));
-            return false;          }
-          
+            return false;
+          }
+
         }
       }
     }

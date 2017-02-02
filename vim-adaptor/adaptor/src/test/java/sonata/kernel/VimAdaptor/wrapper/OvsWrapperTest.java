@@ -166,12 +166,12 @@ public class OvsWrapperTest {
     // First PoP
     WrapperConfiguration config = new WrapperConfiguration();
     config.setVimEndpoint("x.x.x.x");
-    config.setVimVendor("mock");
+    config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(computeUuid1);
-    config.setWrapperType("compute");
+    config.setWrapperType(WrapperType.COMPUTE);
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
     WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
@@ -180,12 +180,12 @@ public class OvsWrapperTest {
 
     config = new WrapperConfiguration();
     config.setVimEndpoint("10.100.32.200");
-    config.setVimVendor("ovs");
+    config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(netUuid1);
-    config.setWrapperType("network");
+    config.setWrapperType(WrapperType.NETWORK);
     config.setTenantExtNet(null);
     config.setTenantExtRouter(null);
     record = new WrapperRecord(new OvsWrapper(config), config, null);
@@ -195,12 +195,12 @@ public class OvsWrapperTest {
     // Second PoP
     config = new WrapperConfiguration();
     config.setVimEndpoint("x.x.x.x");
-    config.setVimVendor("mock");
+    config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(computeUuid2);
-    config.setWrapperType("compute");
+    config.setWrapperType(WrapperType.COMPUTE);
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
     record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
@@ -209,12 +209,12 @@ public class OvsWrapperTest {
 
     config = new WrapperConfiguration();
     config.setVimEndpoint("10.100.32.200");
-    config.setVimVendor("ovs");
+    config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(netUuid2);
-    config.setWrapperType("network");
+    config.setWrapperType(WrapperType.NETWORK);
     config.setTenantExtNet(null);
     config.setTenantExtRouter(null);
     record = new WrapperRecord(new OvsWrapper(config), config, null);
@@ -224,12 +224,12 @@ public class OvsWrapperTest {
     // Third PoP
     config = new WrapperConfiguration();
     config.setVimEndpoint("x.x.x.x");
-    config.setVimVendor("mock");
+    config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(computeUuid3);
-    config.setWrapperType("compute");
+    config.setWrapperType(WrapperType.COMPUTE);
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
     record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
@@ -238,31 +238,37 @@ public class OvsWrapperTest {
 
     config = new WrapperConfiguration();
     config.setVimEndpoint("10.100.32.200");
-    config.setVimVendor("ovs");
+    config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(netUuid3);
-    config.setWrapperType("network");
+    config.setWrapperType(WrapperType.NETWORK);
     config.setTenantExtNet(null);
     config.setTenantExtRouter(null);
     record = new WrapperRecord(new OvsWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     repoInstance.writeNetworkVimLink(computeUuid3, netUuid3);
 
-    
-    //Populate VimRepo with Instance data, VNF1 And VNF2 are deployed on PoP1, VNF3 on PoP2, and VNF4 and VNF5 on PoP3
+
+    // Populate VimRepo with Instance data, VNF1 And VNF2 are deployed on PoP1, VNF3 on PoP2, and
+    // VNF4 and VNF5 on PoP3
     repoInstance.writeServiceInstanceEntry(instanceId, "1", "stack-1", computeUuid1);
     repoInstance.writeServiceInstanceEntry(instanceId, "1", "stack-1", computeUuid2);
     repoInstance.writeServiceInstanceEntry(instanceId, "1", "stack-1", computeUuid3);
-    
-    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(0).getInstanceUuid(), instanceId, computeUuid1);
-    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(1).getInstanceUuid(), instanceId, computeUuid1);
-    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(2).getInstanceUuid(), instanceId, computeUuid2);
-    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(3).getInstanceUuid(), instanceId, computeUuid3);
-    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(4).getInstanceUuid(), instanceId, computeUuid3);
 
-    //Prepare environment and create che call processor.
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(0).getInstanceUuid(), instanceId,
+        computeUuid1);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(1).getInstanceUuid(), instanceId,
+        computeUuid1);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(2).getInstanceUuid(), instanceId,
+        computeUuid2);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(3).getInstanceUuid(), instanceId,
+        computeUuid3);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(4).getInstanceUuid(), instanceId,
+        computeUuid3);
+
+    // Prepare environment and create che call processor.
     NetworkConfigurePayload netData = new NetworkConfigurePayload();
     netData.setServiceInstanceId(data.getNsd().getInstanceUuid());
     netData.setNsd(data.getNsd());
@@ -270,11 +276,12 @@ public class OvsWrapperTest {
     netData.setVnfrs(records);
     String message = mapper.writeValueAsString(netData);
     AdaptorMux mux = new AdaptorMux(new LinkedBlockingQueue<ServicePlatformMessage>());
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/xyaml", "chain.setup", "abla", "chain.setup");
-    Thread t = new Thread(new ConfigureNetworkCallProcessor(spMessage,"abla",mux));
-    
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/xyaml",
+        "chain.setup", "abla", "chain.setup");
+    Thread t = new Thread(new ConfigureNetworkCallProcessor(spMessage, "abla", mux));
+
     t.run();
-    
+
   }
 
 }

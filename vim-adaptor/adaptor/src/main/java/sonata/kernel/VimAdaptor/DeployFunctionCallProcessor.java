@@ -48,8 +48,7 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
    * @param sid
    * @param mux
    */
-  public DeployFunctionCallProcessor(ServicePlatformMessage message, String sid,
-      AdaptorMux mux) {
+  public DeployFunctionCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
   }
 
@@ -68,9 +67,8 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
 
         // Sending the response to the FLM
         Logger.info("Sending partial response to FLM...");
-        ServicePlatformMessage response =
-            new ServicePlatformMessage(update.getBody(), "application/x-yaml",
-                this.getMessage().getReplyTo(), this.getSid(), null);
+        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
+            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
         this.sendToMux(response);
       } else if (update.getStatus().equals("ERROR")) {
         Logger.warn("Deploy " + this.getSid() + " error");

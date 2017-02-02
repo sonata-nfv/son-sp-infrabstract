@@ -85,32 +85,33 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
       payload = mapper.readValue(message.getBody(), ServicePreparePayload.class);
       Logger.info("payload parsed. Configuring VIMs");
 
-      for (VimPreDeploymentList vim: payload.getVimList()) {
+      for (VimPreDeploymentList vim : payload.getVimList()) {
         ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vim.getUuid());
         Logger.info("Wrapper retrieved");
-        
-        for(VnfImage vnfImage : vim.getImages()){
-          if(!wr.isImageStored(vnfImage)){
-            wr.uploadImage(vnfImage.getUrl());
+
+        for (VnfImage vnfImage : vim.getImages()) {
+          if (!wr.isImageStored(vnfImage)) {
+            wr.uploadImage(vnfImage);
           }
         }
-        
+
         boolean success = wr.prepareService(payload.getInstanceId());
         if (!success) {
           throw new Exception("Unable to prepare the environment for instance: "
               + payload.getInstanceId() + " on VIM " + vim.getUuid());
         }
-        
+
       }
       String responseJson = "{\"status\":\"COMPLETED\",\"message\":\"\"}";
-      ServicePlatformMessage responseMessage = new ServicePlatformMessage(responseJson, "application/json", message.getReplyTo(), message.getSid(), null);
+      ServicePlatformMessage responseMessage = new ServicePlatformMessage(responseJson,
+          "application/json", message.getReplyTo(), message.getSid(), null);
       this.sendToMux(responseMessage);
-      
+
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
-      this.sendToMux(new ServicePlatformMessage(
-          "{\"status\":\"fail\",\"message\":\""+e.getMessage()+"\"}", "application/json",
-          message.getReplyTo(), message.getSid(), null));
+      this.sendToMux(
+          new ServicePlatformMessage("{\"status\":\"fail\",\"message\":\"" + e.getMessage() + "\"}",
+              "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }
     return out;
