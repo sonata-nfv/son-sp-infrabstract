@@ -25,7 +25,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
-import sonata.kernel.VimAdaptor.commons.FunctionDeployResponse;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;

@@ -33,6 +33,7 @@ import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 
 public class NetworkMockWrapper extends NetworkWrapper {
 
+  @SuppressWarnings("unused")
   private WrapperConfiguration config;
 
   public NetworkMockWrapper(WrapperConfiguration config) {

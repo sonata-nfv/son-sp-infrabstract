@@ -272,9 +272,7 @@ public class DeployServiceFsm implements Runnable {
       response.setInstanceName(stackName);
       response.setInstanceVimUuid(stackUuid);
       response.setRequestStatus("DEPLOYED");
-      String body = mapper.writeValueAsString(response);
-      Logger.info("Response created");
-      Logger.info(body);
+
 
       NetworkConfigurePayload netData = new NetworkConfigurePayload();
       netData.setNsd(data.getNsd());
@@ -283,7 +281,22 @@ public class DeployServiceFsm implements Runnable {
       netData.setVnfrs(response.getVnfrs());
       netVim.configureNetworking(netData);
 
+      // Set to null hardware addresses from VNFR:VDU:CONNECTION_POINT to ensure compatibility with
+      // VNFR_V1.0
 
+      for (VnfRecord vnfr : response.getVnfrs()) {
+        for (VduRecord vdur : vnfr.getVirtualDeploymentUnits()){
+          for (VnfcInstance vnfc : vdur.getVnfcInstance()){
+            for (ConnectionPointRecord cpr : vnfc.getConnectionPoints()){
+              cpr.getType().setHardwareAddress(null);
+            }
+          }
+        } 
+      }
+      
+      String body = mapper.writeValueAsString(response);
+      Logger.info("Response created");
+      Logger.info(body);
       WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(response.getNsr().getId(),
           response.getInstanceVimUuid(), response.getInstanceName(), data.getVimUuid());
 
@@ -294,6 +307,8 @@ public class DeployServiceFsm implements Runnable {
       Logger.error(e.getMessage(), e);
       response.setRequestStatus("FAIL");
       response.setErrorCode("DeploymentError");
+      response.setNsr(null);
+      response.setVnfrs(null);
       try {
         String body = mapper.writeValueAsString(response);
         Logger.info("Error response created");

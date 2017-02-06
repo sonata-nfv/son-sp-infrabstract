@@ -962,9 +962,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String fileAbsolutePath = "/tmp/" + fileName;
     FileOutputStream fos = new FileOutputStream(fileAbsolutePath);
     fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
-
+    fos.flush();
+    fos.close();
+    
     glance.uploadImage(imageUuid, fileAbsolutePath);
-
+    
+    
     File f = new File(fileAbsolutePath);
     if (f.delete()) {
       Logger.debug("temporary image file deleted succesfully from local environment.");

@@ -24,7 +24,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.ServicePreparePayload;
 import sonata.kernel.VimAdaptor.commons.VimPreDeploymentList;
 import sonata.kernel.VimAdaptor.commons.VnfImage;

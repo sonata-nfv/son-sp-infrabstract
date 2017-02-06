@@ -28,8 +28,6 @@ package sonata.kernel.VimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
-
 import java.util.ArrayList;
 
 public class VnfRecord {

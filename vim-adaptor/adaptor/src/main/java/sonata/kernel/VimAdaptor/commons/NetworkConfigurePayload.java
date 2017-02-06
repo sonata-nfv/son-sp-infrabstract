@@ -19,7 +19,6 @@ package sonata.kernel.VimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.VimAdaptor.commons.nsd.ForwardingGraph;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 

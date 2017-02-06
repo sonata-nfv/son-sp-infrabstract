@@ -35,7 +35,6 @@ public enum WrapperType {
     return this.toString();
   }
 
-
   public static WrapperType getByName(String name) {
     for (WrapperType vendor : values()) {
       if (vendor.getName().toUpperCase().equals(name.toUpperCase())) {

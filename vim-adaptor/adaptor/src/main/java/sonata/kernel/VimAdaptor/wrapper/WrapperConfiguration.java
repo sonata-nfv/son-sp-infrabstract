@@ -99,12 +99,16 @@ public class WrapperConfiguration {
   @Override
   public String toString() {
     String out = "";
-    out += "sid: " + uuid + "\n\r";
-    out += "WrapperType: " + wrapperType.toString() + "\n\r";
-    out += "VimVendor: " + vimVendor.toString() + "\n\r";
-    out += "VimEndpount: " + vimEndpoint + "\n\r";
-    out += "User: " + authUserName + "\n\r";
-    out += "pass: " + authPass + "\n\r";
+    out += "sid: " + uuid + "; ";
+    out += "WrapperType: " + wrapperType.toString() + "\n";
+    out += "VimVendor: " + vimVendor.toString() + "\n";
+    out += "VimEndpount: " + vimEndpoint + "\n";
+    out += "User: " + authUserName + "\n";
+    out += "pass: " + authPass + "\n";
+    if(wrapperType.equals(WrapperType.COMPUTE)){
+      out += "tenant_ext_net: " + tenantExtNet + "\n";
+      out += "tenant_ext_router: " + tenantExtRouter+ "\n";
+    }
     return out;
   }
 

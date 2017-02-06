@@ -27,12 +27,7 @@
 package sonata.kernel.VimAdaptor.wrapper;
 
 import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
-import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
-import sonata.kernel.VimAdaptor.commons.VnfRecord;
-import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
-import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 
-import java.util.ArrayList;
 
 public abstract class NetworkWrapper extends AbstractWrapper implements Wrapper {
 

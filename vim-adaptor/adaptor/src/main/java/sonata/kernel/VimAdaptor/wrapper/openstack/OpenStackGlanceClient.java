@@ -1,7 +1,9 @@
 package sonata.kernel.VimAdaptor.wrapper.openstack;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackUtils;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.Image.Image;
@@ -37,10 +39,10 @@ public class OpenStackGlanceClient {
         "URL: " + url + "|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password + "|");
 
     javaStack = JavaStackCore.getJavaStackCore();
-    javaStack.setEndpoint(url);
-    javaStack.setUsername(userName);
-    javaStack.setPassword(password);
-    javaStack.setTenant_id(tenantName);
+    javaStack.setEndpoint(this.url);
+    javaStack.setUsername(this.userName);
+    javaStack.setPassword(this.password);
+    javaStack.setTenant_id(this.tenantName);
 
     // Authenticate
     try {

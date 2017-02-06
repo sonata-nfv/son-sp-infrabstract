@@ -107,7 +107,6 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
         ArrayList<ConnectionPointReference> pathCp = path.getConnectionPoints();
 
         Collections.sort(pathCp);
-        int portIndex = 0;
 
         // Pre-populate structures for efficent search.
 
@@ -149,7 +148,6 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
               return false;
             }
             String vnfId = split[0];
-            String cpRef = split[1];
             String vnfName = vnfId2NameMap.get(vnfId);
             VnfDescriptor vnfd = vnfName2VnfdMap.get(vnfName);
             cpRef2VnfdMap.put(name, vnfd);

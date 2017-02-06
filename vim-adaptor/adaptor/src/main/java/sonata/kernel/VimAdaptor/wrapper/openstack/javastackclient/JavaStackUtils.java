@@ -2,6 +2,7 @@ package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 import org.apache.http.HttpResponse;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 
 public class JavaStackUtils {
 
+  @SuppressWarnings("unused")
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
 
   public static String readFile(String filePath) throws IOException {

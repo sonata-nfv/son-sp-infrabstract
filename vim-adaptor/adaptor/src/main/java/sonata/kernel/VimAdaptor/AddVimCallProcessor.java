@@ -38,7 +38,6 @@ import sonata.kernel.VimAdaptor.wrapper.WrapperBay;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperType;
 
-import java.util.Arrays;
 import java.util.Observable;
 import java.util.UUID;
 
@@ -71,7 +70,6 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String[] topicSplit = message.getTopic().split("\\.");
-    Logger.debug(Arrays.toString(topicSplit));
     String wrTypeString = topicSplit[topicSplit.length - 2];
     WrapperType wrapperType = WrapperType.getByName(wrTypeString);
     String stringVimVendor = jsonObject.getString("vim_type");
@@ -86,10 +84,12 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     VimVendor vimVendor = null;
 
     if (wrapperType.equals(WrapperType.COMPUTE)) {
+      //Logger.debug("Reading compute-specific VIM parameters");
       tenantExtNet = jsonObject.getString("tenant_ext_net");
       tenantExtRouter = jsonObject.getString("tenant_ext_router");
       vimVendor = ComputeVimVendor.getByName(stringVimVendor);
     } else if (wrapperType.equals(WrapperType.NETWORK)) {
+      //Logger.debug("Reading network-specific VIM parameters");
       computeVimRef = jsonObject.getString("compute_uuid");
       vimVendor = NetworkVimVendor.getByName(stringVimVendor);
     }
@@ -102,21 +102,23 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     config.setTenantName(tenantName);
     config.setTenantExtNet(tenantExtNet);
     config.setTenantExtRouter(tenantExtRouter);
-    // Logger.debug("Parsed Wrapper Configuration: ");
-    // System.out.println(config.toString());
+    Logger.debug("Parsed Wrapper Configuration: ");
+    System.out.println(config.toString());
 
     String output = null;
     boolean out = true;
     if (wrapperType.equals(WrapperType.COMPUTE)) {
       Logger.debug("Registering a COMPUTE wrapper.");
       output = WrapperBay.getInstance().registerComputeWrapper(config);
-    } else if (wrapperType.equals(WrapperType.NETWORK)) {
+    } else if (wrapperType.equals(WrapperType.STORAGE)) {
       // TODO
       output = "";
     } else if (wrapperType.equals(WrapperType.NETWORK)) {
       Logger.debug("Registering a network VIM");
       output = WrapperBay.getInstance().registerNetworkWrapper(config, computeVimRef);
     }
+    
+    //Logger.debug("sending response.");
     this.sendResponse(output);
 
     return out;

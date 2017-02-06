@@ -18,7 +18,6 @@
 package sonata.kernel.VimAdaptor.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -35,7 +34,6 @@ import sonata.kernel.VimAdaptor.ConfigureNetworkCallProcessor;
 import sonata.kernel.VimAdaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.VimAdaptor.commons.ServiceDeployPayload;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
-import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;

@@ -19,11 +19,7 @@ package sonata.kernel.VimAdaptor.wrapper.ovsWrapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonFactory;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
@@ -37,8 +33,6 @@ import sonata.kernel.VimAdaptor.commons.nsd.NetworkForwardingPath;
 import sonata.kernel.VimAdaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.VimAdaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.ConnectionPointReference;
-import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
-import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.VimAdaptor.wrapper.NetworkWrapper;
@@ -241,10 +235,11 @@ public class OvsWrapper extends NetworkWrapper {
     Logger.info("SFC Agent response:\n" + response);
     clientSocket.close();
     if (!response.equals("SUCCESS")) {
+      Logger.error("Unexpected response.");
       Logger.error("received string length: " + response.length());
-      Logger.error("received string: " + response + " not equal SUCCESS");
+      Logger.error("received string: " + response);
       throw new Exception(
-          "Unexcepted response from ODL SFC agent while trying to add a configuration.");
+          "Unexpected response from OVS SFC agent while trying to add a configuration.");
     }
     return;
   }

@@ -50,7 +50,6 @@ public enum NetworkVimVendor implements VimVendor {
         return vendor;
       }
     }
-
     throw new IllegalArgumentException(name + " is not a valid NetworkVimVendor");
   }
 }
