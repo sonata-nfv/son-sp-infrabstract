@@ -604,7 +604,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployTwoServicesOpenStackV1() {
 
 
