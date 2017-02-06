@@ -908,7 +908,7 @@ public class DeployServiceTest implements MessageReceiver {
     Assert.assertTrue(status.equals("COMPLETED"));
     output = null;
     message = "{\"uuid\":\"" + netWrUuid + "\"}";
-    topic = "infrastructure.management.compute.remove";
+    topic = "infrastructure.management.network.remove";
     ServicePlatformMessage removeNetVimMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeNetVimMessage);
