@@ -277,7 +277,9 @@ public class VimRepoTest {
     out = repoInstance.writeNetworkVimLink(computeUuid, "hhhhh");
     Assert.assertFalse("Error. I managed to link the compute VIM to a-non existing net VIM", out);
 
-    out = repoInstance.removeVimEntry(config.getUuid());
+    out = repoInstance.removeVimEntry(networkingUuid);
+    Assert.assertTrue("unable to remove vim", out);
+    out = repoInstance.removeVimEntry(computeUuid);
     Assert.assertTrue("unable to remove vim", out);
   }
 }
