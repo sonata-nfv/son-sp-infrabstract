@@ -27,10 +27,20 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.VimAdaptor.commons.heat.*;
+import sonata.kernel.VimAdaptor.commons.heat.HeatNet;
+import sonata.kernel.VimAdaptor.commons.heat.HeatPort;
+import sonata.kernel.VimAdaptor.commons.heat.HeatRouter;
+import sonata.kernel.VimAdaptor.commons.heat.HeatServer;
+import sonata.kernel.VimAdaptor.commons.heat.HeatTemplate;
+import sonata.kernel.VimAdaptor.commons.heat.StackComposition;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.JavaStackUtils;
-import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.*;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.FloatingIpAttributes;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.PortAttributes;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.Resource;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.ResourceData;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.Resources;
+import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.composition.ServerAttributes;
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.stacks.StackData;
 
 import java.io.IOException;
@@ -122,7 +132,7 @@ public class OpenStackHeatClient {
 
       String response = JavaStackUtils
           .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
-
+      Logger.debug("Stack response: "+response);
     } catch (Exception e) {
       Logger.error(
           "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
@@ -165,7 +175,7 @@ public class OpenStackHeatClient {
    */
   public String getStackStatus(String stackName, String uuid) {
     String status = null;
-    Logger.info("Getting status for stack: " + stackName + "Stack ID: " + uuid);
+    Logger.debug("Getting status for stack: " + stackName + "Stack ID: " + uuid);
     try {
       mapper = new ObjectMapper();
       String findStackResponse =
@@ -240,6 +250,7 @@ public class OpenStackHeatClient {
           .convertHttpResponseToString(javaStack.listStackResources(stackName, uuid, null));
       // Logger.debug(listResources);
 
+      @SuppressWarnings("rawtypes")
       ArrayList<Resource> resources =
           mapper.readValue(listResources, Resources.class).getResources();
 

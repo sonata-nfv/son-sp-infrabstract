@@ -15,40 +15,33 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.VimAdaptor.commons;
+package sonata.kernel.VimAdaptor.wrapper;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+public enum WrapperType {
+  COMPUTE("compute"), NETWORK("network"), STORAGE("storage");
 
-import java.util.ArrayList;
+  private final String name;
 
-public class ServicePreparePayload {
-
-  @JsonProperty("instance_id")
-  private String instanceId;
-  @JsonProperty("vim_list")
-  private ArrayList<VimPreDeploymentList> vimList;
-
-  public String getInstanceId() {
-    return instanceId;
+  WrapperType(String name) {
+    this.name = name;
   }
 
-
-  public void setInstanceId(String instanceId) {
-    this.instanceId = instanceId;
+  @Override
+  public String toString() {
+    return this.name;
   }
 
-
-
-  public ArrayList<VimPreDeploymentList> getVimList() {
-    return vimList;
+  private String getName() {
+    return this.toString();
   }
 
+  public static WrapperType getByName(String name) {
+    for (WrapperType vendor : values()) {
+      if (vendor.getName().toUpperCase().equals(name.toUpperCase())) {
+        return vendor;
+      }
+    }
 
-
-  public void setVimList(ArrayList<VimPreDeploymentList> vimList) {
-    this.vimList = vimList;
+    throw new IllegalArgumentException(name + " is not a valid WrapperType");
   }
-
-
-
 }

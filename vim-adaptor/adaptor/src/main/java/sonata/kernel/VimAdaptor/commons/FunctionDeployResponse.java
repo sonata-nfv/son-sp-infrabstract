@@ -28,7 +28,6 @@ package sonata.kernel.VimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
 
 public class FunctionDeployResponse {
 

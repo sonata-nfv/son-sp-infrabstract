@@ -30,8 +30,8 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.VimAdaptor.wrapper.Wrapper;
 import sonata.kernel.VimAdaptor.wrapper.WrapperBay;
+import sonata.kernel.VimAdaptor.wrapper.WrapperType;
 
 import java.util.Observable;
 
@@ -55,25 +55,20 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     // and de-register it
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String[] topicSplit = message.getTopic().split("\\.");
+    String wrTypeString = topicSplit[topicSplit.length - 2];
     String uuid = jsonObject.getString("uuid");
-    if(uuid==null)
-      this.sendResponse("{\"status\":\"ERROR\",\"message\":\"Malformed request\"}");
-    Wrapper wrapper= WrapperBay.getInstance().getWrapper(uuid);
-    String type =null;
-    if (message.getTopic().contains("compute")) {
-     type = "compute";
-    } else if (message.getTopic().contains("network")){
-      type = "network";
-    }
+    if (uuid == null) this.sendResponse("{\"status\":\"ERROR\",\"message\":\"Malformed request\"}");
+    WrapperType type = WrapperType.getByName(wrTypeString);
     String output = null;
-    if (type.equals("compute")) {
+    if (type.equals(WrapperType.COMPUTE)) {
       output = WrapperBay.getInstance().removeComputeWrapper(uuid);
     }
-    if (type.equals("storage")) {
+    if (type.equals(WrapperType.STORAGE)) {
       // TODO
       output = "";
     }
-    if (type.equals("network")) {
+    if (type.equals(WrapperType.NETWORK)) {
       // TODO
       output = WrapperBay.getInstance().removeNetworkWrapper(uuid);
     }

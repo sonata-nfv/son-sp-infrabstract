@@ -28,6 +28,6 @@ package sonata.kernel.VimAdaptor.wrapper;
 
 public interface Wrapper {
 
-  public String getType();
+  public WrapperType getType();
 
 }

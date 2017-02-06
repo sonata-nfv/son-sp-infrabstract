@@ -45,20 +45,23 @@ public class WrapperFactory {
    */
   public static Wrapper createWrapper(WrapperConfiguration config) {
     Wrapper output = null;
-    Logger.info("Creating wrapper...");
-    if (config.getWrapperType().equals("compute")) {
+    Logger.debug("Factory - Creating wrapper...");
+    if (config.getWrapperType().equals(WrapperType.COMPUTE)) {
+      Logger.debug("Factory - Creating Compute Wrapper.");
       output = createComputeWrapper(config);
     }
-    if (config.getWrapperType().equals("network")) {
+    if (config.getWrapperType().equals(WrapperType.NETWORK)) {
+      Logger.debug("Factory - Creating Network Wrapper.");
       output = createNetworkWrapper(config);
     }
-    if (config.getWrapperType().equals("storage")) {
+    if (config.getWrapperType().equals(WrapperType.STORAGE)) {
+      Logger.debug("Factory - Creating Storage Wrapper.");
       output = createStorageWrapper(config);
     }
     if (output != null) {
-      Logger.info("Wrapper created.");
+      Logger.debug("Factory - Wrapper created.");
     } else {
-      Logger.info("Unable to create wrapper.");
+      Logger.debug("Factory - Unable to create wrapper.");
 
     }
     return output;
@@ -67,9 +70,9 @@ public class WrapperFactory {
   private static ComputeWrapper createComputeWrapper(WrapperConfiguration config) {
     ComputeWrapper output = null;
 
-    if (config.getVimVendor().equals(ComputeVimType.MOCK.toString())) {
+    if (config.getVimVendor().equals(ComputeVimVendor.MOCK)) {
       output = new ComputeMockWrapper(config);
-    } else if (config.getVimVendor().equals(ComputeVimType.OPENSTACKHEAT.toString())) {
+    } else if (config.getVimVendor().equals(ComputeVimVendor.HEAT)) {
       output = new OpenStackHeatWrapper(config);
     }
     // TODO Extends with all wrappers or refactor with a more OO type
@@ -80,9 +83,9 @@ public class WrapperFactory {
 
   private static NetworkWrapper createNetworkWrapper(WrapperConfiguration config) {
     NetworkWrapper output = null;
-    if (config.getVimVendor().equals(NetworkVimType.OPENVSWITCH.toString())) {
+    if (config.getVimVendor().equals(NetworkVimVendor.OVS)) {
       output = new OvsWrapper(config);
-    } else if (config.getVimVendor().equals(NetworkVimType.NETWORKMOCK.toString())) {
+    } else if (config.getVimVendor().equals(NetworkVimVendor.NETWORKMOCK)) {
       output = new NetworkMockWrapper(config);
     }
     return output;

@@ -2,6 +2,7 @@ package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 import org.apache.http.HttpResponse;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +14,7 @@ import java.nio.file.Paths;
 
 public class JavaStackUtils {
 
+  @SuppressWarnings("unused")
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
 
   public static String readFile(String filePath) throws IOException {
@@ -48,11 +50,11 @@ public class JavaStackUtils {
 
     } else if (status == 403) {
       throw new IOException(
-          "Access forbidden, make sure you are using the correct credentials: "+ reasonPhrase);
+          "Access forbidden, make sure you are using the correct credentials: " + reasonPhrase);
     } else if (status == 409) {
-      throw new IOException("Stack is already created, conflict detected: "+ reasonPhrase);
+      throw new IOException("Stack is already created, conflict detected: " + reasonPhrase);
     } else {
-      throw new IOException("Failed Request: "+ reasonPhrase);
+      throw new IOException("Failed Request: " + reasonPhrase);
     }
   }
 }

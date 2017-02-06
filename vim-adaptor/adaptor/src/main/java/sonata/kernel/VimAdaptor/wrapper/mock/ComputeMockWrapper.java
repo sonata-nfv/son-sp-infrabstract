@@ -40,6 +40,7 @@ import sonata.kernel.VimAdaptor.commons.ServiceDeployResponse;
 import sonata.kernel.VimAdaptor.commons.ServiceRecord;
 import sonata.kernel.VimAdaptor.commons.Status;
 import sonata.kernel.VimAdaptor.commons.VduRecord;
+import sonata.kernel.VimAdaptor.commons.VnfImage;
 import sonata.kernel.VimAdaptor.commons.VnfRecord;
 import sonata.kernel.VimAdaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.VimAdaptor.commons.vnfd.VnfDescriptor;
@@ -47,6 +48,8 @@ import sonata.kernel.VimAdaptor.wrapper.ComputeWrapper;
 import sonata.kernel.VimAdaptor.wrapper.ResourceUtilisation;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperStatusUpdate;
+
+import java.io.IOException;
 
 
 public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
@@ -90,7 +93,7 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
 
   @Override
   public void run() {
-    
+
     Logger.info("Deploying Service...");
     try {
       Thread.sleep(THREAD_SLEEP);
@@ -169,7 +172,9 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
     return resources;
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
    */
   @Override
@@ -177,13 +182,57 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
     return true;
   }
 
-  /* (non-Javadoc)
-   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#deployFunction(sonata.kernel.VimAdaptor.commons.FunctionDeployPayload, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#deployFunction(sonata.kernel.VimAdaptor.commons
+   * .FunctionDeployPayload, java.lang.String)
    */
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
     // TODO Auto-generated method stub
-    
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
+   */
+  @Override
+  public boolean isImageStored(VnfImage image) {
+    boolean out = true;
+    return out;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#removeImage(java.lang.String)
+   */
+  @Override
+  public void removeImage(VnfImage image) {
+    this.setChanged();
+    String body = "{\"status\":\"SUCCESS\"}";
+    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+    this.notifyObservers(update);
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.VimAdaptor.wrapper.ComputeWrapper#uploadImage(sonata.kernel.VimAdaptor.commons.
+   * VnfImage)
+   */
+  @Override
+  public void uploadImage(VnfImage image) throws IOException {
+    this.setChanged();
+    String body = "{\"status\":\"SUCCESS\"}";
+    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+    this.notifyObservers(update);
+
+    return;
   }
 
 }

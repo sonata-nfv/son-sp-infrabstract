@@ -33,6 +33,9 @@ import org.junit.Test;
 import sonata.kernel.VimAdaptor.wrapper.VimRepo;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.VimAdaptor.wrapper.WrapperRecord;
+import sonata.kernel.VimAdaptor.wrapper.WrapperType;
+import sonata.kernel.VimAdaptor.wrapper.ComputeVimVendor;
+import sonata.kernel.VimAdaptor.wrapper.NetworkVimVendor;
 import sonata.kernel.VimAdaptor.wrapper.mock.ComputeMockWrapper;
 import sonata.kernel.VimAdaptor.wrapper.ovsWrapper.OvsWrapper;
 
@@ -66,12 +69,12 @@ public class VimRepoTest {
     repoInstance = new VimRepo();
     WrapperConfiguration config = new WrapperConfiguration();
     config.setVimEndpoint("x.x.x.x");
-    config.setVimVendor("compute");
+    config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid("12345");
-    config.setWrapperType("mock");
+    config.setWrapperType(WrapperType.COMPUTE);
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
     WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
@@ -90,12 +93,12 @@ public class VimRepoTest {
     repoInstance = new VimRepo();
     WrapperConfiguration config = new WrapperConfiguration();
     config.setVimEndpoint("x.x.x.x");
-    config.setVimVendor("mock");
+    config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid("1");
-    config.setWrapperType("compute");
+    config.setWrapperType(WrapperType.COMPUTE);
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
 
@@ -232,12 +235,12 @@ public class VimRepoTest {
 
     WrapperConfiguration config = new WrapperConfiguration();
     config.setVimEndpoint("x.x.x.x");
-    config.setVimVendor("mock");
+    config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(computeUuid);
-    config.setWrapperType("compute");
+    config.setWrapperType(WrapperType.COMPUTE);
     config.setTenantExtNet("ext-subnet");
     config.setTenantExtRouter("ext-router");
     WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
@@ -246,12 +249,12 @@ public class VimRepoTest {
 
     config = new WrapperConfiguration();
     config.setVimEndpoint("x.x.x.x");
-    config.setVimVendor("OpenDaylight");
+    config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setTenantName("tenant");
     config.setUuid(networkingUuid);
-    config.setWrapperType("networking");
+    config.setWrapperType(WrapperType.NETWORK);
     config.setTenantExtNet(null);
     config.setTenantExtRouter(null);
     record = new WrapperRecord(new OvsWrapper(config), config, null);
@@ -261,10 +264,10 @@ public class VimRepoTest {
     out = repoInstance.writeNetworkVimLink(computeUuid, networkingUuid);
     Assert.assertTrue("Unable to write compute/networking association", out);
 
-    WrapperRecord netRecord = repoInstance.getNetworkVim(computeUuid);
+    WrapperRecord netRecord = repoInstance.getNetworkVimFromComputeVimUuid(computeUuid);
 
     Assert.assertTrue("The retrieved vim is not a networking vim",
-        netRecord.getConfig().getWrapperType().equals("networking"));
+        netRecord.getConfig().getWrapperType().equals(WrapperType.NETWORK));
     Assert.assertTrue("Unexpected networking vim uuid",
         netRecord.getConfig().getUuid().equals(networkingUuid));
 
@@ -274,7 +277,9 @@ public class VimRepoTest {
     out = repoInstance.writeNetworkVimLink(computeUuid, "hhhhh");
     Assert.assertFalse("Error. I managed to link the compute VIM to a-non existing net VIM", out);
 
-    out = repoInstance.removeVimEntry(config.getUuid());
+    out = repoInstance.removeVimEntry(networkingUuid);
+    Assert.assertTrue("unable to remove vim", out);
+    out = repoInstance.removeVimEntry(computeUuid);
     Assert.assertTrue("unable to remove vim", out);
   }
 }

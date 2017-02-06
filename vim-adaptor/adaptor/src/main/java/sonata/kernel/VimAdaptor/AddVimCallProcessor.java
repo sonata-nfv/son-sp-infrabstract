@@ -31,9 +31,12 @@ import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.VimAdaptor.wrapper.ComputeVimVendor;
+import sonata.kernel.VimAdaptor.wrapper.NetworkVimVendor;
+import sonata.kernel.VimAdaptor.wrapper.VimVendor;
 import sonata.kernel.VimAdaptor.wrapper.WrapperBay;
 import sonata.kernel.VimAdaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.VimAdaptor.wrapper.WrapperFactory;
+import sonata.kernel.VimAdaptor.wrapper.WrapperType;
 
 import java.util.Observable;
 import java.util.UUID;
@@ -42,7 +45,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AddVimCallProcessor.class);
 
-  
+
   /**
    * Generate a CallProcessor to process an API call to create a new VIM wrapper
    * 
@@ -66,14 +69,10 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     WrapperConfiguration config = new WrapperConfiguration();
 
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-
-    String wrapperType = null;
-    if (message.getTopic().contains("compute")) {
-      wrapperType = "compute";
-    } else if (message.getTopic().contains("network")){
-      wrapperType = "network";
-    }
-    String vimVendor = jsonObject.getString("vim_type");
+    String[] topicSplit = message.getTopic().split("\\.");
+    String wrTypeString = topicSplit[topicSplit.length - 2];
+    WrapperType wrapperType = WrapperType.getByName(wrTypeString);
+    String stringVimVendor = jsonObject.getString("vim_type");
     String vimEndpoint = jsonObject.getString("vim_address");
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
@@ -82,12 +81,17 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String tenantExtNet = null;
     String tenantExtRouter = null;
     String computeVimRef = null;
+    VimVendor vimVendor = null;
 
-    if (wrapperType.equals("compute")) {
+    if (wrapperType.equals(WrapperType.COMPUTE)) {
+      //Logger.debug("Reading compute-specific VIM parameters");
       tenantExtNet = jsonObject.getString("tenant_ext_net");
       tenantExtRouter = jsonObject.getString("tenant_ext_router");
-    } else if (wrapperType.equals("network")) {
+      vimVendor = ComputeVimVendor.getByName(stringVimVendor);
+    } else if (wrapperType.equals(WrapperType.NETWORK)) {
+      //Logger.debug("Reading network-specific VIM parameters");
       computeVimRef = jsonObject.getString("compute_uuid");
+      vimVendor = NetworkVimVendor.getByName(stringVimVendor);
     }
     config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType(wrapperType);
@@ -98,18 +102,23 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     config.setTenantName(tenantName);
     config.setTenantExtNet(tenantExtNet);
     config.setTenantExtRouter(tenantExtRouter);
+    Logger.debug("Parsed Wrapper Configuration: ");
+    System.out.println(config.toString());
 
     String output = null;
     boolean out = true;
-    if (wrapperType.equals("compute")) {
+    if (wrapperType.equals(WrapperType.COMPUTE)) {
+      Logger.debug("Registering a COMPUTE wrapper.");
       output = WrapperBay.getInstance().registerComputeWrapper(config);
-    } else if (wrapperType.equals("storage")) {
+    } else if (wrapperType.equals(WrapperType.STORAGE)) {
       // TODO
       output = "";
-    } else if (wrapperType.equals("network")) {
+    } else if (wrapperType.equals(WrapperType.NETWORK)) {
       Logger.debug("Registering a network VIM");
       output = WrapperBay.getInstance().registerNetworkWrapper(config, computeVimRef);
     }
+    
+    //Logger.debug("sending response.");
     this.sendResponse(output);
 
     return out;

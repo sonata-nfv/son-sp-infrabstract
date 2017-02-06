@@ -69,8 +69,8 @@ public class WrapperBay {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
-    } else if (newWrapper.getType().equals("compute")) {
+      output = "{\"status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
+    } else if (newWrapper.getType().equals(WrapperType.COMPUTE)) {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.repository.writeVimEntry(config.getUuid(), record);
       output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
@@ -132,16 +132,18 @@ public class WrapperBay {
 
 
   /**
+   * Registre a new Network VIM to the wrapper bay.
+   * 
    * @param config
    * @param computeVimRef
-   * @return
+   * @return a JSON formatte string with the result of the registration.
    */
   public String registerNetworkWrapper(WrapperConfiguration config, String computeVimRef) {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Vim\"}";
-    } else if (newWrapper.getType().equals("network")) {
+      output = "{\"status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
+    } else {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.repository.writeVimEntry(config.getUuid(), record);
       this.repository.writeNetworkVimLink(computeVimRef, config.getUuid());
@@ -165,13 +167,14 @@ public class WrapperBay {
    * @return
    */
   public String removeNetworkWrapper(String uuid) {
-    this.repository.rempoveNetworkVimLink(uuid);
+    this.repository.removeNetworkVimLink(uuid);
     this.repository.removeVimEntry(uuid);
     return "{\"status\":\"COMPLETED\"}";
   }
 
   /**
    * Return a generic Vim Wrapper for the given Vim UUID
+   * 
    * @param uuid
    * @return
    */

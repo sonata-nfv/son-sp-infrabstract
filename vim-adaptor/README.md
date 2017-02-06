@@ -33,16 +33,6 @@ If you prefer to manually build the source code, please consider the following:
   * [powermock-module-junit4](https://mvnrepository.com/artifact/org.powermock/powermock-module-junit4) >=1.6.5, "Apache 2.0" 
   * [postgresql](https://mvnrepository.com/artifact/org.postgresql/postgresql), 9.4.1208.jre7, "The PostgreSQL License"
 
-* Python dependencies
-  * [python-pip](https://pypi.python.org/pypi/pip)>=8.1.2, "MIT"
-  * [python-dev](http://packages.ubuntu.com/search?keywords=python-dev)
-  * [pyaml](https://pypi.python.org/pypi/pyaml) >=15.8.2 (WTFPL)
-  * [python-heatclient](https://pypi.python.org/pypi/python-heatclient) >=1.2.0, "Apache 2.0"
-  * [python-novaclient](https://pypi.python.org/pypi/python-novaclient) >=4.2.0, "Apache 2.0"
-  * [python-keystoneclient](https://pypi.python.org/pypi/python-keystoneclient) >=3.2.0, "Apache 2.0"
-  * [python-httplib2](https://pypi.python.org/pypi/httplib2) >=0.9.2, "MIT"
-  * [python-setuptools](https://pypi.python.org/pypi/setuptools) >=24.0.3
-
 * General Ubuntu dependencies
   * [librtmp-dev](http://packages.ubuntu.com/precise/librtmp-dev)
   * [libcurl4-gnutls-dev](http://packages.ubuntu.com/trusty/libcurl4-gnutls-dev)

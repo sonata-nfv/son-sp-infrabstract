@@ -25,7 +25,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.VimAdaptor.commons.FunctionDeployPayload;
-import sonata.kernel.VimAdaptor.commons.FunctionDeployResponse;
 import sonata.kernel.VimAdaptor.commons.vnfd.Unit;
 import sonata.kernel.VimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.VimAdaptor.messaging.ServicePlatformMessage;
@@ -48,8 +47,7 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
    * @param sid
    * @param mux
    */
-  public DeployFunctionCallProcessor(ServicePlatformMessage message, String sid,
-      AdaptorMux mux) {
+  public DeployFunctionCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
   }
 
@@ -68,9 +66,8 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
 
         // Sending the response to the FLM
         Logger.info("Sending partial response to FLM...");
-        ServicePlatformMessage response =
-            new ServicePlatformMessage(update.getBody(), "application/x-yaml",
-                this.getMessage().getReplyTo(), this.getSid(), null);
+        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
+            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
         this.sendToMux(response);
       } else if (update.getStatus().equals("ERROR")) {
         Logger.warn("Deploy " + this.getSid() + " error");

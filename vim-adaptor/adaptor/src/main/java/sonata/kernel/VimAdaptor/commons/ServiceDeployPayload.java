@@ -76,5 +76,4 @@ public class ServiceDeployPayload {
     this.vnfds = vnfds;
   }
 
-
 }

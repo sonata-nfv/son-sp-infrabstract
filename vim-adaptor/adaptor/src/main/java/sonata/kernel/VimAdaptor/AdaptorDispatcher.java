@@ -91,7 +91,7 @@ public class AdaptorDispatcher implements Runnable {
 
   private void handleNetworkMessage(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("configure")) {
-      Logger.info("Received a \"Network\" API call on topic: "+message.getTopic());
+      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
     }
   }

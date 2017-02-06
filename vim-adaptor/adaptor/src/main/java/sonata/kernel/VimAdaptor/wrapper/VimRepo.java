@@ -136,8 +136,7 @@ public class VimRepo {
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE service_instances " + "(" + "INSTANCE_UUID TEXT NOT NULL,"
             + " VIM_INSTANCE_UUID TEXT NOT NULL," + " VIM_INSTANCE_NAME TEXT NOT NULL,"
-            + " VIM_UUID TEXT NOT NULL,"
-            + " PRIMARY KEY (INSTANCE_UUID, VIM_UUID)" + ");";
+            + " VIM_UUID TEXT NOT NULL," + " PRIMARY KEY (INSTANCE_UUID, VIM_UUID)" + ");";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE function_instances " + "(" + "INSTANCE_UUID TEXT PRIMARY KEY NOT NULL,"
             + " SERVICE_INSTANCE_UUID TEXT NOT NULL," + " VIM_UUID TEXT NOT NULL,"
@@ -211,8 +210,8 @@ public class VimRepo {
           + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
-      stmt.setString(2, record.getConfig().getWrapperType());
-      stmt.setString(3, record.getConfig().getVimVendor());
+      stmt.setString(2, record.getConfig().getWrapperType().toString());
+      stmt.setString(3, record.getConfig().getVimVendor().toString());
       stmt.setString(4, record.getConfig().getVimEndpoint().toString());
       stmt.setString(5, record.getConfig().getAuthUserName());
       stmt.setString(6, record.getConfig().getTenantName());
@@ -242,7 +241,7 @@ public class VimRepo {
         out = false;
       }
     }
-    Logger.info("Records created successfully");
+    Logger.info("VIM Wrapper written successfully");
 
     return out;
   }
@@ -292,7 +291,7 @@ public class VimRepo {
 
       }
     }
-    Logger.info("Operation done successfully");
+    Logger.info("VIM removed successfully");
     return out;
   }
 
@@ -324,8 +323,8 @@ public class VimRepo {
           + "VALUES (?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
 
       stmt = connection.prepareStatement(sql);
-      stmt.setString(1, record.getConfig().getWrapperType());
-      stmt.setString(2, record.getConfig().getVimVendor());
+      stmt.setString(1, record.getConfig().getWrapperType().toString());
+      stmt.setString(2, record.getConfig().getVimVendor().toString());
       stmt.setString(3, record.getConfig().getVimEndpoint().toString());
       stmt.setString(4, record.getConfig().getAuthUserName());
       stmt.setString(5, record.getConfig().getTenantName());
@@ -392,27 +391,35 @@ public class VimRepo {
       rs = stmt.executeQuery();
 
       if (rs.next()) {
-        String wrapperType = rs.getString("TYPE");
-        String vendor = rs.getString("VENDOR");
+        String stringWrapperType = rs.getString("TYPE");
+        WrapperType wrapperType = WrapperType.getByName(stringWrapperType);
+        String vendorString = rs.getString("VENDOR");
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
         String tenant = rs.getString("TENANT");
         String key = rs.getString("AUTHKEY");
-        String tenantExtNet = rs.getString("TENANT_EXT_NET");
-        String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
+
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
-        config.setVimVendor(vendor);
+
         config.setVimEndpoint(urlString);
         config.setTenantName(tenant);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
         config.setAuthKey(key);
-        config.setTenantExtNet(tenantExtNet);
-        config.setTenantExtRouter(tenantExtRouter);
-
+        if (wrapperType.equals(WrapperType.COMPUTE)) {
+          String tenantExtNet = rs.getString("TENANT_EXT_NET");
+          String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
+          config.setTenantExtNet(tenantExtNet);
+          config.setTenantExtRouter(tenantExtRouter);
+          VimVendor vendor = ComputeVimVendor.getByName(vendorString);
+          config.setVimVendor(vendor);
+        } else if (wrapperType.equals(WrapperType.NETWORK)) {
+          VimVendor vendor = NetworkVimVendor.getByName(vendorString);
+          config.setVimVendor(vendor);
+        }
         Wrapper wrapper = WrapperFactory.createWrapper(config);
         output = new WrapperRecord(wrapper, config, null);
 
@@ -443,7 +450,6 @@ public class VimRepo {
 
       }
     }
-    Logger.info("Operation done successfully");
     return output;
 
   }
@@ -497,7 +503,6 @@ public class VimRepo {
 
       }
     }
-    Logger.info("Operation done successfully");
     return out;
   }
 
@@ -548,7 +553,7 @@ public class VimRepo {
       }
     }
     if (!out) {
-      Logger.info("Records created successfully");
+      Logger.info("Network vim link written successfully");
     }
 
     return out;
@@ -560,7 +565,7 @@ public class VimRepo {
    * @param computeUuid the uuid of the computeVim
    * @return
    */
-  public WrapperRecord getNetworkVim(String computeUuid) {
+  public WrapperRecord getNetworkVimFromComputeVimUuid(String computeUuid) {
     WrapperRecord output = null;
     Connection connection = null;
     PreparedStatement stmt = null;
@@ -581,8 +586,96 @@ public class VimRepo {
 
       if (rs.next()) {
         String uuid = rs.getString("UUID");
-        String wrapperType = rs.getString("TYPE");
+        WrapperType wrapperType = WrapperType.getByName(rs.getString("TYPE"));
         String vendor = rs.getString("VENDOR");
+        String urlString = rs.getString("ENDPOINT");
+        String user = rs.getString("USERNAME");
+        String pass = rs.getString("PASS");
+        String tenant = rs.getString("TENANT");
+        String key = rs.getString("AUTHKEY");
+        String tenantExtNet = rs.getString("TENANT_EXT_NET");
+        String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
+        WrapperConfiguration config = new WrapperConfiguration();
+        config.setUuid(uuid);
+        config.setWrapperType(wrapperType);
+        config.setVimVendor(NetworkVimVendor.getByName(vendor));
+        config.setVimEndpoint(urlString);
+        config.setTenantName(tenant);
+        config.setAuthUserName(user);
+        config.setAuthPass(pass);
+        config.setAuthKey(key);
+        config.setTenantExtNet(tenantExtNet);
+        config.setTenantExtRouter(tenantExtRouter);
+
+        Wrapper wrapper = WrapperFactory.createWrapper(config);
+        output = new WrapperRecord(wrapper, config, null);
+
+
+      } else {
+        output = null;
+      }
+    } catch (SQLException e) {
+      Logger.error(e.getMessage());
+      output = null;
+    } catch (ClassNotFoundException e) {
+      Logger.error(e.getMessage(), e);
+      output = null;
+    } finally {
+      try {
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (rs != null) {
+          rs.close();
+        }
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        Logger.error(e.getMessage());
+        output = null;
+
+      }
+    }
+    return output;
+
+  }
+
+  /**
+   * Get the NetworkWrapper identified by the given UUID.
+   * 
+   * @param computeUuid the uuid of the network VIM
+   * @return
+   */
+  public WrapperRecord getNetworkVim(String vimUuid) {
+    WrapperRecord output = null;
+    Connection connection = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      Class.forName("org.postgresql.Driver");
+      connection =
+          DriverManager.getConnection(
+              "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+                  + prop.getProperty("repo_port") + "/" + "vimregistry",
+              prop.getProperty("user"), prop.getProperty("pass"));
+      connection.setAutoCommit(false);
+
+      stmt =
+          connection.prepareStatement("SELECT * FROM vim WHERE vim.UUID=? AND vim.TYPE='network';");
+      stmt.setString(1, vimUuid);
+      rs = stmt.executeQuery();
+
+      if (rs.next()) {
+        String uuid = rs.getString("UUID");
+        WrapperType wrapperType = WrapperType.getByName(rs.getString("TYPE"));
+        String vendorString = rs.getString("VENDOR");
+        VimVendor vendor = null;
+        if (wrapperType.equals(WrapperType.COMPUTE)) {
+          vendor = ComputeVimVendor.getByName(vendorString);
+        } else if (wrapperType.equals(WrapperType.NETWORK)) {
+          vendor = NetworkVimVendor.getByName(vendorString);
+        }
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
@@ -632,7 +725,6 @@ public class VimRepo {
 
       }
     }
-    Logger.info("Operation done successfully");
     return output;
 
   }
@@ -696,11 +788,7 @@ public class VimRepo {
 
       }
     }
-    if (output != null) {
-      Logger.info("Operation done successfully");
-    }
     return output;
-
   }
 
   /**
@@ -762,9 +850,7 @@ public class VimRepo {
 
       }
     }
-    if (output != null) {
-      Logger.info("Operation done successfully");
-    }
+
     return output;
 
   }
@@ -824,7 +910,7 @@ public class VimRepo {
       }
     }
     if (!out) {
-      Logger.info("Records created successfully");
+      Logger.info("Service instance written successfully");
     }
 
     return out;
@@ -884,7 +970,7 @@ public class VimRepo {
       }
     }
     if (!out) {
-      Logger.info("Records created successfully");
+      Logger.info("Service instance updated successfully");
     }
 
     return out;
@@ -936,7 +1022,7 @@ public class VimRepo {
       }
     }
     if (!out) {
-      Logger.info("Records deleted successfully");
+      Logger.info("Service instance removed successfully");
     }
 
     return out;
@@ -995,7 +1081,7 @@ public class VimRepo {
       }
     }
     if (!out) {
-      Logger.info("Records created successfully");
+      Logger.info("Function Instance written successfully");
     }
 
     return out;
@@ -1059,12 +1145,9 @@ public class VimRepo {
 
       }
     }
-    if (output != null) {
-      Logger.info("Operation done successfully");
-    }
     return output;
   }
-  
+
 
   /**
    * Get the UUID used to reference the service in the scope of the VIM where given VNF is deployed.
@@ -1121,9 +1204,6 @@ public class VimRepo {
         output = null;
 
       }
-    }
-    if (output != null) {
-      Logger.info("Operation done successfully");
     }
     return output;
   }
@@ -1185,9 +1265,6 @@ public class VimRepo {
 
       }
     }
-    if (output != null) {
-      Logger.info("Operation done successfully");
-    }
     return output;
   }
 
@@ -1246,9 +1323,6 @@ public class VimRepo {
 
       }
     }
-    if (output != null) {
-      Logger.info("Operation done successfully");
-    }
     return output;
 
   }
@@ -1256,7 +1330,7 @@ public class VimRepo {
   /**
    * @param uuid
    */
-  public boolean rempoveNetworkVimLink(String networkingUuid) {
+  public boolean removeNetworkVimLink(String networkingUuid) {
     boolean out = true;
 
     Connection connection = null;
@@ -1295,7 +1369,7 @@ public class VimRepo {
       }
     }
     if (!out) {
-      Logger.info("Records created successfully");
+      Logger.info("Network VIM link removed successfully");
     }
 
     return out;

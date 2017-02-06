@@ -1,6 +1,7 @@
 package sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.HttpVersion;
@@ -19,12 +20,12 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicStatusLine;
 import org.json.JSONObject;
 import org.slf4j.LoggerFactory;
+
 import sonata.kernel.VimAdaptor.wrapper.openstack.javastackclient.models.authentication.AuthenticationData;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -46,15 +47,9 @@ public class JavaStackCore {
   private JavaStackCore() {}
 
   public enum Constants {
-    AUTH_PORT("5000"), 
-    HEAT_PORT("8004"), 
-    IMAGE_PORT("9292"), 
-    COMPUTE_PORT("8774"),
-    HEAT_VERSION("v1"),
-    IMAGE_VERSION("v2"),
-    COMPUTE_VERSION("v2"),
-    AUTHTOKEN_HEADER("X-AUTH-TOKEN"),
-    AUTH_URI("/v2.0/tokens");
+    AUTH_PORT("5000"), HEAT_PORT("8004"), IMAGE_PORT("9292"), COMPUTE_PORT("8774"), HEAT_VERSION(
+        "v1"), IMAGE_VERSION("v2"), COMPUTE_VERSION(
+            "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
 
     private final String constantValue;
 
@@ -180,19 +175,20 @@ public class JavaStackCore {
       response = httpClient.execute(createStack);
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
-      
+
       Logger.debug("Response: " + response.toString());
       Logger.debug("Response body:");
-      
-      if (statusCode != 201){
-        BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        String line=null;
-        
-        while((line=in.readLine())!=null)
+
+      if (statusCode != 201) {
+        BufferedReader in =
+            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        String line = null;
+
+        while ((line = in.readLine()) != null)
           Logger.debug(line);
       }
-        
-      
+
+
       return (statusCode == 201)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, statusCode,
@@ -235,7 +231,7 @@ public class JavaStackCore {
 
       Logger.debug("Request: " + updateStack.toString());
       Logger.debug("Request body: " + modifiedObject.toString());
-      
+
       response = httpClient.execute(updateStack);
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
@@ -243,15 +239,16 @@ public class JavaStackCore {
       Logger.debug("Response: " + response.toString());
       Logger.debug("Response body:");
 
-      
-      if (statusCode != 202){
-        BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        String line=null;
-        
-        while((line=in.readLine())!=null)
+
+      if (statusCode != 202) {
+        BufferedReader in =
+            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+        String line = null;
+
+        while ((line = in.readLine()) != null)
           Logger.debug(line);
       }
-      
+
       return (statusCode == 202)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, statusCode,
@@ -375,14 +372,14 @@ public class JavaStackCore {
 
       getStackTemplate = new HttpGet(uri);
       getStackTemplate.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
-      
-      Logger.debug("Request: "+getStackTemplate.toString());
-      
+
+      Logger.debug("Request: " + getStackTemplate.toString());
+
       response = httpclient.execute(getStackTemplate);
       int status_code = response.getStatusLine().getStatusCode();
 
-      Logger.debug("Response: "+response.toString());
-      
+      Logger.debug("Response: " + response.toString());
+
       return (status_code == 200)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
@@ -493,7 +490,7 @@ public class JavaStackCore {
   }
 
   public synchronized HttpResponse uploadBinaryImageData(String endpoint, String imageId,
-      String binaryImage) throws IOException {
+      String binaryImageLocalFilePath) throws IOException {
 
     HttpPut uploadImage;
     HttpClient httpClient = HttpClientBuilder.create().build();
@@ -501,7 +498,7 @@ public class JavaStackCore {
     if (this.isAuthenticated) {
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
-      buildUrl.append(endpoint);
+      buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Constants.IMAGE_PORT.toString());
       buildUrl
@@ -510,13 +507,43 @@ public class JavaStackCore {
       uploadImage = new HttpPut(buildUrl.toString());
       uploadImage.setHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
       uploadImage.setHeader("Content-Type", "application/octet-stream");
-      uploadImage.setEntity(new FileEntity(new File(binaryImage)));
+      uploadImage.setEntity(new FileEntity(new File(binaryImageLocalFilePath)));
 
     } else {
       throw new IOException(
           "You must Authenticate before issuing this request, please re-authenticate. ");
     }
     return httpClient.execute(uploadImage);
+  }
+
+  public HttpResponse listImages() throws IOException {
+
+    HttpGet listImages = null;
+    HttpResponse response = null;
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpResponseFactory factory = new DefaultHttpResponseFactory();
+
+    if (isAuthenticated) {
+
+      StringBuilder buildUrl = new StringBuilder();
+      buildUrl.append("http://");
+      buildUrl.append(endpoint);
+      buildUrl.append(":");
+      buildUrl.append(Constants.IMAGE_PORT.toString());
+      buildUrl.append(String.format("/%s/images", Constants.IMAGE_VERSION.toString()));
+
+      listImages = new HttpGet(buildUrl.toString());
+      listImages.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+
+      response = httpClient.execute(listImages);
+      int status_code = response.getStatusLine().getStatusCode();
+      return (status_code == 200)
+          ? response
+          : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
+              "Listing Images Failed with Status: " + status_code), null);
+    }
+    return response;
   }
 
   public synchronized HttpResponse listComputeLimits() throws IOException {
@@ -543,7 +570,7 @@ public class JavaStackCore {
       return (status_code == 200)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
-              "List Failed with Status: " + status_code), null);
+              "List Limits Failed with Status: " + status_code), null);
     }
     return response;
   }
@@ -572,7 +599,7 @@ public class JavaStackCore {
       return (status_code == 200)
           ? response
           : factory.newHttpResponse(new BasicStatusLine(HttpVersion.HTTP_1_1, status_code,
-              "List Failed with Status: " + status_code), null);
+              "List Flavors  Failed with Status: " + status_code), null);
     }
     return response;
   }

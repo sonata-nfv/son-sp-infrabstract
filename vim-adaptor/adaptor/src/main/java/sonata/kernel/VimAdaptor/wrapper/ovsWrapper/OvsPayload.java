@@ -22,7 +22,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 
 public class OvsPayload {
-  
+
   /**
    * @param string
    * @param string2

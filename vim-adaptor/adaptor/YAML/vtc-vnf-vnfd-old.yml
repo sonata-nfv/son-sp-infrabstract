@@ -27,7 +27,7 @@ function_specific_managers:
 virtual_deployment_units:
   - id: "vdu01"
     description: "VNFC for the dashboard and the time-series database"
-    vm_image: "vtc_dashboard"
+    vm_image: "sonata-vtc"
     vm_image_format: "qcow2"
     resource_requirements:
       cpu:
@@ -49,65 +49,39 @@ virtual_deployment_units:
         unit: "Mbps"
     connection_points:
       - id: "vdu01:eth0"
-        type: "public"
-  - id: "vdu02"
-    vm_image: "pfring_api_module"
-    description: "VNFC for the DPI functionality"
-    vm_image_format: "qcow2"
-    resource_requirements:
-      cpu:
-        vcpus: 1
-      memory:
-        size: 2
-        size_unit: "GB"
-      storage:
-        size: 5
-        size_unit: "GB"
-    monitoring_parameters:
-      - name: "vm_cpu_perc"
-        unit: "Percentage"
-      - name: "vm_mem_pers"
-        unit: "Percentage"
-      - name: "vm_net_rx_MB"
-        unit: "MB"
-      - name: "vm_net_tx_MB"
-        unit: "Mbps"
-    connection_points:
-      - id: "vdu02:eth0"
-        type: "public" 
-      - id: "vdu02:eth1"
-        type: "internal"
-      - id: "vdu02:eth2"
-        type: "internal"
+        type: "interface"
+      - id: "vdu01:eth1"
+        type: "interface"
+      - id: "vdu01:eth2"
+        type: "interface"
 
 virtual_links:
   - id: "mgmt"
     connectivity_type: "E-LAN"
     connection_points_reference:
       - "vdu01:eth0"
-      - "vdu02:eth0"
       - "vnf:mgmt"
     dhcp: True
   - id: "input"
     connectivity_type: "E-Line"
     connection_points_reference:
-      - "vdu02:eth1"
+      - "vdu01:eth1"
       - "vnf:input"
     dhcp: True
   - id: "output"
     connectivity_type: "E-Line"
     connection_points_reference:
-      - "vdu02:eth2"
+      - "vdu01:eth2"
       - "vnf:output"
     dhcp: True
 
 connection_points:
 - id: "vnf:mgmt"
-  type: public
+  type: interface
 - id: "vnf:input"
-  type: internal
+  type: interface
 - id: "vnf:output"
-  type: internal
+  type: interface
 
 monitoring_rules:
   - name: "mon:rule:vm_cpu_perc"
@@ -142,4 +116,3 @@ monitoring_rules:
         type: "rabbitmq_message"
 uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f1234
 instance_uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f0001
-
