@@ -52,6 +52,7 @@ import java.io.FileReader;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -238,11 +239,19 @@ public class OvsWrapper extends NetworkWrapper {
         new DatagramPacket(sendData, sendData.length, IPAddress, sfcAgentPort);
     clientSocket.send(sendPacket);
     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-    clientSocket.receive(receivePacket);
+    clientSocket.setSoTimeout(10000);
+    try{
+      clientSocket.receive(receivePacket);
+    }catch(SocketTimeoutException e){
+      clientSocket.close();
+      Logger.error("Timeout exception from the OVS SFC agent");
+      throw new Exception(
+          "Request to OVS VIM agent timed out.");
+    }
+    clientSocket.close();
     String response =
         new String(receivePacket.getData(), 0, receivePacket.getLength(), Charset.forName("UTF-8"));
     Logger.info("SFC Agent response:\n" + response);
-    clientSocket.close();
     if (!response.equals("SUCCESS")) {
       Logger.error("Unexpected response.");
       Logger.error("received string length: " + response.length());
@@ -263,20 +272,29 @@ public class OvsWrapper extends NetworkWrapper {
     Logger.info(payload);
 
     int sfcAgentPort = 55555;
-    DatagramSocket clientSocket = new DatagramSocket(sfcAgentPort);
+   
     InetAddress IPAddress = InetAddress.getByName(config.getVimEndpoint());
     byte[] sendData = new byte[1024];
     byte[] receiveData = new byte[1024];
     sendData = payload.getBytes(Charset.forName("UTF-8"));
     DatagramPacket sendPacket =
         new DatagramPacket(sendData, sendData.length, IPAddress, sfcAgentPort);
+    DatagramSocket clientSocket = new DatagramSocket(sfcAgentPort);
     clientSocket.send(sendPacket);
     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-    clientSocket.receive(receivePacket);
+    clientSocket.setSoTimeout(10000);
+    try{
+      clientSocket.receive(receivePacket);
+    }catch(SocketTimeoutException e){
+      clientSocket.close();
+      Logger.error("Timeout exception from the OVS SFC agent");
+      throw new Exception(
+          "Request to OVS VIM agent timed out.");
+    }
+    clientSocket.close();
     String response =
         new String(receivePacket.getData(), 0, receivePacket.getLength(), Charset.forName("UTF-8"));
     Logger.info("SFC Agent response:\n" + response);
-    clientSocket.close();
 
 
     if (!response.equals("SUCCESS")) {
