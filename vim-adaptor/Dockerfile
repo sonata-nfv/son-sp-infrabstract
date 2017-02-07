@@ -48,3 +48,4 @@ RUN mvn -e -q compile assembly:single;
 
 CMD ["/docker-entrypoint.sh","/test.sh"]
 
+
