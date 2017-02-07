@@ -48,6 +48,7 @@ public interface Unit {
      * 
      * @return a double with the multiplicative factor.
      */
+    @Override
     public double getMultiplier() {
       return this.multiplier;
     }
@@ -69,6 +70,7 @@ public interface Unit {
      * 
      * @return a double with the multiplicative factor.
      */
+    @Override
     public double getMultiplier() {
       return this.multiplier;
     }
@@ -93,6 +95,7 @@ public interface Unit {
      * 
      * @return a double with the multiplicative factor.
      */
+    @Override
     public double getMultiplier() {
       return this.multiplier;
     }
@@ -114,6 +117,7 @@ public interface Unit {
      * 
      * @return a double with the multiplicative factor.
      */
+    @Override
     public double getMultiplier() {
       return this.multiplier;
     }
@@ -122,6 +126,7 @@ public interface Unit {
   public enum GeneralUnit implements Unit {
     percentage;
 
+    @Override
     public double getMultiplier() {
       return 0.01;
     }

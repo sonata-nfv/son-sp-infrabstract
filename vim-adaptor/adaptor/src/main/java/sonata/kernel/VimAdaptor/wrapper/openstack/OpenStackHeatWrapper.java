@@ -858,10 +858,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       vnfr.addVdu(vdur);
       Logger.debug("VDU table created: " + vduTable.toString());
 
-      HeatServer matchingServer = null;
+      //HeatServer matchingServer = null;
       for (HeatServer server : composition.getServers()) {
         String[] identifiers = server.getServerName().split(":");
-        String vnfName = identifiers[0];
+        //String vnfName = identifiers[0];
         String vduName = identifiers[1];
         String instanceId = identifiers[2];
         if (vdu.getId().equals(vduName)) {
@@ -964,10 +964,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
     fos.flush();
     fos.close();
-    
+
     glance.uploadImage(imageUuid, fileAbsolutePath);
-    
-    
+
+
     File f = new File(fileAbsolutePath);
     if (f.delete()) {
       Logger.debug("temporary image file deleted succesfully from local environment.");

@@ -27,7 +27,6 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
-import org.junit.Test;
 
 import sonata.kernel.VimAdaptor.AdaptorMux;
 import sonata.kernel.VimAdaptor.ConfigureNetworkCallProcessor;

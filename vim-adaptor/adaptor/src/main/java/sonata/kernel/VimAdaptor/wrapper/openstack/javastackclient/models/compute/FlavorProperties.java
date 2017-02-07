@@ -51,6 +51,7 @@ public class FlavorProperties {
     this.name = name;
   }
 
+  @Override
   public String toString() {
     String out = "";
 

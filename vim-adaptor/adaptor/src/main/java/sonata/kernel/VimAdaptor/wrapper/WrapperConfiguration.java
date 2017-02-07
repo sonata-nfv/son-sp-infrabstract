@@ -105,9 +105,9 @@ public class WrapperConfiguration {
     out += "VimEndpount: " + vimEndpoint + "\n";
     out += "User: " + authUserName + "\n";
     out += "pass: " + authPass + "\n";
-    if(wrapperType.equals(WrapperType.COMPUTE)){
+    if (wrapperType.equals(WrapperType.COMPUTE)) {
       out += "tenant_ext_net: " + tenantExtNet + "\n";
-      out += "tenant_ext_router: " + tenantExtRouter+ "\n";
+      out += "tenant_ext_router: " + tenantExtRouter + "\n";
     }
     return out;
   }

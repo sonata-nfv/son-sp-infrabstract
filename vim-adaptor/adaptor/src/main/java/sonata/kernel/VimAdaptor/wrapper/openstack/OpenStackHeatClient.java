@@ -132,7 +132,7 @@ public class OpenStackHeatClient {
 
       String response = JavaStackUtils
           .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
-      Logger.debug("Stack response: "+response);
+      Logger.debug("Stack response: " + response);
     } catch (Exception e) {
       Logger.error(
           "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
@@ -240,6 +240,7 @@ public class OpenStackHeatClient {
    * @param uuid - OpenStack UUID of the stack
    * @return a StackComposition object representing the stack resources
    */
+  @SuppressWarnings("rawtypes")
   public StackComposition getStackComposition(String stackName, String uuid) {
 
     StackComposition composition = new StackComposition();
@@ -250,7 +251,6 @@ public class OpenStackHeatClient {
           .convertHttpResponseToString(javaStack.listStackResources(stackName, uuid, null));
       // Logger.debug(listResources);
 
-      @SuppressWarnings("rawtypes")
       ArrayList<Resource> resources =
           mapper.readValue(listResources, Resources.class).getResources();
 

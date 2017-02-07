@@ -84,12 +84,12 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     VimVendor vimVendor = null;
 
     if (wrapperType.equals(WrapperType.COMPUTE)) {
-      //Logger.debug("Reading compute-specific VIM parameters");
+      // Logger.debug("Reading compute-specific VIM parameters");
       tenantExtNet = jsonObject.getString("tenant_ext_net");
       tenantExtRouter = jsonObject.getString("tenant_ext_router");
       vimVendor = ComputeVimVendor.getByName(stringVimVendor);
     } else if (wrapperType.equals(WrapperType.NETWORK)) {
-      //Logger.debug("Reading network-specific VIM parameters");
+      // Logger.debug("Reading network-specific VIM parameters");
       computeVimRef = jsonObject.getString("compute_uuid");
       vimVendor = NetworkVimVendor.getByName(stringVimVendor);
     }
@@ -117,8 +117,8 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
       Logger.debug("Registering a network VIM");
       output = WrapperBay.getInstance().registerNetworkWrapper(config, computeVimRef);
     }
-    
-    //Logger.debug("sending response.");
+
+    // Logger.debug("sending response.");
     this.sendResponse(output);
 
     return out;

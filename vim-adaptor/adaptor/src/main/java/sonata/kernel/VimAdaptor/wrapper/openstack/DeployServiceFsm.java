@@ -285,15 +285,15 @@ public class DeployServiceFsm implements Runnable {
       // VNFR_V1.0
 
       for (VnfRecord vnfr : response.getVnfrs()) {
-        for (VduRecord vdur : vnfr.getVirtualDeploymentUnits()){
-          for (VnfcInstance vnfc : vdur.getVnfcInstance()){
-            for (ConnectionPointRecord cpr : vnfc.getConnectionPoints()){
+        for (VduRecord vdur : vnfr.getVirtualDeploymentUnits()) {
+          for (VnfcInstance vnfc : vdur.getVnfcInstance()) {
+            for (ConnectionPointRecord cpr : vnfc.getConnectionPoints()) {
               cpr.getType().setHardwareAddress(null);
             }
           }
-        } 
+        }
       }
-      
+
       String body = mapper.writeValueAsString(response);
       Logger.info("Response created");
       Logger.info(body);

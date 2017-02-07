@@ -52,6 +52,7 @@ public class VnfRecord {
   private ArrayList<VduRecord> virtualDeploymentUnits;
 
 
+  @Override
   public boolean equals(Object obj) {
     if (obj instanceof VnfRecord) {
       VnfRecord temp = (VnfRecord) obj;
