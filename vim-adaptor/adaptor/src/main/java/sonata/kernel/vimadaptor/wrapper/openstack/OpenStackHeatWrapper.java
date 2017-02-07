@@ -21,6 +21,7 @@
  * (www.sonata-nfv.eu).
  *
  * @author Dario Valocchi(Ph.D.), UCL
+ * 
  * @author Guy Paz, Nokia
  * 
  */
@@ -858,10 +859,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       vnfr.addVdu(vdur);
       Logger.debug("VDU table created: " + vduTable.toString());
 
-      //HeatServer matchingServer = null;
+      // HeatServer matchingServer = null;
       for (HeatServer server : composition.getServers()) {
         String[] identifiers = server.getServerName().split(":");
-        //String vnfName = identifiers[0];
+        // String vnfName = identifiers[0];
         String vduName = identifiers[1];
         String instanceId = identifiers[2];
         if (vdu.getId().equals(vduName)) {

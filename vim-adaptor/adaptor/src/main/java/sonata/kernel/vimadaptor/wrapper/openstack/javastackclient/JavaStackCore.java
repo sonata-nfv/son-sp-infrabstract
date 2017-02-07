@@ -21,7 +21,8 @@
  * (www.sonata-nfv.eu).
  *
  * @author Adel Zaalouk (Ph.D.), NEC
- * @author Dario Valocchi (Ph.D.), UCL 
+ * 
+ * @author Dario Valocchi (Ph.D.), UCL
  */
 
 package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient;

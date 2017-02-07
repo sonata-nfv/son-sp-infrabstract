@@ -11,9 +11,9 @@
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
  * 
- * Neither the name of the SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos nor the names of its contributors
- * may be used to endorse or promote products derived from this software without specific prior
- * written permission.
+ * Neither the name of the SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos nor the names of its
+ * contributors may be used to endorse or promote products derived from this software without
+ * specific prior written permission.
  * 
  * This work has been performed in the framework of the SONATA project, funded by the European
  * Commission under Grant number 671517 through the Horizon 2020 and 5G-PPP programmes. The authors
@@ -21,6 +21,7 @@
  * (www.sonata-nfv.eu).
  *
  * @author Bruno Vidalenc (Ph.D.), Thales
+ * 
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  */

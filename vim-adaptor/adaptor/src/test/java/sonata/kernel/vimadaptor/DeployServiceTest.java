@@ -759,10 +759,10 @@ public class DeployServiceTest implements MessageReceiver {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
-    } catch (Exception e){
+    } catch (Exception e) {
       e.printStackTrace();
     }
-    
+
     // Deploy a second instance of the same service
 
     data1V1.getNsd().setInstanceUuid(baseInstanceUuid + "-02");
