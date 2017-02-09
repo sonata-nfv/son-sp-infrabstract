@@ -126,7 +126,11 @@ public class WrapperBay {
    *         registered VIM
    */
   public ComputeWrapper getComputeWrapper(String vimUuid) {
-    return (ComputeWrapper) this.repository.readVimEntry(vimUuid).getVimWrapper();
+    WrapperRecord vimEntry = this.repository.readVimEntry(vimUuid);
+    if(vimEntry==null)
+      return null;
+    else
+      return (ComputeWrapper) vimEntry.getVimWrapper();
   }
 
 

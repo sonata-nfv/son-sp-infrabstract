@@ -220,13 +220,13 @@ public class OvsWrapper extends NetworkWrapper {
     segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
 
     Collections.sort(odlList);
-    OvsPayload odlPayload = new OvsPayload("add", data.getNsd().getInstanceUuid(),
+    OvsPayload odlPayload = new OvsPayload("add", data.getServiceInstanceId(),
         segments.getProperty("in"), segments.getProperty("out"), odlList);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
     String payload = mapper.writeValueAsString(odlPayload);
-    Logger.debug(this.config.getUuid());
+    Logger.debug(this.config.getUuid()+" - "+this.config.getVimEndpoint());
     Logger.debug(payload);
 
     int sfcAgentPort = 55555;

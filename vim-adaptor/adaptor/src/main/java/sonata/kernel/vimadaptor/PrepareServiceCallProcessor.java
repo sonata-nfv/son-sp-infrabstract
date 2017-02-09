@@ -94,6 +94,14 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
 
       for (VimPreDeploymentList vim : payload.getVimList()) {
         ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vim.getUuid());
+        if (wr == null) {
+          Logger.warn("Error retrieving the wrapper");
+
+          this.sendToMux(new ServicePlatformMessage(
+              "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
+              message.getReplyTo(), message.getSid(), null));
+          return false;
+        }
         Logger.info("Wrapper retrieved");
 
         for (VnfImage vnfImage : vim.getImages()) {

@@ -89,6 +89,9 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
   @Override
   public boolean process(ServicePlatformMessage message) {
 
+    Logger.info(
+      "Received networking.configure call for service instance " + data.getServiceInstanceId());
+    
     data = null;
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
@@ -227,8 +230,6 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
     }
 
     String responseJson = "{\"status\":\"COMPLETED\",\"message\":\"\"}";
-    Logger.info(
-        "Received networking.configure call for service instance " + data.getServiceInstanceId());
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;

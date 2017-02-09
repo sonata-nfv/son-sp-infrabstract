@@ -66,7 +66,14 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
     ArrayList<VimResources> resList = new ArrayList<VimResources>();
     for (String vimUuid : vimList) {
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
+      if (wr == null) {
+        Logger.warn("Error retrieving the wrapper");
 
+        this.sendToMux(new ServicePlatformMessage(
+            "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
+            message.getReplyTo(), message.getSid(), null));
+       return false;
+      }
       ResourceUtilisation resource = wr.getResourceUtilisation();
 
       if (resource != null) {

@@ -63,7 +63,19 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     String instanceUuid = jsonObject.getString("instance_uuid");
     String vimUuid =
         WrapperBay.getInstance().getVimRepo().getComputeVimUuidFromInstance(instanceUuid);
+    if (vimUuid == null) {
+      this.sendResponse("{\"status\":\"ERROR\",\"message\":\"can't find instance UUID\"}");
+      return false;
+    }
     ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
+    if (wr == null) {
+      Logger.warn("Error retrieving the wrapper");
+
+      this.sendToMux(
+          new ServicePlatformMessage("{\"request_status\":\"fail\",\"message\":\"VIM not found\"}",
+              "application/json", message.getReplyTo(), message.getSid(), null));
+      return false;
+    }
     wr.addObserver(this);
     wr.removeService(instanceUuid, this.getSid());
 
@@ -83,7 +95,7 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
     Logger.info("Received an update:\n" + update.getBody());
 
-    sendResponse("{\"request_status\":\"" + update.getBody() + "\"}");
+    sendResponse("{\"status\":\"" + update.getBody() + "\"}");
     return;
   }
 }
