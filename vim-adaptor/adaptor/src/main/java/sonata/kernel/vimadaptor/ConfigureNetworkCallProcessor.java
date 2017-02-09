@@ -88,9 +88,6 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
    */
   @Override
   public boolean process(ServicePlatformMessage message) {
-
-    Logger.info(
-      "Received networking.configure call for service instance " + data.getServiceInstanceId());
     
     data = null;
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
@@ -109,7 +106,8 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           message.getReplyTo(), message.getSid(), null));
       return false;
     }
-
+    Logger.info(
+      "Received networking.configure call for service instance " + data.getServiceInstanceId());
     ServiceDescriptor nsd = data.getNsd();
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
     ArrayList<VnfDescriptor> vnfds = data.getVnfds();

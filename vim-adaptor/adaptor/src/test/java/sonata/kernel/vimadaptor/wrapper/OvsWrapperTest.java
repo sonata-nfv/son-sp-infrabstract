@@ -168,7 +168,7 @@ public class OvsWrapperTest {
   }
 
   
-  @Test
+  @Ignore
   public void testOvsWrapperSinglePoP() throws JsonProcessingException{
     VimRepo repoInstance = new VimRepo();
     WrapperBay.getInstance().setRepo(repoInstance);
@@ -240,7 +240,7 @@ public class OvsWrapperTest {
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
       String status = jsonObject.getString("status");
       String responseMessage = jsonObject.getString("message");
-      Assert.assertTrue("Request Not completed. Message: "+message,status.equals("COMPLETED"));
+      Assert.assertTrue("Request Not completed.", status.equals("COMPLETED"));
       
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
