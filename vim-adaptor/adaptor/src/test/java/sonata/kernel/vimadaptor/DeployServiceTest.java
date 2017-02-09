@@ -431,7 +431,11 @@ public class DeployServiceTest implements MessageReceiver {
     try {
       while (counter < 2) {
         synchronized (mon) {
-          mon.wait();
+          mon.wait(); // String addNetVimBody = "{\"vim_type\":\"ovs\", "
+          // + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
+          // + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid +
+          // "\"}";
+
           if (lastHeartbeat.contains("RUNNING")) counter++;
         }
       }
@@ -439,12 +443,20 @@ public class DeployServiceTest implements MessageReceiver {
       Assert.assertTrue(false);
     }
 
+    // PoP .10
+    // String addVimBody = "{\"vim_type\":\"Heat\", "
+    // + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
+    // + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
+    // + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dem\","
+    // + "\"pass\":\"s0n@t@.dem\",\"tenant\":\"sonata.dem\"}";
 
+    // PoP .200
     String addVimBody = "{\"vim_type\":\"Heat\", "
         + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
         + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
         + "\"pass\":\"admin_pass\",\"tenant\":\"admin\"}";
+
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -466,9 +478,16 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
+    // PoP .10
+    // String addNetVimBody = "{\"vim_type\":\"ovs\", "
+    // + "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\","
+    // + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
+
+    // PoP .200
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
         + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
+
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);

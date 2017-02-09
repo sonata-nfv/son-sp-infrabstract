@@ -27,15 +27,19 @@
 package sonata.kernel.vimadaptor.wrapper;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Test;
 
 import sonata.kernel.vimadaptor.AdaptorMux;
 import sonata.kernel.vimadaptor.ConfigureNetworkCallProcessor;
@@ -163,8 +167,91 @@ public class OvsWrapperTest {
 
   }
 
+  
   @Ignore
-  public void testOvsWrapper() throws Exception {
+  public void testOvsWrapperSinglePoP() throws JsonProcessingException{
+    VimRepo repoInstance = new VimRepo();
+    WrapperBay.getInstance().setRepo(repoInstance);
+    String instanceId = data.getNsd().getInstanceUuid();
+    String computeUuid1 = "1111-11111-1111";
+    String netUuid1 = "aaaa-aaaaa-aaaa";
+    // First PoP
+    WrapperConfiguration config = new WrapperConfiguration();
+    config.setVimEndpoint("x.x.x.x");
+    config.setVimVendor(ComputeVimVendor.MOCK);
+    config.setAuthUserName("operator");
+    config.setAuthPass("apass");
+    config.setTenantName("tenant");
+    config.setUuid(computeUuid1);
+    config.setWrapperType(WrapperType.COMPUTE);
+    config.setTenantExtNet("ext-subnet");
+    config.setTenantExtRouter("ext-router");
+    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
+    boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
+    Assert.assertTrue("Unable to write the compute vim", out);
+    
+    config = new WrapperConfiguration();
+    config.setVimEndpoint("10.100.32.10");
+    config.setVimVendor(NetworkVimVendor.OVS);
+    config.setAuthUserName("operator");
+    config.setAuthPass("apass");
+    config.setTenantName("tenant");
+    config.setUuid(netUuid1);
+    config.setWrapperType(WrapperType.NETWORK);
+    config.setTenantExtNet(null);
+    config.setTenantExtRouter(null);
+    record = new WrapperRecord(new OvsWrapper(config), config, null);
+    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    repoInstance.writeNetworkVimLink(computeUuid1, netUuid1);
+    
+ // Populate VimRepo with Instance data, VNF1 And VNF2 are deployed on PoP1, VNF3 on PoP2, and
+    // VNF4 and VNF5 on PoP3
+    repoInstance.writeServiceInstanceEntry(instanceId, "1", "stack-1", computeUuid1);
+
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(0).getInstanceUuid(), instanceId,
+        computeUuid1);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(1).getInstanceUuid(), instanceId,
+        computeUuid1);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(2).getInstanceUuid(), instanceId,
+        computeUuid1);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(3).getInstanceUuid(), instanceId,
+        computeUuid1);
+    repoInstance.writeFunctionInstanceEntry(data.getVnfdList().get(4).getInstanceUuid(), instanceId,
+        computeUuid1);
+
+    // Prepare environment and create the call processor.
+    NetworkConfigurePayload netData = new NetworkConfigurePayload();
+    netData.setServiceInstanceId(data.getNsd().getInstanceUuid());
+    netData.setNsd(data.getNsd());
+    netData.setVnfds(data.getVnfdList());
+    netData.setVnfrs(records);
+    String message = mapper.writeValueAsString(netData);
+    LinkedBlockingQueue<ServicePlatformMessage> outQueue = new LinkedBlockingQueue<ServicePlatformMessage>();
+    AdaptorMux mux = new AdaptorMux(outQueue);
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/xyaml",
+        "chain.setup", "aVeryNiceSession", "chain.setup");
+    Thread t = new Thread(new ConfigureNetworkCallProcessor(spMessage, spMessage.getSid(), mux));
+
+    t.run();
+    try {
+      ServicePlatformMessage response = outQueue.take();
+      
+      JSONTokener tokener = new JSONTokener(response.getBody());
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+      String status = jsonObject.getString("status");
+      String responseMessage = jsonObject.getString("message");
+      Assert.assertTrue("Request Not completed.", status.equals("COMPLETED"));
+      
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    
+    
+  }
+  
+  @Ignore
+  public void testOvsWrapperMultiPoP() throws Exception {
 
     // TODO FIXME Edit this test to reflect the new NetworkWrapper interface.
     VimRepo repoInstance = new VimRepo();
@@ -288,13 +375,27 @@ public class OvsWrapperTest {
     netData.setVnfds(data.getVnfdList());
     netData.setVnfrs(records);
     String message = mapper.writeValueAsString(netData);
-    AdaptorMux mux = new AdaptorMux(new LinkedBlockingQueue<ServicePlatformMessage>());
+    LinkedBlockingQueue<ServicePlatformMessage> outQueue = new LinkedBlockingQueue<ServicePlatformMessage>();
+    AdaptorMux mux = new AdaptorMux(outQueue);
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/xyaml",
         "chain.setup", "abla", "chain.setup");
     Thread t = new Thread(new ConfigureNetworkCallProcessor(spMessage, "abla", mux));
 
     t.run();
 
+    try {
+      ServicePlatformMessage response = outQueue.take();
+      
+      JSONTokener tokener = new JSONTokener(response.getBody());
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+      String status = jsonObject.getString("status");
+      String responseMessage = jsonObject.getString("message");
+      Assert.assertTrue("Request Not completed. Message: "+message,status.equals("COMPLETED"));
+      
+    } catch (InterruptedException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
   }
 
 }
