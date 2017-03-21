@@ -26,24 +26,31 @@
 
 package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
-
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
-
+  
+  
   private String id;
-  private Tenant tenant;
-  private String issued_at;
+  private String[] methods;
+  private Project project;
+  @JsonProperty("issued_at")
+  private String issuedAt;
   private String expires;
-  private List<String> audit_ids;
+  @JsonProperty("audit_ids")
+  private List<String> auditIds;
 
 
-  public Tenant getTenant() {
-    return this.tenant;
+  public Project getProject() {
+    return this.project;
   }
 
-  public void setTenant(Tenant tenant) {
-    this.tenant = tenant;
+  public void setTenant(Project project) {
+    this.project = project;
   }
 
   public String getId() {
@@ -54,14 +61,6 @@ public class Token {
     this.id = id;
   }
 
-  public String getIssued_at() {
-    return issued_at;
-  }
-
-  public void setIssued_at(String issued_at) {
-    this.issued_at = issued_at;
-  }
-
   public String getExpires() {
     return expires;
   }
@@ -70,11 +69,27 @@ public class Token {
     this.expires = expires;
   }
 
-  public List<String> getAudit_ids() {
-    return audit_ids;
+  public String[] getMethods() {
+    return methods;
   }
 
-  public void setAudit_ids(List<String> audit_ids) {
-    this.audit_ids = audit_ids;
+  public String getIssuedAt() {
+    return issuedAt;
+  }
+
+  public List<String> getAuditIds() {
+    return auditIds;
+  }
+
+  public void setMethods(String[] methods) {
+    this.methods = methods;
+  }
+
+  public void setIssuedAt(String issuedAt) {
+    this.issuedAt = issuedAt;
+  }
+
+  public void setAuditIds(List<String> auditIds) {
+    this.auditIds = auditIds;
   }
 }

@@ -76,20 +76,19 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String vimEndpoint = jsonObject.getString("vim_address");
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
-    String tenantName = jsonObject.getString("tenant");
-
-    String tenantExtNet = null;
-    String tenantExtRouter = null;
+    String city = jsonObject.getString("city");
+    String country = jsonObject.getString("country");
+    String configuration = jsonObject.getJSONObject("configuration").toString();
+    
     String computeVimRef = null;
     VimVendor vimVendor = null;
 
     if (wrapperType.equals(WrapperType.COMPUTE)) {
-      // Logger.debug("Reading compute-specific VIM parameters");
-      tenantExtNet = jsonObject.getString("tenant_ext_net");
-      tenantExtRouter = jsonObject.getString("tenant_ext_router");
       vimVendor = ComputeVimVendor.getByName(stringVimVendor);
     } else if (wrapperType.equals(WrapperType.NETWORK)) {
       // Logger.debug("Reading network-specific VIM parameters");
+      tokener = new JSONTokener(configuration);
+      jsonObject = (JSONObject) tokener.nextValue();
       computeVimRef = jsonObject.getString("compute_uuid");
       vimVendor = NetworkVimVendor.getByName(stringVimVendor);
     }
@@ -99,9 +98,10 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     config.setVimEndpoint(vimEndpoint);
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);
-    config.setTenantName(tenantName);
-    config.setTenantExtNet(tenantExtNet);
-    config.setTenantExtRouter(tenantExtRouter);
+    config.setCity(city);
+    config.setCountry(country);
+    config.setConfiguration(configuration);
+    
     Logger.debug("Parsed Wrapper Configuration: ");
     System.out.println(config.toString());
 

@@ -62,18 +62,22 @@ public class JavaStackUtils {
     String reasonPhrase = response.getStatusLine().getReasonPhrase();
 
     if (statusCode.startsWith("2") || statusCode.startsWith("3")) {
-      // Logger.debug("Response Received with Status: " + response.getStatusLine().getStatusCode());
+      Logger.debug("Response Received with Status: " + response.getStatusLine().getStatusCode());
 
       StringBuilder sb = new StringBuilder();
-      BufferedReader reader =
-          new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+      if (response.getEntity() != null) {
+        BufferedReader reader =
+            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
 
-      String line;
-      while ((line = reader.readLine()) != null) {
-        sb.append(line);
+        String line;
+        while ((line = reader.readLine()) != null) {
+          sb.append(line);
+        }
+        //Logger.debug("Response: " + sb.toString());
+        return sb.toString();
+      }else{
+        return null;
       }
-      return sb.toString();
-
     } else if (status == 403) {
       throw new IOException(
           "Access forbidden, make sure you are using the correct credentials: " + reasonPhrase);

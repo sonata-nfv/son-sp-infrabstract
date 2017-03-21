@@ -87,6 +87,8 @@ public class DeployServiceTest implements MessageReceiver {
   private Object mon = new Object();
   private TestConsumer consumer;
   private String lastHeartbeat;
+  private VnfDescriptor vtcVnfd;
+  private VnfDescriptor vfwVnfd;
   private ServiceDeployPayload data;
   private ServiceDeployPayload dataV1;
   private ServiceDeployPayload data1V1;
@@ -118,30 +120,28 @@ public class DeployServiceTest implements MessageReceiver {
 
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
-    VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
         new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
-    vnfd1 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+    vtcVnfd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-    VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
         new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
-    vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
+    vfwVnfd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
 
     this.data = new ServiceDeployPayload();
 
     data.setServiceDescriptor(sd);
-    data.addVnfDescriptor(vnfd1);
-    data.addVnfDescriptor(vnfd2);
+    data.addVnfDescriptor(vtcVnfd);
+    data.addVnfDescriptor(vfwVnfd);
 
     // Set a second data for the demo payload
 
@@ -154,7 +154,7 @@ public class DeployServiceTest implements MessageReceiver {
       bodyBuilder.append(line + "\n\r");
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
-    vnfd1 = null;
+    VnfDescriptor vnfd1 = null;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
         new FileInputStream(new File("./YAML/vtc-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
@@ -187,7 +187,7 @@ public class DeployServiceTest implements MessageReceiver {
       bodyBuilder.append(line + "\n\r");
     vnfd1 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
-    vnfd2 = null;;
+    VnfDescriptor vnfd2 = null;;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
         new FileInputStream(new File("./YAML/fw-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
@@ -236,7 +236,9 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
     String message =
-        "{\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"operator\"}";
+        "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
+            + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -334,7 +336,9 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     String message =
-        "{\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\",\"vim_type\":\"Mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\",\"pass\":\"Operator\",\"tenant\":\"op_sonata\"}";
+        "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
+            + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -443,20 +447,40 @@ public class DeployServiceTest implements MessageReceiver {
       Assert.assertTrue(false);
     }
 
-    // PoP .10
+     // PoP Athens.200 Mitaka
+     String addVimBody = "{\"vim_type\":\"Heat\", "
+     + "\"configuration\":{"
+     + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+     + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
+     + "\"tenant\":\"admin\""
+     + "},"
+     + "\"city\":\"Athens\",\"country\":\"Greece\","
+     + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+     + "\"pass\":\"s0nata.d3m\"}";
+
+    // PoP Athens.10 Mitaka
     // String addVimBody = "{\"vim_type\":\"Heat\", "
+    // + "\"configuration\":{"
     // + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
     // + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
+    // + "\"tenant\":\"sonata.dem\""
+    // + "},"
+    // + "\"city\":\"Athens\",\"country\":\"Greece\","
     // + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dem\","
-    // + "\"pass\":\"s0n@t@.dem\",\"tenant\":\"sonata.dem\"}";
+    // + "\"pass\":\"s0n@t@.dem\"}";
 
-    // PoP .200
-    String addVimBody = "{\"vim_type\":\"Heat\", "
-        + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
-        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
-        + "\"pass\":\"admin_pass\",\"tenant\":\"admin\"}";
+    // PoP Aveiro Mitaka
+    // String addVimBody = "{\"vim_type\":\"Heat\", "
+    // + "\"configuration\":{"
+    // + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
+    // + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\","
+    // + "\"tenant\":\"son-demo\""
+    // + "},"
+    // + "\"city\":\"Aveiro\",\"country\":\"Portugal\","
+    // + "\"vim_address\":\"172.31.6.9\",\"username\":\"son-demo\","
+    // + "\"pass\":\"S0n-D3m0\"}";
 
+     
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -478,16 +502,24 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    // PoP .10
+    // PoP Athens .10
     // String addNetVimBody = "{\"vim_type\":\"ovs\", "
-    // + "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\","
-    // + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
+    // +
+    // "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+    // + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
 
-    // PoP .200
-    String addNetVimBody = "{\"vim_type\":\"ovs\", "
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
-        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
+    // PoP Athens .200
+     String addNetVimBody = "{\"vim_type\":\"ovs\", "
+     +
+     "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+     + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
 
+    // PoP Aveiro
+    // String addNetVimBody = "{\"vim_type\":\"ovs\", "
+    // +
+    // "\"vim_address\":\"172.31.6.9\",\"username\":\"operator\",\"city\":\"Aveiro\",\"country\":\"Portugal\","
+    // + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
+     
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -563,7 +595,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("request_status");
+    status = jsonObject.getString("status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
 
     // VIM removal
@@ -658,11 +690,11 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
 
-    String addVimBody = "{\"vim_type\":\"Heat\", "
+    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
         + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
-        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
-        + "\"pass\":\"admin_pass\",\"tenant\":\"admin\"}";
+        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\"," + "\"pass\":\"admin_pass\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -689,8 +721,8 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
-        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1001,11 +1033,11 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
 
-    String addVimBody = "{\"vim_type\":\"Heat\", "
+    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
         + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
-        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
-        + "\"pass\":\"admin_pass\",\"tenant\":\"admin\"}";
+        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\"," + "\"pass\":\"admin_pass\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1028,8 +1060,8 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
-        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid + "\"}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1241,7 +1273,7 @@ public class DeployServiceTest implements MessageReceiver {
   }
 
 
-  @Ignore
+  @Test
   public void testDeployServiceIncrementalMultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1266,13 +1298,19 @@ public class DeployServiceTest implements MessageReceiver {
       Assert.assertTrue(false);
     }
 
-
+    System.out.println("[TwoPoPTest] Adding PoP .200");
     // Add first PoP
+    // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", "
-        + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
-        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
-        + "\"pass\":\"admin_pass\",\"tenant\":\"admin\"}";
+    + "\"configuration\":{"
+    + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+    + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
+    + "\"tenant\":\"admin\""
+    + "},"
+    + "\"city\":\"Athens\",\"country\":\"Greece\","
+    + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+    + "\"pass\":\"s0nata.d3m\"}";
+
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1295,8 +1333,8 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
-        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid1 + "\"}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid1 + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1320,11 +1358,18 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
 
     // Add second PoP
-    addVimBody = "{\"vim_type\":\"Heat\", "
-        + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
-        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\","
-        + "\"pass\":\"admin_pass\",\"tenant\":\"admin\"}";
+    System.out.println("[TwoPoPTest] Adding PoP .10");
+    // PoP Athens.10 Mitaka
+     addVimBody = "{\"vim_type\":\"Heat\", "
+     + "\"configuration\":{"
+     + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
+     + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
+     + "\"tenant\":\"sonata.dem\""
+     + "},"
+     + "\"city\":\"Athens\",\"country\":\"Greece\","
+     + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dem\","
+     + "\"pass\":\"s0n@t@.dem\"}";
+
     topic = "infrastructure.management.compute.add";
     addVimMessage = new ServicePlatformMessage(addVimBody, "application/json", topic,
         UUID.randomUUID().toString(), topic);
@@ -1347,8 +1392,8 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     addNetVimBody = "{\"vim_type\":\"ovs\", "
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\","
-        + "\"pass\":\"apass\",\"tenant\":\"tenant\",\"compute_uuid\":\"" + computeWrUuid2 + "\"}";
+        + "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid2 + "\"}}";
     topic = "infrastructure.management.network.add";
     addNetVimMessage = new ServicePlatformMessage(addNetVimBody, "application/json", topic,
         UUID.randomUUID().toString(), topic);
@@ -1372,6 +1417,7 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
 
     // Prepare the system for a service deployment
+    System.out.println("[TwoPoPTest] Building service.prepare call.");
 
     ServicePreparePayload payload = new ServicePreparePayload();
 
@@ -1381,7 +1427,9 @@ public class DeployServiceTest implements MessageReceiver {
     vimDepList.setUuid(computeWrUuid1);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade =
-        new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1", "file:///test_images/sonata-vtc");
+        //new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01", "file:///test_images/sonata-vtc.img");
+        new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+
     vnfImages.add(vtcImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
@@ -1392,7 +1440,8 @@ public class DeployServiceTest implements MessageReceiver {
     vimDepList.setUuid(computeWrUuid2);
     vnfImages = new ArrayList<VnfImage>();
     VnfImage vfwImgade =
-        new VnfImage("eu.sonata-nfv:fw-vnf:0.1:1", "file:///test_images/sonata-vfw");
+        //new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1", "file:///test_images/sonata-vfw.img");
+        new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
@@ -1400,6 +1449,8 @@ public class DeployServiceTest implements MessageReceiver {
     payload.setVimList(vims);
 
     String body = mapper.writeValueAsString(payload);
+    System.out.println("[TwoPoPTest] Request body:");
+    System.out.println(body);
 
     topic = "infrastructure.service.prepare";
     ServicePlatformMessage servicePrepareMessage = new ServicePlatformMessage(body,
@@ -1423,13 +1474,129 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println("Service " + payload.getInstanceId() + " ready for deployment");
 
 
+    // Deploy the two VNFs, one in each PoP
+    ArrayList<VnfRecord> records = new ArrayList<VnfRecord>();
+    
+    // vTC VNF in PoP#1
+    output = null;
+
+    FunctionDeployPayload vnfPayload = new FunctionDeployPayload();
+    vnfPayload.setVnfd(vtcVnfd);
+    vnfPayload.setVimUuid(computeWrUuid1);
+    vnfPayload.setServiceInstanceId(data.getNsd().getInstanceUuid());
+    body = mapper.writeValueAsString(vnfPayload);
+
+    topic = "infrastructure.function.deploy";
+    ServicePlatformMessage functionDeployMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(functionDeployMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    Assert.assertNotNull(output);
+    int retry = 0;
+    int maxRetry = 60;
+    while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry) {
+      synchronized (mon) {
+        mon.wait(1000);
+        retry++;
+      }
+    }
+
+    System.out.println("FunctionDeployResponse: ");
+    System.out.println(output);
+    Assert.assertTrue("No response received after function deployment", retry < maxRetry);
+    FunctionDeployResponse response = mapper.readValue(output, FunctionDeployResponse.class);
+    Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+    Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
+    records.add(response.getVnfr());
+
+    // vFw VNF in PoP#2
+    output = null;
+    response = null;
+    
+    vnfPayload = new FunctionDeployPayload();
+    vnfPayload.setVnfd(vfwVnfd);
+    vnfPayload.setVimUuid(computeWrUuid2);
+    vnfPayload.setServiceInstanceId(data.getNsd().getInstanceUuid());
+    body = mapper.writeValueAsString(vnfPayload);
+
+    topic = "infrastructure.function.deploy";
+    functionDeployMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(functionDeployMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    Assert.assertNotNull(output);
+    retry = 0;
+    maxRetry = 60;
+    while (output.contains("heartbeat") || output.contains("Vim Added") && retry < maxRetry) {
+      synchronized (mon) {
+        mon.wait(1000);
+        retry++;
+      }
+    }
+
+    System.out.println("FunctionDeployResponse: ");
+    System.out.println(output);
+    Assert.assertTrue("No response received after function deployment", retry < maxRetry);
+    response = mapper.readValue(output, FunctionDeployResponse.class);
+    Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+    Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
+    records.add(response.getVnfr());
+    
+    // Finally configure Networking in each NFVi-PoP (VIMs)
+
+    output = null;
+
+    NetworkConfigurePayload netPayload = new NetworkConfigurePayload();
+    netPayload.setNsd(data.getNsd());
+    netPayload.setVnfds(data.getVnfdList());
+    netPayload.setVnfrs(records);
+    netPayload.setServiceInstanceId(data.getNsd().getInstanceUuid());
+
+
+    body = mapper.writeValueAsString(netPayload);
+
+    topic = "infrastructure.network.configure";
+    ServicePlatformMessage networkConfigureMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(networkConfigureMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("status");
+    Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
+        status.equals("COMPLETED"));
+    System.out.println(
+        "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
+
+    output = null;
 
   }
 
 
 
-  @Test
-  public void testPrepareService() throws JsonProcessingException {
+  @Ignore
+  public void testPrepareServicePayload() throws JsonProcessingException {
 
     ServicePreparePayload payload = new ServicePreparePayload();
 

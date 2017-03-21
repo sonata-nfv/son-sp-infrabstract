@@ -34,6 +34,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
+import org.json.JSONObject;
+import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
@@ -84,7 +86,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(OpenStackHeatWrapper.class);
   private WrapperConfiguration config;
-
   private IpNetPool myPool;
 
   /**
@@ -99,6 +100,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   }
 
   private HeatTemplate createInitStackTemplate(String instanceId) throws Exception {
+
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
     Logger.debug("Creating init stack template");
 
     HeatModel model = new HeatModel();
@@ -137,7 +148,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HashMap<String, Object> mgmtSubnetMapInt = new HashMap<String, Object>();
     mgmtSubnetMapInt.put("get_resource", "SonataService:mgmt:subnet:" + instanceId);
     mgmtRouterInterface.putProperty("subnet", mgmtSubnetMapInt);
-    mgmtRouterInterface.putProperty("router", this.config.getTenantExtRouter());
+    mgmtRouterInterface.putProperty("router", tenantExtRouter);
     model.addResource(mgmtRouterInterface);
 
     HeatResource dataNetwork = new HeatResource();
@@ -174,11 +185,21 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   @Override
   public boolean deployService(ServiceDeployPayload data, String callSid) {
 
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
+
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
 
     OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     Collections.sort(vimFlavors);
     HeatModel stack;
@@ -225,9 +246,19 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   @Override
   public ResourceUtilisation getResourceUtilisation() {
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
+
     Logger.info("OpenStack wrapper - Getting resource utilisation...");
     OpenStackNovaClient client = new OpenStackNovaClient(config.getVimEndpoint(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
     ResourceUtilisation output = client.getResourceUtilizasion();
     Logger.info("OpenStack wrapper - Resource utilisation retrieved.");
     return output;
@@ -242,10 +273,19 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    */
   @Override
   public boolean prepareService(String instanceId) throws Exception {
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
     // To prepare a service instance management and data networks/subnets
     // must be created. The Management Network must also be attached to the external router.
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
 
     HeatTemplate template = createInitStackTemplate(instanceId);
 
@@ -314,6 +354,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   @Override
   public boolean removeService(String instanceUuid, String callSid) {
 
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
+
     VimRepo repo = WrapperBay.getInstance().getVimRepo();
     Logger.info("Trying to remove NS instance: " + instanceUuid);
     String stackName = repo.getServiceInstanceVimName(instanceUuid);
@@ -322,7 +372,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     Logger.info("NS instance mapped to stack uuid: " + stackUuid);
 
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
     try {
       String output = client.deleteStack(stackName, stackUuid);
 
@@ -344,19 +394,29 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return true;
   }
 
-  private String selectFlavor(int vcpu, double memory, double storage,
+  private String selectFlavor(int vcpu, double memoryInGB, double storageIngGB,
       ArrayList<Flavor> vimFlavors) {
     for (Flavor flavor : vimFlavors) {
-      if (vcpu <= flavor.getVcpu() && (memory * 1024) <= flavor.getRam()
-          && storage <= flavor.getStorage()) {
+      if (vcpu <= flavor.getVcpu() && ((memoryInGB * 1024) <= flavor.getRam())
+          && (storageIngGB <= flavor.getStorage())) {
         return flavor.getFlavorName();
       }
     }
-    return "ERROR";
+    return null;
   }
 
   private HeatModel translate(ServiceDeployPayload data, ArrayList<Flavor> vimFlavors)
       throws Exception {
+
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
 
     ServiceDescriptor nsd = data.getNsd();
 
@@ -415,7 +475,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HashMap<String, Object> mgmtSubnetMapInt = new HashMap<String, Object>();
     mgmtSubnetMapInt.put("get_resource", nsd.getName() + ":mgmt:subnet:" + nsd.getInstanceUuid());
     mgmtRouterInterface.putProperty("subnet", mgmtSubnetMapInt);
-    mgmtRouterInterface.putProperty("router", this.config.getTenantExtRouter());
+    mgmtRouterInterface.putProperty("router", tenantExtRouter);
     model.addResource(mgmtRouterInterface);
 
     cidr = null;
@@ -465,6 +525,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           subnet.putProperty("cidr", cidr);
           // config parameter
           // String[] dnsArray = { "10.30.0.11", "8.8.8.8" };
+          // TODO DNS should not be hardcoded, VMs should automatically get OpenStack subnet DNS.
           String[] dnsArray = {"8.8.8.8"};
           subnet.putProperty("dns_nameservers", dnsArray);
           // subnet.putProperty("gateway_ip", myPool.getGateway(cidr));
@@ -488,9 +549,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             vnfd.getName() + ":" + vdu.getId() + ":" + nsd.getInstanceUuid());
         server.putProperty("image", vdu.getVmImage());
         int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
-        double memory = vdu.getResourceRequirements().getMemory().getSize();
-        double storage = vdu.getResourceRequirements().getStorage().getSize();
-        String flavorName = this.selectFlavor(vcpu, memory, storage, vimFlavors);
+        double memoryInBytes = vdu.getResourceRequirements().getMemory().getSize()
+            * vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
+        double storageInBytes = vdu.getResourceRequirements().getStorage().getSize()
+            * vdu.getResourceRequirements().getStorage().getSizeUnit().getMultiplier();
+        String flavorName = this.selectFlavor(vcpu, memoryInBytes, storageInBytes, vimFlavors);
+        if (flavorName == null) {
+          throw new Exception("Cannot find an available flavor for requirements. CPU: "+vcpu+" - mem: "+memoryInBytes+" - sto: "+storageInBytes);
+        }
         server.putProperty("flavor", flavorName);
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
         for (ConnectionPoint cp : vdu.getConnectionPoints()) {
@@ -633,7 +699,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       floatingIp.setName("floating:" + portName);
 
 
-      floatingIp.putProperty("floating_network_id", this.config.getTenantExtNet());
+      floatingIp.putProperty("floating_network_id", tenantExtNet);
 
       HashMap<String, Object> floatMapPort = new HashMap<String, Object>();
       floatMapPort.put("get_resource", portName);
@@ -645,7 +711,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return model;
   }
 
-  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors, String instanceUuid) {
+  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors, String instanceUuid) throws Exception{
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
     HeatModel model = new HeatModel();
 
     ArrayList<String> publicPortNames = new ArrayList<String>();
@@ -655,11 +730,15 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       server.setType("OS::Nova::Server");
       server.setName(vnfd.getName() + ":" + vdu.getId() + ":" + instanceUuid);
       server.putProperty("name", vnfd.getName() + ":" + vdu.getId() + ":" + instanceUuid);
-      server.putProperty("image", vdu.getVmImage());
+      server.putProperty("image",
+          vnfd.getVendor() + "_" + vnfd.getName() + "_" + vnfd.getVersion() + "_" + vdu.getId());
       int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
-      double memory = vdu.getResourceRequirements().getMemory().getSize();
-      double storage = vdu.getResourceRequirements().getStorage().getSize();
-      String flavorName = this.selectFlavor(vcpu, memory, storage, flavors);
+      double memoryInGB = vdu.getResourceRequirements().getMemory().getSize()*vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
+      double storageInGB = vdu.getResourceRequirements().getStorage().getSize()*vdu.getResourceRequirements().getStorage().getSizeUnit().getMultiplier();
+      String flavorName = this.selectFlavor(vcpu, memoryInGB, storageInGB, flavors);
+      if (flavorName == null) {
+        throw new Exception("Cannot find an available flavor for requirements. CPU: "+vcpu+" - mem: "+memoryInGB+" - sto: "+storageInGB);
+      }
       server.putProperty("flavor", flavorName);
       ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
       for (ConnectionPoint cp : vdu.getConnectionPoints()) {
@@ -698,7 +777,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       floatingIp.setName("floating:" + portName);
 
 
-      floatingIp.putProperty("floating_network_id", this.config.getTenantExtNet());
+      floatingIp.putProperty("floating_network_id", tenantExtNet);
 
       HashMap<String, Object> floatMapPort = new HashMap<String, Object>();
       floatMapPort.put("get_resource", portName);
@@ -719,24 +798,41 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    */
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantExtNet = object.getString("tenant_ext_net");
+    String tenantExtRouter = object.getString("tenant_ext_router");
+    // END COMMENT
+
+
     OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
 
     OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
 
     String stackUuid = WrapperBay.getInstance().getVimRepo()
-        .getServiceInstanceVimUuid(data.getServiceInstanceId());
+        .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.config.getUuid());
     String stackName = WrapperBay.getInstance().getVimRepo()
-        .getServiceInstanceVimName(data.getServiceInstanceId());
+        .getServiceInstanceVimName(data.getServiceInstanceId(), this.config.getUuid());
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     Collections.sort(vimFlavors);
     HeatModel stackAddendum;
 
     HeatTemplate template = client.getStackTemplate(stackName, stackUuid);
-
+    try{
     stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
-
+    } catch (Exception e){
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNFD translation.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
     for (HeatResource resource : stackAddendum.getResources()) {
       template.putResource(resource.getResourceName(), resource);
     }
@@ -950,11 +1046,17 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    */
   @Override
   public void uploadImage(VnfImage image) throws IOException {
-    // TODO Auto-generated method stub
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    // END COMMENT
+
     OpenStackGlanceClient glance = new OpenStackGlanceClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
 
-
+    Logger.debug("Creating new image: " + image.getUuid());
     String imageUuid = glance.createImage(image.getUuid());
 
     URL website = new URL(image.getUrl());
@@ -965,6 +1067,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     fos.getChannel().transferFrom(rbc, 0, Long.MAX_VALUE);
     fos.flush();
     fos.close();
+
+    Logger.debug("Uploading new image from " + fileAbsolutePath);
 
     glance.uploadImage(imageUuid, fileAbsolutePath);
 
@@ -988,11 +1092,20 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    */
   @Override
   public boolean isImageStored(VnfImage image) {
+    // TODO This values should be per User, now they are per VIM. This should be re-desinged once
+    // user management is in place.
+    Logger.debug("Checking image: " + image.getUuid());
+    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    // END COMMENT
+
     OpenStackGlanceClient glance = new OpenStackGlanceClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), config.getTenantName());
+        config.getAuthUserName(), config.getAuthPass(), tenant);
     ArrayList<Image> glanceImages = glance.listImages();
 
     for (Image glanceImage : glanceImages) {
+      Logger.debug("Checking " + glanceImage.getName());
       if (glanceImage.getName().equals(image.getUuid())) {
         return true;
       }

@@ -95,7 +95,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
       for (VimPreDeploymentList vim : payload.getVimList()) {
         ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vim.getUuid());
         if (wr == null) {
-          Logger.warn("Error retrieving the wrapper");
+          Logger.error("Error retrieving the wrapper");
 
           this.sendToMux(new ServicePlatformMessage(
               "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
@@ -107,13 +107,20 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         for (VnfImage vnfImage : vim.getImages()) {
           if (!wr.isImageStored(vnfImage)) {
             wr.uploadImage(vnfImage);
+          }else{
+            Logger.info("Image already stored in the VIM image repository");
           }
         }
 
-        boolean success = wr.prepareService(payload.getInstanceId());
-        if (!success) {
-          throw new Exception("Unable to prepare the environment for instance: "
-              + payload.getInstanceId() + " on VIM " + vim.getUuid());
+        if (WrapperBay.getInstance().getVimRepo()
+            .getServiceInstanceVimUuid(payload.getInstanceId(),vim.getUuid()) == null){
+          boolean success = wr.prepareService(payload.getInstanceId());
+          if (!success) {
+            throw new Exception("Unable to prepare the environment for instance: "
+                + payload.getInstanceId() + " on Compute VIM " + vim.getUuid());
+          }
+        } else {
+          Logger.info("Service already prepared in Compute VIM " + vim.getUuid());
         }
 
       }

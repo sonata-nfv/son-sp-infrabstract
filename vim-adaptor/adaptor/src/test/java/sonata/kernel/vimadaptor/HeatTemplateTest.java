@@ -111,8 +111,7 @@ public class HeatTemplateTest {
 
     WrapperConfiguration config = new WrapperConfiguration();
 
-    config.setTenantExtNet("decd89e2-1681-427e-ac24-6e9f1abb1715");
-    config.setTenantExtRouter("20790da5-2dc1-4c7e-b9c3-a8d590517563");
+    config.setConfiguration("{\"tenant\":\"admin\",\"tenant_ext_net\":\"decd89e2-1681-427e-ac24-6e9f1abb1715\",\"tenant_ext_router\":\"20790da5-2dc1-4c7e-b9c3-a8d590517563\"}");
 
     OpenStackHeatWrapper wrapper = new OpenStackHeatWrapper(config);
 

@@ -72,11 +72,13 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
-    config.setTenantName("tenant");
     config.setUuid("12345");
     config.setWrapperType(WrapperType.COMPUTE);
-    config.setTenantExtNet("ext-subnet");
-    config.setTenantExtRouter("ext-router");
+    String configs = "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
+    config.setConfiguration(configs);
+    config.setCity("London");
+    config.setCountry("England");
+    
     WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
 
@@ -96,11 +98,12 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
-    config.setTenantName("tenant");
     config.setUuid("1");
     config.setWrapperType(WrapperType.COMPUTE);
-    config.setTenantExtNet("ext-subnet");
-    config.setTenantExtRouter("ext-router");
+    String configs = "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
+    config.setConfiguration(configs);
+    config.setCity("London");
+    config.setCountry("England");
 
     WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
@@ -238,11 +241,12 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
-    config.setTenantName("tenant");
     config.setUuid(computeUuid);
     config.setWrapperType(WrapperType.COMPUTE);
-    config.setTenantExtNet("ext-subnet");
-    config.setTenantExtRouter("ext-router");
+    String configs = "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
+    config.setConfiguration(configs);
+    config.setCity("London");
+    config.setCountry("England");
     WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write the compute vim", out);
@@ -252,11 +256,9 @@ public class VimRepoTest {
     config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
-    config.setTenantName("tenant");
     config.setUuid(networkingUuid);
     config.setWrapperType(WrapperType.NETWORK);
-    config.setTenantExtNet(null);
-    config.setTenantExtRouter(null);
+    config.setConfiguration("{\"compute_uuid\":\""+computeUuid+"\"}");
     record = new WrapperRecord(new OvsWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write the networking vim", out);
@@ -266,6 +268,9 @@ public class VimRepoTest {
 
     WrapperRecord netRecord = repoInstance.getNetworkVimFromComputeVimUuid(computeUuid);
 
+    Assert.assertNotNull("Retrieved netVim is null",netRecord);
+    Assert.assertNotNull("Retrieved netVim has null configuration",netRecord.getConfig());
+    
     Assert.assertTrue("The retrieved vim is not a networking vim",
         netRecord.getConfig().getWrapperType().equals(WrapperType.NETWORK));
     Assert.assertTrue("Unexpected networking vim uuid",
