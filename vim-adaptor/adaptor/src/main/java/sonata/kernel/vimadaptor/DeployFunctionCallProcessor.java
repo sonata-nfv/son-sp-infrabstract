@@ -82,7 +82,7 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
         Logger.warn("Deploy " + this.getSid() + " error");
         Logger.warn("Pushing back error...");
         ServicePlatformMessage response = new ServicePlatformMessage(
-            "{\"request_status\":\"fail\",\"message\":\"" + update.getBody() + "\"}",
+            "{\"request_status\":\"ERROR\",\"message\":\"" + update.getBody() + "\"}",
             "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
         this.sendToMux(response);
       } else {

@@ -91,7 +91,10 @@ public class AdaptorDispatcher implements Runnable {
   }
 
   private void handleNetworkMessage(ServicePlatformMessage message) {
-    if (message.getTopic().endsWith("configure")) {
+    if (message.getTopic().endsWith("deconfigure")){
+      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new DeconfigureNetworkCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("configure")) {
       Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
     }
@@ -161,7 +164,7 @@ public class AdaptorDispatcher implements Runnable {
   }
 
   private boolean isNetworkMsg(ServicePlatformMessage message) {
-    return message.getTopic().contains("infrastructure.network");
+    return message.getTopic().contains("infrastructure.chain");
   }
 
   private boolean isMonitoringMessage(ServicePlatformMessage message) {

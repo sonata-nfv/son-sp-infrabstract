@@ -53,6 +53,14 @@ public class NetworkMockWrapper extends NetworkWrapper {
     return;
   }
 
+  /* (non-Javadoc)
+   * @see sonata.kernel.vimadaptor.wrapper.NetworkWrapper#deconfigureNetworking(java.lang.String)
+   */
+  @Override
+  public void deconfigureNetworking(String instanceId) throws Exception {
+    return;
+  }
+
 
 
 }

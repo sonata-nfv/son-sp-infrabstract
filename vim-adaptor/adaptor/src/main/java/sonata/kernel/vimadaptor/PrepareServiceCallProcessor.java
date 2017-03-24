@@ -124,7 +124,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         }
 
       }
-      String responseJson = "{\"status\":\"COMPLETED\",\"message\":\"\"}";
+      String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
       ServicePlatformMessage responseMessage = new ServicePlatformMessage(responseJson,
           "application/json", message.getReplyTo(), message.getSid(), null);
       this.sendToMux(responseMessage);
@@ -132,7 +132,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
       this.sendToMux(
-          new ServicePlatformMessage("{\"status\":\"fail\",\"message\":\"" + e.getMessage() + "\"}",
+          new ServicePlatformMessage("{\"request_status\":\"fail\",\"message\":\"" + e.getMessage() + "\"}",
               "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }

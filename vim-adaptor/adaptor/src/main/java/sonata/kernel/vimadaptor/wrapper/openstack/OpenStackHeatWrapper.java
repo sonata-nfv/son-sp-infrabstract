@@ -105,8 +105,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // user management is in place.
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
-    String tenant = object.getString("tenant");
-    String tenantExtNet = object.getString("tenant_ext_net");
+    // String tenant = object.getString("tenant");
+    // String tenantExtNet = object.getString("tenant_ext_net");
     String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
@@ -359,8 +359,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
-    String tenantExtNet = object.getString("tenant_ext_net");
-    String tenantExtRouter = object.getString("tenant_ext_router");
+    // String tenantExtNet = object.getString("tenant_ext_net");
+    // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
 
@@ -380,7 +380,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         repo.removeServiceInstanceEntry(instanceUuid);
         myPool.freeSubnets(instanceUuid);
         this.setChanged();
-        String body = "SUCCESS";
+        String body = "{\"status\":\"SUCCESS\",\"wrapper_uuid\":\""+this.config.getUuid()+"\"}";
         WrapperStatusUpdate update = new WrapperStatusUpdate(null, "SUCCESS", body);
         this.notifyObservers(update);
       }

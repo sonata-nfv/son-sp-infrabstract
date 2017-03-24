@@ -132,7 +132,7 @@ public class AdaptorTest implements MessageReceiver {
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String uuid = jsonObject.getString("uuid");
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     output = null;
@@ -150,7 +150,7 @@ public class AdaptorTest implements MessageReceiver {
 
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     core.stop();
@@ -202,7 +202,7 @@ public class AdaptorTest implements MessageReceiver {
       tokener = new JSONTokener(output);
       jsonObject = (JSONObject) tokener.nextValue();
       uuid = jsonObject.getString("uuid");
-      status = jsonObject.getString("status");
+      status = jsonObject.getString("request_status");
       Assert.assertTrue(status.equals("COMPLETED"));
       vimUuid.add(uuid);
       output = null;
@@ -255,7 +255,7 @@ public class AdaptorTest implements MessageReceiver {
 
       tokener = new JSONTokener(output);
       jsonObject = (JSONObject) tokener.nextValue();
-      status = jsonObject.getString("status");
+      status = jsonObject.getString("request_status");
       Assert.assertTrue(status.equals("COMPLETED"));
     }
 

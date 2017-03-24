@@ -101,7 +101,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       Logger.info("payload parsed");
     } catch (IOException e) {
       Logger.error("Unable to parse the payload received");
-      String responseJson = "{\"status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
+      String responseJson = "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
       this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
           message.getReplyTo(), message.getSid(), null));
       return false;
@@ -152,7 +152,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             if (split.length != 2) {
               Logger.error("Unable to parse the service graph");
               String responseJson =
-                  "{\"status\":\"ERROR\",\"message\":\"Unable to parse NSD service graph. Error in the connection_point_reference fields: "
+                  "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse NSD service graph. Error in the connection_point_reference fields: "
                       + name + "\"}";
               this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
                   message.getReplyTo(), message.getSid(), null));
@@ -217,7 +217,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             netWr.configureNetworking(wrapperPayload);
           } catch (Exception e) {
             Logger.error("Unable to configure networking on VIM: " + netVimUuid, e);
-            String responseJson = "{\"status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
+            String responseJson = "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
             this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
                 message.getReplyTo(), message.getSid(), null));
             return false;
@@ -227,7 +227,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       }
     }
 
-    String responseJson = "{\"status\":\"COMPLETED\",\"message\":\"\"}";
+    String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;

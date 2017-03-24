@@ -262,6 +262,7 @@ public class OvsWrapper extends NetworkWrapper {
     return;
   }
 
+  @Override
   public void deconfigureNetworking(String instanceId) throws Exception {
 
     OvsPayload odlPayload = new OvsPayload("delete", instanceId, null, null, null);

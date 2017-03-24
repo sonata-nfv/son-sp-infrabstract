@@ -35,12 +35,16 @@ import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Observable;
 
 public class RemoveServiceCallProcessor extends AbstractCallProcessor {
 
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(RemoveServiceCallProcessor.class);
+  private ArrayList<String> wrapperQueue;
+  private boolean errorsHappened;
 
   /**
    * Generate a CallProcessor to process an API call to create a new VIM wrapper
@@ -51,34 +55,37 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
    */
   public RemoveServiceCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
-
+    this.errorsHappened = false;
   }
 
   @Override
   public boolean process(ServicePlatformMessage message) {
-    // process json message to get the wrapper type and UUID
-    // and de-register it
+    // process json message to get the service UUID
+    // and remove it
     JSONTokener tokener = new JSONTokener(message.getBody());
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String instanceUuid = jsonObject.getString("instance_uuid");
-    String vimUuid =
+    String[] vimUuidList =
         WrapperBay.getInstance().getVimRepo().getComputeVimUuidFromInstance(instanceUuid);
-    if (vimUuid == null) {
-      this.sendResponse("{\"status\":\"ERROR\",\"message\":\"can't find instance UUID\"}");
+    if (vimUuidList == null || vimUuidList.length == 0) {
+      this.sendResponse(
+          "{\"request_status\":\"ERROR\",\"message\":\"can't find instance UUID or associated VIMs\"}");
       return false;
     }
-    ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
-    if (wr == null) {
-      Logger.warn("Error retrieving the wrapper");
+    this.wrapperQueue = new ArrayList<String>(Arrays.asList(vimUuidList));
+    for (String vimUuid : vimUuidList) {
+      ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
+      if (wr == null) {
+        Logger.warn("Error retrieving the wrapper");
 
-      this.sendToMux(
-          new ServicePlatformMessage("{\"request_status\":\"fail\",\"message\":\"VIM not found\"}",
-              "application/json", message.getReplyTo(), message.getSid(), null));
-      return false;
+        this.sendToMux(new ServicePlatformMessage(
+            "{\"request_status\":\"ERROR\",\"message\":\"VIM not found\"}", "application/json",
+            message.getReplyTo(), message.getSid(), null));
+        // return false;
+      }
+      wr.addObserver(this);
+      wr.removeService(instanceUuid, this.getSid());
     }
-    wr.addObserver(this);
-    wr.removeService(instanceUuid, this.getSid());
-
     boolean out = true;
     return out;
   }
@@ -94,8 +101,28 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
 
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
     Logger.info("Received an update:\n" + update.getBody());
+    JSONTokener tokener = new JSONTokener(update.getBody());
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
 
-    sendResponse("{\"status\":\"" + update.getBody() + "\"}");
-    return;
+    String wrapperId = jsonObject.getString("wrapper_uuid");
+    String status = jsonObject.getString("status");
+
+    if (wrapperQueue.remove(wrapperId)) {
+      if (status.equals("SUCCESS")) {
+        Logger.debug("wrapperSuccesfully dequeued.");
+      } else {
+        Logger.error("Error removing the service. " + status);
+        this.errorsHappened = true;
+      }
+    }
+
+    if (wrapperQueue.size() == 0) {
+      if (!errorsHappened) {
+        sendResponse("{\"request_status\":\"SUCCESS\"}");
+      } else {
+        sendResponse("{\"request_status\":\"ERROR\"}");
+      }
+      return;
+    }
   }
 }

@@ -53,10 +53,21 @@ public abstract class NetworkWrapper extends AbstractWrapper implements Wrapper 
   // throws Exception;
 
   /**
-   * @param nsd
-   * @param functionsRecords
-   * @throws Exception
+   * Configure a given SFC chain into a specific NFVi-PoP. 
+   * 
+   * @param data the payload representing the configuration to apply
+   * 
    */
   public abstract void configureNetworking(NetworkConfigurePayload data) throws Exception;
 
+  
+  /**
+   * Deconfigure a given SFC chain into a specific NFVi-PoP. 
+   * 
+   * @param instanceId the service instance ID which identifies the network service
+   * 
+   */
+  public abstract void deconfigureNetworking(String instanceId) throws Exception;
+
+  
 }

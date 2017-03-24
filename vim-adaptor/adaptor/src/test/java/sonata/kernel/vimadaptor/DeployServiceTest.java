@@ -53,6 +53,7 @@ import sonata.kernel.vimadaptor.commons.ServiceDeployResponse;
 import sonata.kernel.vimadaptor.commons.ServicePreparePayload;
 import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VimPreDeploymentList;
+import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
@@ -251,7 +252,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     String wrUuid = jsonObject.getString("uuid");
     Assert.assertTrue(status.equals("COMPLETED"));
     System.out.println("Mock Wrapper added, with uuid: " + wrUuid);
@@ -295,7 +296,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
     core.stop();
 
@@ -351,7 +352,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     String wrUuid = jsonObject.getString("uuid");
     Assert.assertTrue(status.equals("COMPLETED"));
     System.out.println("Mock Wrapper added, with uuid: " + wrUuid);
@@ -404,7 +405,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
     core.stop();
 
@@ -417,7 +418,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceOpenStackV1() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -495,7 +496,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     String computeWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue(status.equals("COMPLETED"));
     System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid);
@@ -533,7 +534,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String netWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
         status.equals("COMPLETED"));
@@ -541,10 +542,8 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    String baseInstanceUuid = dataV1.getNsd().getInstanceUuid();
+    String instanceUuid = dataV1.getNsd().getInstanceUuid();
     dataV1.setVimUuid(computeWrUuid);
-    dataV1.getNsd().setInstanceUuid(baseInstanceUuid + "-01");
-
     String body = mapper.writeValueAsString(dataV1);
 
     topic = "infrastructure.service.deploy";
@@ -577,10 +576,33 @@ public class DeployServiceTest implements MessageReceiver {
     for (VnfRecord vnfr : response.getVnfrs())
       Assert.assertTrue(vnfr.getStatus() == Status.offline);
 
+    
+    // SFC deconfiguration
+    // 1. De-configure SFC
+    output=null;
+    String message = "{\"service_instance_id\":\"" + instanceUuid +"\"}";
+    topic = "infrastructure.chain.deconfigure";
+    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(deconfigureNetworkMessage);
+    try {
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(2000);
+          System.out.println(output);
+        }
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
     // Service removal
     output = null;
-    String instanceUuid = baseInstanceUuid + "-01";
-    String message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
+    message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
     topic = "infrastructure.service.remove";
     ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -595,7 +617,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
 
     // VIM removal
@@ -614,7 +636,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
     output = null;
     message = "{\"uuid\":\"" + netWrUuid + "\"}";
@@ -631,21 +653,10 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     core.stop();
-
-
-    // clean the SFC engine
-    System.out.println("Cleaning the SFC environment...");
-    WrapperConfiguration config = new WrapperConfiguration();
-
-    config.setVimEndpoint("10.100.32.200");
-
-    OvsWrapper wrapper = new OvsWrapper(config);
-    wrapper.deconfigureNetworking(dataV1.getNsd().getInstanceUuid());
-
 
   }
 
@@ -656,7 +667,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployTwoServicesOpenStackV1() {
 
 
@@ -690,11 +701,17 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
 
-    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-        + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
-        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\"," + "\"tenant\":\"admin\""
-        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\"," + "\"pass\":\"admin_pass\"}";
+    // Add first PoP
+    // PoP Athens.200 Mitaka
+    String addVimBody = "{\"vim_type\":\"Heat\", "
+    + "\"configuration\":{"
+    + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+    + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
+    + "\"tenant\":\"admin\""
+    + "},"
+    + "\"city\":\"Athens\",\"country\":\"Greece\","
+    + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+    + "\"pass\":\"s0nata.d3m\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -713,7 +730,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     String computeWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue(status.equals("COMPLETED"));
     System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid);
@@ -741,7 +758,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String netWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
         status.equals("COMPLETED"));
@@ -956,7 +973,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
     output = null;
     message = "{\"uuid\":\"" + netWrUuid + "\"}";
@@ -977,7 +994,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     core.stop();
@@ -1007,7 +1024,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceIncremental() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1033,11 +1050,17 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
 
-    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-        + "\"tenant_ext_router\":\"0e5d6e42-e544-4ec3-8ce1-9ac950ae994b\", "
-        + "\"tenant_ext_net\":\"c999f013-2022-4464-b44f-88f4437f23b0\"," + "\"tenant\":\"admin\""
-        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"admin\"," + "\"pass\":\"admin_pass\"}";
+ // Add first PoP
+    // PoP Athens.200 Mitaka
+    String addVimBody = "{\"vim_type\":\"Heat\", "
+    + "\"configuration\":{"
+    + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+    + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
+    + "\"tenant\":\"admin\""
+    + "},"
+    + "\"city\":\"Athens\",\"country\":\"Greece\","
+    + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+    + "\"pass\":\"s0nata.d3m\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1052,7 +1075,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     String computeWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue(status.equals("COMPLETED"));
     System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid);
@@ -1075,7 +1098,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String netWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
         status.equals("COMPLETED"));
@@ -1094,10 +1117,10 @@ public class DeployServiceTest implements MessageReceiver {
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade =
-        new VnfImage("eu.sonata-nfv:vtc-vnf:0.1:1", "file:///test_images/sonata-vtc");
+        new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vtcImgade);
     VnfImage vfwImgade =
-        new VnfImage("eu.sonata-nfv:vfw-vnf:0.1:1", "file:///test_images/sonata-vfw");
+        new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
@@ -1121,7 +1144,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String message = jsonObject.getString("message");
     Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status
         + " - message: " + message, status.equals("COMPLETED"));
@@ -1183,7 +1206,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     body = mapper.writeValueAsString(netPayload);
 
-    topic = "infrastructure.network.configure";
+    topic = "infrastructure.chain.configure";
     ServicePlatformMessage networkConfigureMessage = new ServicePlatformMessage(body,
         "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
@@ -1199,7 +1222,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
         status.equals("COMPLETED"));
     System.out.println(
@@ -1207,8 +1230,30 @@ public class DeployServiceTest implements MessageReceiver {
 
     // Clean everything:
     // 1. De-configure SFC
+    output=null;
+    message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() +"\"}";
+    topic = "infrastructure.chain.deconfigure";
+    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(deconfigureNetworkMessage);
+    try {
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(2000);
+          System.out.println(output);
+        }
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    
     // 2. Remove Service
-    // Service removal (Still the old way)
+    // Service removal 
     output = null;
     String instanceUuid = data.getNsd().getInstanceUuid();
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -1246,7 +1291,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     output = null;
@@ -1264,7 +1309,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     core.stop();
@@ -1273,6 +1318,13 @@ public class DeployServiceTest implements MessageReceiver {
   }
 
 
+  /**
+   * This test is de-activated, if you want to use it with your NFVi-PoPs (at least two), please edit the addVimBody
+   * String member to match your OpenStack configuration and substitute the @ignore annotation with
+   * the @test annotation
+   * 
+   * @throws Exception
+   */
   @Test
   public void testDeployServiceIncrementalMultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -1325,7 +1377,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     String computeWrUuid1 = jsonObject.getString("uuid");
     Assert.assertTrue(status.equals("COMPLETED"));
     System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid1);
@@ -1348,7 +1400,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String netWrUuid1 = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
         status.equals("COMPLETED"));
@@ -1384,7 +1436,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String computeWrUuid2 = jsonObject.getString("uuid");
     Assert.assertTrue(status.equals("COMPLETED"));
     System.out.println("OpenStack Wrapper added, with uuid: " + computeWrUuid2);
@@ -1407,7 +1459,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String netWrUuid2 = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
         status.equals("COMPLETED"));
@@ -1415,7 +1467,28 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
+    
+    // List available PoP
+    System.out.println("[TwoPoPTest] Listing available NFVIi-PoP.");
 
+    topic = "infrastructure.management.compute.list";
+    ServicePlatformMessage listVimMessage =
+        new ServicePlatformMessage(null, null, topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(listVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    VimResources[] vimList = mapper.readValue(output, VimResources[].class);
+    System.out.println("[TwoPoPTest] Listing available PoP");
+    for (VimResources resource : vimList) {
+      System.out.println(mapper.writeValueAsString(resource));
+    }
+    
+    output = null;
     // Prepare the system for a service deployment
     System.out.println("[TwoPoPTest] Building service.prepare call.");
 
@@ -1467,7 +1540,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     String message = jsonObject.getString("message");
     Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status
         + " - message: " + message, status.equals("COMPLETED"));
@@ -1567,7 +1640,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     body = mapper.writeValueAsString(netPayload);
 
-    topic = "infrastructure.network.configure";
+    topic = "infrastructure.chain.configure";
     ServicePlatformMessage networkConfigureMessage = new ServicePlatformMessage(body,
         "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
@@ -1583,13 +1656,65 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = null;
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
         status.equals("COMPLETED"));
     System.out.println(
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
 
     output = null;
+    
+    //TODO WIM PART
+    
+    //De-configure SFC
+    
+    message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() +"\"}";
+    topic = "infrastructure.chain.deconfigure";
+    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(deconfigureNetworkMessage);
+    try {
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(2000);
+          System.out.println(output);
+        }
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    
+    output = null;
+    
+    //Remove service
+    message = "{\"instance_uuid\":\"" + data.getNsd().getInstanceUuid() +"\"}";
+    topic = "infrastructure.service.remove";
+    ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeInstanceMessage);
+    try {
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(2000);
+          System.out.println(output);
+        }
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    
+    core.stop();
+    
 
   }
 

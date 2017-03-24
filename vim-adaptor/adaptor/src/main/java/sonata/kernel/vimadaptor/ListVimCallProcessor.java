@@ -108,7 +108,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
       return true;
     } catch (JsonProcessingException e) {
       ServicePlatformMessage response =
-          new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"Internal Server Error\"}",
+          new ServicePlatformMessage("{\"request_status\":\"ERROR\",\"message\":\"Internal Server Error\"}",
               "application/json", this.getMessage().getReplyTo(), this.getSid(), null);
       this.getMux().enqueue(response);
       return false;

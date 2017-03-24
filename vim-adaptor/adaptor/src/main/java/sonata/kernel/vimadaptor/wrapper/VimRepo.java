@@ -1271,12 +1271,14 @@ public class VimRepo {
   }
 
   /**
-   * @param instanceUuid
-   * @return
+   * Return a list of the compute VIMs hosting at least one VNFs of the given Service Instance.
+   * 
+   * @param instanceUuid the UUID that identifies the Service Instance
+   * @return an array of String objecst representing the UUID of the VIMs
    */
-  public String getComputeVimUuidFromInstance(String instanceUuid) {
+  public String[] getComputeVimUuidFromInstance(String instanceUuid) {
 
-    String output = null;
+    String[] output = null;
 
     Connection connection = null;
     PreparedStatement stmt = null;
@@ -1294,14 +1296,14 @@ public class VimRepo {
           .prepareStatement("SELECT VIM_UUID FROM service_instances  WHERE INSTANCE_UUID=?;");
       stmt.setString(1, instanceUuid);
       rs = stmt.executeQuery();
-
-      if (rs.next()) {
-
-        output = rs.getString("VIM_UUID");
-
-      } else {
-        output = null;
-      }
+      ArrayList<String> uuids = new ArrayList<String>();
+      
+      while(rs.next()) {
+        uuids.add(rs.getString("VIM_UUID"));
+      } 
+      output = new String[uuids.size()];
+      output = uuids.toArray(output);
+          
     } catch (SQLException e) {
       Logger.error(e.getMessage());
       output = null;
@@ -1325,6 +1327,7 @@ public class VimRepo {
 
       }
     }
+    
     return output;
 
   }
