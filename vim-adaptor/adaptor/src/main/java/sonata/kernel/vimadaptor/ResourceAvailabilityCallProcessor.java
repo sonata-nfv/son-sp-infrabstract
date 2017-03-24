@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 import sonata.kernel.vimadaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.vimadaptor.commons.vnfd.Unit;
 import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.vimadaptor.commons.vnfd.VmFormat;
+import sonata.kernel.vimadaptor.commons.vnfd.VmFormatDeserializer;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 
 import java.io.IOException;
@@ -68,6 +70,7 @@ public class ResourceAvailabilityCallProcessor extends AbstractCallProcessor {
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Unit.class, new UnitDeserializer());
+    module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
     mapper.registerModule(module);
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     try {

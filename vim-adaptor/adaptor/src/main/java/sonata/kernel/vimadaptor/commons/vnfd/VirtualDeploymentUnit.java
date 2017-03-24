@@ -26,7 +26,6 @@
 
 package sonata.kernel.vimadaptor.commons.vnfd;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPoint;
@@ -34,24 +33,6 @@ import sonata.kernel.vimadaptor.commons.nsd.ConnectionPoint;
 import java.util.ArrayList;
 
 public class VirtualDeploymentUnit {
-
-  public enum VmFormat {
-    RAW("raw"), VHD("vhd"), VMDK("vmdk"), VDI("vdi"), ISO("iso"), QCOW2("qcow2"), DOCKER(
-        "docker"), OVA("ova"), OVF("ovf"), BARE("bare");
-
-    private final String name;
-
-    @JsonCreator
-    VmFormat(String name) {
-      this.name = name.toLowerCase();
-    }
-
-    @Override
-    public String toString() {
-      return this.name;
-    }
-
-  }
 
   private String description;
   private String id;

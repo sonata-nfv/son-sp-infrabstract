@@ -43,6 +43,8 @@ import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.ConnectionPointReference;
 import sonata.kernel.vimadaptor.commons.vnfd.Unit;
 import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.vimadaptor.commons.vnfd.VmFormat;
+import sonata.kernel.vimadaptor.commons.vnfd.VmFormatDeserializer;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;
@@ -93,6 +95,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Unit.class, new UnitDeserializer());
+    module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
     mapper.registerModule(module);
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
