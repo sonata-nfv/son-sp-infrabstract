@@ -26,6 +26,7 @@
 
 package sonata.kernel.vimadaptor.commons.vnfd;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPoint;
@@ -40,8 +41,9 @@ public class VirtualDeploymentUnit {
 
     private final String name;
 
+    @JsonCreator
     VmFormat(String name) {
-      this.name = name;
+      this.name = name.toLowerCase();
     }
 
     @Override

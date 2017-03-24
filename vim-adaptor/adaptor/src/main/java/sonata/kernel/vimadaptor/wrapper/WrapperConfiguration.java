@@ -110,8 +110,8 @@ public class WrapperConfiguration {
     return out;
   }
 
- 
- 
+
+
   public String getCity() {
     return city;
   }

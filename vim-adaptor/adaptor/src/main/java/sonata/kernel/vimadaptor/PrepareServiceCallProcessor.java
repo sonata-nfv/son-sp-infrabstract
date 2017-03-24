@@ -107,13 +107,13 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         for (VnfImage vnfImage : vim.getImages()) {
           if (!wr.isImageStored(vnfImage)) {
             wr.uploadImage(vnfImage);
-          }else{
+          } else {
             Logger.info("Image already stored in the VIM image repository");
           }
         }
 
-        if (WrapperBay.getInstance().getVimRepo()
-            .getServiceInstanceVimUuid(payload.getInstanceId(),vim.getUuid()) == null){
+        if (WrapperBay.getInstance().getVimRepo().getServiceInstanceVimUuid(payload.getInstanceId(),
+            vim.getUuid()) == null) {
           boolean success = wr.prepareService(payload.getInstanceId());
           if (!success) {
             throw new Exception("Unable to prepare the environment for instance: "
@@ -131,9 +131,9 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
 
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
-      this.sendToMux(
-          new ServicePlatformMessage("{\"request_status\":\"fail\",\"message\":\"" + e.getMessage() + "\"}",
-              "application/json", message.getReplyTo(), message.getSid(), null));
+      this.sendToMux(new ServicePlatformMessage(
+          "{\"request_status\":\"fail\",\"message\":\"" + e.getMessage() + "\"}",
+          "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }
     return out;

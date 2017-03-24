@@ -380,7 +380,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         repo.removeServiceInstanceEntry(instanceUuid);
         myPool.freeSubnets(instanceUuid);
         this.setChanged();
-        String body = "{\"status\":\"SUCCESS\",\"wrapper_uuid\":\""+this.config.getUuid()+"\"}";
+        String body = "{\"status\":\"SUCCESS\",\"wrapper_uuid\":\"" + this.config.getUuid() + "\"}";
         WrapperStatusUpdate update = new WrapperStatusUpdate(null, "SUCCESS", body);
         this.notifyObservers(update);
       }
@@ -555,7 +555,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             * vdu.getResourceRequirements().getStorage().getSizeUnit().getMultiplier();
         String flavorName = this.selectFlavor(vcpu, memoryInBytes, storageInBytes, vimFlavors);
         if (flavorName == null) {
-          throw new Exception("Cannot find an available flavor for requirements. CPU: "+vcpu+" - mem: "+memoryInBytes+" - sto: "+storageInBytes);
+          throw new Exception("Cannot find an available flavor for requirements. CPU: " + vcpu
+              + " - mem: " + memoryInBytes + " - sto: " + storageInBytes);
         }
         server.putProperty("flavor", flavorName);
         ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
@@ -711,7 +712,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return model;
   }
 
-  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors, String instanceUuid) throws Exception{
+  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors, String instanceUuid)
+      throws Exception {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
@@ -733,11 +735,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       server.putProperty("image",
           vnfd.getVendor() + "_" + vnfd.getName() + "_" + vnfd.getVersion() + "_" + vdu.getId());
       int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
-      double memoryInGB = vdu.getResourceRequirements().getMemory().getSize()*vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
-      double storageInGB = vdu.getResourceRequirements().getStorage().getSize()*vdu.getResourceRequirements().getStorage().getSizeUnit().getMultiplier();
+      double memoryInGB = vdu.getResourceRequirements().getMemory().getSize()
+          * vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
+      double storageInGB = vdu.getResourceRequirements().getStorage().getSize()
+          * vdu.getResourceRequirements().getStorage().getSizeUnit().getMultiplier();
       String flavorName = this.selectFlavor(vcpu, memoryInGB, storageInGB, flavors);
       if (flavorName == null) {
-        throw new Exception("Cannot find an available flavor for requirements. CPU: "+vcpu+" - mem: "+memoryInGB+" - sto: "+storageInGB);
+        throw new Exception("Cannot find an available flavor for requirements. CPU: " + vcpu
+            + " - mem: " + memoryInGB + " - sto: " + storageInGB);
       }
       server.putProperty("flavor", flavorName);
       ArrayList<HashMap<String, Object>> net = new ArrayList<HashMap<String, Object>>();
@@ -823,9 +828,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatModel stackAddendum;
 
     HeatTemplate template = client.getStackTemplate(stackName, stackUuid);
-    try{
-    stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
-    } catch (Exception e){
+    try {
+      stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
+    } catch (Exception e) {
       Logger.error(e.getMessage());
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Exception during VNFD translation.");

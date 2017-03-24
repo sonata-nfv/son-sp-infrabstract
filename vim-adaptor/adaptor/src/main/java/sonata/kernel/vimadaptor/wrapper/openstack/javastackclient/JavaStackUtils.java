@@ -73,9 +73,9 @@ public class JavaStackUtils {
         while ((line = reader.readLine()) != null) {
           sb.append(line);
         }
-        //Logger.debug("Response: " + sb.toString());
+        // Logger.debug("Response: " + sb.toString());
         return sb.toString();
-      }else{
+      } else {
         return null;
       }
     } else if (status == 403) {

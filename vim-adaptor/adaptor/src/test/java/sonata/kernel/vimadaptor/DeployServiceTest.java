@@ -448,16 +448,13 @@ public class DeployServiceTest implements MessageReceiver {
       Assert.assertTrue(false);
     }
 
-     // PoP Athens.200 Mitaka
-     String addVimBody = "{\"vim_type\":\"Heat\", "
-     + "\"configuration\":{"
-     + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
-     + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
-     + "\"tenant\":\"admin\""
-     + "},"
-     + "\"city\":\"Athens\",\"country\":\"Greece\","
-     + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-     + "\"pass\":\"s0nata.d3m\"}";
+    // PoP Athens.200 Mitaka
+    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+        + "\"pass\":\"s0nata.d3m\"}";
 
     // PoP Athens.10 Mitaka
     // String addVimBody = "{\"vim_type\":\"Heat\", "
@@ -481,7 +478,7 @@ public class DeployServiceTest implements MessageReceiver {
     // + "\"vim_address\":\"172.31.6.9\",\"username\":\"son-demo\","
     // + "\"pass\":\"S0n-D3m0\"}";
 
-     
+
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -510,17 +507,16 @@ public class DeployServiceTest implements MessageReceiver {
     // + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
 
     // PoP Athens .200
-     String addNetVimBody = "{\"vim_type\":\"ovs\", "
-     +
-     "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
-     + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
+    String addNetVimBody = "{\"vim_type\":\"ovs\", "
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
 
     // PoP Aveiro
     // String addNetVimBody = "{\"vim_type\":\"ovs\", "
     // +
     // "\"vim_address\":\"172.31.6.9\",\"username\":\"operator\",\"city\":\"Aveiro\",\"country\":\"Portugal\","
     // + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
-     
+
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -576,14 +572,14 @@ public class DeployServiceTest implements MessageReceiver {
     for (VnfRecord vnfr : response.getVnfrs())
       Assert.assertTrue(vnfr.getStatus() == Status.offline);
 
-    
+
     // SFC deconfiguration
     // 1. De-configure SFC
-    output=null;
-    String message = "{\"service_instance_id\":\"" + instanceUuid +"\"}";
+    output = null;
+    String message = "{\"service_instance_id\":\"" + instanceUuid + "\"}";
     topic = "infrastructure.chain.deconfigure";
-    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message, "application/json", topic,
-        UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);
     try {
       while (output == null) {
@@ -599,7 +595,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
     // Service removal
     output = null;
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -703,15 +700,12 @@ public class DeployServiceTest implements MessageReceiver {
 
     // Add first PoP
     // PoP Athens.200 Mitaka
-    String addVimBody = "{\"vim_type\":\"Heat\", "
-    + "\"configuration\":{"
-    + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
-    + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
-    + "\"tenant\":\"admin\""
-    + "},"
-    + "\"city\":\"Athens\",\"country\":\"Greece\","
-    + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-    + "\"pass\":\"s0nata.d3m\"}";
+    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+        + "\"pass\":\"s0nata.d3m\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1050,17 +1044,14 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
 
- // Add first PoP
+    // Add first PoP
     // PoP Athens.200 Mitaka
-    String addVimBody = "{\"vim_type\":\"Heat\", "
-    + "\"configuration\":{"
-    + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
-    + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
-    + "\"tenant\":\"admin\""
-    + "},"
-    + "\"city\":\"Athens\",\"country\":\"Greece\","
-    + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-    + "\"pass\":\"s0nata.d3m\"}";
+    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+        + "\"pass\":\"s0nata.d3m\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1116,11 +1107,11 @@ public class DeployServiceTest implements MessageReceiver {
     VimPreDeploymentList vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
-    VnfImage vtcImgade =
-        new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01",
+        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vtcImgade);
-    VnfImage vfwImgade =
-        new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1",
+        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
@@ -1230,11 +1221,11 @@ public class DeployServiceTest implements MessageReceiver {
 
     // Clean everything:
     // 1. De-configure SFC
-    output=null;
-    message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() +"\"}";
+    output = null;
+    message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() + "\"}";
     topic = "infrastructure.chain.deconfigure";
-    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message, "application/json", topic,
-        UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);
     try {
       while (output == null) {
@@ -1250,10 +1241,11 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
-    
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
+
     // 2. Remove Service
-    // Service removal 
+    // Service removal
     output = null;
     String instanceUuid = data.getNsd().getInstanceUuid();
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -1319,9 +1311,9 @@ public class DeployServiceTest implements MessageReceiver {
 
 
   /**
-   * This test is de-activated, if you want to use it with your NFVi-PoPs (at least two), please edit the addVimBody
-   * String member to match your OpenStack configuration and substitute the @ignore annotation with
-   * the @test annotation
+   * This test is de-activated, if you want to use it with your NFVi-PoPs (at least two), please
+   * edit the addVimBody String member to match your OpenStack configuration and substitute
+   * the @ignore annotation with the @test annotation
    * 
    * @throws Exception
    */
@@ -1353,15 +1345,12 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println("[TwoPoPTest] Adding PoP .200");
     // Add first PoP
     // PoP Athens.200 Mitaka
-    String addVimBody = "{\"vim_type\":\"Heat\", "
-    + "\"configuration\":{"
-    + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
-    + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\","
-    + "\"tenant\":\"admin\""
-    + "},"
-    + "\"city\":\"Athens\",\"country\":\"Greece\","
-    + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-    + "\"pass\":\"s0nata.d3m\"}";
+    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+        + "\"pass\":\"s0nata.d3m\"}";
 
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
@@ -1412,15 +1401,12 @@ public class DeployServiceTest implements MessageReceiver {
     // Add second PoP
     System.out.println("[TwoPoPTest] Adding PoP .10");
     // PoP Athens.10 Mitaka
-     addVimBody = "{\"vim_type\":\"Heat\", "
-     + "\"configuration\":{"
-     + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
-     + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
-     + "\"tenant\":\"sonata.dem\""
-     + "},"
-     + "\"city\":\"Athens\",\"country\":\"Greece\","
-     + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dem\","
-     + "\"pass\":\"s0n@t@.dem\"}";
+    addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+        + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
+        + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
+        + "\"tenant\":\"sonata.dem\"" + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dem\","
+        + "\"pass\":\"s0n@t@.dem\"}";
 
     topic = "infrastructure.management.compute.add";
     addVimMessage = new ServicePlatformMessage(addVimBody, "application/json", topic,
@@ -1467,7 +1453,7 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    
+
     // List available PoP
     System.out.println("[TwoPoPTest] Listing available NFVIi-PoP.");
 
@@ -1487,7 +1473,7 @@ public class DeployServiceTest implements MessageReceiver {
     for (VimResources resource : vimList) {
       System.out.println(mapper.writeValueAsString(resource));
     }
-    
+
     output = null;
     // Prepare the system for a service deployment
     System.out.println("[TwoPoPTest] Building service.prepare call.");
@@ -1500,8 +1486,9 @@ public class DeployServiceTest implements MessageReceiver {
     vimDepList.setUuid(computeWrUuid1);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade =
-        //new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01", "file:///test_images/sonata-vtc.img");
-        new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+        // new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01", "file:///test_images/sonata-vtc.img");
+        new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01",
+            "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
 
     vnfImages.add(vtcImgade);
     vimDepList.setImages(vnfImages);
@@ -1513,8 +1500,9 @@ public class DeployServiceTest implements MessageReceiver {
     vimDepList.setUuid(computeWrUuid2);
     vnfImages = new ArrayList<VnfImage>();
     VnfImage vfwImgade =
-        //new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1", "file:///test_images/sonata-vfw.img");
-        new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1", "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+        // new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1", "file:///test_images/sonata-vfw.img");
+        new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1",
+            "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
@@ -1549,7 +1537,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     // Deploy the two VNFs, one in each PoP
     ArrayList<VnfRecord> records = new ArrayList<VnfRecord>();
-    
+
     // vTC VNF in PoP#1
     output = null;
 
@@ -1591,7 +1579,7 @@ public class DeployServiceTest implements MessageReceiver {
     // vFw VNF in PoP#2
     output = null;
     response = null;
-    
+
     vnfPayload = new FunctionDeployPayload();
     vnfPayload.setVnfd(vfwVnfd);
     vnfPayload.setVimUuid(computeWrUuid2);
@@ -1599,8 +1587,8 @@ public class DeployServiceTest implements MessageReceiver {
     body = mapper.writeValueAsString(vnfPayload);
 
     topic = "infrastructure.function.deploy";
-    functionDeployMessage = new ServicePlatformMessage(body,
-        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+    functionDeployMessage = new ServicePlatformMessage(body, "application/x-yaml", topic,
+        UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(functionDeployMessage);
 
@@ -1626,7 +1614,7 @@ public class DeployServiceTest implements MessageReceiver {
     Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
     Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
     records.add(response.getVnfr());
-    
+
     // Finally configure Networking in each NFVi-PoP (VIMs)
 
     output = null;
@@ -1663,15 +1651,15 @@ public class DeployServiceTest implements MessageReceiver {
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
 
     output = null;
-    
-    //TODO WIM PART
-    
-    //De-configure SFC
-    
-    message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() +"\"}";
+
+    // TODO WIM PART
+
+    // De-configure SFC
+
+    message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() + "\"}";
     topic = "infrastructure.chain.deconfigure";
-    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message, "application/json", topic,
-        UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);
     try {
       while (output == null) {
@@ -1688,14 +1676,14 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
-    
+
     output = null;
-    
-    //Remove service
-    message = "{\"instance_uuid\":\"" + data.getNsd().getInstanceUuid() +"\"}";
+
+    // Remove service
+    message = "{\"instance_uuid\":\"" + data.getNsd().getInstanceUuid() + "\"}";
     topic = "infrastructure.service.remove";
-    ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message, "application/json", topic,
-        UUID.randomUUID().toString(), topic);
+    ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeInstanceMessage);
     try {
       while (output == null) {
@@ -1712,9 +1700,9 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
-    
+
     core.stop();
-    
+
 
   }
 

@@ -51,7 +51,8 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
    * @param sid
    * @param mux
    */
-  public DeconfigureNetworkCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
+  public DeconfigureNetworkCallProcessor(ServicePlatformMessage message, String sid,
+      AdaptorMux mux) {
     super(message, sid, mux);
   }
 
@@ -73,7 +74,7 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
    */
   @Override
   public boolean process(ServicePlatformMessage message) {
-    
+
     NetworkDeconfigurePayload data = null;
     ObjectMapper mapper = new ObjectMapper();
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
@@ -83,21 +84,27 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
       Logger.info("payload parsed");
     } catch (IOException e) {
       Logger.error("Unable to parse the payload received");
-      String responseJson = "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
+      String responseJson =
+          "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
       this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
           message.getReplyTo(), message.getSid(), null));
       return false;
     }
     Logger.info(
-      "Received networking.deconfigure call for service instance " + data.getServiceInstanceId());
-    
-    String[] computeUuids = WrapperBay.getInstance().getVimRepo().getComputeVimUuidFromInstance(data.getServiceInstanceId());
-    
-    for(String computeVimUuid : computeUuids){
-      WrapperRecord netVimRecord = WrapperBay.getInstance().getVimRepo().getNetworkVimFromComputeVimUuid(computeVimUuid);
-      if(netVimRecord==null){
-        Logger.error("Unable to deconfigure networking. Cannot find NetVim associated with compute vim " + computeVimUuid);
-        String responseJson = "{\"request_status\":\"ERROR\",\"message\":\"Internal Server Error. Can't deconfigure networking.\"}";
+        "Received networking.deconfigure call for service instance " + data.getServiceInstanceId());
+
+    String[] computeUuids = WrapperBay.getInstance().getVimRepo()
+        .getComputeVimUuidFromInstance(data.getServiceInstanceId());
+
+    for (String computeVimUuid : computeUuids) {
+      WrapperRecord netVimRecord =
+          WrapperBay.getInstance().getVimRepo().getNetworkVimFromComputeVimUuid(computeVimUuid);
+      if (netVimRecord == null) {
+        Logger.error(
+            "Unable to deconfigure networking. Cannot find NetVim associated with compute vim "
+                + computeVimUuid);
+        String responseJson =
+            "{\"request_status\":\"ERROR\",\"message\":\"Internal Server Error. Can't deconfigure networking.\"}";
         this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
             message.getReplyTo(), message.getSid(), null));
         return false;
@@ -106,15 +113,17 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
       try {
         netWr.deconfigureNetworking(data.getServiceInstanceId());
       } catch (Exception e) {
-        Logger.error("Unable to deconfigure networking on VIM: " + netVimRecord.getConfig().getUuid(), e);
-        String responseJson = "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
+        Logger.error(
+            "Unable to deconfigure networking on VIM: " + netVimRecord.getConfig().getUuid(), e);
+        String responseJson =
+            "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
         this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
             message.getReplyTo(), message.getSid(), null));
         return false;
       }
     }
-    
-      
+
+
     String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));

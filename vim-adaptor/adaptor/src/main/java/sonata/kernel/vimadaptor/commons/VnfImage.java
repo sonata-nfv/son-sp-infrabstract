@@ -37,7 +37,7 @@ public class VnfImage {
 
   public VnfImage() {}
 
-  
+
   /**
    * @param uuid
    * @param url

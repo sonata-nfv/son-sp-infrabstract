@@ -91,7 +91,7 @@ public class AdaptorDispatcher implements Runnable {
   }
 
   private void handleNetworkMessage(ServicePlatformMessage message) {
-    if (message.getTopic().endsWith("deconfigure")){
+    if (message.getTopic().endsWith("deconfigure")) {
       Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new DeconfigureNetworkCallProcessor(message, message.getSid(), mux));
     } else if (message.getTopic().endsWith("configure")) {

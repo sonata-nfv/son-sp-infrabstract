@@ -131,9 +131,8 @@ public class VimRepo {
         stmt = connection.createStatement();
         sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," + " TYPE TEXT NOT NULL,"
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
-            + " CONFIGURATION TEXT NOT NULL,"
-            + " CITY TEXT," + "COUNTRY TEXT," 
-            + " PASS TEXT," + " AUTHKEY TEXT" + ");";
+            + " CONFIGURATION TEXT NOT NULL," + " CITY TEXT," + "COUNTRY TEXT," + " PASS TEXT,"
+            + " AUTHKEY TEXT" + ");";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE service_instances " + "(" + "INSTANCE_UUID TEXT NOT NULL,"
             + " VIM_INSTANCE_UUID TEXT NOT NULL," + " VIM_INSTANCE_NAME TEXT NOT NULL,"
@@ -595,7 +594,7 @@ public class VimRepo {
         String configuration = rs.getString("CONFIGURATION");
         String city = rs.getString("CITY");
         String country = rs.getString("COUNTRY");
-        
+
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
@@ -684,7 +683,7 @@ public class VimRepo {
         String configuration = rs.getString("CONFIGURATION");
         String city = rs.getString("CITY");
         String country = rs.getString("COUNTRY");
-        
+
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
@@ -696,7 +695,7 @@ public class VimRepo {
         config.setAuthKey(key);
         config.setCity(city);
         config.setCountry(country);
-        
+
         Wrapper wrapper = WrapperFactory.createWrapper(config);
         output = new WrapperRecord(wrapper, config, null);
 
@@ -1297,13 +1296,13 @@ public class VimRepo {
       stmt.setString(1, instanceUuid);
       rs = stmt.executeQuery();
       ArrayList<String> uuids = new ArrayList<String>();
-      
-      while(rs.next()) {
+
+      while (rs.next()) {
         uuids.add(rs.getString("VIM_UUID"));
-      } 
+      }
       output = new String[uuids.size()];
       output = uuids.toArray(output);
-          
+
     } catch (SQLException e) {
       Logger.error(e.getMessage());
       output = null;
@@ -1327,7 +1326,7 @@ public class VimRepo {
 
       }
     }
-    
+
     return output;
 
   }

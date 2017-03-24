@@ -167,9 +167,9 @@ public class OvsWrapperTest {
 
   }
 
-  
+
   @Ignore
-  public void testOvsWrapperSinglePoP() throws JsonProcessingException{
+  public void testOvsWrapperSinglePoP() throws JsonProcessingException {
     VimRepo repoInstance = new VimRepo();
     WrapperBay.getInstance().setRepo(repoInstance);
     String instanceId = data.getNsd().getInstanceUuid();
@@ -183,14 +183,15 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(computeUuid1);
     config.setWrapperType(WrapperType.COMPUTE);
-    String configs = "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
+    String configs =
+        "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
     WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write the compute vim", out);
-    
+
     config = new WrapperConfiguration();
     config.setVimEndpoint("10.100.32.10");
     config.setVimVendor(NetworkVimVendor.OVS);
@@ -198,12 +199,12 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(netUuid1);
     config.setWrapperType(WrapperType.NETWORK);
-    config.setConfiguration("{\"compute_uuid\":\""+computeUuid1+"\"}");
+    config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
     record = new WrapperRecord(new OvsWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     repoInstance.writeNetworkVimLink(computeUuid1, netUuid1);
-    
- // Populate VimRepo with Instance data, VNF1 And VNF2 are deployed on PoP1, VNF3 on PoP2, and
+
+    // Populate VimRepo with Instance data, VNF1 And VNF2 are deployed on PoP1, VNF3 on PoP2, and
     // VNF4 and VNF5 on PoP3
     repoInstance.writeServiceInstanceEntry(instanceId, "1", "stack-1", computeUuid1);
 
@@ -225,7 +226,8 @@ public class OvsWrapperTest {
     netData.setVnfds(data.getVnfdList());
     netData.setVnfrs(records);
     String message = mapper.writeValueAsString(netData);
-    LinkedBlockingQueue<ServicePlatformMessage> outQueue = new LinkedBlockingQueue<ServicePlatformMessage>();
+    LinkedBlockingQueue<ServicePlatformMessage> outQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
     AdaptorMux mux = new AdaptorMux(outQueue);
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/xyaml",
         "chain.setup", "aVeryNiceSession", "chain.setup");
@@ -234,21 +236,21 @@ public class OvsWrapperTest {
     t.run();
     try {
       ServicePlatformMessage response = outQueue.take();
-      
+
       JSONTokener tokener = new JSONTokener(response.getBody());
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
       String status = jsonObject.getString("status");
       String responseMessage = jsonObject.getString("message");
       Assert.assertTrue("Request Not completed.", status.equals("COMPLETED"));
-      
+
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    
-    
+
+
   }
-  
+
   @Ignore
   public void testOvsWrapperMultiPoP() throws Exception {
 
@@ -270,10 +272,12 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(computeUuid1);
     config.setWrapperType(WrapperType.COMPUTE);
-    String configs = "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
+    String configs =
+        "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
     config.setConfiguration(configs);
     config.setCity("London");
-    config.setCountry("England");    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
+    config.setCountry("England");
+    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
     Assert.assertTrue("Unable to write the compute vim", out);
 
@@ -284,7 +288,7 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(netUuid1);
     config.setWrapperType(WrapperType.NETWORK);
-    config.setConfiguration("{\"compute_uuid\":\""+computeUuid1+"\"}");
+    config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
     record = new WrapperRecord(new OvsWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     repoInstance.writeNetworkVimLink(computeUuid1, netUuid1);
@@ -297,7 +301,8 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(computeUuid2);
     config.setWrapperType(WrapperType.COMPUTE);
-    configs = "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
+    configs =
+        "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
@@ -312,7 +317,7 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(netUuid2);
     config.setWrapperType(WrapperType.NETWORK);
-    config.setConfiguration("{\"compute_uuid\":\""+computeUuid1+"\"}");
+    config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
     record = new WrapperRecord(new OvsWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     repoInstance.writeNetworkVimLink(computeUuid2, netUuid2);
@@ -325,7 +330,8 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(computeUuid3);
     config.setWrapperType(WrapperType.COMPUTE);
-    configs = "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
+    configs =
+        "{\"tenant\":\"the_tenant\",\"tenant_ext_net\":\"ext_net\",\"tenant_ext_router\":\"ext_router\"}";
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
@@ -340,7 +346,7 @@ public class OvsWrapperTest {
     config.setAuthPass("apass");
     config.setUuid(netUuid3);
     config.setWrapperType(WrapperType.NETWORK);
-    config.setConfiguration("{\"compute_uuid\":\""+computeUuid1+"\"}");
+    config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
     record = new WrapperRecord(new OvsWrapper(config), config, null);
     out = repoInstance.writeVimEntry(config.getUuid(), record);
     repoInstance.writeNetworkVimLink(computeUuid3, netUuid3);
@@ -370,7 +376,8 @@ public class OvsWrapperTest {
     netData.setVnfds(data.getVnfdList());
     netData.setVnfrs(records);
     String message = mapper.writeValueAsString(netData);
-    LinkedBlockingQueue<ServicePlatformMessage> outQueue = new LinkedBlockingQueue<ServicePlatformMessage>();
+    LinkedBlockingQueue<ServicePlatformMessage> outQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
     AdaptorMux mux = new AdaptorMux(outQueue);
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/xyaml",
         "chain.setup", "abla", "chain.setup");
@@ -380,13 +387,13 @@ public class OvsWrapperTest {
 
     try {
       ServicePlatformMessage response = outQueue.take();
-      
+
       JSONTokener tokener = new JSONTokener(response.getBody());
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
       String status = jsonObject.getString("status");
       String responseMessage = jsonObject.getString("message");
-      Assert.assertTrue("Request Not completed. Message: "+message,status.equals("COMPLETED"));
-      
+      Assert.assertTrue("Request Not completed. Message: " + message, status.equals("COMPLETED"));
+
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();

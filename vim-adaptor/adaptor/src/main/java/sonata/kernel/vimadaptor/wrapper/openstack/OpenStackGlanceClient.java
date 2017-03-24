@@ -132,10 +132,10 @@ public class OpenStackGlanceClient {
 
     response =
         JavaStackUtils.convertHttpResponseToString(javaStack.createImage("", "", "", imageName));
-    
+
     Image imageContainerData = mapper.readValue(response, Image.class);
-    Logger.debug("[Glance-client] Image container creade with UUID: "+imageContainerData.getId());
-    
+    Logger.debug("[Glance-client] Image container creade with UUID: " + imageContainerData.getId());
+
     return imageContainerData.getId();
   }
 

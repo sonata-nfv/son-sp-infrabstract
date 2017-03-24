@@ -139,7 +139,7 @@ public class OpenStackHeatClient {
 
       String response = JavaStackUtils
           .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
-      //Logger.debug("Stack response: " + response);
+      // Logger.debug("Stack response: " + response);
     } catch (Exception e) {
       Logger.error(
           "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());

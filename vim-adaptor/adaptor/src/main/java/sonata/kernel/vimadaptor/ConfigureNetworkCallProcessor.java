@@ -88,7 +88,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
    */
   @Override
   public boolean process(ServicePlatformMessage message) {
-    
+
     data = null;
     ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
@@ -101,13 +101,14 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       Logger.info("payload parsed");
     } catch (IOException e) {
       Logger.error("Unable to parse the payload received");
-      String responseJson = "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
+      String responseJson =
+          "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
       this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
           message.getReplyTo(), message.getSid(), null));
       return false;
     }
     Logger.info(
-      "Received networking.configure call for service instance " + data.getServiceInstanceId());
+        "Received networking.configure call for service instance " + data.getServiceInstanceId());
     ServiceDescriptor nsd = data.getNsd();
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
     ArrayList<VnfDescriptor> vnfds = data.getVnfds();
@@ -217,7 +218,8 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             netWr.configureNetworking(wrapperPayload);
           } catch (Exception e) {
             Logger.error("Unable to configure networking on VIM: " + netVimUuid, e);
-            String responseJson = "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
+            String responseJson =
+                "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
             this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
                 message.getReplyTo(), message.getSid(), null));
             return false;

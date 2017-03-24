@@ -79,7 +79,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String city = jsonObject.getString("city");
     String country = jsonObject.getString("country");
     String configuration = jsonObject.getJSONObject("configuration").toString();
-    
+
     String computeVimRef = null;
     VimVendor vimVendor = null;
 
@@ -101,7 +101,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     config.setCity(city);
     config.setCountry(country);
     config.setConfiguration(configuration);
-    
+
     Logger.debug("Parsed Wrapper Configuration: ");
     System.out.println(config.toString());
 

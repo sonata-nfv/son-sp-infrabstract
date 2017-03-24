@@ -33,8 +33,8 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
-  
-  
+
+
   private String id;
   private String[] methods;
   private Project project;

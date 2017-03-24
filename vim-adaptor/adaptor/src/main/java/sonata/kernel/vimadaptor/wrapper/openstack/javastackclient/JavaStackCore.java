@@ -513,11 +513,9 @@ public class JavaStackCore {
       buildUrl.append(String.format("/%s/images", Constants.IMAGE_VERSION.toString()));
 
       createImage = new HttpPost(buildUrl.toString());
-      String requestBody = String.format(
-          "{ \"container_format\": \"bare\"," + "\"disk_format\": \"raw\"," + " \"name\": \"%s\""
-              + ",\"visibility\":\"public\""
-              + "}",
-          name);
+      String requestBody =
+          String.format("{ \"container_format\": \"bare\"," + "\"disk_format\": \"raw\","
+              + " \"name\": \"%s\"" + ",\"visibility\":\"public\"" + "}", name);
 
       createImage.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
       createImage.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
@@ -550,12 +548,12 @@ public class JavaStackCore {
       uploadImage.setEntity(new FileEntity(new File(binaryImageLocalFilePath)));
       response = httpClient.execute(uploadImage);
       Logger.debug("[JavaStackCore] Response of binary Image upload");
-      Logger.debug(response.toString());      
+      Logger.debug(response.toString());
     } else {
       throw new IOException(
           "You must Authenticate before issuing this request, please re-authenticate. ");
     }
-    
+
     return response;
   }
 
@@ -582,7 +580,7 @@ public class JavaStackCore {
 
       Logger.debug("HTTP request:");
       Logger.debug(listImages.toString());
-      
+
       response = httpClient.execute(listImages);
       Logger.debug("HTTP response:");
       Logger.debug(response.toString());
