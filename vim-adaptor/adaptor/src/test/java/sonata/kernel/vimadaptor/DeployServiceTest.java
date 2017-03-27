@@ -592,8 +592,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status,
-        status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
     // Service removal
     output = null;
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -1238,8 +1237,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status,
-        status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
 
     // 2. Remove Service
     // Service removal
@@ -1464,7 +1462,7 @@ public class DeployServiceTest implements MessageReceiver {
         mon.wait(1000);
       }
     }
-      VimResources[] vimList = mapper.readValue(output, VimResources[].class);
+    VimResources[] vimList = mapper.readValue(output, VimResources[].class);
     System.out.println("[TwoPoPTest] Listing available PoP");
     for (VimResources resource : vimList) {
       System.out.println(mapper.writeValueAsString(resource));

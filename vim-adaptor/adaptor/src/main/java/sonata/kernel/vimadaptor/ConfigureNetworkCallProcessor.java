@@ -27,27 +27,18 @@
 
 package sonata.kernel.vimadaptor;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
-import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
-import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointTypeDeserializer;
 import sonata.kernel.vimadaptor.commons.nsd.ForwardingGraph;
 import sonata.kernel.vimadaptor.commons.nsd.NetworkForwardingPath;
 import sonata.kernel.vimadaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.ConnectionPointReference;
-import sonata.kernel.vimadaptor.commons.vnfd.Unit;
-import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
-import sonata.kernel.vimadaptor.commons.vnfd.VmFormat;
-import sonata.kernel.vimadaptor.commons.vnfd.VmFormatDeserializer;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;

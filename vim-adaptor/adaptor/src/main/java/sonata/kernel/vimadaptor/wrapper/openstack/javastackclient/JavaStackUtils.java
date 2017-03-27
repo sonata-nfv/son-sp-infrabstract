@@ -40,7 +40,6 @@ import java.nio.file.Paths;
 
 public class JavaStackUtils {
 
-  @SuppressWarnings("unused")
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
 
   public static String readFile(String filePath) throws IOException {

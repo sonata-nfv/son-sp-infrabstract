@@ -26,13 +26,8 @@
 
 package sonata.kernel.vimadaptor.wrapper;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -45,23 +40,11 @@ import sonata.kernel.vimadaptor.AdaptorMux;
 import sonata.kernel.vimadaptor.ConfigureNetworkCallProcessor;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
-import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
-import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointTypeDeserializer;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.vimadaptor.commons.vnfd.Unit;
-import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
-import sonata.kernel.vimadaptor.commons.vnfd.VmFormat;
-import sonata.kernel.vimadaptor.commons.vnfd.VmFormatDeserializer;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
-import sonata.kernel.vimadaptor.wrapper.ComputeVimVendor;
-import sonata.kernel.vimadaptor.wrapper.NetworkVimVendor;
-import sonata.kernel.vimadaptor.wrapper.VimRepo;
-import sonata.kernel.vimadaptor.wrapper.WrapperBay;
-import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.vimadaptor.wrapper.WrapperRecord;
-import sonata.kernel.vimadaptor.wrapper.WrapperType;
 import sonata.kernel.vimadaptor.wrapper.mock.ComputeMockWrapper;
 import sonata.kernel.vimadaptor.wrapper.ovsWrapper.OvsWrapper;
 
@@ -89,17 +72,7 @@ public class OvsWrapperTest {
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
-    this.mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    //module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
-    //module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    this.mapper = SonataManifestMapper.getSonataMapper();
 
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
@@ -247,7 +220,7 @@ public class OvsWrapperTest {
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
       String status = jsonObject.getString("status");
       String responseMessage = jsonObject.getString("message");
-      Assert.assertTrue("Request Not completed.", status.equals("COMPLETED"));
+      Assert.assertTrue("Request Not completed: " + responseMessage, status.equals("COMPLETED"));
 
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block
@@ -398,7 +371,8 @@ public class OvsWrapperTest {
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
       String status = jsonObject.getString("status");
       String responseMessage = jsonObject.getString("message");
-      Assert.assertTrue("Request Not completed. Message: " + message, status.equals("COMPLETED"));
+      Assert.assertTrue("Request Not completed. Message: " + responseMessage,
+          status.equals("COMPLETED"));
 
     } catch (InterruptedException e) {
       // TODO Auto-generated catch block

@@ -32,8 +32,9 @@ public class VimNetTable {
 
 
   private Hashtable<String, IpNetPool> vimTable;
-  
-  private static VimNetTable myInstance= null;
+
+  private static VimNetTable myInstance = null;
+
   /**
    * get Singleton instance method.
    * 
@@ -49,23 +50,22 @@ public class VimNetTable {
   public static void resetInstance() {
     myInstance = null;
   }
-  
-  private VimNetTable(){
+
+  private VimNetTable() {
     this.vimTable = new Hashtable<String, IpNetPool>();
   }
-  
-  public void registerVim(String vimUuid){
-    if(this.vimTable.containsKey(vimUuid))
-      return;
+
+  public void registerVim(String vimUuid) {
+    if (this.vimTable.containsKey(vimUuid)) return;
     IpNetPool pool = new IpNetPool("192.0.0.0/8");
     this.vimTable.put(vimUuid, pool);
   }
-  
-  public IpNetPool getNetPool(String vimUuid){
+
+  public IpNetPool getNetPool(String vimUuid) {
     return vimTable.get(vimUuid);
   }
-  
-  public void deregisterVim(String vimUuid){
+
+  public void deregisterVim(String vimUuid) {
     this.vimTable.remove(vimUuid);
   }
 }

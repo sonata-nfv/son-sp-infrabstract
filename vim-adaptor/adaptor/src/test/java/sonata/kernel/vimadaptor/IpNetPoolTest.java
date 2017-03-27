@@ -143,9 +143,9 @@ public class IpNetPoolTest {
 
 
   }
-  
+
   @After
-  public void deregisterTestVim(){
+  public void deregisterTestVim() {
     VimNetTable.getInstance().deregisterVim("1111-1111");
   }
 }

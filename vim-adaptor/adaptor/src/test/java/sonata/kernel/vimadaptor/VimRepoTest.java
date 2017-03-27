@@ -146,7 +146,7 @@ public class VimRepoTest {
 
     Assert.assertTrue("Errors while writing the instance", out);
 
-    out = repoInstance.removeServiceInstanceEntry("1","xxxx-xxxxxxxx-xxxxxxxx-xxxx");
+    out = repoInstance.removeServiceInstanceEntry("1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while removing the instance", out);
 
@@ -166,7 +166,7 @@ public class VimRepoTest {
 
     Assert.assertTrue("Retrieved vim UUID different from the stored UUID", vimUuid.equals("1-1"));
 
-    out = repoInstance.removeServiceInstanceEntry("1","xxxx-xxxxxxxx-xxxxxxxx-xxxx");
+    out = repoInstance.removeServiceInstanceEntry("1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while removing the instance", out);
   }
@@ -186,7 +186,7 @@ public class VimRepoTest {
     Assert.assertTrue("Retrieved vim Name different from the stored Name",
         vimName.equals("stack1-1"));
 
-    out = repoInstance.removeServiceInstanceEntry("1","xxxx-xxxxxxxx-xxxxxxxx-xxxx");
+    out = repoInstance.removeServiceInstanceEntry("1", "xxxx-xxxxxxxx-xxxxxxxx-xxxx");
 
     Assert.assertTrue("Errors while removing the instance", out);
 
@@ -219,8 +219,8 @@ public class VimRepoTest {
 
     Assert.assertFalse(out);
 
-    repoInstance.removeServiceInstanceEntry("1","xxxx-xxxx");
-    repoInstance.removeServiceInstanceEntry("1","yyyy-yyyy");
+    repoInstance.removeServiceInstanceEntry("1", "xxxx-xxxx");
+    repoInstance.removeServiceInstanceEntry("1", "yyyy-yyyy");
     stackId = repoInstance.getServiceInstanceVimUuidByFunction("0001");
     Assert.assertNull(stackId);
     stackId = repoInstance.getServiceInstanceVimUuidByFunction("0002");

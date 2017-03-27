@@ -419,7 +419,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // user management is in place.
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
-//    String tenant = object.getString("tenant");
+    // String tenant = object.getString("tenant");
     String tenantExtNet = object.getString("tenant_ext_net");
     String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
@@ -725,11 +725,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // user management is in place.
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
-    //String tenant = object.getString("tenant");
+    // String tenant = object.getString("tenant");
     String tenantExtNet = object.getString("tenant_ext_net");
-    //String tenantExtRouter = object.getString("tenant_ext_router");
+    // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
-    
+
     HeatModel model = new HeatModel();
 
     ArrayList<String> publicPortNames = new ArrayList<String>();
@@ -748,12 +748,13 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       double storageInGB = vdu.getResourceRequirements().getStorage().getSize()
           * vdu.getResourceRequirements().getStorage().getSizeUnit().getMultiplier();
       String flavorName = null;
-      try{
+      try {
         flavorName = this.selectFlavor(vcpu, memoryInGB, storageInGB, flavors);
       } catch (Exception e) {
-        Logger.error("Exception while searching for available flavor for the requirements: "+e.getMessage());
+        Logger.error("Exception while searching for available flavor for the requirements: "
+            + e.getMessage());
         throw new Exception("Cannot find an available flavor for requirements. CPU: " + vcpu
-          + " - mem: " + memoryInGB + " - sto: " + storageInGB);
+            + " - mem: " + memoryInGB + " - sto: " + storageInGB);
       }
       if (flavorName == null) {
         Logger.error("Cannot find an available flavor for the requirements. CPU: " + vcpu
@@ -825,8 +826,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
-    //String tenantExtNet = object.getString("tenant_ext_net");
-    //String tenantExtRouter = object.getString("tenant_ext_router");
+    // String tenantExtNet = object.getString("tenant_ext_net");
+    // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
 
@@ -845,18 +846,18 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatModel stackAddendum;
 
     HeatTemplate template = client.getStackTemplate(stackName, stackUuid);
-    if( template == null){
+    if (template == null) {
       Logger.error("Error retrieveing the stack template.");
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Cannot retrieve service stack from VIM.");
       this.markAsChanged();
       this.notifyObservers(update);
-      return;  
+      return;
     }
     try {
       stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
     } catch (Exception e) {
-      Logger.error("Error: "+ e.getMessage());
+      Logger.error("Error: " + e.getMessage());
       e.printStackTrace();
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Exception during VNFD translation.");

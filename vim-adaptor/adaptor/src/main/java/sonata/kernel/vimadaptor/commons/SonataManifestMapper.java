@@ -31,13 +31,13 @@ public class SonataManifestMapper {
 
   private static SonataManifestMapper myInstance = null;
   private ObjectMapper mapper;
-  
-  private SonataManifestMapper(){
+
+  private SonataManifestMapper() {
     this.mapper = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Unit.class, new UnitDeserializer());
-    //module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
-    //module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
+    // module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
     mapper.registerModule(module);
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
@@ -45,15 +45,14 @@ public class SonataManifestMapper {
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
   }
-  
-  private ObjectMapper getMapper(){
+
+  private ObjectMapper getMapper() {
     return this.mapper;
   }
-  
-  public static ObjectMapper getSonataMapper(){
-    if(myInstance==null)
-      myInstance = new SonataManifestMapper();
+
+  public static ObjectMapper getSonataMapper() {
+    if (myInstance == null) myInstance = new SonataManifestMapper();
     return myInstance.getMapper();
   }
-  
+
 }

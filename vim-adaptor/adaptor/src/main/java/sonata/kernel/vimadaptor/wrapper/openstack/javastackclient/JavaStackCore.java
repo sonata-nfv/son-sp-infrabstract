@@ -28,7 +28,6 @@
 package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jcraft.jsch.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpResponseFactory;
