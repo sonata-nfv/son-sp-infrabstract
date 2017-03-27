@@ -58,7 +58,8 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     String[] topicSplit = message.getTopic().split("\\.");
     String wrTypeString = topicSplit[topicSplit.length - 2];
     String uuid = jsonObject.getString("uuid");
-    if (uuid == null) this.sendResponse("{\"status\":\"ERROR\",\"message\":\"Malformed request\"}");
+    if (uuid == null)
+      this.sendResponse("{\"request_status\":\"ERROR\",\"message\":\"Malformed request\"}");
     WrapperType type = WrapperType.getByName(wrTypeString);
     String output = null;
     if (type.equals(WrapperType.COMPUTE)) {

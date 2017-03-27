@@ -27,11 +27,13 @@
 package sonata.kernel.vimadaptor;
 
 
+import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.commons.IpNetPool;
+import sonata.kernel.vimadaptor.commons.VimNetTable;
 
 import java.util.ArrayList;
 import java.util.UUID;
@@ -49,8 +51,8 @@ public class IpNetPoolTest {
    */
   @Before
   public void setUp() {
-    IpNetPool.resetInstance();
-    pool = IpNetPool.getInstance();
+    VimNetTable.getInstance().registerVim("1111-1111");
+    pool = VimNetTable.getInstance().getNetPool("1111-1111");
   }
 
 
@@ -89,7 +91,7 @@ public class IpNetPoolTest {
   @Test
   public void testReserveSubnetRangeTooMany() {
 
-    pool = IpNetPool.getInstance();
+    pool = VimNetTable.getInstance().getNetPool("1111-1111");
     int totSubnet = pool.getFreeSubnetsNumber();
     String instanceUuid = UUID.randomUUID().toString();
     ArrayList<String> myPool = pool.reserveSubnets(instanceUuid, totSubnet + 1);
@@ -108,7 +110,7 @@ public class IpNetPoolTest {
   @Test
   public void testReserveSubnetRangeTwice() {
 
-    pool = IpNetPool.getInstance();
+    pool = VimNetTable.getInstance().getNetPool("1111-1111");
     int numOfSubnet = 100;
     String instanceUuid1 = UUID.randomUUID().toString();
     ArrayList<String> myPool = pool.reserveSubnets(instanceUuid1, numOfSubnet);
@@ -131,7 +133,7 @@ public class IpNetPoolTest {
   @Test
   public void testGetGateway() {
 
-    pool = IpNetPool.getInstance();
+    pool = VimNetTable.getInstance().getNetPool("1111-1111");
     String gateway = pool.getGateway("192.168.0.0/24");
     Assert.assertTrue("Unexpected gateway.", gateway.equals("192.168.0.1"));
     gateway = pool.getGateway("192.168.0.8/29");
@@ -140,5 +142,10 @@ public class IpNetPoolTest {
     Assert.assertTrue("Unexpected gateway.", gateway.equals("172.0.0.1"));
 
 
+  }
+
+  @After
+  public void deregisterTestVim() {
+    VimNetTable.getInstance().deregisterVim("1111-1111");
   }
 }

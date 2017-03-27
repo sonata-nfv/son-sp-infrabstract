@@ -26,6 +26,8 @@
 
 package sonata.kernel.vimadaptor.wrapper;
 
+import sonata.kernel.vimadaptor.commons.VimNetTable;
+
 import java.util.ArrayList;
 
 public class WrapperBay {
@@ -69,11 +71,11 @@ public class WrapperBay {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
+      output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
     } else if (newWrapper.getType().equals(WrapperType.COMPUTE)) {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.repository.writeVimEntry(config.getUuid(), record);
-      output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
+      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
     }
 
     return output;
@@ -102,8 +104,9 @@ public class WrapperBay {
    * @return a JSON representing the output of the API call
    */
   public String removeComputeWrapper(String uuid) {
+    VimNetTable.getInstance().deregisterVim(uuid);
     repository.removeVimEntry(uuid);
-    return "{\"status\":\"COMPLETED\"}";
+    return "{\"request_status\":\"COMPLETED\"}";
   }
 
 
@@ -127,7 +130,7 @@ public class WrapperBay {
    */
   public ComputeWrapper getComputeWrapper(String vimUuid) {
     WrapperRecord vimEntry = this.repository.readVimEntry(vimUuid);
-    if(vimEntry==null)
+    if (vimEntry == null)
       return null;
     else
       return (ComputeWrapper) vimEntry.getVimWrapper();
@@ -146,12 +149,12 @@ public class WrapperBay {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
+      output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
     } else {
       WrapperRecord record = new WrapperRecord(newWrapper, config, null);
       this.repository.writeVimEntry(config.getUuid(), record);
       this.repository.writeNetworkVimLink(computeVimRef, config.getUuid());
-      output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
+      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
     }
     return output;
   }
@@ -173,7 +176,7 @@ public class WrapperBay {
   public String removeNetworkWrapper(String uuid) {
     this.repository.removeNetworkVimLink(uuid);
     this.repository.removeVimEntry(uuid);
-    return "{\"status\":\"COMPLETED\"}";
+    return "{\"request_status\":\"COMPLETED\"}";
   }
 
   /**

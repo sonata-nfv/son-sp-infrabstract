@@ -21,8 +21,8 @@ virtual_deployment_units:
       cpu:
         vcpus: 1
       memory:
-        size: 1
-        size_unit: "GB"
+        size: 512
+        size_unit: "MB"
       storage:
         size: 1
         size_unit: "GB"

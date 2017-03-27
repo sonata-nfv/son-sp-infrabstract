@@ -85,13 +85,13 @@ public class OpenStackHeatClient {
     this.tenantName = tenantName;
 
     Logger.debug(
-        "URL: " + url + "|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password + "|");
+        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
 
     javaStack = JavaStackCore.getJavaStackCore();
     javaStack.setEndpoint(url);
     javaStack.setUsername(userName);
     javaStack.setPassword(password);
-    javaStack.setTenant_id(tenantName);
+    javaStack.setTenantId(tenantName);
 
     // Authenticate
     try {
@@ -137,9 +137,9 @@ public class OpenStackHeatClient {
 
     try {
 
-      String response = JavaStackUtils
+      JavaStackUtils
           .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
-      Logger.debug("Stack response: " + response);
+      // Logger.debug("Stack response: " + response);
     } catch (Exception e) {
       Logger.error(
           "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());

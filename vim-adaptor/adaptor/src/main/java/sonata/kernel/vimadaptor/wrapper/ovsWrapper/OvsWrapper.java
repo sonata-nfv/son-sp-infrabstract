@@ -226,7 +226,7 @@ public class OvsWrapper extends NetworkWrapper {
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
     String payload = mapper.writeValueAsString(odlPayload);
-    Logger.debug(this.config.getUuid()+" - "+this.config.getVimEndpoint());
+    Logger.debug(this.config.getUuid() + " - " + this.config.getVimEndpoint());
     Logger.debug(payload);
 
     int sfcAgentPort = 55555;
@@ -240,13 +240,12 @@ public class OvsWrapper extends NetworkWrapper {
     clientSocket.send(sendPacket);
     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
     clientSocket.setSoTimeout(10000);
-    try{
+    try {
       clientSocket.receive(receivePacket);
-    }catch(SocketTimeoutException e){
+    } catch (SocketTimeoutException e) {
       clientSocket.close();
       Logger.error("Timeout exception from the OVS SFC agent");
-      throw new Exception(
-          "Request to OVS VIM agent timed out.");
+      throw new Exception("Request to OVS VIM agent timed out.");
     }
     clientSocket.close();
     String response =
@@ -262,6 +261,7 @@ public class OvsWrapper extends NetworkWrapper {
     return;
   }
 
+  @Override
   public void deconfigureNetworking(String instanceId) throws Exception {
 
     OvsPayload odlPayload = new OvsPayload("delete", instanceId, null, null, null);
@@ -272,7 +272,7 @@ public class OvsWrapper extends NetworkWrapper {
     Logger.info(payload);
 
     int sfcAgentPort = 55555;
-   
+
     InetAddress IPAddress = InetAddress.getByName(config.getVimEndpoint());
     byte[] sendData = new byte[1024];
     byte[] receiveData = new byte[1024];
@@ -283,13 +283,12 @@ public class OvsWrapper extends NetworkWrapper {
     clientSocket.send(sendPacket);
     DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
     clientSocket.setSoTimeout(10000);
-    try{
+    try {
       clientSocket.receive(receivePacket);
-    }catch(SocketTimeoutException e){
+    } catch (SocketTimeoutException e) {
       clientSocket.close();
       Logger.error("Timeout exception from the OVS SFC agent");
-      throw new Exception(
-          "Request to OVS VIM agent timed out.");
+      throw new Exception("Request to OVS VIM agent timed out.");
     }
     clientSocket.close();
     String response =

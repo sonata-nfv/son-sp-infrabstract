@@ -26,6 +26,7 @@ ADD son-sp-infra /etc/init.d/
 ADD ./setenv.sh /
 ADD ./test.sh /
 ADD ./docker-entrypoint.sh /
+#ADD test_images /test_images
 RUN chmod +x /setenv.sh
 RUN chmod +x /test.sh
 RUN chmod +x /usr/local/bin/son-sp-infra-*

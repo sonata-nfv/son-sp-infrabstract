@@ -65,9 +65,9 @@ public class JavaStackCore {
   private String endpoint;
   private String username;
   private String password;
-  private String tenant_id;
+  private String projectId;
   private ObjectMapper mapper;
-  private String token_id;
+  private String tokenId;
   // private String image_id;
   private boolean isAuthenticated = false;
 
@@ -76,7 +76,7 @@ public class JavaStackCore {
   public enum Constants {
     AUTH_PORT("5000"), HEAT_PORT("8004"), IMAGE_PORT("9292"), COMPUTE_PORT("8774"), HEAT_VERSION(
         "v1"), IMAGE_VERSION("v2"), COMPUTE_VERSION(
-            "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v2.0/tokens");
+            "v2"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI("/v3/auth/tokens");
 
     private final String constantValue;
 
@@ -122,16 +122,16 @@ public class JavaStackCore {
     this.username = username;
   }
 
-  public String getTenant_id() {
-    return this.tenant_id;
+  public String getTenantId() {
+    return this.projectId;
   }
 
-  public void setTenant_id(String tenant_id) {
-    this.tenant_id = tenant_id;
+  public void setTenantId(String tenant_id) {
+    this.projectId = tenant_id;
   }
 
-  public String getToken_id() {
-    return this.token_id;
+  public String getTokenId() {
+    return this.tokenId;
   }
 
   public synchronized void authenticateClient() throws IOException {
@@ -150,20 +150,30 @@ public class JavaStackCore {
     post = new HttpPost(buildUrl.toString());
 
     String body = String.format(
-        "{\"auth\": {\"tenantName\": \"%s\", \"passwordCredentials\": {\"username\": \"%s\", \"password\": \"%s\"}}}",
-        this.tenant_id, this.username, this.password);
-
+        // "{ \"auth\": {\"scope\": {\"project\": {\"name\": \"%s\"}}, \"identity\": { \"methods\":
+        // [\"password\"], \"password\": { \"user\": { \"name\": \"%s\", \"domain\": { \"name\":
+        // \"default\" }, \"password\": \"%s\" }}}}}",
+        "{ \"auth\": {\"identity\": { \"methods\": [\"password\"], \"password\": { \"user\": { \"name\": \"%s\", \"domain\": { \"name\": \"default\" }, \"password\": \"%s\" }}}}}",
+        // this.getTenantId(),
+        this.username, this.password);
+    Logger.debug("[JavaStack] Authenticating client...");
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
-
+    // Logger.debug("[JavaStack] " + post.toString());
+    // Logger.debug("[JavaStack] " + body);
     response = httpClient.execute(post);
+    // Logger.debug("[JavaStack] Authentication response:");
+    // Logger.debug(response.toString());
     mapper = new ObjectMapper();
 
     AuthenticationData auth = mapper.readValue(JavaStackUtils.convertHttpResponseToString(response),
         AuthenticationData.class);
-
-    this.token_id = auth.getAccess().getToken().getId();
-    this.tenant_id = auth.getAccess().getToken().getTenant().getId();
-    this.isAuthenticated = true;
+    if (response.containsHeader("X-Subject-Token")) {
+      this.tokenId = response.getFirstHeader("X-Subject-Token").getValue();
+      if (auth.getToken().getProject() != null) {
+        this.projectId = auth.getToken().getProject().getId();
+      } // FIXME check the token structure to see what we get back and what we need to memorise.
+      this.isAuthenticated = true;
+    }
 
 
   }
@@ -187,24 +197,24 @@ public class JavaStackCore {
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Constants.HEAT_PORT.toString());
-      buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(), tenant_id));
+      buildUrl.append(String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(), projectId));
 
       // Logger.debug(buildUrl.toString());
       createStack = new HttpPost(buildUrl.toString());
       createStack
           .setEntity(new StringEntity(modifiedObject.toString(), ContentType.APPLICATION_JSON));
       // Logger.debug(this.token_id);
-      createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
-      Logger.debug("Request: " + createStack.toString());
-      Logger.debug("Request body: " + modifiedObject.toString());
+      // Logger.debug("Request: " + createStack.toString());
+      // Logger.debug("Request body: " + modifiedObject.toString());
 
       response = httpClient.execute(createStack);
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
 
-      Logger.debug("Response: " + response.toString());
-      Logger.debug("Response body:");
+      // Logger.debug("Response: " + response.toString());
+      // Logger.debug("Response body:");
 
       if (statusCode != 201) {
         BufferedReader in =
@@ -247,14 +257,14 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Constants.HEAT_PORT.toString());
       buildUrl.append(String.format("/%s/%s/stacks/%s/%s", Constants.HEAT_VERSION.toString(),
-          tenant_id, stackName, stackUuid));
+          projectId, stackName, stackUuid));
 
       // Logger.debug(buildUrl.toString());
       updateStack = new HttpPatch(buildUrl.toString());
       updateStack
           .setEntity(new StringEntity(modifiedObject.toString(), ContentType.APPLICATION_JSON));
       // Logger.debug(this.token_id);
-      updateStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      updateStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
       Logger.debug("Request: " + updateStack.toString());
       Logger.debug("Request body: " + modifiedObject.toString());
@@ -299,9 +309,9 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Constants.HEAT_PORT.toString());
       buildUrl.append(String.format("/%s/%s/stacks/%s/%s", Constants.HEAT_VERSION.toString(),
-          tenant_id, stackName, stackId));
+          projectId, stackName, stackId));
       deleteStack = new HttpDelete(buildUrl.toString());
-      deleteStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      deleteStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
       return httpClient.execute(deleteStack);
     } else {
@@ -322,13 +332,13 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Constants.HEAT_PORT.toString());
       buildUrl.append(String.format("/%s/%s/stacks/%s", Constants.HEAT_VERSION.toString(),
-          this.tenant_id, stackIdentity));
+          this.projectId, stackIdentity));
 
       // Logger.debug("URL: " + buildUrl);
       // Logger.debug("Token: " + this.token_id);
 
       findStack = new HttpGet(buildUrl.toString());
-      findStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      findStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
       return httpClient.execute(findStack);
 
@@ -355,13 +365,13 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Constants.HEAT_PORT.toString());
       buildUrl.append(
-          String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(), this.tenant_id));
+          String.format("/%s/%s/stacks", Constants.HEAT_VERSION.toString(), this.projectId));
 
       System.out.println(buildUrl);
-      System.out.println(this.token_id);
+      System.out.println(this.tokenId);
 
       listStacks = new HttpGet(buildUrl.toString());
-      listStacks.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      listStacks.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
       response = httpClient.execute(listStacks);
       int status_code = response.getStatusLine().getStatusCode();
@@ -390,7 +400,7 @@ public class JavaStackCore {
 
       URIBuilder builder = new URIBuilder();
       String path = String.format("/%s/%s/stacks/%s/%s/template", Constants.HEAT_VERSION.toString(),
-          this.tenant_id, stackName, stackId);
+          this.projectId, stackName, stackId);
 
       builder.setScheme("http").setHost(endpoint)
           .setPort(Integer.parseInt(Constants.HEAT_PORT.toString())).setPath(path);
@@ -398,7 +408,7 @@ public class JavaStackCore {
       URI uri = builder.build();
 
       getStackTemplate = new HttpGet(uri);
-      getStackTemplate.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      getStackTemplate.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
       Logger.debug("Request: " + getStackTemplate.toString());
 
@@ -429,7 +439,7 @@ public class JavaStackCore {
     if (isAuthenticated) {
       URIBuilder builder = new URIBuilder();
       String path = String.format("/%s/%s/stacks/%s/%s/resources/%s",
-          Constants.HEAT_VERSION.toString(), this.tenant_id, stackName, stackId, resourceName);
+          Constants.HEAT_VERSION.toString(), this.projectId, stackName, stackId, resourceName);
 
       builder.setScheme("http").setHost(endpoint)
           .setPort(Integer.parseInt(Constants.HEAT_PORT.toString())).setPath(path);
@@ -437,7 +447,7 @@ public class JavaStackCore {
       URI uri = builder.build();
 
       showResourceData = new HttpGet(uri);
-      showResourceData.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      showResourceData.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
       response = httpclient.execute(showResourceData);
       int status_code = response.getStatusLine().getStatusCode();
@@ -463,7 +473,7 @@ public class JavaStackCore {
     if (isAuthenticated) {
       URIBuilder builder = new URIBuilder();
       String path = String.format("/%s/%s/stacks/%s/%s/resources",
-          Constants.HEAT_VERSION.toString(), this.tenant_id, stackName, stackId);
+          Constants.HEAT_VERSION.toString(), this.projectId, stackName, stackId);
 
       builder.setScheme("http").setHost(endpoint)
           .setPort(Integer.parseInt(Constants.HEAT_PORT.toString())).setPath(path);
@@ -471,7 +481,7 @@ public class JavaStackCore {
       URI uri = builder.build();
 
       listResources = new HttpGet(uri);
-      listResources.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      listResources.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
 
       response = httpclient.execute(listResources);
@@ -502,12 +512,12 @@ public class JavaStackCore {
       buildUrl.append(String.format("/%s/images", Constants.IMAGE_VERSION.toString()));
 
       createImage = new HttpPost(buildUrl.toString());
-      String requestBody = String.format(
-          "{ \"container_format\": \"bare\"," + "\"disk_format\": \"raw\"," + " \"name\": \"%s\"}",
-          name);
+      String requestBody =
+          String.format("{ \"container_format\": \"bare\"," + "\"disk_format\": \"raw\","
+              + " \"name\": \"%s\"" + ",\"visibility\":\"public\"" + "}", name);
 
       createImage.setEntity(new StringEntity(requestBody, ContentType.APPLICATION_JSON));
-      createImage.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      createImage.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
     } else {
       throw new IOException(
@@ -521,7 +531,7 @@ public class JavaStackCore {
 
     HttpPut uploadImage;
     HttpClient httpClient = HttpClientBuilder.create().build();
-
+    HttpResponse response;
     if (this.isAuthenticated) {
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
@@ -532,19 +542,23 @@ public class JavaStackCore {
           .append(String.format("/%s/images/%s/file", Constants.IMAGE_VERSION.toString(), imageId));
 
       uploadImage = new HttpPut(buildUrl.toString());
-      uploadImage.setHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      uploadImage.setHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
       uploadImage.setHeader("Content-Type", "application/octet-stream");
       uploadImage.setEntity(new FileEntity(new File(binaryImageLocalFilePath)));
-
+      response = httpClient.execute(uploadImage);
+      Logger.debug("[JavaStackCore] Response of binary Image upload");
+      Logger.debug(response.toString());
     } else {
       throw new IOException(
           "You must Authenticate before issuing this request, please re-authenticate. ");
     }
-    return httpClient.execute(uploadImage);
+
+    return response;
   }
 
   public HttpResponse listImages() throws IOException {
 
+    Logger.debug("RESTful request to glance image list");
     HttpGet listImages = null;
     HttpResponse response = null;
 
@@ -561,9 +575,14 @@ public class JavaStackCore {
       buildUrl.append(String.format("/%s/images", Constants.IMAGE_VERSION.toString()));
 
       listImages = new HttpGet(buildUrl.toString());
-      listImages.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      listImages.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
+
+      Logger.debug("HTTP request:");
+      Logger.debug(listImages.toString());
 
       response = httpClient.execute(listImages);
+      Logger.debug("HTTP response:");
+      Logger.debug(response.toString());
       int status_code = response.getStatusLine().getStatusCode();
       return (status_code == 200)
           ? response
@@ -587,10 +606,10 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Constants.COMPUTE_PORT.toString());
       buildUrl.append(
-          String.format("/%s/%s/limits", Constants.COMPUTE_VERSION.toString(), this.tenant_id));
+          String.format("/%s/%s/limits", Constants.COMPUTE_VERSION.toString(), this.projectId));
 
       getLimits = new HttpGet(buildUrl.toString());
-      getLimits.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      getLimits.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
       response = httpClient.execute(getLimits);
       int status_code = response.getStatusLine().getStatusCode();
@@ -616,12 +635,16 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Constants.COMPUTE_PORT.toString());
       buildUrl.append(String.format("/%s/%s/flavors/detail", Constants.COMPUTE_VERSION.toString(),
-          this.tenant_id));
+          this.projectId));
 
+      // Logger.debug("[JavaStack] Authenticating client...");
       getFlavors = new HttpGet(buildUrl.toString());
-      getFlavors.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
+      getFlavors.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
+      Logger.debug("[JavaStack] " + getFlavors.toString());
 
       response = httpClient.execute(getFlavors);
+      Logger.debug("[JavaStack] GET Flavor gresponse:");
+      Logger.debug(response.toString());
       int status_code = response.getStatusLine().getStatusCode();
       return (status_code == 200)
           ? response

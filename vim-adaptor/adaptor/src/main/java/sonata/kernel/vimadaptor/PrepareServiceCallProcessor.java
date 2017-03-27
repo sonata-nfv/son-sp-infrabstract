@@ -25,18 +25,14 @@
  */
 package sonata.kernel.vimadaptor;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.ServicePreparePayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimPreDeploymentList;
 import sonata.kernel.vimadaptor.commons.VnfImage;
-import sonata.kernel.vimadaptor.commons.vnfd.Unit;
-import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
@@ -81,12 +77,15 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
     Logger.info("Parsing payload...");
     ServicePreparePayload payload = null;
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
+    // ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    // SimpleModule module = new SimpleModule();
+    // module.addDeserializer(Unit.class, new UnitDeserializer());
+    // //module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // //module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
+    // mapper.registerModule(module);
+    // mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    // mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
     try {
       payload = mapper.readValue(message.getBody(), ServicePreparePayload.class);
@@ -95,7 +94,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
       for (VimPreDeploymentList vim : payload.getVimList()) {
         ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vim.getUuid());
         if (wr == null) {
-          Logger.warn("Error retrieving the wrapper");
+          Logger.error("Error retrieving the wrapper");
 
           this.sendToMux(new ServicePlatformMessage(
               "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
@@ -107,26 +106,33 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         for (VnfImage vnfImage : vim.getImages()) {
           if (!wr.isImageStored(vnfImage)) {
             wr.uploadImage(vnfImage);
+          } else {
+            Logger.info("Image already stored in the VIM image repository");
           }
         }
 
-        boolean success = wr.prepareService(payload.getInstanceId());
-        if (!success) {
-          throw new Exception("Unable to prepare the environment for instance: "
-              + payload.getInstanceId() + " on VIM " + vim.getUuid());
+        if (WrapperBay.getInstance().getVimRepo().getServiceInstanceVimUuid(payload.getInstanceId(),
+            vim.getUuid()) == null) {
+          boolean success = wr.prepareService(payload.getInstanceId());
+          if (!success) {
+            throw new Exception("Unable to prepare the environment for instance: "
+                + payload.getInstanceId() + " on Compute VIM " + vim.getUuid());
+          }
+        } else {
+          Logger.info("Service already prepared in Compute VIM " + vim.getUuid());
         }
 
       }
-      String responseJson = "{\"status\":\"COMPLETED\",\"message\":\"\"}";
+      String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
       ServicePlatformMessage responseMessage = new ServicePlatformMessage(responseJson,
           "application/json", message.getReplyTo(), message.getSid(), null);
       this.sendToMux(responseMessage);
 
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
-      this.sendToMux(
-          new ServicePlatformMessage("{\"status\":\"fail\",\"message\":\"" + e.getMessage() + "\"}",
-              "application/json", message.getReplyTo(), message.getSid(), null));
+      this.sendToMux(new ServicePlatformMessage(
+          "{\"request_status\":\"fail\",\"message\":\"" + e.getMessage() + "\"}",
+          "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }
     return out;

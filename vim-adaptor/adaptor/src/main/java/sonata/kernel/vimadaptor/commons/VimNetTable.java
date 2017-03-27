@@ -20,50 +20,52 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Adel Zaalouk (Ph.D.), NEC
+ * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
 
-package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication;
+package sonata.kernel.vimadaptor.commons;
 
-/**
- * Created by nle5220 on 20.10.2016.
- */
-public class Tenant {
-  private String id;
-  private String description;
-  private String enabled;
-  private String name;
+import java.util.Hashtable;
 
-  public String getId() {
-    return this.id;
+public class VimNetTable {
+
+
+  private Hashtable<String, IpNetPool> vimTable;
+
+  private static VimNetTable myInstance = null;
+
+  /**
+   * get Singleton instance method.
+   * 
+   * @return the singleton instance of IpNetPool
+   */
+  public static VimNetTable getInstance() {
+    if (myInstance == null) {
+      myInstance = new VimNetTable();
+    }
+    return myInstance;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public static void resetInstance() {
+    myInstance = null;
   }
 
-  public String getDescription() {
-    return description;
+  private VimNetTable() {
+    this.vimTable = new Hashtable<String, IpNetPool>();
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public void registerVim(String vimUuid) {
+    if (this.vimTable.containsKey(vimUuid)) return;
+    IpNetPool pool = new IpNetPool("192.0.0.0/8");
+    this.vimTable.put(vimUuid, pool);
   }
 
-  public String getEnabled() {
-    return enabled;
+  public IpNetPool getNetPool(String vimUuid) {
+    return vimTable.get(vimUuid);
   }
 
-  public void setEnabled(String enabled) {
-    this.enabled = enabled;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
+  public void deregisterVim(String vimUuid) {
+    this.vimTable.remove(vimUuid);
   }
 }

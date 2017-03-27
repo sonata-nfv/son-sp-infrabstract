@@ -131,8 +131,8 @@ public class VimRepo {
         stmt = connection.createStatement();
         sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," + " TYPE TEXT NOT NULL,"
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
-            + " TENANT TEXT NOT NULL," + " TENANT_EXT_NET TEXT," + " TENANT_EXT_ROUTER TEXT,"
-            + " PASS TEXT," + " AUTHKEY TEXT" + ");";
+            + " CONFIGURATION TEXT NOT NULL," + " CITY TEXT," + "COUNTRY TEXT," + " PASS TEXT,"
+            + " AUTHKEY TEXT" + ");";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE service_instances " + "(" + "INSTANCE_UUID TEXT NOT NULL,"
             + " VIM_INSTANCE_UUID TEXT NOT NULL," + " VIM_INSTANCE_NAME TEXT NOT NULL,"
@@ -206,7 +206,7 @@ public class VimRepo {
       connection.setAutoCommit(false);
 
       String sql = "INSERT INTO VIM "
-          + "(UUID, TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, TENANT_EXT_NET, TENANT_EXT_ROUTER, PASS, AUTHKEY) "
+          + "(UUID, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
           + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
@@ -214,9 +214,9 @@ public class VimRepo {
       stmt.setString(3, record.getConfig().getVimVendor().toString());
       stmt.setString(4, record.getConfig().getVimEndpoint().toString());
       stmt.setString(5, record.getConfig().getAuthUserName());
-      stmt.setString(6, record.getConfig().getTenantName());
-      stmt.setString(7, record.getConfig().getTenantExtNet());
-      stmt.setString(8, record.getConfig().getTenantExtRouter());
+      stmt.setString(6, record.getConfig().getConfiguration());
+      stmt.setString(7, record.getConfig().getCity());
+      stmt.setString(8, record.getConfig().getCountry());
       stmt.setString(9, record.getConfig().getAuthPass());
       stmt.setString(10, record.getConfig().getAuthKey());
 
@@ -319,7 +319,7 @@ public class VimRepo {
 
 
       String sql = "UPDATE VIM set "
-          + "(TYPE, VENDOR, ENDPOINT, USERNAME, TENANT, TENANT_EXT_NET, TENANT_EXT_ROUTER, PASS, AUTHKEY) "
+          + "(TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
           + "VALUES (?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
 
       stmt = connection.prepareStatement(sql);
@@ -327,9 +327,9 @@ public class VimRepo {
       stmt.setString(2, record.getConfig().getVimVendor().toString());
       stmt.setString(3, record.getConfig().getVimEndpoint().toString());
       stmt.setString(4, record.getConfig().getAuthUserName());
-      stmt.setString(5, record.getConfig().getTenantName());
-      stmt.setString(6, record.getConfig().getTenantExtNet());
-      stmt.setString(7, record.getConfig().getTenantExtRouter());
+      stmt.setString(5, record.getConfig().getConfiguration());
+      stmt.setString(6, record.getConfig().getCity());
+      stmt.setString(7, record.getConfig().getCountry());
       stmt.setString(8, record.getConfig().getAuthPass());
       stmt.setString(9, record.getConfig().getAuthKey());
       stmt.setString(10, uuid);
@@ -397,23 +397,22 @@ public class VimRepo {
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
-        String tenant = rs.getString("TENANT");
+        String configuration = rs.getString("CONFIGURATION");
+        String city = rs.getString("CITY");
+        String country = rs.getString("COUNTRY");
         String key = rs.getString("AUTHKEY");
 
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
-
+        config.setConfiguration(configuration);
+        config.setCity(city);
+        config.setCountry(country);
         config.setVimEndpoint(urlString);
-        config.setTenantName(tenant);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
         config.setAuthKey(key);
         if (wrapperType.equals(WrapperType.COMPUTE)) {
-          String tenantExtNet = rs.getString("TENANT_EXT_NET");
-          String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
-          config.setTenantExtNet(tenantExtNet);
-          config.setTenantExtRouter(tenantExtRouter);
           VimVendor vendor = ComputeVimVendor.getByName(vendorString);
           config.setVimVendor(vendor);
         } else if (wrapperType.equals(WrapperType.NETWORK)) {
@@ -552,7 +551,7 @@ public class VimRepo {
         out = false;
       }
     }
-    if (!out) {
+    if (out) {
       Logger.info("Network vim link written successfully");
     }
 
@@ -591,21 +590,22 @@ public class VimRepo {
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
-        String tenant = rs.getString("TENANT");
         String key = rs.getString("AUTHKEY");
-        String tenantExtNet = rs.getString("TENANT_EXT_NET");
-        String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
+        String configuration = rs.getString("CONFIGURATION");
+        String city = rs.getString("CITY");
+        String country = rs.getString("COUNTRY");
+
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
         config.setVimVendor(NetworkVimVendor.getByName(vendor));
         config.setVimEndpoint(urlString);
-        config.setTenantName(tenant);
+        config.setConfiguration(configuration);
+        config.setCity(city);
+        config.setCountry(country);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
         config.setAuthKey(key);
-        config.setTenantExtNet(tenantExtNet);
-        config.setTenantExtRouter(tenantExtRouter);
 
         Wrapper wrapper = WrapperFactory.createWrapper(config);
         output = new WrapperRecord(wrapper, config, null);
@@ -679,21 +679,22 @@ public class VimRepo {
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
-        String tenant = rs.getString("TENANT");
         String key = rs.getString("AUTHKEY");
-        String tenantExtNet = rs.getString("TENANT_EXT_NET");
-        String tenantExtRouter = rs.getString("TENANT_EXT_ROUTER");
+        String configuration = rs.getString("CONFIGURATION");
+        String city = rs.getString("CITY");
+        String country = rs.getString("COUNTRY");
+
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
         config.setVimVendor(vendor);
         config.setVimEndpoint(urlString);
-        config.setTenantName(tenant);
+        config.setConfiguration(configuration);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
         config.setAuthKey(key);
-        config.setTenantExtNet(tenantExtNet);
-        config.setTenantExtRouter(tenantExtRouter);
+        config.setCity(city);
+        config.setCountry(country);
 
         Wrapper wrapper = WrapperFactory.createWrapper(config);
         output = new WrapperRecord(wrapper, config, null);
@@ -983,7 +984,7 @@ public class VimRepo {
    * 
    * @return true for process success
    */
-  public boolean removeServiceInstanceEntry(String instanceUuid) {
+  public boolean removeServiceInstanceEntry(String instanceUuid, String vimUuid) {
     boolean out = true;
 
     Connection connection = null;
@@ -997,9 +998,10 @@ public class VimRepo {
               prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      String sql = "DELETE FROM service_instances  WHERE INSTANCE_UUID=?;";
+      String sql = "DELETE FROM service_instances WHERE INSTANCE_UUID=? AND VIM_UUID=?;";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, instanceUuid);
+      stmt.setString(2, vimUuid);
       stmt.executeUpdate();
       connection.commit();
     } catch (SQLException e) {
@@ -1269,12 +1271,14 @@ public class VimRepo {
   }
 
   /**
-   * @param instanceUuid
-   * @return
+   * Return a list of the compute VIMs hosting at least one VNFs of the given Service Instance.
+   * 
+   * @param instanceUuid the UUID that identifies the Service Instance
+   * @return an array of String objecst representing the UUID of the VIMs
    */
-  public String getComputeVimUuidFromInstance(String instanceUuid) {
+  public String[] getComputeVimUuidFromInstance(String instanceUuid) {
 
-    String output = null;
+    String[] output = null;
 
     Connection connection = null;
     PreparedStatement stmt = null;
@@ -1292,14 +1296,14 @@ public class VimRepo {
           .prepareStatement("SELECT VIM_UUID FROM service_instances  WHERE INSTANCE_UUID=?;");
       stmt.setString(1, instanceUuid);
       rs = stmt.executeQuery();
+      ArrayList<String> uuids = new ArrayList<String>();
 
-      if (rs.next()) {
-
-        output = rs.getString("VIM_UUID");
-
-      } else {
-        output = null;
+      while (rs.next()) {
+        uuids.add(rs.getString("VIM_UUID"));
       }
+      output = new String[uuids.size()];
+      output = uuids.toArray(output);
+
     } catch (SQLException e) {
       Logger.error(e.getMessage());
       output = null;
@@ -1323,6 +1327,7 @@ public class VimRepo {
 
       }
     }
+
     return output;
 
   }
@@ -1401,5 +1406,129 @@ public class VimRepo {
   }
 
 
+  /**
+   * @param instanceId
+   * @param vimUuid
+   * @return
+   */
+  public String getServiceInstanceVimUuid(String instanceId, String vimUuid) {
+    String output = null;
+
+    Connection connection = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      Class.forName("org.postgresql.Driver");
+      connection =
+          DriverManager.getConnection(
+              "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+                  + prop.getProperty("repo_port") + "/" + "vimregistry",
+              prop.getProperty("user"), prop.getProperty("pass"));
+      connection.setAutoCommit(false);
+
+      stmt = connection.prepareStatement(
+          "SELECT VIM_INSTANCE_UUID FROM service_instances  WHERE INSTANCE_UUID=? AND VIM_UUID=?;");
+      stmt.setString(1, instanceId);
+      stmt.setString(2, vimUuid);
+      rs = stmt.executeQuery();
+
+      if (rs.next()) {
+
+        output = rs.getString("VIM_INSTANCE_UUID");
+
+      } else {
+        output = null;
+      }
+    } catch (SQLException e) {
+      Logger.error(e.getMessage());
+      output = null;
+    } catch (ClassNotFoundException e) {
+      Logger.error(e.getMessage(), e);
+      output = null;
+    } finally {
+      try {
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (rs != null) {
+          rs.close();
+        }
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        Logger.error(e.getMessage());
+        output = null;
+
+      }
+    }
+    return output;
+  }
+
+  /**
+   * Get the UUID used by the given VIM to identify the given service instance.
+   * 
+   * @param instanceUuid the instance UUID of the service to remove
+   * @param vimUuid the UUID of the VIM
+   * 
+   * @return the logical name used by the VIM to identify the service instance
+   * 
+   */
+  public String getServiceInstanceVimName(String instanceUuid, String vimUuid) {
+
+    String output = null;
+
+    Connection connection = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      Class.forName("org.postgresql.Driver");
+      connection =
+          DriverManager.getConnection(
+              "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+                  + prop.getProperty("repo_port") + "/" + "vimregistry",
+              prop.getProperty("user"), prop.getProperty("pass"));
+      connection.setAutoCommit(false);
+
+      stmt = connection.prepareStatement(
+          "SELECT VIM_INSTANCE_NAME FROM service_instances  WHERE INSTANCE_UUID=? AND VIM_UUID=?;");
+      stmt.setString(1, instanceUuid);
+      stmt.setString(2, vimUuid);
+      rs = stmt.executeQuery();
+
+      if (rs.next()) {
+
+        output = rs.getString("VIM_INSTANCE_NAME");
+
+      } else {
+        output = null;
+      }
+    } catch (SQLException e) {
+      Logger.error(e.getMessage());
+      output = null;
+    } catch (ClassNotFoundException e) {
+      Logger.error(e.getMessage(), e);
+      output = null;
+    } finally {
+      try {
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (rs != null) {
+          rs.close();
+        }
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        Logger.error(e.getMessage());
+        output = null;
+
+      }
+    }
+
+    return output;
+
+  }
 
 }

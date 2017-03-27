@@ -27,31 +27,16 @@
 package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.List;
-
+/**
+ * Created by nle5220 on 20.10.2016.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Token {
-
-
+public class Project {
   private String id;
-  private String[] methods;
-  private Project project;
-  @JsonProperty("issued_at")
-  private String issuedAt;
-  private String expires;
-  @JsonProperty("audit_ids")
-  private List<String> auditIds;
-
-
-  public Project getProject() {
-    return this.project;
-  }
-
-  public void setTenant(Project project) {
-    this.project = project;
-  }
+  private String description;
+  private String enabled;
+  private String name;
 
   public String getId() {
     return this.id;
@@ -61,35 +46,27 @@ public class Token {
     this.id = id;
   }
 
-  public String getExpires() {
-    return expires;
+  public String getDescription() {
+    return description;
   }
 
-  public void setExpires(String expires) {
-    this.expires = expires;
+  public void setDescription(String description) {
+    this.description = description;
   }
 
-  public String[] getMethods() {
-    return methods;
+  public String getEnabled() {
+    return enabled;
   }
 
-  public String getIssuedAt() {
-    return issuedAt;
+  public void setEnabled(String enabled) {
+    this.enabled = enabled;
   }
 
-  public List<String> getAuditIds() {
-    return auditIds;
+  public String getName() {
+    return name;
   }
 
-  public void setMethods(String[] methods) {
-    this.methods = methods;
-  }
-
-  public void setIssuedAt(String issuedAt) {
-    this.issuedAt = issuedAt;
-  }
-
-  public void setAuditIds(List<String> auditIds) {
-    this.auditIds = auditIds;
+  public void setName(String name) {
+    this.name = name;
   }
 }

@@ -24,7 +24,7 @@ virtual_deployment_units:
         size: 1
         size_unit: "GB"
       storage:
-        size: 1
+        size: 45
         size_unit: "GB"
     connection_points:
       - id: "vdu01:eth0"

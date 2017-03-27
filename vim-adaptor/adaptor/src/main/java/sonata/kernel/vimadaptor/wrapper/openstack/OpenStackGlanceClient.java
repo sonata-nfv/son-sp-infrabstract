@@ -26,7 +26,11 @@
 
 package sonata.kernel.vimadaptor.wrapper.openstack;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
@@ -61,14 +65,21 @@ public class OpenStackGlanceClient {
     this.password = password;
     this.tenantName = tenantName;
 
+    this.mapper = new ObjectMapper(new YAMLFactory());
+    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+
     Logger.debug(
-        "URL: " + url + "|User:" + userName + "|Tenant:" + tenantName + "|Pass:" + password + "|");
+        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
 
     javaStack = JavaStackCore.getJavaStackCore();
     javaStack.setEndpoint(this.url);
     javaStack.setUsername(this.userName);
     javaStack.setPassword(this.password);
-    javaStack.setTenant_id(this.tenantName);
+    javaStack.setTenantId(this.tenantName);
 
     // Authenticate
     try {
@@ -110,14 +121,16 @@ public class OpenStackGlanceClient {
    * @throws IOException
    */
   public String createImage(String imageName) throws IOException {
-    Logger.debug("Listing available Images");
+    Logger.debug("[Glance-client] Creating new image container");
     String response = null;
 
     response =
         JavaStackUtils.convertHttpResponseToString(javaStack.createImage("", "", "", imageName));
 
+    Image imageContainerData = mapper.readValue(response, Image.class);
+    Logger.debug("[Glance-client] Image container creade with UUID: " + imageContainerData.getId());
 
-    return response;
+    return imageContainerData.getId();
   }
 
   /**
@@ -128,11 +141,10 @@ public class OpenStackGlanceClient {
    * 
    */
   public void uploadImage(String imageId, String imageFileLocalPath) {
-    Logger.debug("Listing available Images");
-    String response = null;
+    Logger.debug("[Glance-client] Pushing image binary...");
     try {
 
-      response = JavaStackUtils.convertHttpResponseToString(
+      JavaStackUtils.convertHttpResponseToString(
           javaStack.uploadBinaryImageData(null, imageId, imageFileLocalPath));
 
     } catch (IOException e) {

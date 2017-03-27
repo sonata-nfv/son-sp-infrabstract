@@ -15,6 +15,10 @@ adaptor/bin
 
 adaptor/doc
 
+## test images
+
+test_images/
+
 ## Python files
 
 adaptor/.pydevproject

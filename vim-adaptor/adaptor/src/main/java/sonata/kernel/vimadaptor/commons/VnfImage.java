@@ -35,6 +35,9 @@ public class VnfImage {
   @JsonProperty("image_url")
   private String url;
 
+  public VnfImage() {}
+
+
   /**
    * @param uuid
    * @param url

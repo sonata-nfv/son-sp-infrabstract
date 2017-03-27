@@ -72,7 +72,7 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
         this.sendToMux(new ServicePlatformMessage(
             "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
             message.getReplyTo(), message.getSid(), null));
-       return false;
+        return false;
       }
       ResourceUtilisation resource = wr.getResourceUtilisation();
 
@@ -107,9 +107,9 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
       Logger.info("List VIM call completed.");
       return true;
     } catch (JsonProcessingException e) {
-      ServicePlatformMessage response =
-          new ServicePlatformMessage("{\"status\":\"ERROR\",\"message\":\"Internal Server Error\"}",
-              "application/json", this.getMessage().getReplyTo(), this.getSid(), null);
+      ServicePlatformMessage response = new ServicePlatformMessage(
+          "{\"request_status\":\"ERROR\",\"message\":\"Internal Server Error\"}",
+          "application/json", this.getMessage().getReplyTo(), this.getSid(), null);
       this.getMux().enqueue(response);
       return false;
     }

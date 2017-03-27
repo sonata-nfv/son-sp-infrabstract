@@ -34,23 +34,6 @@ import java.util.ArrayList;
 
 public class VirtualDeploymentUnit {
 
-  public enum VmFormat {
-    RAW("raw"), VHD("vhd"), VMDK("vmdk"), VDI("vdi"), ISO("iso"), QCOW2("qcow2"), DOCKER(
-        "docker"), OVA("ova"), OVF("ovf"), BARE("bare");
-
-    private final String name;
-
-    VmFormat(String name) {
-      this.name = name;
-    }
-
-    @Override
-    public String toString() {
-      return this.name;
-    }
-
-  }
-
   private String description;
   private String id;
   @JsonProperty("vm_image")
