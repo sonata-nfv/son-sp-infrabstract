@@ -415,7 +415,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployServiceOpenStackV1() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -660,7 +660,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployTwoServicesOpenStackV1() {
 
 
@@ -1014,7 +1014,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployServiceIncremental() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1312,7 +1312,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployServiceIncrementalMultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
