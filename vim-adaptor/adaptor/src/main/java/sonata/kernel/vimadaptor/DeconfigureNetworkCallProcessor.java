@@ -124,7 +124,7 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
     }
 
 
-    String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
+    String responseJson = "{\"request_status\":\"SUCCESS\",\"message\":\"\"}";
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;

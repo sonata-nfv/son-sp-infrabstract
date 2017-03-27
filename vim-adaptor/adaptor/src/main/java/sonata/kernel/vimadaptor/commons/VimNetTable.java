@@ -24,37 +24,48 @@
  * 
  */
 
-package sonata.kernel.vimadaptor.commons.vnfd;
+package sonata.kernel.vimadaptor.commons;
 
-import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationContext;
-import com.fasterxml.jackson.databind.JsonDeserializer;
-import com.fasterxml.jackson.databind.JsonNode;
+import java.util.Hashtable;
+
+public class VimNetTable {
 
 
-import java.io.IOException;
-
-public class VmFormatDeserializer extends JsonDeserializer<VmFormat> {
-
-  /*
-   * (non-Javadoc)
+  private Hashtable<String, IpNetPool> vimTable;
+  
+  private static VimNetTable myInstance= null;
+  /**
+   * get Singleton instance method.
    * 
-   * @see com.fasterxml.jackson.databind.JsonDeserializer#deserialize(com.fasterxml.jackson.core.
-   * JsonParser, com.fasterxml.jackson.databind.DeserializationContext)
+   * @return the singleton instance of IpNetPool
    */
-  @Override
-  public VmFormat deserialize(JsonParser jp, DeserializationContext context)
-      throws IOException, JsonProcessingException {
-    JsonNode node = jp.getCodec().readTree(jp);
-    JsonNode unitNode = node.get("vm_image_format");
-    VmFormat out = null;
-    if (unitNode != null) {
-      String vmFormat = unitNode.asText();
-      out = VmFormat.valueOf(vmFormat.toLowerCase());
+  public static VimNetTable getInstance() {
+    if (myInstance == null) {
+      myInstance = new VimNetTable();
     }
-    
-    return out;
+    return myInstance;
   }
 
+  public static void resetInstance() {
+    myInstance = null;
+  }
+  
+  private VimNetTable(){
+    this.vimTable = new Hashtable<String, IpNetPool>();
+  }
+  
+  public void registerVim(String vimUuid){
+    if(this.vimTable.containsKey(vimUuid))
+      return;
+    IpNetPool pool = new IpNetPool("192.0.0.0/8");
+    this.vimTable.put(vimUuid, pool);
+  }
+  
+  public IpNetPool getNetPool(String vimUuid){
+    return vimTable.get(vimUuid);
+  }
+  
+  public void deregisterVim(String vimUuid){
+    this.vimTable.remove(vimUuid);
+  }
 }

@@ -26,6 +26,7 @@
 
 package sonata.kernel.vimadaptor.commons.nsd;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.ArrayList;
@@ -38,6 +39,7 @@ public class VirtualLink {
 
     private final String name;
 
+    @JsonCreator
     ConnectivityType(String name) {
       this.name = name;
     }

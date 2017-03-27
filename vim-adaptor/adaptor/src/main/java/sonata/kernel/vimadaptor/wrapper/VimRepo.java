@@ -984,7 +984,7 @@ public class VimRepo {
    * 
    * @return true for process success
    */
-  public boolean removeServiceInstanceEntry(String instanceUuid) {
+  public boolean removeServiceInstanceEntry(String instanceUuid, String vimUuid) {
     boolean out = true;
 
     Connection connection = null;
@@ -998,9 +998,10 @@ public class VimRepo {
               prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      String sql = "DELETE FROM service_instances  WHERE INSTANCE_UUID=?;";
+      String sql = "DELETE FROM service_instances WHERE INSTANCE_UUID=? AND VIM_UUID=?;";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, instanceUuid);
+      stmt.setString(2, vimUuid);
       stmt.executeUpdate();
       connection.commit();
     } catch (SQLException e) {

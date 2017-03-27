@@ -35,7 +35,10 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
+import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
+import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointTypeDeserializer;
 import sonata.kernel.vimadaptor.commons.nsd.ForwardingGraph;
 import sonata.kernel.vimadaptor.commons.nsd.NetworkForwardingPath;
 import sonata.kernel.vimadaptor.commons.nsd.NetworkFunction;
@@ -92,13 +95,15 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
 
     data = null;
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
+    // ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    // SimpleModule module = new SimpleModule();
+    // module.addDeserializer(Unit.class, new UnitDeserializer());
+    // //module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // //module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
+    // mapper.registerModule(module);
+    // mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    // mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     try {
       data = mapper.readValue(message.getBody(), NetworkConfigurePayload.class);
       Logger.info("payload parsed");
@@ -232,7 +237,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       }
     }
 
-    String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
+    String responseJson = "{\"request_status\":\"SUCCESS\",\"message\":\"\"}";
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;

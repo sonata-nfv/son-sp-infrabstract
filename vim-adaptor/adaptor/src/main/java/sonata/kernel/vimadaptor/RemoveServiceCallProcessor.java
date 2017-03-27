@@ -73,6 +73,8 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
       return false;
     }
     this.wrapperQueue = new ArrayList<String>(Arrays.asList(vimUuidList));
+    Logger.debug("List of VIMs hosting the service: ");
+    Logger.debug(wrapperQueue.toString());
     for (String vimUuid : vimUuidList) {
       ComputeWrapper wr = WrapperBay.getInstance().getComputeWrapper(vimUuid);
       if (wr == null) {

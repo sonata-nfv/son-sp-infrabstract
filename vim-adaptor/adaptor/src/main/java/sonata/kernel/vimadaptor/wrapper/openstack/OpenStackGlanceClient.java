@@ -69,9 +69,6 @@ public class OpenStackGlanceClient {
     this.tenantName = tenantName;
 
     this.mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    mapper.registerModule(module);
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);

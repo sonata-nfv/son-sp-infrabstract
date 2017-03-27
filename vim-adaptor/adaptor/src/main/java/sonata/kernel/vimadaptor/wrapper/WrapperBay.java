@@ -26,6 +26,8 @@
 
 package sonata.kernel.vimadaptor.wrapper;
 
+import sonata.kernel.vimadaptor.commons.VimNetTable;
+
 import java.util.ArrayList;
 
 public class WrapperBay {
@@ -102,6 +104,7 @@ public class WrapperBay {
    * @return a JSON representing the output of the API call
    */
   public String removeComputeWrapper(String uuid) {
+    VimNetTable.getInstance().deregisterVim(uuid);
     repository.removeVimEntry(uuid);
     return "{\"request_status\":\"COMPLETED\"}";
   }

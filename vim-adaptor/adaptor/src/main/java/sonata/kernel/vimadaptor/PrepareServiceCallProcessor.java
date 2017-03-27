@@ -33,8 +33,11 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.ServicePreparePayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimPreDeploymentList;
 import sonata.kernel.vimadaptor.commons.VnfImage;
+import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
+import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointTypeDeserializer;
 import sonata.kernel.vimadaptor.commons.vnfd.Unit;
 import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.vimadaptor.commons.vnfd.VmFormat;
@@ -83,13 +86,15 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
     Logger.info("Parsing payload...");
     ServicePreparePayload payload = null;
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
+    // ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    // SimpleModule module = new SimpleModule();
+    // module.addDeserializer(Unit.class, new UnitDeserializer());
+    // //module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // //module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
+    // mapper.registerModule(module);
+    // mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    // mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 
     try {
       payload = mapper.readValue(message.getBody(), ServicePreparePayload.class);

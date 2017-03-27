@@ -29,6 +29,7 @@ package sonata.kernel.vimadaptor;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import sonata.kernel.vimadaptor.commons.VimNetTable;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import sonata.kernel.vimadaptor.wrapper.WrapperType;

@@ -137,7 +137,7 @@ public class OpenStackHeatClient {
 
     try {
 
-      String response = JavaStackUtils
+      JavaStackUtils
           .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
       // Logger.debug("Stack response: " + response);
     } catch (Exception e) {

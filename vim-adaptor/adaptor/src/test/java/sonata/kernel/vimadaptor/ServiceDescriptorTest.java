@@ -27,19 +27,15 @@
 package sonata.kernel.vimadaptor;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.junit.Assert;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.vimadaptor.commons.vnfd.Unit;
-import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 
 import java.io.BufferedReader;
@@ -54,6 +50,8 @@ import java.nio.charset.Charset;
  * Unit test for simple App.
  */
 public class ServiceDescriptorTest {
+
+  ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
 
 
   /**
@@ -72,11 +70,6 @@ public class ServiceDescriptorTest {
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
     VnfDescriptor vnfd1;
@@ -125,11 +118,6 @@ public class ServiceDescriptorTest {
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
     VnfDescriptor vnfd1;
@@ -179,8 +167,6 @@ public class ServiceDescriptorTest {
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     in.close();
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
     Assert.assertNotNull(sd.getDescriptorVersion());
@@ -202,8 +188,6 @@ public class ServiceDescriptorTest {
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     in.close();
-    mapper = new ObjectMapper(new YAMLFactory());
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
     Assert.assertNotNull(sd.getDescriptorVersion());
@@ -236,8 +220,6 @@ public class ServiceDescriptorTest {
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     in.close();
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     vd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
     Assert.assertNotNull(vd.getDescriptorVersion());
@@ -269,11 +251,8 @@ public class ServiceDescriptorTest {
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
     in.close();
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    mapper.registerModule(module);
+    // module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
     vd = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
 
     Assert.assertNotNull(vd.getDescriptorVersion());

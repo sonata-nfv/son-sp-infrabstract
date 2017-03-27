@@ -44,6 +44,7 @@ import sonata.kernel.vimadaptor.commons.IpNetPool;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VduRecord;
+import sonata.kernel.vimadaptor.commons.VimNetTable;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.VnfcInstance;
@@ -55,6 +56,7 @@ import sonata.kernel.vimadaptor.commons.heat.HeatTemplate;
 import sonata.kernel.vimadaptor.commons.heat.StackComposition;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPoint;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointRecord;
+import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
 import sonata.kernel.vimadaptor.commons.nsd.InterfaceRecord;
 import sonata.kernel.vimadaptor.commons.nsd.NetworkFunction;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
@@ -96,7 +98,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public OpenStackHeatWrapper(WrapperConfiguration config) {
     super();
     this.config = config;
-    this.myPool = IpNetPool.getInstance();
+    VimNetTable.getInstance().registerVim(this.config.getUuid());
+    this.myPool = VimNetTable.getInstance().getNetPool(this.config.getUuid());
   }
 
   private HeatTemplate createInitStackTemplate(String instanceId) throws Exception {
@@ -190,8 +193,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
-    String tenantExtNet = object.getString("tenant_ext_net");
-    String tenantExtRouter = object.getString("tenant_ext_router");
+    // String tenantExtNet = object.getString("tenant_ext_net");
+    // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
 
@@ -251,8 +254,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
-    String tenantExtNet = object.getString("tenant_ext_net");
-    String tenantExtRouter = object.getString("tenant_ext_router");
+    // String tenantExtNet = object.getString("tenant_ext_net");
+    // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
 
@@ -278,8 +281,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
-    String tenantExtNet = object.getString("tenant_ext_net");
-    String tenantExtRouter = object.getString("tenant_ext_router");
+    // String tenantExtNet = object.getString("tenant_ext_net");
+    // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
     // To prepare a service instance management and data networks/subnets
@@ -377,7 +380,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       String output = client.deleteStack(stackName, stackUuid);
 
       if (output.equals("DELETED")) {
-        repo.removeServiceInstanceEntry(instanceUuid);
+        repo.removeServiceInstanceEntry(instanceUuid, this.config.getUuid());
         myPool.freeSubnets(instanceUuid);
         this.setChanged();
         String body = "{\"status\":\"SUCCESS\",\"wrapper_uuid\":\"" + this.config.getUuid() + "\"}";
@@ -385,6 +388,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         this.notifyObservers(update);
       }
     } catch (Exception e) {
+      e.printStackTrace();
       this.setChanged();
       WrapperStatusUpdate errorUpdate = new WrapperStatusUpdate(callSid, "ERROR", e.getMessage());
       this.notifyObservers(errorUpdate);
@@ -396,12 +400,15 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private String selectFlavor(int vcpu, double memoryInGB, double storageIngGB,
       ArrayList<Flavor> vimFlavors) {
+    Logger.debug("Flavor Selecting routine...");
     for (Flavor flavor : vimFlavors) {
       if (vcpu <= flavor.getVcpu() && ((memoryInGB * 1024) <= flavor.getRam())
           && (storageIngGB <= flavor.getStorage())) {
+        Logger.debug("Flavor found");
         return flavor.getFlavorName();
       }
     }
+    Logger.debug("Flavor not found");
     return null;
   }
 
@@ -412,7 +419,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // user management is in place.
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
-    String tenant = object.getString("tenant");
+//    String tenant = object.getString("tenant");
     String tenantExtNet = object.getString("tenant_ext_net");
     String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
@@ -718,16 +725,17 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // user management is in place.
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
-    String tenant = object.getString("tenant");
+    //String tenant = object.getString("tenant");
     String tenantExtNet = object.getString("tenant_ext_net");
-    String tenantExtRouter = object.getString("tenant_ext_router");
+    //String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
-
+    
     HeatModel model = new HeatModel();
 
     ArrayList<String> publicPortNames = new ArrayList<String>();
 
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
+      Logger.debug("Each VDU goes into a number of Heat Server...");
       HeatResource server = new HeatResource();
       server.setType("OS::Nova::Server");
       server.setName(vnfd.getName() + ":" + vdu.getId() + ":" + instanceUuid);
@@ -739,8 +747,17 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           * vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
       double storageInGB = vdu.getResourceRequirements().getStorage().getSize()
           * vdu.getResourceRequirements().getStorage().getSizeUnit().getMultiplier();
-      String flavorName = this.selectFlavor(vcpu, memoryInGB, storageInGB, flavors);
+      String flavorName = null;
+      try{
+        flavorName = this.selectFlavor(vcpu, memoryInGB, storageInGB, flavors);
+      } catch (Exception e) {
+        Logger.error("Exception while searching for available flavor for the requirements: "+e.getMessage());
+        throw new Exception("Cannot find an available flavor for requirements. CPU: " + vcpu
+          + " - mem: " + memoryInGB + " - sto: " + storageInGB);
+      }
       if (flavorName == null) {
+        Logger.error("Cannot find an available flavor for the requirements. CPU: " + vcpu
+            + " - mem: " + memoryInGB + " - sto: " + storageInGB);
         throw new Exception("Cannot find an available flavor for requirements. CPU: " + vcpu
             + " - mem: " + memoryInGB + " - sto: " + storageInGB);
       }
@@ -753,11 +770,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         port.setName(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         port.putProperty("name", vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         HashMap<String, Object> netMap = new HashMap<String, Object>();
-        if (cp.getType().equals(ConnectionPoint.Interface.INT)) {
+        if (cp.getType().equals(ConnectionPointType.INT)) {
           netMap.put("get_resource", "SonataService:data:net:" + instanceUuid);
-        } else if (cp.getType().equals(ConnectionPoint.Interface.EXT)) {
+        } else if (cp.getType().equals(ConnectionPointType.EXT)) {
           netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
-        } else if (cp.getType().equals(ConnectionPoint.Interface.PUBLIC)) {
+        } else if (cp.getType().equals(ConnectionPointType.PUBLIC)) {
           netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
           publicPortNames.add(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         }
@@ -808,8 +825,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(config.getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
-    String tenantExtNet = object.getString("tenant_ext_net");
-    String tenantExtRouter = object.getString("tenant_ext_router");
+    //String tenantExtNet = object.getString("tenant_ext_net");
+    //String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
 
@@ -828,10 +845,19 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatModel stackAddendum;
 
     HeatTemplate template = client.getStackTemplate(stackName, stackUuid);
+    if( template == null){
+      Logger.error("Error retrieveing the stack template.");
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Cannot retrieve service stack from VIM.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;  
+    }
     try {
       stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
     } catch (Exception e) {
-      Logger.error(e.getMessage());
+      Logger.error("Error: "+ e.getMessage());
+      e.printStackTrace();
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Exception during VNFD translation.");
       this.markAsChanged();

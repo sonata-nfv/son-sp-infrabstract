@@ -26,15 +26,10 @@
 
 package sonata.kernel.vimadaptor;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -51,14 +46,13 @@ import sonata.kernel.vimadaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployResponse;
 import sonata.kernel.vimadaptor.commons.ServicePreparePayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VimPreDeploymentList;
 import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.vimadaptor.commons.vnfd.Unit;
-import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
@@ -109,15 +103,18 @@ public class DeployServiceTest implements MessageReceiver {
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
-    this.mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    module.addDeserializer(Unit.class, new UnitDeserializer());
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    this.mapper = SonataManifestMapper.getSonataMapper();
+    // this.mapper = new ObjectMapper(new YAMLFactory());
+    // SimpleModule module = new SimpleModule();
+    // module.addDeserializer(Unit.class, new UnitDeserializer());
+    // //module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // //module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
+    // mapper.registerModule(module);
+    // mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    // mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    // mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    // mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    // mapper.setSerializationInclusion(Include.NON_NULL);
 
     sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
 
@@ -596,7 +593,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-        status.equals("COMPLETED"));
+        status.equals("SUCCESS"));
     // Service removal
     output = null;
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -1215,7 +1212,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
-        status.equals("COMPLETED"));
+        status.equals("SUCCESS"));
     System.out.println(
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
 
@@ -1242,7 +1239,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-        status.equals("COMPLETED"));
+        status.equals("SUCCESS"));
 
     // 2. Remove Service
     // Service removal
@@ -1467,8 +1464,7 @@ public class DeployServiceTest implements MessageReceiver {
         mon.wait(1000);
       }
     }
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    VimResources[] vimList = mapper.readValue(output, VimResources[].class);
+      VimResources[] vimList = mapper.readValue(output, VimResources[].class);
     System.out.println("[TwoPoPTest] Listing available PoP");
     for (VimResources resource : vimList) {
       System.out.println(mapper.writeValueAsString(resource));
@@ -1646,7 +1642,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
-        status.equals("COMPLETED"));
+        status.equals("SUCCESS"));
     System.out.println(
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
 
