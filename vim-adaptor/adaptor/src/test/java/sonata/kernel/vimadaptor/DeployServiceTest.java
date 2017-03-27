@@ -1695,6 +1695,80 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
 
+    // Remove registered VIMs
+    
+    output = null;
+    message = "{\"uuid\":\"" + computeWrUuid1 + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    output = null;
+    message = "{\"uuid\":\"" + netWrUuid1 + "\"}";
+    topic = "infrastructure.management.network.remove";
+    ServicePlatformMessage removeNetVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeNetVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    output = null;
+    message = "{\"uuid\":\"" + computeWrUuid2 + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    output = null;
+    message = "{\"uuid\":\"" + netWrUuid2 + "\"}";
+    topic = "infrastructure.management.network.remove";
+    removeNetVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeNetVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    
     core.stop();
 
 
