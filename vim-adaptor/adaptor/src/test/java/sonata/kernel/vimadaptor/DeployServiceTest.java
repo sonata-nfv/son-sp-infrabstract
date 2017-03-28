@@ -574,7 +574,7 @@ public class DeployServiceTest implements MessageReceiver {
     // 1. De-configure SFC
     output = null;
     String message = "{\"service_instance_id\":\"" + instanceUuid + "\"}";
-    topic = "infrastructure.chain.deconfigure";
+    topic = "infrastructure.service.chain.deconfigure";
     ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);
@@ -1193,7 +1193,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     body = mapper.writeValueAsString(netPayload);
 
-    topic = "infrastructure.chain.configure";
+    topic = "infrastructure.service.chain.configure";
     ServicePlatformMessage networkConfigureMessage = new ServicePlatformMessage(body,
         "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
@@ -1219,7 +1219,7 @@ public class DeployServiceTest implements MessageReceiver {
     // 1. De-configure SFC
     output = null;
     message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() + "\"}";
-    topic = "infrastructure.chain.deconfigure";
+    topic = "infrastructure.service.chain.deconfigure";
     ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);
@@ -1622,7 +1622,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     body = mapper.writeValueAsString(netPayload);
 
-    topic = "infrastructure.chain.configure";
+    topic = "infrastructure.service.chain.configure";
     ServicePlatformMessage networkConfigureMessage = new ServicePlatformMessage(body,
         "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
@@ -1651,7 +1651,7 @@ public class DeployServiceTest implements MessageReceiver {
     // De-configure SFC
 
     message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() + "\"}";
-    topic = "infrastructure.chain.deconfigure";
+    topic = "infrastructure.service.chain.deconfigure";
     ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);

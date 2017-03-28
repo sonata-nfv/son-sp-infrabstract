@@ -81,24 +81,13 @@ public class AdaptorDispatcher implements Runnable {
           handleFunctionMessage(message);
         } else if (isMonitoringMessage(message)) {
           this.handleMonitoringMessage(message);
-        } else if (isNetworkMsg(message)) {
-          this.handleNetworkMessage(message);
-        }
+        } 
       } catch (InterruptedException e) {
         Logger.error(e.getMessage(), e);
       }
     } while (!stop);
   }
 
-  private void handleNetworkMessage(ServicePlatformMessage message) {
-    if (message.getTopic().endsWith("deconfigure")) {
-      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
-      myThreadPool.execute(new DeconfigureNetworkCallProcessor(message, message.getSid(), mux));
-    } else if (message.getTopic().endsWith("configure")) {
-      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
-      myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
-    }
-  }
 
   private void handleMonitoringMessage(ServicePlatformMessage message) {
     if (message.getTopic().contains("compute")) {
@@ -119,6 +108,12 @@ public class AdaptorDispatcher implements Runnable {
     } else if (message.getTopic().endsWith("prepare")) {
       Logger.info("Received a \"service.prepare\" API call on topic: " + message.getTopic());
       myThreadPool.execute(new PrepareServiceCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("chain.deconfigure")) {
+      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new DeconfigureNetworkCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("chain.configure")) {
+      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
     }
   }
 
@@ -161,10 +156,6 @@ public class AdaptorDispatcher implements Runnable {
 
   private boolean isServiceMsg(ServicePlatformMessage message) {
     return message.getTopic().contains("infrastructure.service");
-  }
-
-  private boolean isNetworkMsg(ServicePlatformMessage message) {
-    return message.getTopic().contains("infrastructure.chain");
   }
 
   private boolean isMonitoringMessage(ServicePlatformMessage message) {
