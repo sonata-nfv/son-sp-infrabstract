@@ -383,7 +383,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         repo.removeServiceInstanceEntry(instanceUuid, this.config.getUuid());
         myPool.freeSubnets(instanceUuid);
         this.setChanged();
-        String body = "{\"status\":\"SUCCESS\",\"wrapper_uuid\":\"" + this.config.getUuid() + "\"}";
+        String body = "{\"status\":\"COMPLETED\",\"wrapper_uuid\":\"" + this.config.getUuid() + "\"}";
         WrapperStatusUpdate update = new WrapperStatusUpdate(null, "SUCCESS", body);
         this.notifyObservers(update);
       }
@@ -962,11 +962,13 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     FunctionDeployResponse response = new FunctionDeployResponse();
     VnfDescriptor vnfd = data.getVnfd();
-    response.setRequestStatus("DEPLOYED");
+    response.setRequestStatus("COMPLETED");
     response.setInstanceVimUuid(stackUuid);
     response.setInstanceName(stackName);
     response.setVimUuid(this.config.getUuid());
+    response.setMessage("");
 
+    
     VnfRecord vnfr = new VnfRecord();
     vnfr.setDescriptorVersion("vnfr-schema-01");
     vnfr.setId(vnfd.getInstanceUuid());

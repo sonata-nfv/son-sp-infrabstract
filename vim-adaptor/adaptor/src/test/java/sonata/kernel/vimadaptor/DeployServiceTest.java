@@ -592,7 +592,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
     // Service removal
     output = null;
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -611,7 +611,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
 
     // VIM removal
     output = null;
@@ -802,8 +802,8 @@ public class DeployServiceTest implements MessageReceiver {
       System.out.println("output:");
       System.out.println(output);
       Assert.assertTrue("Deploy request failed with status: " + response.getRequestStatus()
-          + " - Message: " + response.getErrorCode(),
-          response.getRequestStatus().equals("DEPLOYED"));
+          + " - Message: " + response.getMessage(),
+          response.getRequestStatus().equals("COMPLETED"));
       if (response.getNsr() != null) {
         Assert.assertTrue(response.getNsr().getStatus() == Status.offline);
       }
@@ -864,7 +864,7 @@ public class DeployServiceTest implements MessageReceiver {
     try {
       response = mapper.readValue(output, ServiceDeployResponse.class);
 
-      Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+      Assert.assertTrue(response.getRequestStatus().equals("COMPLETED"));
       if (response.getNsr() != null) {
         Assert.assertTrue(response.getNsr().getStatus() == Status.offline);
       }
@@ -918,7 +918,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
 
     output = null;
     instanceUuid = baseInstanceUuid + "-02";
@@ -941,7 +941,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
 
 
 
@@ -1175,7 +1175,7 @@ public class DeployServiceTest implements MessageReceiver {
       System.out.println(output);
       Assert.assertTrue("No response received after function deployment", retry < maxRetry);
       FunctionDeployResponse response = mapper.readValue(output, FunctionDeployResponse.class);
-      Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+      Assert.assertTrue(response.getRequestStatus().equals("COMPLETED"));
       Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
       records.add(response.getVnfr());
     }
@@ -1211,7 +1211,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
-        status.equals("SUCCESS"));
+        status.equals("COMPLETED"));
     System.out.println(
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
 
@@ -1237,7 +1237,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
 
     // 2. Remove Service
     // Service removal
@@ -1259,7 +1259,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
 
     // 3. De-register VIMs.
 
@@ -1640,7 +1640,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
-        status.equals("SUCCESS"));
+        status.equals("COMPLETED"));
     System.out.println(
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
 
@@ -1669,7 +1669,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
 
     output = null;
 
@@ -1693,7 +1693,7 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("SUCCESS"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
 
     // Remove registered VIMs
     

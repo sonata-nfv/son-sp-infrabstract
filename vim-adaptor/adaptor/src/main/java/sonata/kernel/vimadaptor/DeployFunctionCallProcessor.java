@@ -123,7 +123,7 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
         Logger.warn("Error retrieving the wrapper");
 
         this.sendToMux(new ServicePlatformMessage(
-            "{\"request_status\":\"fail\",\"message\":\"VIM not found\"}", "application/json",
+            "{\"request_status\":\"ERROR\",\"message\":\"VIM not found\"}", "application/json",
             message.getReplyTo(), message.getSid(), null));
         out = false;
       } else {
@@ -136,7 +136,7 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
       this.sendToMux(new ServicePlatformMessage(
-          "{\"request_status\":\"fail\",\"message\":\"Deployment Error\"}", "application/json",
+          "{\"request_status\":\"ERROR\",\"message\":\"Deployment Error\"}", "application/json",
           message.getReplyTo(), message.getSid(), null));
       out = false;
     }

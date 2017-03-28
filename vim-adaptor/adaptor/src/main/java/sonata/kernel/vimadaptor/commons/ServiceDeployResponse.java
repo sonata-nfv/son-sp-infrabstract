@@ -39,7 +39,7 @@ public class ServiceDeployResponse {
   private String requestStatus;
   private ServiceRecord nsr;
   private ArrayList<VnfRecord> vnfrs;
-  private String errorCode;
+  private String message;
 
   public ServiceDeployResponse() {
     this.vnfrs = new ArrayList<VnfRecord>();
@@ -65,8 +65,8 @@ public class ServiceDeployResponse {
     return vnfrs;
   }
 
-  public String getErrorCode() {
-    return errorCode;
+  public String getMessage() {
+    return message;
   }
 
   public void setInstanceName(String instanceName) {
@@ -89,8 +89,8 @@ public class ServiceDeployResponse {
     this.vnfrs = vnfrs;
   }
 
-  public void setErrorCode(String errorCode) {
-    this.errorCode = errorCode;
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   /**
