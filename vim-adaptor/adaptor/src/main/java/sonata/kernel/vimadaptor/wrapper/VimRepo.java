@@ -564,8 +564,8 @@ public class VimRepo {
    * @param computeUuid the uuid of the computeVim
    * @return
    */
-  public WrapperRecord getNetworkVimFromComputeVimUuid(String computeUuid) {
-    WrapperRecord output = null;
+  public String getNetworkVimFromComputeVimUuid(String computeUuid) {
+    String output = null;
     Connection connection = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -607,9 +607,10 @@ public class VimRepo {
         config.setAuthPass(pass);
         config.setAuthKey(key);
 
-        Wrapper wrapper = WrapperFactory.createWrapper(config);
-        output = new WrapperRecord(wrapper, config, null);
-
+        //Wrapper wrapper = WrapperFactory.createWrapper(config);
+        //output = new WrapperRecord(wrapper, config, null);
+        
+        output = uuid;
 
       } else {
         output = null;

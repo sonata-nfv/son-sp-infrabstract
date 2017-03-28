@@ -1014,7 +1014,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceIncremental() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1312,7 +1312,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceIncrementalMultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1566,7 +1566,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     Assert.assertTrue("No response received after function deployment", retry < maxRetry);
     FunctionDeployResponse response = mapper.readValue(output, FunctionDeployResponse.class);
-    Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+    Assert.assertTrue(response.getRequestStatus().equals("COMPLETED"));
     Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
     records.add(response.getVnfr());
 
@@ -1605,7 +1605,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     Assert.assertTrue("No response received after function deployment", retry < maxRetry);
     response = mapper.readValue(output, FunctionDeployResponse.class);
-    Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+    Assert.assertTrue(response.getRequestStatus().equals("COMPLETED"));
     Assert.assertTrue(response.getVnfr().getStatus() == Status.offline);
     records.add(response.getVnfr());
 

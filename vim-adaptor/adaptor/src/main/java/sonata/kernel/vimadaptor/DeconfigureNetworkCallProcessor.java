@@ -98,7 +98,7 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
 
     for (String computeVimUuid : computeUuids) {
       WrapperRecord netVimRecord =
-          WrapperBay.getInstance().getVimRepo().getNetworkVimFromComputeVimUuid(computeVimUuid);
+          WrapperBay.getInstance().getNetworkVimFromComputeVimUuid(computeVimUuid);
       if (netVimRecord == null) {
         Logger.error(
             "Unable to deconfigure networking. Cannot find NetVim associated with compute vim "
@@ -124,7 +124,7 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
     }
 
 
-    String responseJson = "{\"request_status\":\"SUCCESS\",\"message\":\"\"}";
+    String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;

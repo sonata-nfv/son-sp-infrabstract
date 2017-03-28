@@ -167,7 +167,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             String vnfInstanceUuid = vnfd.getInstanceUuid();
             String computeVimUuid = WrapperBay.getInstance().getVimRepo()
                 .getComputeVimUuidByFunctionInstanceId(vnfInstanceUuid);
-            String netVimUuid = WrapperBay.getInstance().getVimRepo()
+            String netVimUuid = WrapperBay.getInstance()
                 .getNetworkVimFromComputeVimUuid(computeVimUuid).getConfig().getUuid();
             if (netVim2SubGraphMap.containsKey(netVimUuid)) {
               netVim2SubGraphMap.get(netVimUuid).add(cpr);
@@ -228,7 +228,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       }
     }
 
-    String responseJson = "{\"request_status\":\"SUCCESS\",\"message\":\"\"}";
+    String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;
