@@ -209,7 +209,7 @@ public class WrapperBay {
    */
   public WrapperRecord getNetworkVimFromComputeVimUuid(String vimUuid) {
     String netVimUuid = this.repository.getNetworkVimFromComputeVimUuid(vimUuid);
-    if (netVimUuid != null) {
+    if (netVimUuid == null) {
       Logger.error("can't find Networking VIM for compute VIM UUID: " + vimUuid);
     }
     if (networkWrapperCache.containsKey(netVimUuid)) {
