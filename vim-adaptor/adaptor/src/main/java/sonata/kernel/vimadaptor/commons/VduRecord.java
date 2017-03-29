@@ -26,12 +26,14 @@
 
 package sonata.kernel.vimadaptor.commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.vimadaptor.commons.vnfd.ResourceRequirements;
 
 import java.util.ArrayList;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VduRecord {
 
   private String id;
