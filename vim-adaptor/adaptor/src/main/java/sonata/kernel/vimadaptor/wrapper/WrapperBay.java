@@ -26,6 +26,8 @@
 
 package sonata.kernel.vimadaptor.wrapper;
 
+import org.slf4j.LoggerFactory;
+
 import sonata.kernel.vimadaptor.commons.VimNetTable;
 
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import java.util.Hashtable;
 public class WrapperBay {
 
   private static WrapperBay myInstance = null;
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(WrapperBay.class);
 
   private VimRepo repository = null;
 
@@ -136,8 +139,8 @@ public class WrapperBay {
    *         registered VIM
    */
   public ComputeWrapper getComputeWrapper(String vimUuid) {
-    if (computeWrapperCache.containsKey(vimUuid)) 
-      return (ComputeWrapper)computeWrapperCache.get(vimUuid).getVimWrapper();
+    if (computeWrapperCache.containsKey(vimUuid))
+      return (ComputeWrapper) computeWrapperCache.get(vimUuid).getVimWrapper();
     WrapperRecord vimEntry = this.repository.readVimEntry(vimUuid);
     if (vimEntry == null) {
       return null;
@@ -206,8 +209,12 @@ public class WrapperBay {
    */
   public WrapperRecord getNetworkVimFromComputeVimUuid(String vimUuid) {
     String netVimUuid = this.repository.getNetworkVimFromComputeVimUuid(vimUuid);
-    if (networkWrapperCache.containsKey(netVimUuid)) 
+    if (netVimUuid != null) {
+      Logger.error("can't find Networking VIM for compute VIM UUID: " + vimUuid);
+    }
+    if (networkWrapperCache.containsKey(netVimUuid)) {
       return networkWrapperCache.get(netVimUuid);
+    }
     WrapperRecord vimEntry = this.repository.getNetworkVim(netVimUuid);
     if (vimEntry == null) {
       return null;
