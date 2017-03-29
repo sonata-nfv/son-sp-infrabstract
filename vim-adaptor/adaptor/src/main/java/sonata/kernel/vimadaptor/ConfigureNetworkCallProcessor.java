@@ -167,6 +167,14 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             String vnfInstanceUuid = vnfd.getInstanceUuid();
             String computeVimUuid = WrapperBay.getInstance().getVimRepo()
                 .getComputeVimUuidByFunctionInstanceId(vnfInstanceUuid);
+            if(computeVimUuid==null){
+              Logger.error("Can't find Compute VIM UUID for Function Instance Id "+vnfInstanceUuid);
+              String responseJson =
+                  "{\"request_status\":\"ERROR\",\"message\":\"Can't find VIM where function instance"+ vnfInstanceUuid+ " is deployed\"}";
+              this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
+                  message.getReplyTo(), message.getSid(), null));
+              return false;
+            }
             String netVimUuid = WrapperBay.getInstance()
                 .getNetworkVimFromComputeVimUuid(computeVimUuid).getConfig().getUuid();
             if (netVim2SubGraphMap.containsKey(netVimUuid)) {
