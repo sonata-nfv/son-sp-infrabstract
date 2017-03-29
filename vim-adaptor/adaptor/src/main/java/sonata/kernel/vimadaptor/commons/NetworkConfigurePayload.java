@@ -39,7 +39,7 @@ public class NetworkConfigurePayload {
   private String serviceInstanceId;
   @JsonProperty("nsd")
   private ServiceDescriptor nsd;
-  @JsonProperty("vfnds")
+  @JsonProperty("vnfds")
   private ArrayList<VnfDescriptor> vnfds;
   @JsonProperty("vnfrs")
   private ArrayList<VnfRecord> vnfrs;
