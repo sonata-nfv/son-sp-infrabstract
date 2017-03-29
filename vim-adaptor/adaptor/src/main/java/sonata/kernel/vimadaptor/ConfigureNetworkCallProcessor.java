@@ -99,7 +99,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       data = mapper.readValue(message.getBody(), NetworkConfigurePayload.class);
       Logger.info("payload parsed");
     } catch (IOException e) {
-      Logger.error("Unable to parse the payload received");
+      Logger.error("Unable to parse the payload received",e);
       String responseJson =
           "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
       this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
