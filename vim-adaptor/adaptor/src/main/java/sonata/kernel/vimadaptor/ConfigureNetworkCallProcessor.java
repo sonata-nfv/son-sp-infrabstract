@@ -27,6 +27,7 @@
 
 package sonata.kernel.vimadaptor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
@@ -221,7 +222,15 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           wrapperPayload.setVnfds(descriptorsSublist);
           wrapperPayload.setVnfrs(recordsSublist);
           wrapperPayload.setServiceInstanceId(serviceInstaceId);
-
+          
+          try {
+            Logger.debug("Partial configuration for PoP "+netVimUuid+":");
+            Logger.debug(mapper.writeValueAsString(wrapperPayload));
+          } catch (JsonProcessingException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+          }
+          
           NetworkWrapper netWr = (NetworkWrapper) WrapperBay.getInstance().getWrapper(netVimUuid);
           try {
             netWr.configureNetworking(wrapperPayload);
