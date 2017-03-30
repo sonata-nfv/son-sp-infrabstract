@@ -1,5 +1,7 @@
 # Vim-adaptor files
 
+
+
 ## Eclipse files
 
 .project
@@ -12,6 +14,10 @@ adaptor/bin
 ## licence_finder docs
 
 adaptor/doc
+
+## test images
+
+test_images/
 
 ## Python files
 

@@ -21,18 +21,18 @@ virtual_deployment_units:
       cpu:
         vcpus: 1
       memory:
-        size: 1
-        size_unit: "GB"
+        size: 512
+        size_unit: "MB"
       storage:
         size: 1
         size_unit: "GB"
     connection_points:
       - id: "vdu01:eth0"
-        type: "interface"
+        type: "public"
       - id: "vdu01:eth1"
-        type: "interface"
+        type: "internal"
       - id: "vdu01:eth2"
-        type: "interface"
+        type: "internal"
 
 ##
 ## The virtual links that interconnect
@@ -61,10 +61,10 @@ virtual_links:
 ##
 connection_points:
   - id: "vnf:mgmt"
-    type: "interface"
+    type: "public"
   - id: "vnf:input"
-    type: "interface"
+    type: "internal"
   - id: "vnf:output"
-    type: "interface"
+    type: "internal"
 uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f5678
 instance_uuid: 6a15313f-cb0a-4540-baa2-77cc6b3f0000
