@@ -106,8 +106,9 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           message.getReplyTo(), message.getSid(), null));
       return false;
     }
+    String serviceInstaceId = data.getServiceInstanceId();
     Logger.info(
-        "Received networking.configure call for service instance " + data.getServiceInstanceId());
+        "Received networking.configure call for service instance " + serviceInstaceId);
     ServiceDescriptor nsd = data.getNsd();
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
     ArrayList<VnfDescriptor> vnfds = data.getVnfds();
@@ -196,6 +197,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           ServiceDescriptor partialNsd = new ServiceDescriptor();
           partialNsd.setConnectionPoints(nsd.getConnectionPoints());
           partialNsd.setNetworkFunctions(nsd.getNetworkFunctions());
+          partialNsd.setInstanceUuid(serviceInstaceId);
           ForwardingGraph partialGraph = new ForwardingGraph();
           NetworkForwardingPath partialPath = new NetworkForwardingPath();
           ArrayList<ConnectionPointReference> connectionPoints = netVim2SubGraphMap.get(netVimUuid);
@@ -218,7 +220,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           wrapperPayload.setNsd(partialNsd);
           wrapperPayload.setVnfds(descriptorsSublist);
           wrapperPayload.setVnfrs(recordsSublist);
-          wrapperPayload.setServiceInstanceId(nsd.getInstanceUuid());
+          wrapperPayload.setServiceInstanceId(serviceInstaceId);
 
           NetworkWrapper netWr = (NetworkWrapper) WrapperBay.getInstance().getWrapper(netVimUuid);
           try {

@@ -88,7 +88,7 @@ public class OvsWrapper extends NetworkWrapper {
     // This is not implemented in the first version.
 
 
-
+    String serviceInstanceId = data.getServiceInstanceId();
     ServiceDescriptor nsd = data.getNsd();
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
     ArrayList<VnfDescriptor> vnfds = data.getVnfds();
@@ -220,7 +220,7 @@ public class OvsWrapper extends NetworkWrapper {
     segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
 
     Collections.sort(odlList);
-    OvsPayload odlPayload = new OvsPayload("add", data.getServiceInstanceId(),
+    OvsPayload odlPayload = new OvsPayload("add", serviceInstanceId,
         segments.getProperty("in"), segments.getProperty("out"), odlList);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
