@@ -189,8 +189,8 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
         }
 
 
-        Logger.debug("subgraph data structure:");
-        Logger.debug(netVim2SubGraphMap.toString());
+        // Logger.debug("subgraph data structure:");
+        // Logger.debug(netVim2SubGraphMap.toString());
         
         for (String netVimUuid : netVim2SubGraphMap.keySet()) {
           ArrayList<VnfDescriptor> descriptorsSublist = new ArrayList<VnfDescriptor>();
@@ -225,13 +225,13 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           wrapperPayload.setVnfrs(recordsSublist);
           wrapperPayload.setServiceInstanceId(serviceInstaceId);
           
-          try {
-            Logger.debug("Partial configuration for PoP "+netVimUuid+":");
-            Logger.debug(mapper.writeValueAsString(wrapperPayload));
-          } catch (JsonProcessingException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-          }
+          // try {
+          // Logger.debug("Partial configuration for PoP "+netVimUuid+":");
+          // Logger.debug(mapper.writeValueAsString(wrapperPayload));
+          // } catch (JsonProcessingException e1) {
+          // // TODO Auto-generated catch block
+          // e1.printStackTrace();
+          // }
           
           NetworkWrapper netWr = (NetworkWrapper) WrapperBay.getInstance().getWrapper(netVimUuid);
           try {
