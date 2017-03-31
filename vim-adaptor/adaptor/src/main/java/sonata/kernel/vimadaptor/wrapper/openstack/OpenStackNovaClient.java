@@ -74,10 +74,11 @@ public class OpenStackNovaClient {
         "URL:" + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
 
     javaStack = JavaStackCore.getJavaStackCore();
+    
     javaStack.setEndpoint(url);
     javaStack.setUsername(userName);
     javaStack.setPassword(password);
-    javaStack.setTenantId(tenantName);
+    //javaStack.setTenantId(tenantName);
 
     // Authenticate
     try {

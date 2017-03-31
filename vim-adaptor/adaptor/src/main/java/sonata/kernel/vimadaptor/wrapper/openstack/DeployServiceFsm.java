@@ -265,13 +265,13 @@ public class DeployServiceFsm implements Runnable {
         referenceVdur.addVnfcInstance(vnfc);
       }
 
-      NetworkWrapper netVim = (NetworkWrapper) WrapperBay.getInstance().getVimRepo()
-          .getNetworkVimFromComputeVimUuid(this.data.getVimUuid()).getVimWrapper();
+      NetworkWrapper netVim = (NetworkWrapper) WrapperBay.getInstance().getNetworkVimFromComputeVimUuid(this.data.getVimUuid()).getVimWrapper();
 
       response.setVimUuid(data.getVimUuid());
       response.setInstanceName(stackName);
       response.setInstanceVimUuid(stackUuid);
-      response.setRequestStatus("DEPLOYED");
+      response.setRequestStatus("COMPLETED");
+      response.setMessage("");
 
 
       NetworkConfigurePayload netData = new NetworkConfigurePayload();
@@ -305,8 +305,8 @@ public class DeployServiceFsm implements Runnable {
       wrapper.notifyObservers(update);
     } catch (Exception e) {
       Logger.error(e.getMessage(), e);
-      response.setRequestStatus("FAIL");
-      response.setErrorCode("DeploymentError");
+      response.setRequestStatus("ERROR");
+      response.setMessage(e.getMessage());
       response.setNsr(null);
       response.setVnfrs(null);
       try {

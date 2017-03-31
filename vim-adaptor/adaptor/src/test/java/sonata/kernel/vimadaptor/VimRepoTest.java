@@ -270,7 +270,8 @@ public class VimRepoTest {
     out = repoInstance.writeNetworkVimLink(computeUuid, networkingUuid);
     Assert.assertTrue("Unable to write compute/networking association", out);
 
-    WrapperRecord netRecord = repoInstance.getNetworkVimFromComputeVimUuid(computeUuid);
+    String netVimUuid = repoInstance.getNetworkVimFromComputeVimUuid(computeUuid);
+    WrapperRecord netRecord = repoInstance.getNetworkVim(netVimUuid);
 
     Assert.assertNotNull("Retrieved netVim is null", netRecord);
     Assert.assertNotNull("Retrieved netVim has null configuration", netRecord.getConfig());

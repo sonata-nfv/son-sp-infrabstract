@@ -564,8 +564,8 @@ public class VimRepo {
    * @param computeUuid the uuid of the computeVim
    * @return
    */
-  public WrapperRecord getNetworkVimFromComputeVimUuid(String computeUuid) {
-    WrapperRecord output = null;
+  public String getNetworkVimFromComputeVimUuid(String computeUuid) {
+    String output = null;
     Connection connection = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -579,37 +579,39 @@ public class VimRepo {
       connection.setAutoCommit(false);
 
       stmt = connection.prepareStatement(
-          "SELECT * FROM vim,link_vim WHERE vim.UUID=LINK_VIM.NETWORKING_UUID AND LINK_VIM.COMPUTE_UUID=?;");
+          "SELECT vim.UUID FROM vim,link_vim WHERE vim.UUID=LINK_VIM.NETWORKING_UUID AND LINK_VIM.COMPUTE_UUID=?;");
       stmt.setString(1, computeUuid);
       rs = stmt.executeQuery();
 
       if (rs.next()) {
         String uuid = rs.getString("UUID");
-        WrapperType wrapperType = WrapperType.getByName(rs.getString("TYPE"));
-        String vendor = rs.getString("VENDOR");
-        String urlString = rs.getString("ENDPOINT");
-        String user = rs.getString("USERNAME");
-        String pass = rs.getString("PASS");
-        String key = rs.getString("AUTHKEY");
-        String configuration = rs.getString("CONFIGURATION");
-        String city = rs.getString("CITY");
-        String country = rs.getString("COUNTRY");
-
-        WrapperConfiguration config = new WrapperConfiguration();
-        config.setUuid(uuid);
-        config.setWrapperType(wrapperType);
-        config.setVimVendor(NetworkVimVendor.getByName(vendor));
-        config.setVimEndpoint(urlString);
-        config.setConfiguration(configuration);
-        config.setCity(city);
-        config.setCountry(country);
-        config.setAuthUserName(user);
-        config.setAuthPass(pass);
-        config.setAuthKey(key);
-
-        Wrapper wrapper = WrapperFactory.createWrapper(config);
-        output = new WrapperRecord(wrapper, config, null);
-
+        
+        // WrapperType wrapperType = WrapperType.getByName(rs.getString("TYPE"));
+        // String vendor = rs.getString("VENDOR");
+        // String urlString = rs.getString("ENDPOINT");
+        // String user = rs.getString("USERNAME");
+        // String pass = rs.getString("PASS");
+        // String key = rs.getString("AUTHKEY");
+        // String configuration = rs.getString("CONFIGURATION");
+        // String city = rs.getString("CITY");
+        // String country = rs.getString("COUNTRY");
+        //
+        // WrapperConfiguration config = new WrapperConfiguration();
+        // config.setUuid(uuid);
+        // config.setWrapperType(wrapperType);
+        // config.setVimVendor(NetworkVimVendor.getByName(vendor));
+        // config.setVimEndpoint(urlString);
+        // config.setConfiguration(configuration);
+        // config.setCity(city);
+        // config.setCountry(country);
+        // config.setAuthUserName(user);
+        // config.setAuthPass(pass);
+        // config.setAuthKey(key);
+        //
+        //Wrapper wrapper = WrapperFactory.createWrapper(config);
+        //output = new WrapperRecord(wrapper, config, null);
+        
+        output = uuid;
 
       } else {
         output = null;

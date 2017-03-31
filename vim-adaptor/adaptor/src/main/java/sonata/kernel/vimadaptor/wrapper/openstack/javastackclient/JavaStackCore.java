@@ -171,7 +171,7 @@ public class JavaStackCore {
       this.tokenId = response.getFirstHeader("X-Subject-Token").getValue();
       if (auth.getToken().getProject() != null) {
         this.projectId = auth.getToken().getProject().getId();
-      } // FIXME check the token structure to see what we get back and what we need to memorise.
+      } 
       this.isAuthenticated = true;
     }
 

@@ -37,7 +37,8 @@ public class FunctionDeployResponse {
   @JsonProperty("request_status")
   private String requestStatus;
   private VnfRecord vnfr;
-  private String errorCode;
+  
+  private String message;
 
 
   public String getInstanceName() {
@@ -54,10 +55,6 @@ public class FunctionDeployResponse {
 
   public VnfRecord getVnfr() {
     return vnfr;
-  }
-
-  public String getErrorCode() {
-    return errorCode;
   }
 
   public void setInstanceName(String instanceName) {
@@ -77,16 +74,24 @@ public class FunctionDeployResponse {
     this.vnfr = vnfr;
   }
 
-  public void setErrorCode(String errorCode) {
-    this.errorCode = errorCode;
-  }
-
   public String getVimUuid() {
     return vimUuid;
   }
 
   public void setVimUuid(String vimUuid) {
     this.vimUuid = vimUuid;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public void setVnfr(VnfRecord vnfr) {
+    this.vnfr = vnfr;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
 

@@ -105,12 +105,12 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     Logger.info("Received an update:\n" + update.getBody());
     JSONTokener tokener = new JSONTokener(update.getBody());
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-
+    String updateStatus = update.getStatus();
     String wrapperId = jsonObject.getString("wrapper_uuid");
     String status = jsonObject.getString("status");
 
     if (wrapperQueue.remove(wrapperId)) {
-      if (status.equals("SUCCESS")) {
+      if (updateStatus.equals("SUCCESS")) {
         Logger.debug("wrapperSuccesfully dequeued.");
       } else {
         Logger.error("Error removing the service. " + status);
@@ -120,9 +120,9 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
 
     if (wrapperQueue.size() == 0) {
       if (!errorsHappened) {
-        sendResponse("{\"request_status\":\"SUCCESS\"}");
+        sendResponse("{\"request_status\":\"COMPLETED\",\"message\":\"\"}");
       } else {
-        sendResponse("{\"request_status\":\"ERROR\"}");
+        sendResponse("{\"request_status\":\"ERROR\",\"message\":\"\"}");
       }
       return;
     }

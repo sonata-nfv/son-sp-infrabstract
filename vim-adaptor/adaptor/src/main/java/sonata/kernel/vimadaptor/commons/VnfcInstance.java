@@ -26,12 +26,14 @@
 
 package sonata.kernel.vimadaptor.commons;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointRecord;
 
 import java.util.ArrayList;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VnfcInstance {
 
   private String id;

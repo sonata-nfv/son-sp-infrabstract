@@ -27,6 +27,7 @@
 
 package sonata.kernel.vimadaptor;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
@@ -99,15 +100,16 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       data = mapper.readValue(message.getBody(), NetworkConfigurePayload.class);
       Logger.info("payload parsed");
     } catch (IOException e) {
-      Logger.error("Unable to parse the payload received");
+      Logger.error("Unable to parse the payload received",e);
       String responseJson =
           "{\"request_status\":\"ERROR\",\"message\":\"Unable to parse API payload\"}";
       this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
           message.getReplyTo(), message.getSid(), null));
       return false;
     }
+    String serviceInstaceId = data.getServiceInstanceId();
     Logger.info(
-        "Received networking.configure call for service instance " + data.getServiceInstanceId());
+        "Received networking.configure call for service instance " + serviceInstaceId);
     ServiceDescriptor nsd = data.getNsd();
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
     ArrayList<VnfDescriptor> vnfds = data.getVnfds();
@@ -167,7 +169,15 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
             String vnfInstanceUuid = vnfd.getInstanceUuid();
             String computeVimUuid = WrapperBay.getInstance().getVimRepo()
                 .getComputeVimUuidByFunctionInstanceId(vnfInstanceUuid);
-            String netVimUuid = WrapperBay.getInstance().getVimRepo()
+            if(computeVimUuid==null){
+              Logger.error("Can't find Compute VIM UUID for Function Instance Id "+vnfInstanceUuid);
+              String responseJson =
+                  "{\"request_status\":\"ERROR\",\"message\":\"Can't find VIM where function instance"+ vnfInstanceUuid+ " is deployed\"}";
+              this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
+                  message.getReplyTo(), message.getSid(), null));
+              return false;
+            }
+            String netVimUuid = WrapperBay.getInstance()
                 .getNetworkVimFromComputeVimUuid(computeVimUuid).getConfig().getUuid();
             if (netVim2SubGraphMap.containsKey(netVimUuid)) {
               netVim2SubGraphMap.get(netVimUuid).add(cpr);
@@ -179,7 +189,9 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
         }
 
 
-
+        // Logger.debug("subgraph data structure:");
+        // Logger.debug(netVim2SubGraphMap.toString());
+        
         for (String netVimUuid : netVim2SubGraphMap.keySet()) {
           ArrayList<VnfDescriptor> descriptorsSublist = new ArrayList<VnfDescriptor>();
           ArrayList<VnfRecord> recordsSublist = new ArrayList<VnfRecord>();
@@ -188,6 +200,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           ServiceDescriptor partialNsd = new ServiceDescriptor();
           partialNsd.setConnectionPoints(nsd.getConnectionPoints());
           partialNsd.setNetworkFunctions(nsd.getNetworkFunctions());
+          partialNsd.setInstanceUuid(serviceInstaceId);
           ForwardingGraph partialGraph = new ForwardingGraph();
           NetworkForwardingPath partialPath = new NetworkForwardingPath();
           ArrayList<ConnectionPointReference> connectionPoints = netVim2SubGraphMap.get(netVimUuid);
@@ -210,8 +223,16 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           wrapperPayload.setNsd(partialNsd);
           wrapperPayload.setVnfds(descriptorsSublist);
           wrapperPayload.setVnfrs(recordsSublist);
-          wrapperPayload.setServiceInstanceId(nsd.getInstanceUuid());
-
+          wrapperPayload.setServiceInstanceId(serviceInstaceId);
+          
+          // try {
+          // Logger.debug("Partial configuration for PoP "+netVimUuid+":");
+          // Logger.debug(mapper.writeValueAsString(wrapperPayload));
+          // } catch (JsonProcessingException e1) {
+          // // TODO Auto-generated catch block
+          // e1.printStackTrace();
+          // }
+          
           NetworkWrapper netWr = (NetworkWrapper) WrapperBay.getInstance().getWrapper(netVimUuid);
           try {
             netWr.configureNetworking(wrapperPayload);
@@ -228,7 +249,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
       }
     }
 
-    String responseJson = "{\"request_status\":\"SUCCESS\",\"message\":\"\"}";
+    String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;

@@ -31,7 +31,7 @@ import java.util.Hashtable;
 
 public class IpNetPool {
 
-  private static final int sizeOfSubnet = 8;
+  private static final int sizeOfSubnet = 32;
   private static final int[] CIDR2MASK =
       new int[] {0x00000000, 0x80000000, 0xC0000000, 0xE0000000, 0xF0000000, 0xF8000000, 0xFC000000,
           0xFE000000, 0xFF000000, 0xFF800000, 0xFFC00000, 0xFFE00000, 0xFFF00000, 0xFFF80000,
