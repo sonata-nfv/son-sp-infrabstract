@@ -58,21 +58,23 @@ def findPort(mac):
 ###   Main Part ###
 
 parser = argparse.ArgumentParser()   #handler for arguments passed 
-parser.add_argument("-s", "--server", nargs=1, help="pass the local server ip",
+parser.add_argument("-s", "--server",help="pass the local server ip",type=str,
                     required=True)  # option configurations, needs to be required
-parser.add_argument("-i", "--brint", nargs=1, help="pass the connection of br-int to br-ex port", required=True)
-parser.add_argument("-e", "--brex", narg=1, help="pass the connection of br-ex to br-int port", required=True)
-parser.add_argument("-t", "--breth", narg=1, help="pass the connection of br-eth0 to br-ex port", required=True)
+parser.add_argument("-i", "--brint",help="pass the connection of br-int to br-ex port",type=int, required=True)
+parser.add_argument("-e", "--brex",help="pass the connection of br-ex to br-int port",type=int, required=True)
+parser.add_argument("-t", "--breth",help="pass the connection of br-eth0 to br-ex port",type=int, required=True)
 args = parser.parse_args()  # pass the arguments to the parser
 
 if args.server:  # parse the server adress passed
     server = args.server
 if args.brint:
     brintport = args.brint
+    print brintport
 if args.brex:
     brexport = args.brex
 if args.breth:
     breth0port = args.breth 
+
 
 print ""
 print ""
