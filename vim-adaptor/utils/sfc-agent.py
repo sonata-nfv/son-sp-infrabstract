@@ -64,7 +64,7 @@ parser = argparse.ArgumentParser()   #handler for arguments passed
 parser.add_argument("-s", "--server",help="pass the local server ip. If not, it finds it automatically",type=str)  # option configurations, needs to be required
 parser.add_argument("-i", "--brint",help="pass the connection of br-int to br-ex port, or use default '2' ",type=str)
 parser.add_argument("-e", "--brex",help="pass the connection of br-ex to br-int port, or use default '2' ",type=str)
-parser.add_argument("-t", "--breth",help="pass the connection of br-eth0 to br-ex port, or use default '2' ",type=str)
+parser.add_argument("-t", "--breth",help="pass the connection of br-eth0 to br-ex port, or use default '3' ",type=str)
 args = parser.parse_args()  # pass the arguments to the parser
 # default values for ports 
 brexport = "2"
