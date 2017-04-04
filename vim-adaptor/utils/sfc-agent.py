@@ -98,13 +98,13 @@ print >>sys.stderr, 'starting up on %s port %s' % server_address
 sock.bind(server_address)
 
 while True:
+    print ""
+    print "Waiting for data ..."
     data, address = sock.recvfrom(4096)
     #print >>sys.stderr, data
     print "received from: "
     print address
     print ""
-    print ""
-
 
     jsonResponse=json.loads(data)
     returnflag = "SUCCESS"
@@ -199,3 +199,8 @@ while True:
             os.system(line)
         sock.sendto("SUCCESS", address)
 
+    # not add or delete 
+    else:
+        message = "This function is not supported. Please check your json file"
+        print message
+        sock.sendto(message, address)
