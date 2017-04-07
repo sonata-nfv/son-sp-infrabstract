@@ -39,6 +39,7 @@ public class SonataManifestMapper {
     // module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
     // module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
     mapper.registerModule(module);
+    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
     mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
     mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);

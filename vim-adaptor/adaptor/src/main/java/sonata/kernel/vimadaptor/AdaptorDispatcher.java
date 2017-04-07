@@ -81,7 +81,7 @@ public class AdaptorDispatcher implements Runnable {
           handleFunctionMessage(message);
         } else if (isMonitoringMessage(message)) {
           this.handleMonitoringMessage(message);
-        } 
+        }
       } catch (InterruptedException e) {
         Logger.error(e.getMessage(), e);
       }

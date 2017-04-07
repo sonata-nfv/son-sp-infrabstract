@@ -592,7 +592,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
     // Service removal
     output = null;
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -611,7 +612,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
 
     // VIM removal
     output = null;
@@ -918,7 +920,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
 
     output = null;
     instanceUuid = baseInstanceUuid + "-02";
@@ -941,7 +944,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
 
 
 
@@ -1014,7 +1018,7 @@ public class DeployServiceTest implements MessageReceiver {
    * 
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceIncremental() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1048,6 +1052,18 @@ public class DeployServiceTest implements MessageReceiver {
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
         + "\"pass\":\"s0nata.d3m\"}";
+    
+    System.out.println("[TwoPoPTest] Adding PoP .201");
+    // Add first PoP
+    // PoP Athens.201 Newton
+//    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+//        + "\"tenant_ext_router\":\"3bc4fc5c-9c3e-4f29-8244-267fbc2c7ccb\", "
+//        + "\"tenant_ext_net\":\"081e13ad-e231-4291-a390-4a66fa09b846\"," + "\"tenant\":\"admin\""
+//        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+//        + "\"vim_address\":\"10.30.0.201\",\"username\":\"admin\","
+//        + "\"pass\":\"char1234\"}";
+
+    
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1237,7 +1253,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
 
     // 2. Remove Service
     // Service removal
@@ -1259,7 +1276,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
 
     // 3. De-register VIMs.
 
@@ -1347,6 +1365,7 @@ public class DeployServiceTest implements MessageReceiver {
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
         + "\"pass\":\"s0nata.d3m\"}";
 
+    
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1669,7 +1688,8 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
 
     output = null;
 
@@ -1693,10 +1713,11 @@ public class DeployServiceTest implements MessageReceiver {
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
-    Assert.assertTrue("Adapter returned an unexpected status: " + status, status.equals("COMPLETED"));
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
 
     // Remove registered VIMs
-    
+
     output = null;
     message = "{\"uuid\":\"" + computeWrUuid1 + "\"}";
     topic = "infrastructure.management.compute.remove";
@@ -1736,8 +1757,8 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
     message = "{\"uuid\":\"" + computeWrUuid2 + "\"}";
     topic = "infrastructure.management.compute.remove";
-    removeVimMessage = new ServicePlatformMessage(message,
-        "application/json", topic, UUID.randomUUID().toString(), topic);
+    removeVimMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -1754,8 +1775,8 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
     message = "{\"uuid\":\"" + netWrUuid2 + "\"}";
     topic = "infrastructure.management.network.remove";
-    removeNetVimMessage = new ServicePlatformMessage(message,
-        "application/json", topic, UUID.randomUUID().toString(), topic);
+    removeNetVimMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeNetVimMessage);
 
     while (output == null) {
@@ -1768,7 +1789,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
+
     core.stop();
 
 
