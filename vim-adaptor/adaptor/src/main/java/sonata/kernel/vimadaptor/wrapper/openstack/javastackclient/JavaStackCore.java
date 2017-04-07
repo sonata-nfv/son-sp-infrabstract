@@ -158,11 +158,11 @@ public class JavaStackCore {
         this.username, this.password);
     Logger.debug("[JavaStack] Authenticating client...");
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
-    // Logger.debug("[JavaStack] " + post.toString());
-    // Logger.debug("[JavaStack] " + body);
+    Logger.debug("[JavaStack] " + post.toString());
+    Logger.debug("[JavaStack] " + body);
     response = httpClient.execute(post);
-    // Logger.debug("[JavaStack] Authentication response:");
-    // Logger.debug(response.toString());
+    Logger.debug("[JavaStack] Authentication response:");
+    Logger.debug(response.toString());
     mapper = new ObjectMapper();
 
     AuthenticationData auth = mapper.readValue(JavaStackUtils.convertHttpResponseToString(response),
@@ -171,7 +171,7 @@ public class JavaStackCore {
       this.tokenId = response.getFirstHeader("X-Subject-Token").getValue();
       if (auth.getToken().getProject() != null) {
         this.projectId = auth.getToken().getProject().getId();
-      } 
+      }
       this.isAuthenticated = true;
     }
 
@@ -611,7 +611,14 @@ public class JavaStackCore {
       getLimits = new HttpGet(buildUrl.toString());
       getLimits.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.tokenId);
 
+      Logger.debug("[JavaStack] Getting limit request:");
+      Logger.debug(getLimits.toString());
+
       response = httpClient.execute(getLimits);
+
+      Logger.debug("[JavaStack] Getting limit request:");
+      Logger.debug(getLimits.toString());
+
       int status_code = response.getStatusLine().getStatusCode();
       return (status_code == 200)
           ? response

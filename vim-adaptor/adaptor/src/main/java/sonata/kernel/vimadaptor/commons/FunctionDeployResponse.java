@@ -37,7 +37,7 @@ public class FunctionDeployResponse {
   @JsonProperty("request_status")
   private String requestStatus;
   private VnfRecord vnfr;
-  
+
   private String message;
 
 

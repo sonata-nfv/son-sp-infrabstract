@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -27,11 +27,11 @@
 package sonata.kernel.WimAdaptor.commons.vnfd;
 
 
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.WimAdaptor.commons.nsd.ConnectionPoint;
+
+import java.util.ArrayList;
 
 public class VnfDescriptor {
 
@@ -66,6 +66,15 @@ public class VnfDescriptor {
   @JsonProperty("function_specific_managers")
   private ArrayList<FunctionSpecificManager> functionSpecificManagers;
 
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof VnfDescriptor) {
+      VnfDescriptor temp = (VnfDescriptor) obj;
+      return temp.getUuid().equals(this.getUuid());
+    } else {
+      return false;
+    }
+  }
 
 
   public void setDescriptorVersion(String descriptorVersion) {

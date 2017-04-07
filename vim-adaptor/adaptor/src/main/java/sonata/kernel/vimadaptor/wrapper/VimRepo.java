@@ -585,7 +585,7 @@ public class VimRepo {
 
       if (rs.next()) {
         String uuid = rs.getString("UUID");
-        
+
         // WrapperType wrapperType = WrapperType.getByName(rs.getString("TYPE"));
         // String vendor = rs.getString("VENDOR");
         // String urlString = rs.getString("ENDPOINT");
@@ -608,9 +608,9 @@ public class VimRepo {
         // config.setAuthPass(pass);
         // config.setAuthKey(key);
         //
-        //Wrapper wrapper = WrapperFactory.createWrapper(config);
-        //output = new WrapperRecord(wrapper, config, null);
-        
+        // Wrapper wrapper = WrapperFactory.createWrapper(config);
+        // output = new WrapperRecord(wrapper, config, null);
+
         output = uuid;
 
       } else {

@@ -95,3 +95,9 @@ forwarding_graphs:
 uuid: 9df6a98f-9e11-4cb7-b3c0-b1375e7ca1a1
 instance_uuid: 9df6a98f-9e11-4cb7-b3c0-InAdUnitTest
 
+service_specific_managers:
+- image: "tsoenen/ssmplace"
+  id: "sonssmdefaultplacement1"
+  options:
+    - key: "type"
+      value: "placement"

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -26,10 +26,12 @@
 
 package sonata.kernel.WimAdaptor.commons;
 
-import java.util.ArrayList;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VnfRecord {
 
   @JsonProperty("descriptor_version")
@@ -51,6 +53,16 @@ public class VnfRecord {
   @JsonProperty("virtual_deployment_units")
   private ArrayList<VduRecord> virtualDeploymentUnits;
 
+
+  @Override
+  public boolean equals(Object obj) {
+    if (obj instanceof VnfRecord) {
+      VnfRecord temp = (VnfRecord) obj;
+      return temp.getId().equals(this.getId());
+    } else {
+      return false;
+    }
+  }
 
   public VnfRecord() {
     this.virtualDeploymentUnits = new ArrayList<VduRecord>();

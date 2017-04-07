@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -54,6 +54,11 @@ public class ConnectionPointReference implements Comparable<ConnectionPointRefer
   @Override
   public int compareTo(ConnectionPointReference o) {
     return (int) Math.signum(position - o.getPosition());
+  }
+
+  @Override
+  public String toString() {
+    return "[" + connectionPointRef + "," + position + "]";
   }
 
 }
