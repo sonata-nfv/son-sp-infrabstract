@@ -20,46 +20,49 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.), UCL
+ * @author Dario Valocchi (Ph.D.)
  * 
  */
 
-package sonata.kernel.WimAdaptor.commons.vnfd;
+package sonata.kernel.WimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.WimAdaptor.commons.vnfd.Unit.MemoryUnit;
+public class VnfImage {
 
-public class Storage {
+  @JsonProperty("image_uuid")
+  private String uuid;
+  @JsonProperty("image_url")
+  private String url;
 
-  private double size;
-  @JsonProperty("size_unit")
-  private MemoryUnit sizeUnit;
-  private boolean persistence;
+  public VnfImage() {}
 
-  public void setSize(double size) {
-    this.size = size;
+
+  /**
+   * @param uuid
+   * @param url
+   */
+  public VnfImage(String uuid, String url) {
+    this.uuid = uuid;
+    this.url = url;
   }
 
-  public void setSizeUnit(MemoryUnit sizeUnit) {
-    this.sizeUnit = sizeUnit;
+  public String getUuid() {
+    return uuid;
   }
 
-  public void setPersistence(boolean persistence) {
-    this.persistence = persistence;
+  public String getUrl() {
+    return url;
   }
 
-  public double getSize() {
-    return size;
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
-  public MemoryUnit getSizeUnit() {
-    return sizeUnit;
+  public void setUrl(String url) {
+    this.url = url;
   }
 
-  public boolean isPersistence() {
-    return persistence;
-  }
 
 
 }

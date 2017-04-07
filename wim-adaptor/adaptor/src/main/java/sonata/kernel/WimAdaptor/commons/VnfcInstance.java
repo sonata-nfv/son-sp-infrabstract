@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -26,12 +26,14 @@
 
 package sonata.kernel.WimAdaptor.commons;
 
-import java.util.ArrayList;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.WimAdaptor.commons.nsd.ConnectionPointRecord;
 
+import java.util.ArrayList;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class VnfcInstance {
 
   private String id;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -34,6 +34,8 @@ public class InterfaceRecord {
   private String address;
   @JsonProperty("netmask")
   private String netmask;
+  @JsonProperty("hardware_address")
+  private String hardwareAddress;
 
   public String getAddress() {
     return address;
@@ -49,6 +51,14 @@ public class InterfaceRecord {
 
   public void setNetmask(String netmask) {
     this.netmask = netmask;
+  }
+
+  public String getHardwareAddress() {
+    return hardwareAddress;
+  }
+
+  public void setHardwareAddress(String hardwareAddress) {
+    this.hardwareAddress = hardwareAddress;
   }
 
 }

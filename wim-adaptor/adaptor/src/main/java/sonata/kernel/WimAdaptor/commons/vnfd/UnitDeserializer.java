@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -26,8 +26,6 @@
 
 package sonata.kernel.WimAdaptor.commons.vnfd;
 
-import java.io.IOException;
-
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -38,6 +36,8 @@ import sonata.kernel.WimAdaptor.commons.vnfd.Unit.BandwidthUnit;
 import sonata.kernel.WimAdaptor.commons.vnfd.Unit.FrequencyUnit;
 import sonata.kernel.WimAdaptor.commons.vnfd.Unit.GeneralUnit;
 import sonata.kernel.WimAdaptor.commons.vnfd.Unit.MemoryUnit;
+
+import java.io.IOException;
 
 public class UnitDeserializer extends JsonDeserializer<Unit> {
 
