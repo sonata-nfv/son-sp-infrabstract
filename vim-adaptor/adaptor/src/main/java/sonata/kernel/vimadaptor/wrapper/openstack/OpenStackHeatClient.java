@@ -95,7 +95,7 @@ public class OpenStackHeatClient {
 
     // Authenticate
     try {
-      javaStack.authenticateClient();
+      javaStack.authenticateClientV3();
     } catch (IOException e) {
       e.printStackTrace();
     }
