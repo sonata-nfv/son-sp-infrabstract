@@ -46,6 +46,7 @@ import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicStatusLine;
 import org.json.JSONObject;
+import org.mortbay.log.Log;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication.AuthenticationData;
@@ -226,6 +227,11 @@ public class JavaStackCore {
     return this.token_id;
   }
 
+  /**
+   * Authenticate Client (v3 of the Identity API) and fetches information about endpoints e.g., ports and version
+   *
+   * @throws IOException
+   */
   public synchronized void authenticateClientV3() throws IOException {
     HttpClient httpClient = HttpClientBuilder.create().build();
     HttpPost post;
@@ -262,7 +268,15 @@ public class JavaStackCore {
 
       post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
+      Logger.debug("[JavaStack] Authenticating client...");
+      Logger.debug("[JavaStack] " + post.toString());
+      Logger.debug("[JavaStack] " + body);
+
       response = httpClient.execute(post);
+
+      Logger.debug("[JavaStack] Authentication response:");
+      Logger.debug(response.toString());
+
       if (response.containsHeader("X-Subject-Token")) {
         this.token_id = response.getFirstHeader("X-Subject-Token").getValue();
       }
@@ -335,7 +349,13 @@ public class JavaStackCore {
     }
   }
 
-  public void authenticateClientV2(String endpoint) throws IOException {
+  /**
+   * Authenticate Client (v2 of the Identity API for backward compatability)
+   *
+   * @param
+   * @throws IOException
+   */
+  public void authenticateClientV2() throws IOException {
 
     HttpClient httpClient = HttpClientBuilder.create().build();
     HttpPost post;
@@ -350,23 +370,29 @@ public class JavaStackCore {
       buildUrl.append(Constants.AUTH_URI_V2.toString());
 
       post = new HttpPost(buildUrl.toString());
-
-
       String body = String.format(
               "{\"auth\": {\"tenantName\": \"%s\", \"passwordCredentials\": {\"username\": \"%s\", \"password\": \"%s\"}}}",
               this.tenant_id,
               this.username,
               this.password);
 
-      post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+      Logger.debug("[JavaStack] Authenticating client...");
+      Logger.debug("[JavaStack] " + post.toString());
+      Logger.debug("[JavaStack] " + body);
 
+      post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
       response = httpClient.execute(post);
+
+      Logger.debug("[JavaStack] Authentication response:");
+      Logger.debug(response.toString());
+
       mapper = new ObjectMapper();
 
       AuthenticationData auth = mapper.readValue(
               JavaStackUtils.convertHttpResponseToString(response),
               AuthenticationData.class
       );
+
       this.token_id = auth.getAccess().getToken().getId();
       this.tenant_id = auth.getAccess().getToken().getTenant().getId();
       this.isAuthenticated = true;
@@ -376,6 +402,14 @@ public class JavaStackCore {
     }
   }
 
+  /**
+   * HEAT method to create a stack using a template
+   *
+   * @param template
+   * @param stackName
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse createStack(String template, String stackName)
       throws IOException {
 
@@ -434,6 +468,15 @@ public class JavaStackCore {
     }
   }
 
+  /**
+   * HEAT method to update a stack
+   *
+   * @param stackName
+   * @param stackUuid
+   * @param template
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse updateStack(String stackName, String stackUuid, String template)
       throws IOException {
 
@@ -494,6 +537,14 @@ public class JavaStackCore {
     }
   }
 
+  /**
+   * HEAT method to delete a stack
+   *
+   * @param stackName
+   * @param stackId
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse deleteStack(String stackName, String stackId)
       throws IOException {
 
@@ -518,6 +569,13 @@ public class JavaStackCore {
     }
   }
 
+  /**
+   * HEAT Method to find a stack
+   *
+   * @param stackIdentity
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse findStack(String stackIdentity) throws IOException {
     HttpGet findStack;
     HttpClient httpClient = HttpClientBuilder.create().build();
@@ -547,6 +605,13 @@ public class JavaStackCore {
 
   }
 
+  /**
+   * HEAT Method to list stacks
+   *
+   * @param endpoint
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse listStacks(String endpoint) throws IOException {
 
 
@@ -586,6 +651,15 @@ public class JavaStackCore {
 
   }
 
+  /**
+   * HEAT method to get the HOT template
+   *
+   * @param stackName
+   * @param stackId
+   * @return
+   * @throws IOException
+   * @throws URISyntaxException
+   */
   public synchronized HttpResponse getStackTemplate(String stackName, String stackId)
       throws IOException, URISyntaxException {
 
@@ -627,6 +701,16 @@ public class JavaStackCore {
 
   }
 
+  /**
+   * HEAT Method to show resource details
+   *
+   * @param stackName
+   * @param stackId
+   * @param resourceName
+   * @return
+   * @throws IOException
+   * @throws URISyntaxException
+   */
   public synchronized HttpResponse showResourceData(String stackName, String stackId,
       String resourceName) throws IOException, URISyntaxException {
     HttpResponseFactory factory = new DefaultHttpResponseFactory();
@@ -661,6 +745,16 @@ public class JavaStackCore {
     }
   }
 
+  /**
+   * HEAT method to list stack resources
+   *
+   * @param stackName
+   * @param stackId
+   * @param resources
+   * @return
+   * @throws IOException
+   * @throws URISyntaxException
+   */
   public synchronized HttpResponse listStackResources(String stackName, String stackId,
       ArrayList<String> resources) throws IOException, URISyntaxException {
     HttpResponseFactory factory = new DefaultHttpResponseFactory();
@@ -696,6 +790,16 @@ public class JavaStackCore {
     }
   }
 
+  /**
+   * GLANCE Method to create an Image
+   *
+   * @param template
+   * @param containerFormat
+   * @param diskFormat
+   * @param name
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse createImage(String template, String containerFormat,
       String diskFormat, String name) throws IOException {
     HttpPost createImage;
@@ -724,6 +828,15 @@ public class JavaStackCore {
     return httpClient.execute(createImage);
   }
 
+  /**
+   * GLANCE method to upload an Image
+   *
+   * @param endpoint
+   * @param imageId
+   * @param binaryImageLocalFilePath
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse uploadBinaryImageData(String endpoint, String imageId,
       String binaryImageLocalFilePath) throws IOException {
 
@@ -754,6 +867,12 @@ public class JavaStackCore {
     return response;
   }
 
+  /**
+   * GLANCE method to list images
+   *
+   * @return
+   * @throws IOException
+   */
   public HttpResponse listImages() throws IOException {
 
     Logger.debug("RESTful request to glance image list");
@@ -790,6 +909,12 @@ public class JavaStackCore {
     return response;
   }
 
+  /**
+   * NOVA method to list compute limits
+   *
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse listComputeLimits() throws IOException {
     HttpGet getLimits = null;
     HttpResponse response = null;
@@ -819,6 +944,12 @@ public class JavaStackCore {
     return response;
   }
 
+  /**
+   * NOVA method to list compute flavors
+   *
+   * @return
+   * @throws IOException
+   */
   public synchronized HttpResponse listComputeFlavors() throws IOException {
     HttpGet getFlavors = null;
     HttpResponse response = null;
