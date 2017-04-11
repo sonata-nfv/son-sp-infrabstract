@@ -33,32 +33,34 @@ import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
-
-
   private String id;
-  private String[] methods;
-  private Project project;
-  @JsonProperty("issued_at")
-  private String issuedAt;
+  private Tenant tenant;
+  private String issued_at;
   private String expires;
-  @JsonProperty("audit_ids")
-  private List<String> auditIds;
+  private List<String>  audit_ids;
 
 
-  public Project getProject() {
-    return this.project;
+  public Tenant getTenant(){
+    return this.tenant;
   }
 
-  public void setTenant(Project project) {
-    this.project = project;
+  public void setTenant(Tenant tenant) {
+    this.tenant = tenant;
   }
-
-  public String getId() {
+  public String getId(){
     return this.id;
   }
 
   public void setId(String id) {
-    this.id = id;
+    this.id=id;
+  }
+
+  public String getIssued_at() {
+    return issued_at;
+  }
+
+  public void setIssued_at(String issued_at) {
+    this.issued_at = issued_at;
   }
 
   public String getExpires() {
@@ -69,27 +71,11 @@ public class Token {
     this.expires = expires;
   }
 
-  public String[] getMethods() {
-    return methods;
+  public List<String> getAudit_ids() {
+    return audit_ids;
   }
 
-  public String getIssuedAt() {
-    return issuedAt;
-  }
-
-  public List<String> getAuditIds() {
-    return auditIds;
-  }
-
-  public void setMethods(String[] methods) {
-    this.methods = methods;
-  }
-
-  public void setIssuedAt(String issuedAt) {
-    this.issuedAt = issuedAt;
-  }
-
-  public void setAuditIds(List<String> auditIds) {
-    this.auditIds = auditIds;
+  public void setAudit_ids(List<String> audit_ids) {
+    this.audit_ids = audit_ids;
   }
 }

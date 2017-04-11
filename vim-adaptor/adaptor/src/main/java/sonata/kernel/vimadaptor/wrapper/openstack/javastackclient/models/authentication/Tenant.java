@@ -32,7 +32,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * Created by nle5220 on 20.10.2016.
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Project {
+public class Tenant {
   private String id;
   private String description;
   private String enabled;
@@ -41,8 +41,7 @@ public class Project {
   public String getId() {
     return this.id;
   }
-
-  public void setId(String id) {
+  public void setId(String id){
     this.id = id;
   }
 

@@ -4,7 +4,7 @@ services:
     image: registry.sonata-nfv.eu:5000/son-sp-infrabstract
     entrypoint: /test.sh
     links:
-     - postgres 
+     - postgres
     environment:
      - repo_host postgres
      - repo_port 5432
