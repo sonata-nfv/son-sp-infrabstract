@@ -15,7 +15,7 @@
  *       and limitations under the License.
  * 
  */
-package sonata.kernel.vimadaptor.commons;
+package sonata.kernel.WimAdaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -24,8 +24,8 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import sonata.kernel.vimadaptor.commons.vnfd.Unit;
-import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
+import sonata.kernel.WimAdaptor.commons.vnfd.Unit;
+import sonata.kernel.WimAdaptor.commons.vnfd.UnitDeserializer;
 
 public class SonataManifestMapper {
 

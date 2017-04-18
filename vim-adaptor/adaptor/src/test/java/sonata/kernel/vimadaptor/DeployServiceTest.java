@@ -593,7 +593,9 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
+
             status.equals("COMPLETED"));
+
     // Service removal
     output = null;
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
@@ -1052,7 +1054,6 @@ public class DeployServiceTest implements MessageReceiver {
             + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
             + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
             + "\"pass\":\"s0nata.d3m\"}";
-
     System.out.println("[TwoPoPTest] Adding PoP .201");
     // Add first PoP
     // PoP Athens.201 Newton
@@ -1062,7 +1063,6 @@ public class DeployServiceTest implements MessageReceiver {
 //        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
 //        + "\"vim_address\":\"10.30.0.201\",\"username\":\"admin\","
 //        + "\"pass\":\"char1234\"}";
-
 
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
@@ -1256,6 +1256,7 @@ public class DeployServiceTest implements MessageReceiver {
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
             status.equals("COMPLETED"));
 
+
     // 2. Remove Service
     // Service removal
     output = null;
@@ -1366,6 +1367,7 @@ public class DeployServiceTest implements MessageReceiver {
             + "\"pass\":\"s0nata.d3m\"}";
 
 
+    
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
             "application/json", topic, UUID.randomUUID().toString(), topic);

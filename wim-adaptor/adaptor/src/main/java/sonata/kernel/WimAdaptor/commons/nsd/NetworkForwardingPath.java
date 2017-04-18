@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -26,11 +26,11 @@
 
 package sonata.kernel.WimAdaptor.commons.nsd;
 
-import java.util.ArrayList;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import sonata.kernel.WimAdaptor.commons.vnfd.ConnectionPointReference;
+
+import java.util.ArrayList;
 
 
 public class NetworkForwardingPath {

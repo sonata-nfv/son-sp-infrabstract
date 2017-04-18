@@ -238,6 +238,7 @@ public class JavaStackCore {
     HttpResponse response = null;
     HashMap<String, String> endpoint_details = new HashMap<>();
 
+
     if (!isAuthenticated) {
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
@@ -342,6 +343,7 @@ public class JavaStackCore {
       }
 
       this.tenant_id = auth.getToken().getProject().getId();
+      
       this.isAuthenticated = true;
 
     } else {
@@ -934,7 +936,14 @@ public class JavaStackCore {
       getLimits = new HttpGet(buildUrl.toString());
       getLimits.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
+      Logger.debug("[JavaStack] Getting limit request:");
+      Logger.debug(getLimits.toString());
+
       response = httpClient.execute(getLimits);
+
+      Logger.debug("[JavaStack] Getting limit request:");
+      Logger.debug(getLimits.toString());
+
       int status_code = response.getStatusLine().getStatusCode();
       return (status_code == 200)
           ? response
