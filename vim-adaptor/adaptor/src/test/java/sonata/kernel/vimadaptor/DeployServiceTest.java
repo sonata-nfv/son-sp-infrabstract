@@ -563,7 +563,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println(output);
     Assert.assertTrue("No Deploy service response received", retry < maxRetry);
     ServiceDeployResponse response = mapper.readValue(output, ServiceDeployResponse.class);
-    Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+    Assert.assertTrue(response.getRequestStatus().equals("COMPLETED"));
     Assert.assertTrue(response.getNsr().getStatus() == Status.offline);
 
     for (VnfRecord vnfr : response.getVnfrs())
@@ -659,7 +659,7 @@ public class DeployServiceTest implements MessageReceiver {
    * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody
    * String Member to match your OpenStack configuration and substitute the @ignore annotation with
    * the @test annotation
-   * 
+   *
    * @throws Exception
    */
   @Ignore
@@ -875,11 +875,7 @@ public class DeployServiceTest implements MessageReceiver {
           Assert.assertTrue(vnfr.getStatus() == Status.offline);
         }
       }
-    } catch (JsonParseException e) {
-      e.printStackTrace();
-    } catch (JsonMappingException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
+    } catch (Exception e){
       e.printStackTrace();
     }
     // // Clean the OpenStack tenant from the stack
@@ -897,6 +893,7 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     // Service removal
+    System.out.println("Removing services...");
     output = null;
     String instanceUuid = baseInstanceUuid + "-01";
     String message =
@@ -922,7 +919,6 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
         status.equals("COMPLETED"));
-
     output = null;
     instanceUuid = baseInstanceUuid + "-02";
     message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + computeWrUuid + "\"}";
@@ -1015,7 +1011,7 @@ public class DeployServiceTest implements MessageReceiver {
    * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody
    * String Member to match your OpenStack configuration and substitute the @ignore annotation with
    * the @test annotation
-   * 
+   *
    * @throws Exception
    */
   @Ignore
@@ -1052,18 +1048,17 @@ public class DeployServiceTest implements MessageReceiver {
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
         + "\"pass\":\"s0nata.d3m\"}";
-    
-    System.out.println("[TwoPoPTest] Adding PoP .201");
+
+    System.out.println("[TwoPoPTest] Adding PoP .200");
     // Add first PoP
     // PoP Athens.201 Newton
-//    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-//        + "\"tenant_ext_router\":\"3bc4fc5c-9c3e-4f29-8244-267fbc2c7ccb\", "
-//        + "\"tenant_ext_net\":\"081e13ad-e231-4291-a390-4a66fa09b846\"," + "\"tenant\":\"admin\""
-//        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-//        + "\"vim_address\":\"10.30.0.201\",\"username\":\"admin\","
-//        + "\"pass\":\"char1234\"}";
+    // String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+    // + "\"tenant_ext_router\":\"3bc4fc5c-9c3e-4f29-8244-267fbc2c7ccb\", "
+    // + "\"tenant_ext_net\":\"081e13ad-e231-4291-a390-4a66fa09b846\"," + "\"tenant\":\"admin\""
+    // + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+    // + "\"vim_address\":\"10.30.0.201\",\"username\":\"admin\","
+    // + "\"pass\":\"char1234\"}";
 
-    
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1327,7 +1322,7 @@ public class DeployServiceTest implements MessageReceiver {
    * This test is de-activated, if you want to use it with your NFVi-PoPs (at least two), please
    * edit the addVimBody String member to match your OpenStack configuration and substitute
    * the @ignore annotation with the @test annotation
-   * 
+   *
    * @throws Exception
    */
   @Ignore
@@ -1365,7 +1360,8 @@ public class DeployServiceTest implements MessageReceiver {
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
         + "\"pass\":\"s0nata.d3m\"}";
 
-    
+
+
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);

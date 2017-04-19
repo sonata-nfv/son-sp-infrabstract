@@ -18,7 +18,7 @@
 package sonata.kernel.WimAdaptor.commons.nsd;
 
 public enum ConnectionPointType {
-  PUBLIC("public"), EXT("external"), INT("internal"), INTERFACE("interface");
+  MANAGEMENT("management"), EXT("external"), INT("internal"), INTERFACE("interface");
   private final String name;
 
   ConnectionPointType(String name) {

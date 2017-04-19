@@ -117,8 +117,8 @@ public class WimRepo {
       rs = findTablesStmt.executeQuery();
       while (rs.next()) {
         String tablename = rs.getString("tablename");
-        if (tablename.equals("wim") || tablename.equals("WIM")
-            || tablename.equals("serviced_segments") || tablename.equals("SERVICED_SEGMENTS")) {
+        if (tablename.equals("wim") || tablename.equals("WIM") || tablename.equals("attached_vim")
+            || tablename.equals("attached_vim")) {
           isEnvironmentSet = true;
           break;
         }
@@ -132,7 +132,7 @@ public class WimRepo {
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
             + " PASS TEXT," + " AUTHKEY TEXT);";
         stmt.executeUpdate(sql);
-        sql = "CREATE TABLE serviced_segments " + "(NETWORK_SEGMENT TEXT PRIMARY KEY NOT NULL,"
+        sql = "CREATE TABLE attached_vim " + "(VIM_UUID TEXT PRIMARY KEY NOT NULL,"
             + " WIM_UUID TEXT NOT NULL REFERENCES wim(UUID));";
         stmt.executeUpdate(sql);
 
@@ -205,17 +205,6 @@ public class WimRepo {
       stmt.executeUpdate();
       connection.commit();
       stmt.close();
-      if (record.getConfig().getServicedSegments() != null) {
-        sql = "INSERT INTO SERVICED_SEGMENTS (NETWORK_SEGMENT, WIM_UUID) " + "VALUES (?, ?);";
-        stmt = connection.prepareStatement(sql);
-        for (String segment : record.getConfig().getServicedSegments()) {
-          stmt.setString(1, segment);
-          stmt.setString(2, uuid);
-          stmt.executeUpdate();
-
-        }
-        connection.commit();
-      }
     } catch (SQLException e) {
       Logger.error(e.getMessage(), e);
       out = false;
@@ -259,14 +248,7 @@ public class WimRepo {
                   + prop.getProperty("repo_port") + "/" + "wimregistry",
               prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
-      String sql = "DELETE from SERVICED_SEGMENTS where WIM_UUID=?;";
-      stmt = connection.prepareStatement(sql);
-      stmt.setString(1, uuid);
-      stmt.executeUpdate();
-      connection.commit();
-      stmt.close();
-
-      sql = "DELETE from WIM where UUID=?;";
+      String sql = "DELETE from WIM where UUID=?;";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
       stmt.executeUpdate();
@@ -447,7 +429,7 @@ public class WimRepo {
    * @return the WrapperRecord representing the wrapper, null if the wrapper is not registered in
    *         the repository
    */
-  public WrapperRecord readWimEntryFromNetSegment(String netSegment) {
+  public WrapperRecord readWimEntryFromVimUuid(String vimUuid) {
 
     WrapperRecord output = null;
 
@@ -464,8 +446,8 @@ public class WimRepo {
       connection.setAutoCommit(false);
 
       stmt = connection.prepareStatement(
-          "SELECT * FROM wim,serviced_segments WHERE wim.uuid = serviced_segments.wim_uuid AND network_segment=?;");
-      stmt.setString(1, netSegment);
+          "SELECT * FROM wim,attached_vim WHERE wim.uuid = attached_vim.wim_uuid AND attached_vim.vim_uuid=?;");
+      stmt.setString(1, vimUuid);
       rs = stmt.executeQuery();
 
       if (rs.next()) {

@@ -78,11 +78,13 @@ public class OpenStackNovaClient {
     javaStack.setEndpoint(url);
     javaStack.setUsername(userName);
     javaStack.setPassword(password);
+    javaStack.setProjectId(null);
+    javaStack.setAuthenticated(false);
     // javaStack.setTenantId(tenantName);
 
     // Authenticate
     try {
-      javaStack.authenticateClient();
+      javaStack.authenticateClientV3();
     } catch (IOException e) {
       e.printStackTrace();
     }

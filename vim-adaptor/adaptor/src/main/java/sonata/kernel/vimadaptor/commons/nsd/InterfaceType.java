@@ -20,22 +20,22 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Adel Zaalouk (Ph.D.), NEC
+ * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
 
-package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication;
+package sonata.kernel.vimadaptor.commons.nsd;
 
-public class AuthenticationData {
+public enum InterfaceType {
+  IPV4("ipv4"), IPV6("ipv6"), ethernet("ethernet");
+  private final String name;
 
-  private Access access;
-
-  public Access getAccess() {
-    return this.access;
+  InterfaceType(String name) {
+    this.name = name;
   }
 
-  public void setAccess(Access access) {
-    this.access = access;
+  @Override
+  public String toString() {
+    return this.name;
   }
-
 }
