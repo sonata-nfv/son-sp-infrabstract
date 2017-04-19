@@ -35,7 +35,7 @@ network_functions:
 ##
 connection_points:
   - id: "ns:mgmt"
-    type: "public"
+    type: "management"
   - id: "ns:input"
     type: "internal"
   - id: "ns:output"

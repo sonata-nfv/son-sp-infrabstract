@@ -56,7 +56,7 @@ public class ListWimCallProcessor extends AbstractCallProcessor {
     // ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
     ArrayList<String> wimList = null;
     ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
-    
+
     String body;
     try {
       body = mapper.writeValueAsString(wimList);

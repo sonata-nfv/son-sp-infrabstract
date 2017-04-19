@@ -28,7 +28,7 @@ virtual_deployment_units:
         size_unit: "GB"
     connection_points:
       - id: "vdu01:eth0"
-        type: "public"
+        type: "management"
       - id: "vdu01:eth1"
         type: "internal"
       - id: "vdu01:eth2"
@@ -61,7 +61,7 @@ virtual_links:
 ##
 connection_points:
   - id: "vnf:mgmt"
-    type: "public"
+    type: "management"
   - id: "vnf:input"
     type: "internal"
   - id: "vnf:output"

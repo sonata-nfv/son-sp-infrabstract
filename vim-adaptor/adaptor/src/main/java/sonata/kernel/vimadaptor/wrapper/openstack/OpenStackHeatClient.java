@@ -91,8 +91,9 @@ public class OpenStackHeatClient {
     javaStack.setEndpoint(url);
     javaStack.setUsername(userName);
     javaStack.setPassword(password);
-    javaStack.setTenantId(tenantName);
-
+    javaStack.setProjectName(tenantName);
+    javaStack.setProjectId(null);
+    javaStack.setAuthenticated(false);
     // Authenticate
     try {
       javaStack.authenticateClientV3();
@@ -352,6 +353,7 @@ public class OpenStackHeatClient {
     } catch (Exception e) {
       Logger.error("Runtime error getting composition for stack : " + stackName + " error message: "
           + e.getMessage());
+      e.printStackTrace();
     }
 
     return composition;

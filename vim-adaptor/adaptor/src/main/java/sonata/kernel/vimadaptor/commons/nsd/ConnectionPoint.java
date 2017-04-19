@@ -32,6 +32,8 @@ public class ConnectionPoint {
 
 
   private String id;
+  @JsonProperty("interface")
+  private InterfaceType interfaceTye;
   private ConnectionPointType type;
   @JsonProperty("virtua_link_reference")
   private String virtualLinkReference;

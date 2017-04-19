@@ -72,7 +72,8 @@ public class WrapperBay {
     } else {
       WrapperRecord record = new WrapperRecord(newWrapper, config);
       this.repository.writeWimEntry(config.getUuid(), record);
-      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\",\"message\":\"\"}";
+      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid()
+          + "\",\"message\":\"\"}";
     }
 
     return output;

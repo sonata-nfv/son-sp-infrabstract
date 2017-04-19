@@ -8,24 +8,24 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
 
-    ArrayList<CatalogItem> catalog = new ArrayList<>();
-    Project project;
+  ArrayList<CatalogItem> catalog = new ArrayList<>();
+  Project project;
 
-    public ArrayList<CatalogItem> getCatalog() {
-        return catalog;
-    }
+  public ArrayList<CatalogItem> getCatalog() {
+    return catalog;
+  }
 
-    public void setCatalog(ArrayList<CatalogItem> catalog) {
-        this.catalog = catalog;
-    }
+  public void setCatalog(ArrayList<CatalogItem> catalog) {
+    this.catalog = catalog;
+  }
 
-    public Project getProject() {
-        return project;
-    }
+  public Project getProject() {
+    return project;
+  }
 
-    public void setProject(Project project) {
-        this.project = project;
-    }
+  public void setProject(Project project) {
+    this.project = project;
+  }
 
 
 }

@@ -20,53 +20,22 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Adel Zaalouk (Ph.D.), NEC
+ * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
 
-package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication;
+package sonata.kernel.WimAdaptor.commons.nsd;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+public enum InterfaceType {
+  IPV4("ipv4"), IPV6("ipv6"), ethernet("ethernet");
+  private final String name;
 
-/**
- * Created by nle5220 on 20.10.2016.
- */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public class Tenant {
-  private String id;
-  private String description;
-  private String enabled;
-  private String name;
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public String getEnabled() {
-    return enabled;
-  }
-
-  public void setEnabled(String enabled) {
-    this.enabled = enabled;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
+  InterfaceType(String name) {
     this.name = name;
+  }
+
+  @Override
+  public String toString() {
+    return this.name;
   }
 }

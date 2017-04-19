@@ -69,7 +69,8 @@ public class JavaStackCore {
   private String endpoint;
   private String username;
   private String password;
-  private String tenant_id;
+  private String projectId;
+  private String projectName;
   private ObjectMapper mapper;
   private String token_id;
   // private String image_id;
@@ -165,10 +166,8 @@ public class JavaStackCore {
 
 
   public enum Constants {
-    AUTH_PORT("5000"),
-    AUTHTOKEN_HEADER("X-AUTH-TOKEN"),
-    AUTH_URI_V2("/v2.0/tokens"),
-    AUTH_URI_V3("/v3/auth/tokens");
+    AUTH_PORT("5000"), AUTHTOKEN_HEADER("X-AUTH-TOKEN"), AUTH_URI_V2("/v2.0/tokens"), AUTH_URI_V3(
+        "/v3/auth/tokens");
 
     private final String constantValue;
 
@@ -214,20 +213,13 @@ public class JavaStackCore {
     this.username = username;
   }
 
-  public String getTenantId() {
-    return this.tenant_id;
-  }
-
-  public void setTenantId(String tenant_id) {
-    this.tenant_id = tenant_id;
-  }
-
   public String getTokenId() {
     return this.token_id;
   }
 
   /**
-   * Authenticate Client (v3 of the Identity API) and fetches information about endpoints e.g., ports and version
+   * Authenticate Client (v3 of the Identity API) and fetches information about endpoints e.g.,
+   * ports and version
    *
    * @throws IOException
    */
@@ -237,40 +229,42 @@ public class JavaStackCore {
     HttpResponse response = null;
     HashMap<String, String> endpoint_details = new HashMap<>();
 
-//<<<<<<< HEAD
-//    StringBuilder buildUrl = new StringBuilder();
-//    buildUrl.append("http://");
-//    buildUrl.append(this.endpoint);
-//    buildUrl.append(":");
-//    buildUrl.append(Constants.AUTH_PORT.toString());
-//    buildUrl.append(Constants.AUTH_URI.toString());
-//
-//    post = new HttpPost(buildUrl.toString());
-//
-//    String body = String.format(
-//        // "{ \"auth\": {\"scope\": {\"project\": {\"name\": \"%s\"}}, \"identity\": { \"methods\":
-//        // [\"password\"], \"password\": { \"user\": { \"name\": \"%s\", \"domain\": { \"name\":
-//        // \"default\" }, \"password\": \"%s\" }}}}}",
-//        "{ \"auth\": {\"identity\": { \"methods\": [\"password\"], \"password\": { \"user\": { \"name\": \"%s\", \"domain\": { \"name\": \"default\" }, \"password\": \"%s\" }}}}}",
-//        // this.getTenantId(),
-//        this.username, this.password);
-//    Logger.debug("[JavaStack] Authenticating client...");
-//    post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
-//    Logger.debug("[JavaStack] " + post.toString());
-//    Logger.debug("[JavaStack] " + body);
-//    response = httpClient.execute(post);
-//    Logger.debug("[JavaStack] Authentication response:");
-//    Logger.debug(response.toString());
-//    mapper = new ObjectMapper();
-//
-//    AuthenticationData auth = mapper.readValue(JavaStackUtils.convertHttpResponseToString(response),
-//        AuthenticationData.class);
-//    if (response.containsHeader("X-Subject-Token")) {
-//      this.tokenId = response.getFirstHeader("X-Subject-Token").getValue();
-//      if (auth.getToken().getProject() != null) {
-//        this.projectId = auth.getToken().getProject().getId();
-//      }
-//=======
+    // <<<<<<< HEAD
+    // StringBuilder buildUrl = new StringBuilder();
+    // buildUrl.append("http://");
+    // buildUrl.append(this.endpoint);
+    // buildUrl.append(":");
+    // buildUrl.append(Constants.AUTH_PORT.toString());
+    // buildUrl.append(Constants.AUTH_URI.toString());
+    //
+    // post = new HttpPost(buildUrl.toString());
+    //
+    // String body = String.format(
+    // // "{ \"auth\": {\"scope\": {\"project\": {\"name\": \"%s\"}}, \"identity\": { \"methods\":
+    // // [\"password\"], \"password\": { \"user\": { \"name\": \"%s\", \"domain\": { \"name\":
+    // // \"default\" }, \"password\": \"%s\" }}}}}",
+    // "{ \"auth\": {\"identity\": { \"methods\": [\"password\"], \"password\": { \"user\": {
+    // \"name\": \"%s\", \"domain\": { \"name\": \"default\" }, \"password\": \"%s\" }}}}}",
+    // // this.getTenantId(),
+    // this.username, this.password);
+    // Logger.debug("[JavaStack] Authenticating client...");
+    // post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+    // Logger.debug("[JavaStack] " + post.toString());
+    // Logger.debug("[JavaStack] " + body);
+    // response = httpClient.execute(post);
+    // Logger.debug("[JavaStack] Authentication response:");
+    // Logger.debug(response.toString());
+    // mapper = new ObjectMapper();
+    //
+    // AuthenticationData auth =
+    // mapper.readValue(JavaStackUtils.convertHttpResponseToString(response),
+    // AuthenticationData.class);
+    // if (response.containsHeader("X-Subject-Token")) {
+    // this.tokenId = response.getFirstHeader("X-Subject-Token").getValue();
+    // if (auth.getToken().getProject() != null) {
+    // this.projectId = auth.getToken().getProject().getId();
+    // }
+    // =======
     if (!isAuthenticated) {
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
@@ -280,24 +274,15 @@ public class JavaStackCore {
       buildUrl.append(Constants.AUTH_URI_V3.toString());
 
       post = new HttpPost(buildUrl.toString());
-      String body = String.format("{\n" +
-              "    \"auth\": {\n" +
-              "        \"identity\": {\n" +
-              "            \"methods\": [\n" +
-              "                \"password\"\n" +
-              "            ],\n" +
-              "            \"password\": {\n" +
-              "                \"user\": {\n" +
-              "                    \"name\": \"%s\",\n" +
-              "                    \"domain\": {\n" +
-              "                        \"name\": \"%s\"\n" +
-              "                    },\n" +
-              "                    \"password\": \"%s\"\n" +
-              "                }\n" +
-              "            }\n" +
-              "        }\n" +
-              "    }\n" +
-              "}", this.username, this.tenant_id, this.password);
+      String body = String.format(
+          "{\n" + "    \"auth\": {\n" + "        \"identity\": {\n" + "            \"methods\": [\n"
+              + "                \"password\"\n" + "            ],\n"
+              + "            \"password\": {\n" + "                \"user\": {\n"
+              + "                    \"name\": \"%s\",\n" + "                    \"domain\": {\n"
+              + "                        \"name\": \"%s\"\n" + "                    },\n"
+              + "                    \"password\": \"%s\"\n" + "                }\n"
+              + "            }\n" + "        }\n" + "    }\n" + "}",
+          this.username, "default", this.password);
 
       post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
@@ -316,9 +301,7 @@ public class JavaStackCore {
 
       mapper = new ObjectMapper();
       AuthenticationDataV3 auth = mapper.readValue(
-              JavaStackUtils.convertHttpResponseToString(response),
-              AuthenticationDataV3.class
-      );
+          JavaStackUtils.convertHttpResponseToString(response), AuthenticationDataV3.class);
 
       ArrayList<CatalogItem> catalogItems = auth.getToken().getCatalog();
       for (CatalogItem catalogItem : catalogItems) {
@@ -327,8 +310,7 @@ public class JavaStackCore {
 
         for (EndpointItem endpointItem : catalogItem.getEndpoints()) {
           if (endpointItem.getIface().equals("public")) {
-            String[] path_port = endpointItem.getUrl().split(":");
-            ;
+            String[] path_port = endpointItem.getUrl().split(":");;
             String[] path = path_port[2].split("/");
             String version, port;
 
@@ -374,8 +356,9 @@ public class JavaStackCore {
         }
       }
 
-      this.tenant_id = auth.getToken().getProject().getId();
-//>>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
+      this.projectId = auth.getToken().getProject().getId();
+      Logger.debug("[JavaStack] ProjectId set to "+projectId);
+      // >>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
       this.isAuthenticated = true;
 
     } else {
@@ -405,10 +388,8 @@ public class JavaStackCore {
 
       post = new HttpPost(buildUrl.toString());
       String body = String.format(
-              "{\"auth\": {\"tenantName\": \"%s\", \"passwordCredentials\": {\"username\": \"%s\", \"password\": \"%s\"}}}",
-              this.tenant_id,
-              this.username,
-              this.password);
+          "{\"auth\": {\"tenantName\": \"%s\", \"passwordCredentials\": {\"username\": \"%s\", \"password\": \"%s\"}}}",
+          this.projectName, this.username, this.password);
 
       Logger.debug("[JavaStack] Authenticating client...");
       Logger.debug("[JavaStack] " + post.toString());
@@ -423,12 +404,10 @@ public class JavaStackCore {
       mapper = new ObjectMapper();
 
       AuthenticationData auth = mapper.readValue(
-              JavaStackUtils.convertHttpResponseToString(response),
-              AuthenticationData.class
-      );
+          JavaStackUtils.convertHttpResponseToString(response), AuthenticationData.class);
 
       this.token_id = auth.getAccess().getToken().getId();
-      this.tenant_id = auth.getAccess().getToken().getTenant().getId();
+      this.projectId = auth.getAccess().getToken().getTenant().getId();
       this.isAuthenticated = true;
 
     } else {
@@ -463,24 +442,24 @@ public class JavaStackCore {
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Orchestration.getPORT());
-      buildUrl.append(String.format("/%s/%s/stacks", Orchestration.getVERSION(), tenant_id));
+      buildUrl.append(String.format("/%s/%s/stacks", Orchestration.getVERSION(), this.projectId));
 
-      // Logger.debug(buildUrl.toString());
+      Logger.debug(buildUrl.toString());
       createStack = new HttpPost(buildUrl.toString());
       createStack
           .setEntity(new StringEntity(modifiedObject.toString(), ContentType.APPLICATION_JSON));
       // Logger.debug(this.token_id);
       createStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
-      // Logger.debug("Request: " + createStack.toString());
+      Logger.debug("Request: " + createStack.toString());
       // Logger.debug("Request body: " + modifiedObject.toString());
 
       response = httpClient.execute(createStack);
       int statusCode = response.getStatusLine().getStatusCode();
       String responsePhrase = response.getStatusLine().getReasonPhrase();
 
-      // Logger.debug("Response: " + response.toString());
-      // Logger.debug("Response body:");
+      Logger.debug("Response: " + response.toString());
+      Logger.debug("Response body:");
 
       if (statusCode != 201) {
         BufferedReader in =
@@ -531,8 +510,8 @@ public class JavaStackCore {
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Orchestration.getPORT());
-      buildUrl.append(String.format("/%s/%s/stacks/%s/%s", Orchestration.getVERSION(),
-          tenant_id, stackName, stackUuid));
+      buildUrl.append(String.format("/%s/%s/stacks/%s/%s", Orchestration.getVERSION(), projectId,
+          stackName, stackUuid));
 
       // Logger.debug(buildUrl.toString());
       updateStack = new HttpPatch(buildUrl.toString());
@@ -591,8 +570,8 @@ public class JavaStackCore {
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Orchestration.getPORT());
-      buildUrl.append(String.format("/%s/%s/stacks/%s/%s", Orchestration.getVERSION(),
-          tenant_id, stackName, stackId));
+      buildUrl.append(String.format("/%s/%s/stacks/%s/%s", Orchestration.getVERSION(), projectId,
+          stackName, stackId));
       deleteStack = new HttpDelete(buildUrl.toString());
       deleteStack.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
 
@@ -621,8 +600,8 @@ public class JavaStackCore {
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Orchestration.getPORT());
-      buildUrl.append(String.format("/%s/%s/stacks/%s", Orchestration.getVERSION(),
-          this.tenant_id, stackIdentity));
+      buildUrl.append(String.format("/%s/%s/stacks/%s", Orchestration.getVERSION(), this.projectId,
+          stackIdentity));
 
       // Logger.debug("URL: " + buildUrl);
       // Logger.debug("Token: " + this.token_id);
@@ -661,8 +640,7 @@ public class JavaStackCore {
       buildUrl.append(endpoint);
       buildUrl.append(":");
       buildUrl.append(Orchestration.getPORT());
-      buildUrl.append(
-          String.format("/%s/%s/stacks", Orchestration.getVERSION(), this.tenant_id));
+      buildUrl.append(String.format("/%s/%s/stacks", Orchestration.getVERSION(), this.projectId));
 
       System.out.println(buildUrl);
       System.out.println(this.token_id);
@@ -706,10 +684,10 @@ public class JavaStackCore {
 
       URIBuilder builder = new URIBuilder();
       String path = String.format("/%s/%s/stacks/%s/%s/template", Orchestration.getVERSION(),
-          this.tenant_id, stackName, stackId);
+          this.projectId, stackName, stackId);
 
-      builder.setScheme("http").setHost(endpoint)
-          .setPort(Integer.parseInt(Orchestration.getPORT())).setPath(path);
+      builder.setScheme("http").setHost(endpoint).setPort(Integer.parseInt(Orchestration.getPORT()))
+          .setPath(path);
 
       URI uri = builder.build();
 
@@ -754,11 +732,11 @@ public class JavaStackCore {
 
     if (isAuthenticated) {
       URIBuilder builder = new URIBuilder();
-      String path = String.format("/%s/%s/stacks/%s/%s/resources/%s",
-          Orchestration.getVERSION(), this.tenant_id, stackName, stackId, resourceName);
+      String path = String.format("/%s/%s/stacks/%s/%s/resources/%s", Orchestration.getVERSION(),
+          this.projectId, stackName, stackId, resourceName);
 
       builder.setScheme("http").setHost(endpoint)
-          .setPort(Integer.parseInt(Orchestration.getVERSION())).setPath(path);
+          .setPort(Integer.parseInt(Orchestration.getPORT())).setPath(path);
 
       URI uri = builder.build();
 
@@ -798,11 +776,11 @@ public class JavaStackCore {
 
     if (isAuthenticated) {
       URIBuilder builder = new URIBuilder();
-      String path = String.format("/%s/%s/stacks/%s/%s/resources",
-          Orchestration.getVERSION(), this.tenant_id, stackName, stackId);
+      String path = String.format("/%s/%s/stacks/%s/%s/resources", Orchestration.getVERSION(),
+          this.projectId, stackName, stackId);
 
-      builder.setScheme("http").setHost(endpoint)
-          .setPort(Integer.parseInt(Orchestration.getPORT())).setPath(path);
+      builder.setScheme("http").setHost(endpoint).setPort(Integer.parseInt(Orchestration.getPORT()))
+          .setPath(path);
 
       URI uri = builder.build();
 
@@ -845,7 +823,7 @@ public class JavaStackCore {
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Image.getPORT());
-      buildUrl.append(String.format("/%s/images",Image.getVERSION()));
+      buildUrl.append(String.format("/%s/images", Image.getVERSION()));
 
       createImage = new HttpPost(buildUrl.toString());
       String requestBody =
@@ -883,8 +861,7 @@ public class JavaStackCore {
       buildUrl.append(this.endpoint);
       buildUrl.append(":");
       buildUrl.append(Image.getPORT());
-      buildUrl
-          .append(String.format("/%s/images/%s/file", Image.getVERSION(), imageId));
+      buildUrl.append(String.format("/%s/images/%s/file", Image.getVERSION(), imageId));
 
       uploadImage = new HttpPut(buildUrl.toString());
       uploadImage.setHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
@@ -962,8 +939,7 @@ public class JavaStackCore {
       buildUrl.append(endpoint);
       buildUrl.append(":");
       buildUrl.append(Compute.getPORT());
-      buildUrl.append(
-          String.format("/%s/%s/limits", Compute.getVERSION(), this.tenant_id));
+      buildUrl.append(String.format("/%s/%s/limits", Compute.getVERSION(), this.projectId));
 
       getLimits = new HttpGet(buildUrl.toString());
       getLimits.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
@@ -1004,8 +980,7 @@ public class JavaStackCore {
       buildUrl.append(endpoint);
       buildUrl.append(":");
       buildUrl.append(Compute.getPORT());
-      buildUrl.append(String.format("/%s/%s/flavors/detail", Compute.getVERSION(),
-          this.tenant_id));
+      buildUrl.append(String.format("/%s/%s/flavors/detail", Compute.getVERSION(), this.projectId));
 
       // Logger.debug("[JavaStack] Authenticating client...");
       getFlavors = new HttpGet(buildUrl.toString());
@@ -1022,6 +997,26 @@ public class JavaStackCore {
               "List Flavors  Failed with Status: " + status_code), null);
     }
     return response;
+  }
+
+  public String getProjectId() {
+    return projectId;
+  }
+
+  public String getProjectName() {
+    return projectName;
+  }
+
+  public void setProjectName(String projectName) {
+    this.projectName = projectName;
+  }
+
+  public void setProjectId(String projectId) {
+    this.projectId = projectId;
+  }
+
+  public void setAuthenticated(boolean isAuthenticated) {
+    this.isAuthenticated = isAuthenticated;
   }
 
 }

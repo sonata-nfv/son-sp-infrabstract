@@ -37,22 +37,23 @@ public class Token {
   private Tenant tenant;
   private String issued_at;
   private String expires;
-  private List<String>  audit_ids;
+  private List<String> audit_ids;
 
 
-  public Tenant getTenant(){
+  public Tenant getTenant() {
     return this.tenant;
   }
 
   public void setTenant(Tenant tenant) {
     this.tenant = tenant;
   }
-  public String getId(){
+
+  public String getId() {
     return this.id;
   }
 
   public void setId(String id) {
-    this.id=id;
+    this.id = id;
   }
 
   public String getIssued_at() {

@@ -79,8 +79,9 @@ public class OpenStackGlanceClient {
     javaStack.setEndpoint(this.url);
     javaStack.setUsername(this.userName);
     javaStack.setPassword(this.password);
-    javaStack.setTenantId(this.tenantName);
-
+    javaStack.setProjectName(this.tenantName);
+    javaStack.setProjectId(null);
+    javaStack.setAuthenticated(false);
     // Authenticate
     try {
       javaStack.authenticateClientV3();

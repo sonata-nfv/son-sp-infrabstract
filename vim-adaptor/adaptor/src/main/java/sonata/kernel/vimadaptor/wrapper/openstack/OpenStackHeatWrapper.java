@@ -776,7 +776,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           netMap.put("get_resource", "SonataService:data:net:" + instanceUuid);
         } else if (cp.getType().equals(ConnectionPointType.EXT)) {
           netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
-        } else if (cp.getType().equals(ConnectionPointType.PUBLIC)) {
+        } else if (cp.getType().equals(ConnectionPointType.MANAGEMENT)) {
           netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
           publicPortNames.add(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         }
