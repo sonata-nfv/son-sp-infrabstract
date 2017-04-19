@@ -63,26 +63,20 @@ public class AddWimCallProcessor extends AbstractCallProcessor {
     WrapperConfiguration config = new WrapperConfiguration();
 
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String wrapperType = jsonObject.getString("wr_type");
-    String vimType = jsonObject.getString("wim_type");
+    String wrapperType = jsonObject.getString("WIM");
+    String wimVendor = jsonObject.getString("wim_vendor");
     String vimEndpoint = jsonObject.getString("wim_address");
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
-    JSONArray jsonServicedSegments = jsonObject.getJSONArray("serviced_segments");
-    ArrayList<String> servicedSegments = new ArrayList<String>();
-
-    for (int i = 0; i < jsonServicedSegments.length(); i++) {
-      servicedSegments.add(jsonServicedSegments.getString(i));
-    }
-
+    // JSONArray jsonServicedSegments = jsonObject.getJSONArray("serviced_segments");
+    // ArrayList<String> servicedSegments = new ArrayList<String>();
 
     config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType(wrapperType);
-    config.setWimVendor(vimType);
+    config.setWimVendor(wimVendor);
     config.setWimEndpoint(vimEndpoint);
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);
-    config.setServicedSegments(servicedSegments);
     String output = null;
     boolean out = true;
 

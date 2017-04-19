@@ -87,7 +87,7 @@ public class WimRepoTest {
   }
 
   @Test
-  public void testServiceSegmentRetrival() {
+  public void testWimRetrivalFromVimUuid() {
     repoInstance = new WimRepo();
     WrapperConfiguration config = new WrapperConfiguration();
     config.setWimEndpoint("x.x.x.x");
@@ -109,10 +109,10 @@ public class WimRepoTest {
     config.setServicedSegments(servicedSegments);
     out = repoInstance.writeWimEntry(config.getUuid(), record);
 
-    WrapperRecord recordA = repoInstance.readWimEntryFromNetSegment("A");
+    WrapperRecord recordA = repoInstance.readWimEntryFromVimUuid("A");
     Assert.assertTrue("Unable to retrieve the correct WIM for segment A",
         recordA.getConfig().getUuid().equals("1"));
-    WrapperRecord recordB = repoInstance.readWimEntryFromNetSegment("B");
+    WrapperRecord recordB = repoInstance.readWimEntryFromVimUuid("B");
     Assert.assertTrue("Unable to retrieve the correct WIM for segment B",
         recordB.getConfig().getUuid().equals("2"));
     out = repoInstance.removeWimEntry("1");

@@ -52,6 +52,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.WimAdaptor.commons.DeployServiceResponse;
+import sonata.kernel.WimAdaptor.commons.SonataManifestMapper;
 import sonata.kernel.WimAdaptor.commons.Status;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.messaging.TestConsumer;
@@ -81,14 +82,7 @@ public class WimAdaptorTest implements MessageReceiver {
       bodyBuilder.append(line + "\n\r");
     }
     in.close();
-    this.mapper = new ObjectMapper(new YAMLFactory());
-    SimpleModule module = new SimpleModule();
-    mapper.registerModule(module);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    this.mapper = SonataManifestMapper.getSonataMapper();
 
     response = mapper.readValue(bodyBuilder.toString(), DeployServiceResponse.class);
 

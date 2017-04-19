@@ -68,11 +68,11 @@ public class WrapperBay {
     Wrapper newWrapper = WrapperFactory.createWrapper(config);
     String output = "";
     if (newWrapper == null) {
-      output = "{\"status\":\"ERROR\",\"message:\"Cannot Attach To Wim\"}";
+      output = "{\"request_status\":\"ERROR\",\"message:\"Cannot Attach To Wim\",\"uuid\":\"\"}";
     } else {
       WrapperRecord record = new WrapperRecord(newWrapper, config);
       this.repository.writeWimEntry(config.getUuid(), record);
-      output = "{\"status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
+      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\",\"message\":\"\"}";
     }
 
     return output;
@@ -80,7 +80,7 @@ public class WrapperBay {
 
   public WrapperRecord getWimRecord(String vimUuid) {
     WrapperRecord out;
-    out = this.repository.readWimEntryFromNetSegment(vimUuid);
+    out = this.repository.readWimEntryFromVimUuid(vimUuid);
     return out;
   }
 
