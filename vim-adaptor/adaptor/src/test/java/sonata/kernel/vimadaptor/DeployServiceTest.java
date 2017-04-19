@@ -1049,7 +1049,7 @@ public class DeployServiceTest implements MessageReceiver {
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
         + "\"pass\":\"s0nata.d3m\"}";
 
-    System.out.println("[TwoPoPTest] Adding PoP .201");
+    System.out.println("[TwoPoPTest] Adding PoP .200");
     // Add first PoP
     // PoP Athens.201 Newton
     // String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"

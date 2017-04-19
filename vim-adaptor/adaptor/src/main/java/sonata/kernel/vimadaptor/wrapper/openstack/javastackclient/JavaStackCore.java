@@ -229,6 +229,7 @@ public class JavaStackCore {
     HttpResponse response = null;
     HashMap<String, String> endpoint_details = new HashMap<>();
 
+    //<<<<<<< HEAD
     // <<<<<<< HEAD
     // StringBuilder buildUrl = new StringBuilder();
     // buildUrl.append("http://");
@@ -265,6 +266,8 @@ public class JavaStackCore {
     // this.projectId = auth.getToken().getProject().getId();
     // }
     // =======
+    // =======
+
     if (!isAuthenticated) {
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
@@ -358,7 +361,6 @@ public class JavaStackCore {
 
       this.projectId = auth.getToken().getProject().getId();
       Logger.debug("[JavaStack] ProjectId set to "+projectId);
-      // >>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
       this.isAuthenticated = true;
 
     } else {
