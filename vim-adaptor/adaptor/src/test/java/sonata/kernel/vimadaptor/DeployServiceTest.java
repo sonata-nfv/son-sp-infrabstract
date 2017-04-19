@@ -99,7 +99,7 @@ public class DeployServiceTest implements MessageReceiver {
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -120,7 +120,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -128,7 +128,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -146,7 +146,7 @@ public class DeployServiceTest implements MessageReceiver {
     sd = null;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/sonata-demo1-old.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/sonata-demo1-old.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -155,7 +155,7 @@ public class DeployServiceTest implements MessageReceiver {
     VnfDescriptor vnfd1 = null;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/vtc-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vtc-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -170,7 +170,7 @@ public class DeployServiceTest implements MessageReceiver {
     sd = null;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/sonata-demo-old.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/sonata-demo-old.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -179,7 +179,7 @@ public class DeployServiceTest implements MessageReceiver {
     vnfd1 = null;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/vtc-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vtc-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -188,7 +188,7 @@ public class DeployServiceTest implements MessageReceiver {
     VnfDescriptor vnfd2 = null;;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-            new FileInputStream(new File("./YAML/fw-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/fw-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -211,9 +211,9 @@ public class DeployServiceTest implements MessageReceiver {
   public void testCheckResources() throws IOException, InterruptedException {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
     TestProducer producer = new TestProducer(muxQueue, this);
     consumer = new TestConsumer(dispatcherQueue);
@@ -234,12 +234,12 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
     String message =
-            "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
-                    + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
-                    + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
+        "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
+            + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
-            topic, UUID.randomUUID().toString(), topic);
+        topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -267,7 +267,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = mapper.writeValueAsString(data);
 
     ServicePlatformMessage checkResourcesMessage = new ServicePlatformMessage(message,
-            "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     output = null;
     consumer.injectMessage(checkResourcesMessage);
@@ -281,7 +281,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + wrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
     output = null;
     while (output == null) {
@@ -310,9 +310,9 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
     TestProducer producer = new TestProducer(muxQueue, this);
     consumer = new TestConsumer(dispatcherQueue);
@@ -334,12 +334,12 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     String message =
-            "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
-                    + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
-                    + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
+        "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
+            + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
-            topic, UUID.randomUUID().toString(), topic);
+        topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -361,7 +361,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     topic = "infrastructure.service.deploy";
     ServicePlatformMessage deployServiceMessage = new ServicePlatformMessage(body,
-            "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(deployServiceMessage);
 
@@ -391,7 +391,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + wrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -419,9 +419,9 @@ public class DeployServiceTest implements MessageReceiver {
   public void testDeployServiceOpenStackV1() throws Exception {
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
     TestProducer producer = new TestProducer(muxQueue, this);
     consumer = new TestConsumer(dispatcherQueue);
@@ -447,11 +447,11 @@ public class DeployServiceTest implements MessageReceiver {
 
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-            + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
-            + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
-            + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-            + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-            + "\"pass\":\"s0nata.d3m\"}";
+        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+        + "\"pass\":\"s0nata.d3m\"}";
 
     // PoP Athens.10 Mitaka
     // String addVimBody = "{\"vim_type\":\"Heat\", "
@@ -478,7 +478,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -505,8 +505,8 @@ public class DeployServiceTest implements MessageReceiver {
 
     // PoP Athens .200
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
-            + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
-            + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
 
     // PoP Aveiro
     // String addNetVimBody = "{\"vim_type\":\"ovs\", "
@@ -516,7 +516,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addNetVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -530,7 +530,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("request_status");
     String netWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
-            status.equals("COMPLETED"));
+        status.equals("COMPLETED"));
     System.out.println("OpenDaylight Wrapper added, with uuid: " + netWrUuid);
 
 
@@ -541,7 +541,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     topic = "infrastructure.service.deploy";
     ServicePlatformMessage deployServiceMessage = new ServicePlatformMessage(body,
-            "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(deployServiceMessage);
 
@@ -576,7 +576,7 @@ public class DeployServiceTest implements MessageReceiver {
     String message = "{\"service_instance_id\":\"" + instanceUuid + "\"}";
     topic = "infrastructure.service.chain.deconfigure";
     ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);
     try {
       while (output == null) {
@@ -593,17 +593,13 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
     // Service removal
     output = null;
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
     topic = "infrastructure.service.remove";
     ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeInstanceMessage);
 
     while (output == null) {
@@ -617,18 +613,14 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
 
     // VIM removal
     output = null;
     message = "{\"uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -645,7 +637,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + netWrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeNetVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeNetVimMessage);
 
     while (output == null) {
@@ -675,9 +667,9 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     BlockingQueue<ServicePlatformMessage> muxQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
     TestProducer producer = new TestProducer(muxQueue, this);
     consumer = new TestConsumer(dispatcherQueue);
@@ -707,14 +699,14 @@ public class DeployServiceTest implements MessageReceiver {
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-            + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
-            + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
-            + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-            + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-            + "\"pass\":\"s0nata.d3m\"}";
+        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+        + "\"pass\":\"s0nata.d3m\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     try {
       Thread.sleep(2000);
@@ -738,11 +730,11 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
-            + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
-            + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addNetVimMessage);
     try {
       Thread.sleep(2000);
@@ -761,7 +753,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("request_status");
     String netWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
-            status.equals("COMPLETED"));
+        status.equals("COMPLETED"));
     System.out.println("Openvswitch Wrapper added, with uuid: " + netWrUuid);
 
 
@@ -781,7 +773,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     topic = "infrastructure.service.deploy";
     ServicePlatformMessage deployServiceMessage = new ServicePlatformMessage(body,
-            "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(deployServiceMessage);
     int retry = 0;
@@ -812,8 +804,8 @@ public class DeployServiceTest implements MessageReceiver {
       System.out.println("output:");
       System.out.println(output);
       Assert.assertTrue("Deploy request failed with status: " + response.getRequestStatus()
-                      + " - Message: " + response.getMessage(),
-              response.getRequestStatus().equals("COMPLETED"));
+          + " - Message: " + response.getMessage(),
+          response.getRequestStatus().equals("COMPLETED"));
       if (response.getNsr() != null) {
         Assert.assertTrue(response.getNsr().getStatus() == Status.offline);
       }
@@ -846,7 +838,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     topic = "infrastructure.service.deploy";
     deployServiceMessage = new ServicePlatformMessage(body, "application/x-yaml", topic,
-            UUID.randomUUID().toString(), topic);
+        UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(deployServiceMessage);
 
@@ -908,10 +900,10 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
     String instanceUuid = baseInstanceUuid + "-01";
     String message =
-            "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + computeWrUuid + "\"}";
+        "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.service.remove";
     ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeInstanceMessage);
 
     try {
@@ -929,18 +921,13 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
-
     output = null;
     instanceUuid = baseInstanceUuid + "-02";
     message = "{\"instance_uuid\":\"" + instanceUuid + "\",\"vim_uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.service.remove";
     removeInstanceMessage = new ServicePlatformMessage(message, "application/json", topic,
-            UUID.randomUUID().toString(), topic);
+        UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeInstanceMessage);
     try {
       while (output == null) {
@@ -957,11 +944,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
 
 
 
@@ -969,7 +952,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
     try {
       while (output == null) {
@@ -989,7 +972,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + netWrUuid + "\"}";
     topic = "infrastructure.management.network.remove";
     ServicePlatformMessage removeNetVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeNetVimMessage);
 
     try {
@@ -1037,9 +1020,9 @@ public class DeployServiceTest implements MessageReceiver {
   @Ignore
   public void testDeployServiceIncremental() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
-            new LinkedBlockingQueue<ServicePlatformMessage>();
+        new LinkedBlockingQueue<ServicePlatformMessage>();
 
     TestProducer producer = new TestProducer(muxQueue, this);
     consumer = new TestConsumer(dispatcherQueue);
@@ -1063,39 +1046,25 @@ public class DeployServiceTest implements MessageReceiver {
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-<<<<<<< HEAD
         + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
         + "\"pass\":\"s0nata.d3m\"}";
-    
-=======
-            + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
-            + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
-            + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-            + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-            + "\"pass\":\"s0nata.d3m\"}";
 
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
     System.out.println("[TwoPoPTest] Adding PoP .201");
     // Add first PoP
     // PoP Athens.201 Newton
-//    String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-//        + "\"tenant_ext_router\":\"3bc4fc5c-9c3e-4f29-8244-267fbc2c7ccb\", "
-//        + "\"tenant_ext_net\":\"081e13ad-e231-4291-a390-4a66fa09b846\"," + "\"tenant\":\"admin\""
-//        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-//        + "\"vim_address\":\"10.30.0.201\",\"username\":\"admin\","
-//        + "\"pass\":\"char1234\"}";
+    // String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
+    // + "\"tenant_ext_router\":\"3bc4fc5c-9c3e-4f29-8244-267fbc2c7ccb\", "
+    // + "\"tenant_ext_net\":\"081e13ad-e231-4291-a390-4a66fa09b846\"," + "\"tenant\":\"admin\""
+    // + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+    // + "\"vim_address\":\"10.30.0.201\",\"username\":\"admin\","
+    // + "\"pass\":\"char1234\"}";
 
-<<<<<<< HEAD
-    
-=======
-
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -1115,11 +1084,11 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", "
-            + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
-            + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addNetVimMessage);
     Thread.sleep(2000);
     while (output == null)
@@ -1133,7 +1102,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("request_status");
     String netWrUuid = jsonObject.getString("uuid");
     Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
-            status.equals("COMPLETED"));
+        status.equals("COMPLETED"));
     System.out.println("OVS Wrapper added, with uuid: " + netWrUuid);
 
 
@@ -1149,10 +1118,10 @@ public class DeployServiceTest implements MessageReceiver {
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01",
-            "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vtcImgade);
     VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1",
-            "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
@@ -1163,7 +1132,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     topic = "infrastructure.service.prepare";
     ServicePlatformMessage servicePrepareMessage = new ServicePlatformMessage(body,
-            "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(servicePrepareMessage);
 
@@ -1179,7 +1148,7 @@ public class DeployServiceTest implements MessageReceiver {
     status = jsonObject.getString("request_status");
     String message = jsonObject.getString("message");
     Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status
-            + " - message: " + message, status.equals("COMPLETED"));
+        + " - message: " + message, status.equals("COMPLETED"));
     System.out.println("Service " + payload.getInstanceId() + " ready for deployment");
 
 
@@ -1197,7 +1166,7 @@ public class DeployServiceTest implements MessageReceiver {
 
       topic = "infrastructure.function.deploy";
       ServicePlatformMessage functionDeployMessage = new ServicePlatformMessage(body,
-              "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+          "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
       consumer.injectMessage(functionDeployMessage);
 
@@ -1240,7 +1209,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     topic = "infrastructure.service.chain.configure";
     ServicePlatformMessage networkConfigureMessage = new ServicePlatformMessage(body,
-            "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
 
     consumer.injectMessage(networkConfigureMessage);
 
@@ -1256,9 +1225,9 @@ public class DeployServiceTest implements MessageReceiver {
     status = null;
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
-            status.equals("COMPLETED"));
+        status.equals("COMPLETED"));
     System.out.println(
-            "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
+        "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
 
     // Clean everything:
     // 1. De-configure SFC
@@ -1266,7 +1235,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"service_instance_id\":\"" + data.getNsd().getInstanceUuid() + "\"}";
     topic = "infrastructure.service.chain.deconfigure";
     ServicePlatformMessage deconfigureNetworkMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(deconfigureNetworkMessage);
     try {
       while (output == null) {
@@ -1283,11 +1252,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
 
     // 2. Remove Service
     // Service removal
@@ -1296,7 +1261,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"instance_uuid\":\"" + instanceUuid + "\"}";
     topic = "infrastructure.service.remove";
     ServicePlatformMessage removeInstanceMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeInstanceMessage);
 
     while (output == null) {
@@ -1310,11 +1275,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
 
     // 3. De-register VIMs.
 
@@ -1322,7 +1283,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + computeWrUuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -1340,7 +1301,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + netWrUuid + "\"}";
     topic = "infrastructure.management.network.remove";
     ServicePlatformMessage removeNetVimMessage = new ServicePlatformMessage(message,
-            "application/json", topic, UUID.randomUUID().toString(), topic);
+        "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeNetVimMessage);
 
     while (output == null) {
@@ -1367,7 +1328,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceIncrementalMultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
             new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -1727,11 +1688,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
 
     output = null;
 
@@ -1756,11 +1713,7 @@ public class DeployServiceTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
-<<<<<<< HEAD
         status.equals("COMPLETED"));
-=======
-            status.equals("COMPLETED"));
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
 
     // Remove registered VIMs
 
@@ -1804,11 +1757,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + computeWrUuid2 + "\"}";
     topic = "infrastructure.management.compute.remove";
     removeVimMessage = new ServicePlatformMessage(message, "application/json", topic,
-<<<<<<< HEAD
         UUID.randomUUID().toString(), topic);
-=======
-            UUID.randomUUID().toString(), topic);
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -1826,11 +1775,7 @@ public class DeployServiceTest implements MessageReceiver {
     message = "{\"uuid\":\"" + netWrUuid2 + "\"}";
     topic = "infrastructure.management.network.remove";
     removeNetVimMessage = new ServicePlatformMessage(message, "application/json", topic,
-<<<<<<< HEAD
         UUID.randomUUID().toString(), topic);
-=======
-            UUID.randomUUID().toString(), topic);
->>>>>>> b6d03ccbdf175bb7337de5f70f96aa51533f6c8a
     consumer.injectMessage(removeNetVimMessage);
 
     while (output == null) {

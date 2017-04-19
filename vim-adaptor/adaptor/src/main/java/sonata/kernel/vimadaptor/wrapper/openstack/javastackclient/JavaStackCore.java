@@ -46,7 +46,6 @@ import org.apache.http.impl.DefaultHttpResponseFactory;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicStatusLine;
 import org.json.JSONObject;
-import org.mortbay.log.Log;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication.AuthenticationData;
