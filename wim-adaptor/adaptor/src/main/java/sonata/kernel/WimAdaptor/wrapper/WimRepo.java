@@ -118,7 +118,7 @@ public class WimRepo {
       while (rs.next()) {
         String tablename = rs.getString("tablename");
         if (tablename.equals("wim") || tablename.equals("WIM") || tablename.equals("attached_vim")
-            || tablename.equals("SERVICED_SEGMENTS")) {
+            || tablename.equals("attached_vim")) {
           isEnvironmentSet = true;
           break;
         }

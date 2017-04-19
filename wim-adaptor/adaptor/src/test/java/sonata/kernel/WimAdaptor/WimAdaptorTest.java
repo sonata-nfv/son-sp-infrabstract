@@ -136,7 +136,7 @@ public class WimAdaptorTest implements MessageReceiver {
   @Test
   public void testCreateVTNWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"wr_type\":\"WIM\",\"wim_type\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
+        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -162,7 +162,7 @@ public class WimAdaptorTest implements MessageReceiver {
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String uuid = jsonObject.getString("uuid");
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     output = null;
@@ -180,7 +180,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     tokener = new JSONTokener(output);
     jsonObject = (JSONObject) tokener.nextValue();
-    status = jsonObject.getString("status");
+    status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     core.stop();
@@ -191,7 +191,7 @@ public class WimAdaptorTest implements MessageReceiver {
   public void configureService() throws IOException, InterruptedException {
 
     String message =
-        "{\"wr_type\":\"WIM\",\"wim_type\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
+        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -217,7 +217,7 @@ public class WimAdaptorTest implements MessageReceiver {
     JSONTokener tokener = new JSONTokener(output);
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     String uuid = jsonObject.getString("uuid");
-    String status = jsonObject.getString("status");
+    String status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
 
     output = null;

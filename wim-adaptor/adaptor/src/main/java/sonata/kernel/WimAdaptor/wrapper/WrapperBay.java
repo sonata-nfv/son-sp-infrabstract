@@ -87,7 +87,7 @@ public class WrapperBay {
 
   public String removeWimWrapper(String uuid) {
     repository.removeWimEntry(uuid);
-    return "{\"status\":\"COMPLETED\"}";
+    return "{\"request_status\":\"COMPLETED\"}";
   }
 
 }
