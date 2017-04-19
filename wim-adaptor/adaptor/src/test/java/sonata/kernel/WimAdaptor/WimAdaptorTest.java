@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -127,9 +128,86 @@ public class WimAdaptorTest implements MessageReceiver {
 
   }
 
-
   /**
-   * Create a Mock wrapper
+   * Create a VTNwrapper
+   * 
+   * @throws IOException
+   */
+  @Test
+  public void testListWIM() throws InterruptedException, IOException {
+    String message =
+        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
+    String topic = "infrastructure.wan.add";
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    ServicePlatformMessage addWimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
+    consumer = new TestConsumer(dispatcherQueue);
+    WimAdaptorCore core = new WimAdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+
+    core.start();
+
+    consumer.injectMessage(addWimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String uuid1 = jsonObject.getString("uuid");
+    String status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    
+    //Add a second WIM
+    output=null;
+    message =
+        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.20.0.12\",\"username\":\"admin\",\"pass\":\"admin\"}";
+    topic = "infrastructure.wan.add";
+    addWimMessage = new ServicePlatformMessage(message, "application/json",
+      topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addWimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    String uuid2 = jsonObject.getString("uuid");
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    
+    //List wim;
+    output=null;
+    topic = "infrastructure.wan.list";
+    ServicePlatformMessage listWimMessage = new ServicePlatformMessage(message, "application/json",
+      topic, UUID.randomUUID().toString(), topic);
+    
+    consumer.injectMessage(listWimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    
+    String[] list = mapper.readValue(output, String[].class);
+    
+    for(String id : list)
+      System.out.println(id);
+    
+  }
+  /**
+   * Create a VTNwrapper
    * 
    * @throws IOException
    */
@@ -246,7 +324,7 @@ public class WimAdaptorTest implements MessageReceiver {
     Assert.assertTrue("No Deploy service response received", retry < maxRetry);
 
     DeployServiceResponse response = mapper.readValue(output, DeployServiceResponse.class);
-    Assert.assertTrue(response.getRequestStatus().equals("DEPLOYED"));
+    Assert.assertTrue(response.getRequestStatus().equals("COMPLETED"));
     Assert.assertTrue(response.getNsr().getStatus() == Status.normal_operation);
     Assert.assertNull(response.getVimUuid());
 

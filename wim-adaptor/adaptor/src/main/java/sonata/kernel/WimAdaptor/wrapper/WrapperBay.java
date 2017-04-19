@@ -26,6 +26,7 @@
 
 package sonata.kernel.WimAdaptor.wrapper;
 
+import java.util.ArrayList;
 
 public class WrapperBay {
 
@@ -88,6 +89,10 @@ public class WrapperBay {
   public String removeWimWrapper(String uuid) {
     repository.removeWimEntry(uuid);
     return "{\"request_status\":\"COMPLETED\"}";
+  }
+
+  public ArrayList<String> getWimList() {
+    return repository.listWims();
   }
 
 }

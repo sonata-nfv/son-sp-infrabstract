@@ -37,6 +37,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import sonata.kernel.WimAdaptor.commons.SonataManifestMapper;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 
 public class ListWimCallProcessor extends AbstractCallProcessor {
 
@@ -54,9 +55,9 @@ public class ListWimCallProcessor extends AbstractCallProcessor {
 
     // TODO
     // ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
-    ArrayList<String> wimList = null;
+    ArrayList<String> wimList = WrapperBay.getInstance().getWimList();
     ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
-
+  
     String body;
     try {
       body = mapper.writeValueAsString(wimList);
