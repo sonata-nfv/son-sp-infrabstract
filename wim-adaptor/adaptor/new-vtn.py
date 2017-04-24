@@ -63,9 +63,12 @@ if args.configuration:
 	headers = {'Content type' : 'application/json'} #also this 
 '''
 
-host = "10.30.0.13"
-url = 'http://'+host+':8181/restconf/'
-headers = {'Content type' : 'application/json'}
+if __name__=="__main__":
+	username="admin"
+	password="admin"
+	host = "10.30.0.13"
+	url = 'http://'+host+':8181/restconf/'
+	headers = {'Content type' : 'application/json'}
 
-vtn_name = get_vtn_name()
+	vtn_name = get_vtn_name()
 
