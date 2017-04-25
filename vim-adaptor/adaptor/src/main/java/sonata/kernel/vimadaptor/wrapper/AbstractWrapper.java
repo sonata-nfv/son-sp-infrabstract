@@ -31,9 +31,23 @@ import java.util.Observable;
 public abstract class AbstractWrapper extends Observable {
 
   private WrapperType type;
+  private WrapperConfiguration config;
 
   protected void setType(WrapperType type) {
     this.type = type;
+  }
+
+  protected void setConfig(WrapperConfiguration config) {
+    this.config = config;
+  }
+
+  /**
+   * return the configuration object of this wrapper.
+   * 
+   * @return a WrapperConfiguration object
+   */
+  public WrapperConfiguration getConfig() {
+    return this.config;
   }
 
   /**

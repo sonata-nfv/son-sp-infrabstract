@@ -34,13 +34,18 @@ import java.io.IOException;
 
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
+
+  public ComputeWrapper(){
+    this.setType(WrapperType.COMPUTE);
+  }
+  
   /**
    * general constructor for wrappers of type compute.
    */
-  public ComputeWrapper() {
+  public ComputeWrapper(WrapperConfiguration config) {
 
     this.setType(WrapperType.COMPUTE);
-
+    this.setConfig(config);
   }
 
   /**

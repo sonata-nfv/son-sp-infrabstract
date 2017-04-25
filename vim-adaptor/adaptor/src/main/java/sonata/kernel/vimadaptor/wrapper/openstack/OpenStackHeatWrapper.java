@@ -96,8 +96,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * @param config the config object for this Compute Wrapper
    */
   public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
-    this.config = config;
+    super(config);
     VimNetTable.getInstance().registerVim(this.config.getUuid());
     this.myPool = VimNetTable.getInstance().getNetPool(this.config.getUuid());
   }

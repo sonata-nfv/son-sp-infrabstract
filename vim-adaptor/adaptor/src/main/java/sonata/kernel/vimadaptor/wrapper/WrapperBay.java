@@ -40,12 +40,12 @@ public class WrapperBay {
 
   private VimRepo repository = null;
 
-  private Hashtable<String, WrapperRecord> computeWrapperCache;
-  private Hashtable<String, WrapperRecord> networkWrapperCache;
+  private Hashtable<String, ComputeWrapper> computeWrapperCache;
+  private Hashtable<String, NetworkWrapper> networkWrapperCache;
 
   private WrapperBay() {
-    computeWrapperCache = new Hashtable<String, WrapperRecord>();
-    networkWrapperCache = new Hashtable<String, WrapperRecord>();
+    computeWrapperCache = new Hashtable<String, ComputeWrapper>();
+    networkWrapperCache = new Hashtable<String, NetworkWrapper>();
   }
 
   /**
@@ -83,8 +83,8 @@ public class WrapperBay {
     if (newWrapper == null) {
       output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
     } else if (newWrapper.getType().equals(WrapperType.COMPUTE)) {
-      WrapperRecord record = new WrapperRecord(newWrapper, config, null);
-      this.repository.writeVimEntry(config.getUuid(), record);
+      //WrapperRecord record = new WrapperRecord(newWrapper, config, null);
+      this.repository.writeVimEntry(config.getUuid(),newWrapper);
       output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
     }
 
@@ -140,13 +140,13 @@ public class WrapperBay {
    */
   public ComputeWrapper getComputeWrapper(String vimUuid) {
     if (computeWrapperCache.containsKey(vimUuid))
-      return (ComputeWrapper) computeWrapperCache.get(vimUuid).getVimWrapper();
-    WrapperRecord vimEntry = this.repository.readVimEntry(vimUuid);
+      return (ComputeWrapper) computeWrapperCache.get(vimUuid);
+    ComputeWrapper vimEntry = (ComputeWrapper) this.repository.readVimEntry(vimUuid);
     if (vimEntry == null) {
       return null;
     } else {
       computeWrapperCache.put(vimUuid, vimEntry);
-      return (ComputeWrapper) vimEntry.getVimWrapper();
+      return vimEntry;
     }
   }
 
@@ -165,8 +165,7 @@ public class WrapperBay {
     if (newWrapper == null) {
       output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
     } else {
-      WrapperRecord record = new WrapperRecord(newWrapper, config, null);
-      this.repository.writeVimEntry(config.getUuid(), record);
+      this.repository.writeVimEntry(config.getUuid(), newWrapper);
       this.repository.writeNetworkVimLink(computeVimRef, config.getUuid());
       output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
     }
@@ -200,14 +199,14 @@ public class WrapperBay {
    * @return
    */
   public Wrapper getWrapper(String uuid) {
-    return this.repository.readVimEntry(uuid).getVimWrapper();
+    return this.repository.readVimEntry(uuid);
   }
 
   /**
    * @param vimUuid
    * @return
    */
-  public WrapperRecord getNetworkVimFromComputeVimUuid(String vimUuid) {
+  public NetworkWrapper getNetworkVimFromComputeVimUuid(String vimUuid) {
     String netVimUuid = this.repository.getNetworkVimFromComputeVimUuid(vimUuid);
     if (netVimUuid == null) {
       Logger.error("can't find Networking VIM for compute VIM UUID: " + vimUuid);
@@ -215,13 +214,20 @@ public class WrapperBay {
     if (networkWrapperCache.containsKey(netVimUuid)) {
       return networkWrapperCache.get(netVimUuid);
     }
-    WrapperRecord vimEntry = this.repository.getNetworkVim(netVimUuid);
-    if (vimEntry == null) {
+    NetworkWrapper netWrapper = this.repository.getNetworkVim(netVimUuid);
+    if (netWrapper == null) {
       return null;
     } else {
-      networkWrapperCache.put(vimUuid, vimEntry);
-      return vimEntry;
+      networkWrapperCache.put(vimUuid, netWrapper);
+      return netWrapper;
     }
+  }
+
+  /**
+   * @return
+   */
+  public ArrayList<String> getNetworkWrapperList() {
+    return repository.getNetworkVims();
   }
 
 

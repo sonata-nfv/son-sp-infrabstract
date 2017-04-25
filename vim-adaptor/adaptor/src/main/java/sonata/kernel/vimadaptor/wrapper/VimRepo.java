@@ -129,7 +129,7 @@ public class VimRepo {
       }
       if (!isEnvironmentSet) {
         stmt = connection.createStatement();
-        sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," + " TYPE TEXT NOT NULL,"
+        sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," +"NAME TEXT," + " TYPE TEXT NOT NULL,"
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
             + " CONFIGURATION TEXT NOT NULL," + " CITY TEXT," + "COUNTRY TEXT," + " PASS TEXT,"
             + " AUTHKEY TEXT" + ");";
@@ -187,11 +187,11 @@ public class VimRepo {
    * Write the wrapper record into the repository with the specified UUID.
    * 
    * @param uuid the UUID of the wrapper to store
-   * @param record the WrapperRecord object with the information on the wrapper to store
+   * @param wrapper the WrapperRecord object with the information on the wrapper to store
    * 
    * @return true for process success
    */
-  public boolean writeVimEntry(String uuid, WrapperRecord record) {
+  public boolean writeVimEntry(String uuid, Wrapper wrapper) {
     boolean out = true;
 
     Connection connection = null;
@@ -206,19 +206,20 @@ public class VimRepo {
       connection.setAutoCommit(false);
 
       String sql = "INSERT INTO VIM "
-          + "(UUID, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+          + "(UUID, NAME, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
-      stmt.setString(2, record.getConfig().getWrapperType().toString());
-      stmt.setString(3, record.getConfig().getVimVendor().toString());
-      stmt.setString(4, record.getConfig().getVimEndpoint().toString());
-      stmt.setString(5, record.getConfig().getAuthUserName());
-      stmt.setString(6, record.getConfig().getConfiguration());
-      stmt.setString(7, record.getConfig().getCity());
-      stmt.setString(8, record.getConfig().getCountry());
-      stmt.setString(9, record.getConfig().getAuthPass());
-      stmt.setString(10, record.getConfig().getAuthKey());
+      stmt.setString(2, wrapper.getConfig().getName());
+      stmt.setString(3, wrapper.getConfig().getWrapperType().toString());
+      stmt.setString(4, wrapper.getConfig().getVimVendor().toString());
+      stmt.setString(5, wrapper.getConfig().getVimEndpoint().toString());
+      stmt.setString(6, wrapper.getConfig().getAuthUserName());
+      stmt.setString(7, wrapper.getConfig().getConfiguration());
+      stmt.setString(8, wrapper.getConfig().getCity());
+      stmt.setString(9, wrapper.getConfig().getCountry());
+      stmt.setString(10, wrapper.getConfig().getAuthPass());
+      stmt.setString(11, wrapper.getConfig().getAuthKey());
 
       stmt.executeUpdate();
       connection.commit();
@@ -299,11 +300,11 @@ public class VimRepo {
    * update the wrapper record into the repository with the specified UUID.
    * 
    * @param uuid the UUID of the wrapper to update
-   * @param record the WrapperRecord object with the information on the wrapper to store
+   * @param wrapper the Wrapper object with the information on the wrapper to store
    * 
    * @return true for process success
    */
-  public boolean updateVimEntry(String uuid, WrapperRecord record) {
+  public boolean updateVimEntry(String uuid, Wrapper wrapper) {
     boolean out = true;
 
     Connection connection = null;
@@ -319,20 +320,21 @@ public class VimRepo {
 
 
       String sql = "UPDATE VIM set "
-          + "(TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
-          + "VALUES (?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
+          + "(NAME, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
+          + "VALUES (?,?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
 
       stmt = connection.prepareStatement(sql);
-      stmt.setString(1, record.getConfig().getWrapperType().toString());
-      stmt.setString(2, record.getConfig().getVimVendor().toString());
-      stmt.setString(3, record.getConfig().getVimEndpoint().toString());
-      stmt.setString(4, record.getConfig().getAuthUserName());
-      stmt.setString(5, record.getConfig().getConfiguration());
-      stmt.setString(6, record.getConfig().getCity());
-      stmt.setString(7, record.getConfig().getCountry());
-      stmt.setString(8, record.getConfig().getAuthPass());
-      stmt.setString(9, record.getConfig().getAuthKey());
-      stmt.setString(10, uuid);
+      stmt.setString(1, wrapper.getConfig().getWrapperType().toString());
+      stmt.setString(2, wrapper.getConfig().getName());
+      stmt.setString(3, wrapper.getConfig().getVimVendor().toString());
+      stmt.setString(4, wrapper.getConfig().getVimEndpoint().toString());
+      stmt.setString(5, wrapper.getConfig().getAuthUserName());
+      stmt.setString(6, wrapper.getConfig().getConfiguration());
+      stmt.setString(7, wrapper.getConfig().getCity());
+      stmt.setString(8, wrapper.getConfig().getCountry());
+      stmt.setString(9, wrapper.getConfig().getAuthPass());
+      stmt.setString(10, wrapper.getConfig().getAuthKey());
+      stmt.setString(11, uuid);
 
 
       stmt.executeUpdate(sql);
@@ -370,9 +372,9 @@ public class VimRepo {
    * @return the WrapperRecord representing the wrapper, null if the wrapper is not registere in the
    *         repository
    */
-  public WrapperRecord readVimEntry(String uuid) {
+  public Wrapper readVimEntry(String uuid) {
 
-    WrapperRecord output = null;
+    Wrapper output = null;
 
     Connection connection = null;
     PreparedStatement stmt = null;
@@ -401,7 +403,8 @@ public class VimRepo {
         String city = rs.getString("CITY");
         String country = rs.getString("COUNTRY");
         String key = rs.getString("AUTHKEY");
-
+        String name = rs.getString("NAME");
+            
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
@@ -412,6 +415,8 @@ public class VimRepo {
         config.setAuthUserName(user);
         config.setAuthPass(pass);
         config.setAuthKey(key);
+        config.setName(name);
+        
         if (wrapperType.equals(WrapperType.COMPUTE)) {
           VimVendor vendor = ComputeVimVendor.getByName(vendorString);
           config.setVimVendor(vendor);
@@ -419,9 +424,7 @@ public class VimRepo {
           VimVendor vendor = NetworkVimVendor.getByName(vendorString);
           config.setVimVendor(vendor);
         }
-        Wrapper wrapper = WrapperFactory.createWrapper(config);
-        output = new WrapperRecord(wrapper, config, null);
-
+        output = WrapperFactory.createWrapper(config);
 
       } else {
         output = null;
@@ -649,8 +652,8 @@ public class VimRepo {
    * @param computeUuid the uuid of the network VIM
    * @return
    */
-  public WrapperRecord getNetworkVim(String vimUuid) {
-    WrapperRecord output = null;
+  public NetworkWrapper getNetworkVim(String vimUuid) {
+    NetworkWrapper output = null;
     Connection connection = null;
     PreparedStatement stmt = null;
     ResultSet rs = null;
@@ -698,9 +701,8 @@ public class VimRepo {
         config.setCity(city);
         config.setCountry(country);
 
-        Wrapper wrapper = WrapperFactory.createWrapper(config);
-        output = new WrapperRecord(wrapper, config, null);
-
+        output = (NetworkWrapper) WrapperFactory.createWrapper(config);
+        
 
       } else {
         output = null;
@@ -1531,6 +1533,57 @@ public class VimRepo {
 
     return output;
 
+  }
+
+
+  /**
+   * @return
+   */
+  public ArrayList<String> getNetworkVims() {
+    ArrayList<String> out = new ArrayList<String>();
+
+    Connection connection = null;
+    Statement stmt = null;
+    ResultSet rs = null;
+    try {
+      Class.forName("org.postgresql.Driver");
+      connection =
+          DriverManager.getConnection(
+              "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+                  + prop.getProperty("repo_port") + "/" + "vimregistry",
+              prop.getProperty("user"), prop.getProperty("pass"));
+      connection.setAutoCommit(false);
+
+      stmt = connection.createStatement();
+      rs = stmt.executeQuery("SELECT * FROM VIM WHERE TYPE='network';");
+      while (rs.next()) {
+        String uuid = rs.getString("UUID");
+        out.add(uuid);
+      }
+
+    } catch (SQLException e) {
+      Logger.error(e.getMessage());
+      out = null;
+    } catch (ClassNotFoundException e) {
+      Logger.error(e.getMessage(), e);
+      out = null;
+    } finally {
+      try {
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (rs != null) {
+          rs.close();
+        }
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        Logger.error(e.getMessage());
+
+      }
+    }
+    return out;
   }
 
 }

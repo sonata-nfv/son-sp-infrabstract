@@ -36,7 +36,6 @@ import sonata.kernel.vimadaptor.commons.NetworkDeconfigurePayload;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
-import sonata.kernel.vimadaptor.wrapper.WrapperRecord;
 
 import java.io.IOException;
 import java.util.Observable;
@@ -97,9 +96,9 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
         .getComputeVimUuidFromInstance(data.getServiceInstanceId());
 
     for (String computeVimUuid : computeUuids) {
-      WrapperRecord netVimRecord =
+      NetworkWrapper netVim =
           WrapperBay.getInstance().getNetworkVimFromComputeVimUuid(computeVimUuid);
-      if (netVimRecord == null) {
+      if (netVim == null) {
         Logger.error(
             "Unable to deconfigure networking. Cannot find NetVim associated with compute vim "
                 + computeVimUuid);
@@ -109,12 +108,11 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
             message.getReplyTo(), message.getSid(), null));
         return false;
       }
-      NetworkWrapper netWr = (NetworkWrapper) netVimRecord.getVimWrapper();
       try {
-        netWr.deconfigureNetworking(data.getServiceInstanceId());
+        netVim.deconfigureNetworking(data.getServiceInstanceId());
       } catch (Exception e) {
         Logger.error(
-            "Unable to deconfigure networking on VIM: " + netVimRecord.getConfig().getUuid(), e);
+            "Unable to deconfigure networking on VIM: " + netVim.getConfig().getUuid(), e);
         String responseJson =
             "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
         this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",

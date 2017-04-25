@@ -66,7 +66,7 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
   private static final long THREAD_SLEEP = 1000;
 
   public ComputeMockWrapper(WrapperConfiguration config) {
-    super();
+    super(config);
   }
 
   @Override

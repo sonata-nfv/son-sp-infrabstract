@@ -167,8 +167,8 @@ public class OvsWrapperTest {
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
-    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
+    ComputeWrapper computeWr =new ComputeMockWrapper(config);
+    boolean out = repoInstance.writeVimEntry(config.getUuid(), computeWr);
     Assert.assertTrue("Unable to write the compute vim", out);
 
     config = new WrapperConfiguration();
@@ -179,8 +179,8 @@ public class OvsWrapperTest {
     config.setUuid(netUuid1);
     config.setWrapperType(WrapperType.NETWORK);
     config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
-    record = new WrapperRecord(new OvsWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    NetworkWrapper netWr = new OvsWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), netWr);
     repoInstance.writeNetworkVimLink(computeUuid1, netUuid1);
 
     // Populate VimRepo with Instance data, VNF1 And VNF2 are deployed on PoP1, VNF3 on PoP2, and
@@ -256,8 +256,8 @@ public class OvsWrapperTest {
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
-    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
+    ComputeWrapper computeWr = new ComputeMockWrapper(config);
+    boolean out = repoInstance.writeVimEntry(config.getUuid(), computeWr);
     Assert.assertTrue("Unable to write the compute vim", out);
 
     config = new WrapperConfiguration();
@@ -268,8 +268,8 @@ public class OvsWrapperTest {
     config.setUuid(netUuid1);
     config.setWrapperType(WrapperType.NETWORK);
     config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
-    record = new WrapperRecord(new OvsWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    NetworkWrapper netWr = new OvsWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), netWr);
     repoInstance.writeNetworkVimLink(computeUuid1, netUuid1);
 
     // Second PoP
@@ -285,8 +285,8 @@ public class OvsWrapperTest {
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
-    record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    computeWr = new ComputeMockWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), computeWr);
     Assert.assertTrue("Unable to write the compute vim", out);
 
     config = new WrapperConfiguration();
@@ -297,8 +297,8 @@ public class OvsWrapperTest {
     config.setUuid(netUuid2);
     config.setWrapperType(WrapperType.NETWORK);
     config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
-    record = new WrapperRecord(new OvsWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    netWr = new OvsWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), netWr);
     repoInstance.writeNetworkVimLink(computeUuid2, netUuid2);
 
     // Third PoP
@@ -314,8 +314,8 @@ public class OvsWrapperTest {
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
-    record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    computeWr = new ComputeMockWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), computeWr);
     Assert.assertTrue("Unable to write the compute vim", out);
 
     config = new WrapperConfiguration();
@@ -326,8 +326,8 @@ public class OvsWrapperTest {
     config.setUuid(netUuid3);
     config.setWrapperType(WrapperType.NETWORK);
     config.setConfiguration("{\"compute_uuid\":\"" + computeUuid1 + "\"}");
-    record = new WrapperRecord(new OvsWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    netWr = new OvsWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), netWr);
     repoInstance.writeNetworkVimLink(computeUuid3, netUuid3);
 
 
