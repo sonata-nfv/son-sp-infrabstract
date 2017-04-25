@@ -663,7 +663,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployTwoServicesOpenStackV1() {
 
 
