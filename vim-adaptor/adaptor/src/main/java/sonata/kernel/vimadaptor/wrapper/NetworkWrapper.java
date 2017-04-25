@@ -33,10 +33,10 @@ public abstract class NetworkWrapper extends AbstractWrapper implements Wrapper 
 
 
 
-  public NetworkWrapper() {
+  public NetworkWrapper(WrapperConfiguration config) {
 
     this.setType(WrapperType.NETWORK);
-
+    this.setConfig(config);
   }
 
   // /**

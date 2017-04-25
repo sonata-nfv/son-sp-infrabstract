@@ -106,6 +106,7 @@ public class WrapperConfiguration {
     out += "VimEndpount: " + vimEndpoint + "\n";
     out += "User: " + authUserName + "\n";
     out += "pass: " + authPass + "\n";
+    out += "name: " + name + "\n";
     out += "config:\n";
     out += configuration;
     return out;
