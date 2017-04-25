@@ -55,6 +55,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import sonata.kernel.WimAdaptor.commons.DeployServiceResponse;
 import sonata.kernel.WimAdaptor.commons.SonataManifestMapper;
 import sonata.kernel.WimAdaptor.commons.Status;
+import sonata.kernel.WimAdaptor.commons.WimRecord;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.messaging.TestConsumer;
 import sonata.kernel.WimAdaptor.messaging.TestProducer;
@@ -136,7 +137,7 @@ public class WimAdaptorTest implements MessageReceiver {
   @Test
   public void testListWIM() throws InterruptedException, IOException {
     String message =
-        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
+        "{\"wim_vendor\":\"VTN\",\"name\":\"Wan-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -164,14 +165,14 @@ public class WimAdaptorTest implements MessageReceiver {
     String uuid1 = jsonObject.getString("uuid");
     String status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
-    //Add a second WIM
-    output=null;
+
+    // Add a second WIM
+    output = null;
     message =
-        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.20.0.12\",\"username\":\"admin\",\"pass\":\"admin\"}";
+        "{\"wim_vendor\":\"VTN\",\"name\":\"Wan-area-2\",\"wim_address\":\"10.20.0.12\",\"username\":\"admin\",\"pass\":\"admin\"}";
     topic = "infrastructure.wan.add";
-    addWimMessage = new ServicePlatformMessage(message, "application/json",
-      topic, UUID.randomUUID().toString(), topic);
+    addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addWimMessage);
     Thread.sleep(2000);
     while (output == null) {
@@ -185,13 +186,54 @@ public class WimAdaptorTest implements MessageReceiver {
     String uuid2 = jsonObject.getString("uuid");
     status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
+
+    // attach 2 VIMs per WIM
+    String vims[] = {"11111", "22222", "33333", "44444"};
     
-    //List wim;
-    output=null;
+    for (int i = 0; i < 2; i++) {
+      message = "{\"wim_uuid\":\"" + uuid1 + "\",\"vim_uuid\":\""+vims[i]+"\"}";
+      topic = "infrastructure.wan.attach";
+      addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
+          UUID.randomUUID().toString(), topic);
+      consumer.injectMessage(addWimMessage);
+      Thread.sleep(2000);
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(1000);
+        }
+      }
+
+      tokener = new JSONTokener(output);
+      jsonObject = (JSONObject) tokener.nextValue();
+      status = jsonObject.getString("request_status");
+      Assert.assertTrue(status.equals("COMPLETED"));
+    }
+
+    for (int i = 2; i < 4; i++) {
+      message = "{\"wim_uuid\":\"" + uuid2 + "\",\"vim_uuid\":\""+vims[i]+"\"}";
+      topic = "infrastructure.wan.attach";
+      addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
+          UUID.randomUUID().toString(), topic);
+      consumer.injectMessage(addWimMessage);
+      Thread.sleep(2000);
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(1000);
+        }
+      }
+
+      tokener = new JSONTokener(output);
+      jsonObject = (JSONObject) tokener.nextValue();
+      status = jsonObject.getString("request_status");
+      Assert.assertTrue(status.equals("COMPLETED"));
+    }
+    // List wim;
+    output = null;
+    message = null;
     topic = "infrastructure.wan.list";
     ServicePlatformMessage listWimMessage = new ServicePlatformMessage(message, "application/json",
-      topic, UUID.randomUUID().toString(), topic);
-    
+        topic, UUID.randomUUID().toString(), topic);
+
     consumer.injectMessage(listWimMessage);
     Thread.sleep(2000);
     while (output == null) {
@@ -199,13 +241,25 @@ public class WimAdaptorTest implements MessageReceiver {
         mon.wait(1000);
       }
     }
+
+    WimRecord[] list = mapper.readValue(output, WimRecord[].class);
+
+    for (WimRecord wim : list){
+      System.out.println(wim);
+      if(wim.getUuid().equals(uuid1)){
+        Assert.assertTrue(wim.getAttachedVims().contains(vims[0]));
+        Assert.assertTrue(wim.getAttachedVims().contains(vims[1]));
+      }
+      if(wim.getUuid().equals(uuid2)){
+        Assert.assertTrue(wim.getAttachedVims().contains(vims[2]));
+        Assert.assertTrue(wim.getAttachedVims().contains(vims[3]));
+      }
+    }
     
-    String[] list = mapper.readValue(output, String[].class);
     
-    for(String id : list)
-      System.out.println(id);
     
   }
+
   /**
    * Create a VTNwrapper
    * 
@@ -214,7 +268,7 @@ public class WimAdaptorTest implements MessageReceiver {
   @Test
   public void testCreateVTNWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
+        "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -265,11 +319,14 @@ public class WimAdaptorTest implements MessageReceiver {
     Assert.assertTrue(core.getState().equals("STOPPED"));
   }
 
+  @Test
+
+
   @Ignore
   public void configureService() throws IOException, InterruptedException {
 
     String message =
-        "{\"wim_vendor\":\"VTN\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
+        "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();

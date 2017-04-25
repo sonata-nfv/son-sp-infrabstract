@@ -95,4 +95,16 @@ public class WrapperBay {
     return repository.listWims();
   }
 
+  public String attachVim(String wimUuid, String vimUuid) {
+    boolean result = repository.attachVim(wimUuid, vimUuid);
+    if(result)
+      return "{\"request_status\":\"COMPLETED\"}";
+    else
+      return "{\"request_status\":\"ERROR\",\"message\":\"Unable to write VIM attachment into WIM repository\"}";  
+  }
+
+  public ArrayList<String> getAttachedVims(String wimUuid) {
+    return repository.readAttachedVim(wimUuid);
+  }
+
 }
