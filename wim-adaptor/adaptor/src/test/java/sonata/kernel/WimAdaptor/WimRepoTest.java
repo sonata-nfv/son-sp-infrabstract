@@ -74,7 +74,7 @@ public class WimRepoTest {
     config.setWrapperType("mock");
     ArrayList<String> servicedSegments = new ArrayList<String>();
     servicedSegments.add("1234-1234567890-1234567890-1234");
-    config.setServicedSegments(servicedSegments);
+    config.setAttachedVims(servicedSegments);
     WrapperRecord record = new WrapperRecord(new VtnWrapper(config), config);
     boolean out = repoInstance.writeWimEntry(config.getUuid(), record);
 

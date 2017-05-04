@@ -80,12 +80,18 @@ public class WrapperBay {
     return output;
   }
 
-  public WrapperRecord getWimRecord(String vimUuid) {
+  public WrapperRecord getWimRecordFromAttachedVim(String vimUuid) {
     WrapperRecord out;
     out = this.repository.readWimEntryFromVimUuid(vimUuid);
     return out;
   }
 
+  public WrapperRecord getWimRecordFromWimUuid(String wimUuid) {
+    WrapperRecord out;
+    out = this.repository.readWimEntry(wimUuid);
+    return out;
+  }
+  
   public String removeWimWrapper(String uuid) {
     repository.removeWimEntry(uuid);
     return "{\"request_status\":\"COMPLETED\"}";

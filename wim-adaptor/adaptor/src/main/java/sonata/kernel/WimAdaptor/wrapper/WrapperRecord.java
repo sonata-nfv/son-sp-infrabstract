@@ -51,4 +51,9 @@ public class WrapperRecord {
     this.config = config;
     this.wimWrapper = wrapper;
   }
+  
+  @Override
+  public String toString(){
+    return config.toString();
+  }
 }
