@@ -66,16 +66,13 @@ public class OvsWrapper extends NetworkWrapper {
 
   private static final String ADAPTOR_SEGMENTS_CONF = "/adaptor/segments.conf";
 
-  private WrapperConfiguration config;
-
   /**
    * Basic constructor.
    * 
    * @param config the configuration object of this wrapper.
    */
   public OvsWrapper(WrapperConfiguration config) {
-    super();
-    this.config = config;
+    super(config);
   }
 
   @Override
@@ -208,7 +205,7 @@ public class OvsWrapper extends NetworkWrapper {
         } else {
           // Eureka!
           OrderedMacAddress mac = new OrderedMacAddress();
-          mac.setMac(matchingCpRec.getType().getHardwareAddress());
+          mac.setMac(matchingCpRec.getInterface().getHardwareAddress());
           mac.setPosition(portIndex);
           mac.setReferenceCp(qualifiedName);
           portIndex++;
@@ -226,12 +223,12 @@ public class OvsWrapper extends NetworkWrapper {
     mapper.setSerializationInclusion(Include.NON_NULL);
     // Logger.info(compositionString);
     String payload = mapper.writeValueAsString(odlPayload);
-    Logger.debug(this.config.getUuid() + " - " + this.config.getVimEndpoint());
+    Logger.debug(this.getConfig().getUuid() + " - " + this.getConfig().getVimEndpoint());
     Logger.debug(payload);
 
     int sfcAgentPort = 55555;
     DatagramSocket clientSocket = new DatagramSocket(sfcAgentPort);
-    InetAddress IPAddress = InetAddress.getByName(config.getVimEndpoint());
+    InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
     byte[] sendData = new byte[1024];
     byte[] receiveData = new byte[1024];
     sendData = payload.getBytes(Charset.forName("UTF-8"));
@@ -273,7 +270,7 @@ public class OvsWrapper extends NetworkWrapper {
 
     int sfcAgentPort = 55555;
 
-    InetAddress IPAddress = InetAddress.getByName(config.getVimEndpoint());
+    InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
     byte[] sendData = new byte[1024];
     byte[] receiveData = new byte[1024];
     sendData = payload.getBytes(Charset.forName("UTF-8"));

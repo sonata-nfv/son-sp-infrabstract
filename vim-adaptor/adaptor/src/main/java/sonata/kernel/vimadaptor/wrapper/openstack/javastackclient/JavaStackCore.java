@@ -291,7 +291,7 @@ public class JavaStackCore {
 
       Logger.debug("[JavaStack] Authenticating client...");
       Logger.debug("[JavaStack] " + post.toString());
-      Logger.debug("[JavaStack] " + body);
+//      Logger.debug("[JavaStack] " + body);
 
       response = httpClient.execute(post);
 
@@ -461,16 +461,16 @@ public class JavaStackCore {
       String responsePhrase = response.getStatusLine().getReasonPhrase();
 
       Logger.debug("Response: " + response.toString());
-      Logger.debug("Response body:");
-
-      if (statusCode != 201) {
-        BufferedReader in =
-            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        String line = null;
-
-        while ((line = in.readLine()) != null)
-          Logger.debug(line);
-      }
+//      Logger.debug("Response body:");
+//
+//      if (statusCode != 201) {
+//        BufferedReader in =
+//            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+//        String line = null;
+//
+//        while ((line = in.readLine()) != null)
+//          Logger.debug(line);
+//      }
 
 
       return (statusCode == 201)
@@ -530,17 +530,17 @@ public class JavaStackCore {
       String responsePhrase = response.getStatusLine().getReasonPhrase();
 
       Logger.debug("Response: " + response.toString());
-      Logger.debug("Response body:");
-
-
-      if (statusCode != 202) {
-        BufferedReader in =
-            new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-        String line = null;
-
-        while ((line = in.readLine()) != null)
-          Logger.debug(line);
-      }
+      // Logger.debug("Response body:");
+      //
+      //
+      // if (statusCode != 202) {
+      // BufferedReader in =
+      // new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+      // String line = null;
+      //
+      // while ((line = in.readLine()) != null)
+      // Logger.debug(line);
+      // }
 
       return (statusCode == 202)
           ? response

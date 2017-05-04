@@ -87,7 +87,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(OpenStackHeatWrapper.class);
-  private WrapperConfiguration config;
   private IpNetPool myPool;
 
   /**
@@ -96,17 +95,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * @param config the config object for this Compute Wrapper
    */
   public OpenStackHeatWrapper(WrapperConfiguration config) {
-    super();
-    this.config = config;
-    VimNetTable.getInstance().registerVim(this.config.getUuid());
-    this.myPool = VimNetTable.getInstance().getNetPool(this.config.getUuid());
+    super(config);
+    VimNetTable.getInstance().registerVim(this.getConfig().getUuid());
+    this.myPool = VimNetTable.getInstance().getNetPool(this.getConfig().getUuid());
   }
 
   private HeatTemplate createInitStackTemplate(String instanceId) throws Exception {
 
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(this.getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     // String tenant = object.getString("tenant");
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -190,7 +188,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -198,11 +196,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // END COMMENT
 
 
-    OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
 
-    OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackNovaClient novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     Collections.sort(vimFlavors);
     HeatModel stack;
@@ -251,7 +249,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public ResourceUtilisation getResourceUtilisation() {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -260,8 +258,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
 
     Logger.info("OpenStack wrapper - Getting resource utilisation...");
-    OpenStackNovaClient client = new OpenStackNovaClient(config.getVimEndpoint(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackNovaClient client = new OpenStackNovaClient(getConfig().getVimEndpoint(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
     ResourceUtilisation output = client.getResourceUtilizasion();
     Logger.info("OpenStack wrapper - Resource utilisation retrieved.");
     return output;
@@ -278,7 +276,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public boolean prepareService(String instanceId) throws Exception {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -287,8 +285,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     // To prepare a service instance management and data networks/subnets
     // must be created. The Management Network must also be attached to the external router.
-    OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
 
     HeatTemplate template = createInitStackTemplate(instanceId);
 
@@ -342,7 +340,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
       Logger.info("VIM prepared succesfully. Creating record in Infra Repo.");
       WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(instanceId, stackUuid,
-          stackName, this.config.getUuid());
+          stackName, this.getConfig().getUuid());
 
     } catch (Exception e) {
       Logger.error("Error during stack creation.");
@@ -359,7 +357,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -374,17 +372,17 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     Logger.info("NS instance mapped to stack name: " + stackName);
     Logger.info("NS instance mapped to stack uuid: " + stackUuid);
 
-    OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
     try {
       String output = client.deleteStack(stackName, stackUuid);
 
       if (output.equals("DELETED")) {
-        repo.removeServiceInstanceEntry(instanceUuid, this.config.getUuid());
+        repo.removeServiceInstanceEntry(instanceUuid, this.getConfig().getUuid());
         myPool.freeSubnets(instanceUuid);
         this.setChanged();
         String body =
-            "{\"status\":\"COMPLETED\",\"wrapper_uuid\":\"" + this.config.getUuid() + "\"}";
+            "{\"status\":\"COMPLETED\",\"wrapper_uuid\":\"" + this.getConfig().getUuid() + "\"}";
         WrapperStatusUpdate update = new WrapperStatusUpdate(callSid, "SUCCESS", body);
         this.notifyObservers(update);
       }
@@ -418,7 +416,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     // String tenant = object.getString("tenant");
     String tenantExtNet = object.getString("tenant_ext_net");
@@ -531,7 +529,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
               vnfd.getName() + ":" + link.getId() + ":subnet:" + nsd.getInstanceUuid());
           cidr = subnets.get(subnetIndex);
           subnet.putProperty("cidr", cidr);
-          // config parameter
+          // getConfig() parameter
           // String[] dnsArray = { "10.30.0.11", "8.8.8.8" };
           // TODO DNS should not be hardcoded, VMs should automatically get OpenStack subnet DNS.
           String[] dnsArray = {"8.8.8.8"};
@@ -724,7 +722,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       throws Exception {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     // String tenant = object.getString("tenant");
     String tenantExtNet = object.getString("tenant_ext_net");
@@ -824,7 +822,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public synchronized void deployFunction(FunctionDeployPayload data, String sid) {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -832,16 +830,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // END COMMENT
 
 
-    OpenStackHeatClient client = new OpenStackHeatClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
 
-    OpenStackNovaClient novaClient = new OpenStackNovaClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackNovaClient novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
 
     String stackUuid = WrapperBay.getInstance().getVimRepo()
-        .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.config.getUuid());
+        .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.getConfig().getUuid());
     String stackName = WrapperBay.getInstance().getVimRepo()
-        .getServiceInstanceVimName(data.getServiceInstanceId(), this.config.getUuid());
+        .getServiceInstanceVimName(data.getServiceInstanceId(), this.getConfig().getUuid());
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     Collections.sort(vimFlavors);
     HeatModel stackAddendum;
@@ -966,7 +964,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     response.setRequestStatus("COMPLETED");
     response.setInstanceVimUuid(stackUuid);
     response.setInstanceName(stackName);
-    response.setVimUuid(this.config.getUuid());
+    response.setVimUuid(this.getConfig().getUuid());
     response.setMessage("");
 
 
@@ -1033,7 +1031,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
                   ip.setNetmask("255.255.255.248");
 
                 }
-                cpr.setType(ip);
+                cpr.setInterface(ip);
+                cpr.setType(cp.getType());
                 break;
               }
             }
@@ -1067,7 +1066,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // Logger.info("body");
 
     WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnfd.getInstanceUuid(),
-        data.getServiceInstanceId(), this.config.getUuid());
+        data.getServiceInstanceId(), this.getConfig().getUuid());
     WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "SUCCESS", body);
     this.markAsChanged();
     this.notifyObservers(update);
@@ -1083,13 +1082,13 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public void uploadImage(VnfImage image) throws IOException {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     // END COMMENT
 
-    OpenStackGlanceClient glance = new OpenStackGlanceClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackGlanceClient glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
 
     Logger.debug("Creating new image: " + image.getUuid());
     String imageUuid = glance.createImage(image.getUuid());
@@ -1130,13 +1129,13 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
     Logger.debug("Checking image: " + image.getUuid());
-    JSONTokener tokener = new JSONTokener(config.getConfiguration());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     // END COMMENT
 
-    OpenStackGlanceClient glance = new OpenStackGlanceClient(config.getVimEndpoint().toString(),
-        config.getAuthUserName(), config.getAuthPass(), tenant);
+    OpenStackGlanceClient glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
     ArrayList<Image> glanceImages = glance.listImages();
 
     for (Image glanceImage : glanceImages) {

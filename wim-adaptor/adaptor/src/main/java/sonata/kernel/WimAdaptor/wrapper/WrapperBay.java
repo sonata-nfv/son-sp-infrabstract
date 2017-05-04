@@ -80,12 +80,18 @@ public class WrapperBay {
     return output;
   }
 
-  public WrapperRecord getWimRecord(String vimUuid) {
+  public WrapperRecord getWimRecordFromAttachedVim(String vimUuid) {
     WrapperRecord out;
     out = this.repository.readWimEntryFromVimUuid(vimUuid);
     return out;
   }
 
+  public WrapperRecord getWimRecordFromWimUuid(String wimUuid) {
+    WrapperRecord out;
+    out = this.repository.readWimEntry(wimUuid);
+    return out;
+  }
+  
   public String removeWimWrapper(String uuid) {
     repository.removeWimEntry(uuid);
     return "{\"request_status\":\"COMPLETED\"}";
@@ -93,6 +99,18 @@ public class WrapperBay {
 
   public ArrayList<String> getWimList() {
     return repository.listWims();
+  }
+
+  public String attachVim(String wimUuid, String vimUuid) {
+    boolean result = repository.attachVim(wimUuid, vimUuid);
+    if(result)
+      return "{\"request_status\":\"COMPLETED\"}";
+    else
+      return "{\"request_status\":\"ERROR\",\"message\":\"Unable to write VIM attachment into WIM repository\"}";  
+  }
+
+  public ArrayList<String> getAttachedVims(String wimUuid) {
+    return repository.readAttachedVim(wimUuid);
   }
 
 }

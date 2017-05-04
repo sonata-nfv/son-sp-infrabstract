@@ -29,6 +29,7 @@ package sonata.kernel.vimadaptor.wrapper;
 public class WrapperConfiguration {
 
   private String vimEndpoint;
+  private String name;
   private VimVendor vimVendor;
   private WrapperType wrapperType;
   private String authUserName;
@@ -105,6 +106,7 @@ public class WrapperConfiguration {
     out += "VimEndpount: " + vimEndpoint + "\n";
     out += "User: " + authUserName + "\n";
     out += "pass: " + authPass + "\n";
+    out += "name: " + name + "\n";
     out += "config:\n";
     out += configuration;
     return out;
@@ -134,6 +136,14 @@ public class WrapperConfiguration {
 
   public void setConfiguration(String configuration) {
     this.configuration = configuration;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
 }

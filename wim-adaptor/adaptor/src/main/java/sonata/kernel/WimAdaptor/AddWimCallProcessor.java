@@ -67,6 +67,7 @@ public class AddWimCallProcessor extends AbstractCallProcessor {
     String wimVendor = jsonObject.getString("wim_vendor");
     String vimEndpoint = jsonObject.getString("wim_address");
     String authUser = jsonObject.getString("username");
+    String name = jsonObject.getString("name");
     String authPass = jsonObject.getString("pass");
     // JSONArray jsonServicedSegments = jsonObject.getJSONArray("serviced_segments");
     // ArrayList<String> servicedSegments = new ArrayList<String>();
@@ -77,6 +78,7 @@ public class AddWimCallProcessor extends AbstractCallProcessor {
     config.setWimEndpoint(vimEndpoint);
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);
+    config.setName(name);
     String output = null;
     boolean out = true;
 

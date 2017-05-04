@@ -38,7 +38,7 @@ public class NetworkMockWrapper extends NetworkWrapper {
   private WrapperConfiguration config;
 
   public NetworkMockWrapper(WrapperConfiguration config) {
-    this.config = config;
+    super(config);
   }
 
   /*

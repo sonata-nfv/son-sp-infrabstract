@@ -134,7 +134,7 @@ public class AdaptorDispatcher implements Runnable {
         myThreadPool.execute(new ResourceAvailabilityCallProcessor(message, message.getSid(), mux));
       } else if (message.getTopic().endsWith("list")) {
         Logger.info("Received a \"List VIMs\" API call on topic: " + message.getTopic());
-        myThreadPool.execute(new ListVimCallProcessor(message, message.getSid(), mux));
+        myThreadPool.execute(new ListComputeVimCallProcessor(message, message.getSid(), mux));
       }
     } else if (message.getTopic().contains("storage")) {
       // TODO Storage Management API
@@ -143,6 +143,9 @@ public class AdaptorDispatcher implements Runnable {
         myThreadPool.execute(new AddVimCallProcessor(message, message.getSid(), mux));
       } else if (message.getTopic().endsWith("remove")) {
         myThreadPool.execute(new RemoveVimCallProcessor(message, message.getSid(), mux));
+      } else if (message.getTopic().endsWith("list")) {
+        Logger.info("Received a \"List VIMs\" API call on topic: " + message.getTopic());
+        myThreadPool.execute(new ListNetworkVimCallProcessor(message, message.getSid(), mux));
       } else {
         Logger.info("Received an unknown menagement API call on topic: " + message.getTopic());
       }

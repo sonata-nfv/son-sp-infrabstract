@@ -36,8 +36,9 @@ public class WrapperConfiguration {
   private String authUserName;
   private String authPass;
   private String authKey;
+  private String name;
   private String uuid;
-  private ArrayList<String> servicedSegments;
+  private ArrayList<String> attachedVims;
 
   public String getWrapperType() {
     return wrapperType;
@@ -105,16 +106,25 @@ public class WrapperConfiguration {
     out += "WimEndpount: " + wimEndpoint + "\n\r";
     out += "User: " + authUserName + "\n\r";
     out += "pass: " + authPass + "\n\r";
-    out += "serviced_segments: \n\r" + servicedSegments;
+    out += "name: " + name + "\n\r";
+    out += "attached_vims: \n\r" + attachedVims;
     return out;
   }
 
-  public ArrayList<String> getServicedSegments() {
-    return servicedSegments;
+  public ArrayList<String> getAttachedVims() {
+    return attachedVims;
   }
 
-  public void setServicedSegments(ArrayList<String> servicedSegments) {
-    this.servicedSegments = servicedSegments;
+  public void setAttachedVims(ArrayList<String> attachedVims) {
+    this.attachedVims = attachedVims;
+  }
+
+  public String getName() {
+    return name;
+  }
+
+  public void setName(String name) {
+    this.name = name;
   }
 
 }

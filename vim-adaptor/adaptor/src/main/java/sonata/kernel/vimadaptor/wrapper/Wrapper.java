@@ -29,5 +29,6 @@ package sonata.kernel.vimadaptor.wrapper;
 public interface Wrapper {
 
   public WrapperType getType();
-
+  public WrapperConfiguration getConfig();
+  
 }

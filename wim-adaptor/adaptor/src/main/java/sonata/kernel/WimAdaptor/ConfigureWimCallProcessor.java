@@ -63,7 +63,7 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
     String instanceId = response.getNsr().getId();
     String vimId = response.getVimUuid();
 
-    WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecord(vimId).getWimWrapper();
+    WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecordFromAttachedVim(vimId).getWimWrapper();
     wim.addObserver(this);
     Logger.debug("Configuring WIM...");
     ServicePlatformMessage responseMessage = null;

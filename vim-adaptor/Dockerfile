@@ -44,7 +44,7 @@ ENV repo_port 5432
 ENV repo_user sonatatest
 ENV repo_pass sonata
 
-RUN mvn -e  compile assembly:single;
+RUN mvn -e -q  compile assembly:single;
 #RUN mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true clean compile assembly:single;
 
 CMD ["/docker-entrypoint.sh","/test.sh"]

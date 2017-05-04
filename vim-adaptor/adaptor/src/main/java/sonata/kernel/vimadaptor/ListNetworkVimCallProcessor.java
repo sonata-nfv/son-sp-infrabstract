@@ -43,24 +43,25 @@ import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import java.util.ArrayList;
 import java.util.Observable;
 
-public class ListVimCallProcessor extends AbstractCallProcessor {
+public class ListNetworkVimCallProcessor extends AbstractCallProcessor {
 
   private static final org.slf4j.Logger Logger =
-      LoggerFactory.getLogger(ListVimCallProcessor.class);
+      LoggerFactory.getLogger(ListNetworkVimCallProcessor.class);
 
-  public ListVimCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
+  /**
+   * @param message
+   * @param sid
+   * @param mux
+   */
+  public ListNetworkVimCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
-  }
-
-  @Override
-  public void update(Observable obs, Object arg) {
-    // This call does not need to be updated by any observable (wrapper).
+    // TODO Auto-generated constructor stub
   }
 
   @Override
   public boolean process(ServicePlatformMessage message) {
     Logger.info("Retrieving VIM list from vim repository");
-    ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
+    ArrayList<String> vimList = WrapperBay.getInstance().getNetworkWrapperList();
     Logger.info("Found " + vimList.size() + " VIMs");
     Logger.info("Retrieving VIM(s) resource utilisation");
     ArrayList<VimResources> resList = new ArrayList<VimResources>();
@@ -81,10 +82,9 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
         VimResources bodyElement = new VimResources();
 
         bodyElement.setVimUuid(vimUuid);
-        bodyElement.setCoreTotal(resource.getTotCores());
-        bodyElement.setCoreUsed(resource.getUsedCores());
-        bodyElement.setMemoryTotal(resource.getTotMemory());
-        bodyElement.setMemoryUsed(resource.getUsedMemory());
+        bodyElement.setVimCity(wr.getConfig().getCity());
+        bodyElement.setVimName(wr.getConfig().getName());
+        bodyElement.setVimEndpoint(wr.getConfig().getVimEndpoint());
         resList.add(bodyElement);
       }
     }
@@ -114,5 +114,11 @@ public class ListVimCallProcessor extends AbstractCallProcessor {
       return false;
     }
   }
+
+  
+  @Override
+  public void update(Observable o, Object arg) {  
+  }
+
 
 }

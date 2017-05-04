@@ -32,7 +32,9 @@ public class ConnectionPointRecord {
 
 
   private String id;
-  private InterfaceRecord type;
+  @JsonProperty("interface")
+  private InterfaceRecord interData;
+  private ConnectionPointType type;
   @JsonProperty("virtua_link_reference")
   private String virtualLinkReference;
 
@@ -55,12 +57,22 @@ public class ConnectionPointRecord {
   }
 
 
-  public InterfaceRecord getType() {
-    return type;
+  public InterfaceRecord getInterface() {
+    return interData;
   }
 
 
-  public void setType(InterfaceRecord type) {
+  public void setInterface(InterfaceRecord interData) {
+    this.interData = interData;
+  }
+
+
+  public void setType(ConnectionPointType type) {
     this.type = type;
+  }
+
+
+  public ConnectionPointType getType() {
+    return type;
   }
 }

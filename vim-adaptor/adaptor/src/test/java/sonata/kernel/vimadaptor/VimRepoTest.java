@@ -31,10 +31,11 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.wrapper.ComputeVimVendor;
+import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
 import sonata.kernel.vimadaptor.wrapper.NetworkVimVendor;
+import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;
 import sonata.kernel.vimadaptor.wrapper.VimRepo;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.vimadaptor.wrapper.WrapperRecord;
 import sonata.kernel.vimadaptor.wrapper.WrapperType;
 import sonata.kernel.vimadaptor.wrapper.mock.ComputeMockWrapper;
 import sonata.kernel.vimadaptor.wrapper.ovsWrapper.OvsWrapper;
@@ -80,7 +81,7 @@ public class VimRepoTest {
     config.setCity("London");
     config.setCountry("England");
 
-    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
+    ComputeWrapper record = new ComputeMockWrapper(config);
     boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
 
 
@@ -107,18 +108,18 @@ public class VimRepoTest {
     config.setCity("London");
     config.setCountry("England");
 
-    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
+    ComputeWrapper wrapper = new ComputeMockWrapper(config);
+    boolean out = repoInstance.writeVimEntry(config.getUuid(), wrapper);
     Assert.assertTrue("Unable to write a vim", out);
 
     config.setUuid("2");
-    record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    wrapper = new ComputeMockWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), wrapper);
     Assert.assertTrue("Unable to write a vim", out);
 
     config.setUuid("3");
-    record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    wrapper = new ComputeMockWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), wrapper);
     Assert.assertTrue("Unable to write a vim", out);
 
 
@@ -251,8 +252,8 @@ public class VimRepoTest {
     config.setConfiguration(configs);
     config.setCity("London");
     config.setCountry("England");
-    WrapperRecord record = new WrapperRecord(new ComputeMockWrapper(config), config, null);
-    boolean out = repoInstance.writeVimEntry(config.getUuid(), record);
+    ComputeWrapper computeWrapper = new ComputeMockWrapper(config);
+    boolean out = repoInstance.writeVimEntry(config.getUuid(), computeWrapper);
     Assert.assertTrue("Unable to write the compute vim", out);
 
     config = new WrapperConfiguration();
@@ -263,15 +264,15 @@ public class VimRepoTest {
     config.setUuid(networkingUuid);
     config.setWrapperType(WrapperType.NETWORK);
     config.setConfiguration("{\"compute_uuid\":\"" + computeUuid + "\"}");
-    record = new WrapperRecord(new OvsWrapper(config), config, null);
-    out = repoInstance.writeVimEntry(config.getUuid(), record);
+    NetworkWrapper netWrapper = new OvsWrapper(config);
+    out = repoInstance.writeVimEntry(config.getUuid(), netWrapper);
     Assert.assertTrue("Unable to write the networking vim", out);
 
     out = repoInstance.writeNetworkVimLink(computeUuid, networkingUuid);
     Assert.assertTrue("Unable to write compute/networking association", out);
 
     String netVimUuid = repoInstance.getNetworkVimFromComputeVimUuid(computeUuid);
-    WrapperRecord netRecord = repoInstance.getNetworkVim(netVimUuid);
+    NetworkWrapper netRecord = repoInstance.getNetworkVim(netVimUuid);
 
     Assert.assertNotNull("Retrieved netVim is null", netRecord);
     Assert.assertNotNull("Retrieved netVim has null configuration", netRecord.getConfig());

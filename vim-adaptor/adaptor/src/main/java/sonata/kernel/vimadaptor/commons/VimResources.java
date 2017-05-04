@@ -32,6 +32,12 @@ public class VimResources {
 
   @JsonProperty("vim_uuid")
   private String vimUuid;
+  @JsonProperty("vim_city")
+  private String vimCity;
+  @JsonProperty("vim_name")
+  private String vimName;
+  @JsonProperty("vim_endpoint")
+  private String vimEndpoint;
   @JsonProperty("memory_used")
   private int memoryUsed;
   @JsonProperty("memory_total")
@@ -79,6 +85,30 @@ public class VimResources {
 
   public void setCoreTotal(int coreTotal) {
     this.coreTotal = coreTotal;
+  }
+
+  public String getVimCity() {
+    return vimCity;
+  }
+
+  public String getVimName() {
+    return vimName;
+  }
+
+  public String getVimEndpoint() {
+    return vimEndpoint;
+  }
+
+  public void setVimCity(String vimCity) {
+    this.vimCity = vimCity;
+  }
+
+  public void setVimName(String vimName) {
+    this.vimName = vimName;
+  }
+
+  public void setVimEndpoint(String vimEndpoint) {
+    this.vimEndpoint = vimEndpoint;
   }
 
 
