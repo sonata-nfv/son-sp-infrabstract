@@ -73,7 +73,7 @@ public class ListWimCallProcessor extends AbstractCallProcessor {
         return false;
       }
       WimRecord out = new WimRecord();
-      Logger.debug(wr.toString());
+      //Logger.debug(wr.toString());
       out.setUuid(wr.getConfig().getUuid());
       out.setName(wr.getConfig().getName());
       ArrayList<String> attachedVims = WrapperBay.getInstance().getAttachedVims(wim);

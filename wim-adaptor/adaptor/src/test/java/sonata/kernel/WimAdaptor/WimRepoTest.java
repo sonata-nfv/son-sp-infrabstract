@@ -72,9 +72,9 @@ public class WimRepoTest {
     config.setAuthPass("apass");
     config.setUuid("12345");
     config.setWrapperType("mock");
-    ArrayList<String> servicedSegments = new ArrayList<String>();
-    servicedSegments.add("1234-1234567890-1234567890-1234");
-    config.setAttachedVims(servicedSegments);
+    ArrayList<String> attachedVims = new ArrayList<String>();
+    attachedVims.add("1234-1234567890-1234567890-1234");
+    config.setAttachedVims(attachedVims);
     WrapperRecord record = new WrapperRecord(new VtnWrapper(config), config);
     boolean out = repoInstance.writeWimEntry(config.getUuid(), record);
 
