@@ -448,22 +448,22 @@ public class DeployServiceTest implements MessageReceiver {
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
         +"\"name\":\"Athens1\","
-        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-        + "\"pass\":\"s0nata.d3m\"}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
+        + "\"pass\":\"s0n@t@.d@ri0\"}";
 
     // PoP Athens.10 Mitaka
     // String addVimBody = "{\"vim_type\":\"Heat\", "
     // + "\"configuration\":{"
     // + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
     // + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
-    // + "\"tenant\":\"sonata.dem\""
+    // + "\"tenant\":\"sonata.dario\""
     // + "},"
     // + "\"city\":\"Athens\",\"country\":\"Greece\","
-    // + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dem\","
-    // + "\"pass\":\"s0n@t@.dem\"}";
+    // + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dario\","
+    // + "\"pass\":\"s0n@t@.d@ri0\"}";
 
     // PoP Aveiro Mitaka
     // String addVimBody = "{\"vim_type\":\"Heat\", "
@@ -700,11 +700,11 @@ public class DeployServiceTest implements MessageReceiver {
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", "+"\"name\":\"Athens1\"," + "\"configuration\":{"
-        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-        + "\"pass\":\"s0nata.d3m\"}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
+        + "\"pass\":\"s0n@t@.d@ri0\"}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(addVimBody,
         "application/json", topic, UUID.randomUUID().toString(), topic);
@@ -1044,11 +1044,11 @@ public class DeployServiceTest implements MessageReceiver {
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " +"\"name\":\"Athens1\"," + "\"configuration\":{"
-        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-        + "\"pass\":\"s0nata.d3m\"}";
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
+        + "\"pass\":\"s0n@t@.d@ri0\"}";
 
     System.out.println("[TwoPoPTest] Adding PoP .200");
     // Add first PoP
@@ -1355,12 +1355,12 @@ public class DeployServiceTest implements MessageReceiver {
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-        + "\"tenant_ext_router\":\"e8cdd5c7-191f-4215-83f3-53ee1113db86\", "
+        + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-        + "\"vim_address\":\"10.100.32.200\", \"username\":\"sonata.dem\","
+        + "\"vim_address\":\"10.100.32.200\", \"username\":\"sonata.dario\","
         +"\"name\":\"Athens1\","
-        + "\"pass\":\"s0nata.d3m\"}";
+        + "\"pass\":\"s0n@t@.d@ri0\"}";
 
 
 
@@ -1416,10 +1416,10 @@ public class DeployServiceTest implements MessageReceiver {
     addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
         + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
         + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
-        + "\"tenant\":\"sonata.dem\"" + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
-        + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dem\","
+        + "\"tenant\":\"sonata.dario\"" + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dario\","
         +"\"name\":\"Athens2\","
-        + "\"pass\":\"s0n@t@.dem\"}";
+        + "\"pass\":\"s0n@t@.d@ri0\"}";
 
     topic = "infrastructure.management.compute.add";
     addVimMessage = new ServicePlatformMessage(addVimBody, "application/json", topic,
