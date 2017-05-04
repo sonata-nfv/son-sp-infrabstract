@@ -730,8 +730,8 @@ public class DeployServiceTest implements MessageReceiver {
 
 
     output = null;
-    String addNetVimBody = "{\"vim_type\":\"ovs\", "
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+    String addNetVimBody = "{\"vim_type\":\"ovs\", "+"\"name\":\"Athens1-net\","
+     + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
