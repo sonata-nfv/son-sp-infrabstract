@@ -46,7 +46,7 @@ import java.util.Observable;
 public class ListNetworkVimCallProcessor extends AbstractCallProcessor {
 
   private static final org.slf4j.Logger Logger =
-      LoggerFactory.getLogger(ListComputeVimCallProcessor.class);
+      LoggerFactory.getLogger(ListNetworkVimCallProcessor.class);
 
   /**
    * @param message

@@ -252,7 +252,8 @@ public class DeployServiceFsm implements Runnable {
                 ip.setNetmask("255.255.255.248");
 
               }
-              cpr.setType(ip);
+              cpr.setInterface(ip);
+              cpr.setType(cp.getType());
               break;
             }
           }
@@ -289,7 +290,7 @@ public class DeployServiceFsm implements Runnable {
         for (VduRecord vdur : vnfr.getVirtualDeploymentUnits()) {
           for (VnfcInstance vnfc : vdur.getVnfcInstance()) {
             for (ConnectionPointRecord cpr : vnfc.getConnectionPoints()) {
-              cpr.getType().setHardwareAddress(null);
+              cpr.getInterface().setHardwareAddress(null);
             }
           }
         }

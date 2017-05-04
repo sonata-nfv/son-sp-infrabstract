@@ -205,7 +205,7 @@ public class OvsWrapper extends NetworkWrapper {
         } else {
           // Eureka!
           OrderedMacAddress mac = new OrderedMacAddress();
-          mac.setMac(matchingCpRec.getType().getHardwareAddress());
+          mac.setMac(matchingCpRec.getInterface().getHardwareAddress());
           mac.setPosition(portIndex);
           mac.setReferenceCp(qualifiedName);
           portIndex++;

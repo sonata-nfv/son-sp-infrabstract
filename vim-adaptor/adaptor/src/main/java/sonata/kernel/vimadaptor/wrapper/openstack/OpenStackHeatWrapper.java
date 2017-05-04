@@ -1031,7 +1031,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
                   ip.setNetmask("255.255.255.248");
 
                 }
-                cpr.setType(ip);
+                cpr.setInterface(ip);
+                cpr.setType(cp.getType());
                 break;
               }
             }
