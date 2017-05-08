@@ -242,12 +242,10 @@ public class WimAdaptorTest implements MessageReceiver {
       System.out.println(wim);
       ArrayList<String> attachedVims = wim.getAttachedVims();
       if(wim.getUuid().equals(uuid1)){
-        System.out.println("This is WIM1");
         Assert.assertTrue(vims[0]+" not present", attachedVims.contains(vims[0]));
         Assert.assertTrue(vims[1]+" not present", attachedVims.contains(vims[1]));
       }
       if(wim.getUuid().equals(uuid2)){
-        System.out.println("This is WIM2");
         Assert.assertTrue(vims[2]+" not present", attachedVims.contains(vims[2]));
         Assert.assertTrue(vims[3]+" not present", attachedVims.contains(vims[3]));
       }
