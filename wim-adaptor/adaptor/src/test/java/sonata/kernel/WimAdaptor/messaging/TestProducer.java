@@ -53,6 +53,9 @@ public class TestProducer extends AbstractMsgBusProducer {
     if (message.getTopic().contains("infrastructure.wan")) {
       output.receive(message);
     }
+    if (message.getTopic().contains("infrastructure.management.wan")) {
+      output.receive(message);
+    }
     if (message.getTopic().contains("infrastructure.service.deploy")) {
       output.receive(message);
     }

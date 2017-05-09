@@ -78,6 +78,7 @@ public class ListWimCallProcessor extends AbstractCallProcessor {
       out.setName(wr.getConfig().getName());
       ArrayList<String> attachedVims = WrapperBay.getInstance().getAttachedVims(wim);
       out.setAttachedVims(attachedVims);
+      wimList.add(out);
     }
 
     ObjectMapper mapper = SonataManifestMapper.getSonataMapper();

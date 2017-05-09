@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -205,7 +206,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     for (int i = 2; i < 4; i++) {
       message = "{\"wim_uuid\":\"" + uuid2 + "\",\"vim_uuid\":\""+vims[i]+"\"}";
-      topic = "infrastructure.wan.attach";
+      topic = "infrastructure.management.wan.attach";
       addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
           UUID.randomUUID().toString(), topic);
       consumer.injectMessage(addWimMessage);
@@ -224,7 +225,7 @@ public class WimAdaptorTest implements MessageReceiver {
     // List wim;
     output = null;
     message = null;
-    topic = "infrastructure.wan.list";
+    topic = "infrastructure.management.wan.list";
     ServicePlatformMessage listWimMessage = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
 
@@ -235,18 +236,18 @@ public class WimAdaptorTest implements MessageReceiver {
         mon.wait(1000);
       }
     }
-
     WimRecord[] list = mapper.readValue(output, WimRecord[].class);
 
     for (WimRecord wim : list){
       System.out.println(wim);
+      ArrayList<String> attachedVims = wim.getAttachedVims();
       if(wim.getUuid().equals(uuid1)){
-        Assert.assertTrue(wim.getAttachedVims().contains(vims[0]));
-        Assert.assertTrue(wim.getAttachedVims().contains(vims[1]));
+        Assert.assertTrue(vims[0]+" not present", attachedVims.contains(vims[0]));
+        Assert.assertTrue(vims[1]+" not present", attachedVims.contains(vims[1]));
       }
       if(wim.getUuid().equals(uuid2)){
-        Assert.assertTrue(wim.getAttachedVims().contains(vims[2]));
-        Assert.assertTrue(wim.getAttachedVims().contains(vims[3]));
+        Assert.assertTrue(vims[2]+" not present", attachedVims.contains(vims[2]));
+        Assert.assertTrue(vims[3]+" not present", attachedVims.contains(vims[3]));
       }
     }
     
@@ -312,9 +313,6 @@ public class WimAdaptorTest implements MessageReceiver {
     core.stop();
     Assert.assertTrue(core.getState().equals("STOPPED"));
   }
-
-  @Test
-
 
   @Ignore
   public void configureService() throws IOException, InterruptedException {

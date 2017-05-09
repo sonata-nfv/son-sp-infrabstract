@@ -654,13 +654,12 @@ public class WimRepo {
       stmt.setString(1, wimUuid);
       rs = stmt.executeQuery();
 
-      if (rs.next()) {
+      while (rs.next()) {
         String vimUuid = rs.getString("VIM_UUID");
         output.add(vimUuid);
 
-      } else {
-        output = null;
       }
+      
     } catch (SQLException e) {
       Logger.error(e.getMessage(), e);
       output = null;

@@ -33,7 +33,7 @@ public class WimRecord {
   @Override
   public String toString(){
     String out = "uuid: "+this.uuid+"\n"+
-        "name: "+this.uuid+"\n"+
+        "name: "+this.name+"\n"+
         "attachedVim: "+this.attachedVims.toString();
         
     return out;
