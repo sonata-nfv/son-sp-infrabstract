@@ -206,7 +206,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     for (int i = 2; i < 4; i++) {
       message = "{\"wim_uuid\":\"" + uuid2 + "\",\"vim_uuid\":\""+vims[i]+"\"}";
-      topic = "infrastructure.wan.attach";
+      topic = "infrastructure.management.wan.attach";
       addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
           UUID.randomUUID().toString(), topic);
       consumer.injectMessage(addWimMessage);
@@ -313,9 +313,6 @@ public class WimAdaptorTest implements MessageReceiver {
     core.stop();
     Assert.assertTrue(core.getState().equals("STOPPED"));
   }
-
-  @Test
-
 
   @Ignore
   public void configureService() throws IOException, InterruptedException {
