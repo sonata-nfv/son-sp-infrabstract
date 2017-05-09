@@ -1162,7 +1162,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
    */
   @Override
-  public boolean isImageStored(VnfImage image) {
+  public boolean isImageStored(VnfImage image, String callSid) {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
     Logger.debug("Checking image: " + image.getUuid());
@@ -1171,8 +1171,18 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     // END COMMENT
 
-    OpenStackGlanceClient glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
+    
+    OpenStackGlanceClient glance = null;
+    try{
+      glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
         getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+    }catch (IOException e){
+      Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
+      this.setChanged();
+      WrapperStatusUpdate errorUpdate = new WrapperStatusUpdate(callSid, "ERROR", e.getMessage());
+      this.notifyObservers(errorUpdate);
+      return false;
+    }
     ArrayList<Image> glanceImages = glance.listImages();
 
     for (Image glanceImage : glanceImages) {
