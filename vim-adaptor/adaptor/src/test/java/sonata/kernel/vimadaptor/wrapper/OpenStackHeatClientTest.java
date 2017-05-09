@@ -49,7 +49,7 @@ public class OpenStackHeatClientTest {
 
 
   @Before
-  public void initClient() {
+  public void initClient() throws IOException {
 
     // todo - this needs to be moved to configuration file
     this.heatClient =

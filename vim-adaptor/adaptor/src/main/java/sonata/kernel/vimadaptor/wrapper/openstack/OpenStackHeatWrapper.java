@@ -194,13 +194,21 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
+    OpenStackHeatClient client = null;
+    OpenStackNovaClient novaClient=null;
 
-
-    OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
+    try{
+    client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
         getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
-
-    OpenStackNovaClient novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
+    novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
         getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+    }catch(IOException e){
+      Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
+      this.setChanged();
+      WrapperStatusUpdate errorUpdate = new WrapperStatusUpdate(callSid, "ERROR", e.getMessage());
+      this.notifyObservers(errorUpdate);
+      return false;
+    }
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     Collections.sort(vimFlavors);
     HeatModel stack;
@@ -256,12 +264,22 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
-
+    ResourceUtilisation output=null;
     Logger.info("OpenStack wrapper - Getting resource utilisation...");
-    OpenStackNovaClient client = new OpenStackNovaClient(getConfig().getVimEndpoint(),
-        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
-    ResourceUtilisation output = client.getResourceUtilizasion();
-    Logger.info("OpenStack wrapper - Resource utilisation retrieved.");
+    OpenStackNovaClient client;
+    try {
+      client = new OpenStackNovaClient(getConfig().getVimEndpoint(),
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+      output = client.getResourceUtilizasion();
+      Logger.info("OpenStack wrapper - Resource utilisation retrieved.");
+    } catch (IOException e) {
+      Logger.error("OpenStack wrapper - Unable to connect to PoP.");;
+      output = new ResourceUtilisation();
+      output.setTotCores(0);
+      output.setUsedCores(0);
+      output.setTotMemory(0);
+      output.setUsedMemory(0);      
+    }
     return output;
   }
 
@@ -372,8 +390,19 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     Logger.info("NS instance mapped to stack name: " + stackName);
     Logger.info("NS instance mapped to stack uuid: " + stackUuid);
 
-    OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint(),
+    OpenStackHeatClient client = null;
+    
+    try{
+    client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
         getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+    }catch(IOException e){
+      Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
+      this.setChanged();
+      WrapperStatusUpdate errorUpdate = new WrapperStatusUpdate(callSid, "ERROR", e.getMessage());
+      this.notifyObservers(errorUpdate);
+      return false;
+    }
+    
     try {
       String output = client.deleteStack(stackName, stackUuid);
 
@@ -829,13 +858,21 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
 
+    OpenStackHeatClient client = null;
+    OpenStackNovaClient novaClient=null;
 
-    OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
+    try{
+    client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
         getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
-
-    OpenStackNovaClient novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
+    novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
         getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
-
+    }catch(IOException e){
+      Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
+      this.setChanged();
+      WrapperStatusUpdate errorUpdate = new WrapperStatusUpdate(sid, "ERROR", e.getMessage());
+      this.notifyObservers(errorUpdate);
+      return;
+    }
     String stackUuid = WrapperBay.getInstance().getVimRepo()
         .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.getConfig().getUuid());
     String stackName = WrapperBay.getInstance().getVimRepo()
