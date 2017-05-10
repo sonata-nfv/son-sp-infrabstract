@@ -1414,7 +1414,7 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println("[TwoPoPTest] Adding PoP .10");
     // PoP Athens.10 Mitaka
     addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-        + "\"tenant_ext_router\":\"2c2a8b09-b746-47de-b0ce-dce5fa242c7e\", "
+        + "\"tenant_ext_router\":\"4e362dfd-ba10-4957-9b8b-51e31b5ec4e9\", "
         + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
         + "\"tenant\":\"sonata.dario\"" + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dario\","

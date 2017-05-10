@@ -59,7 +59,7 @@ public class OpenStackGlanceClient {
 
   private ObjectMapper mapper;
 
-  public OpenStackGlanceClient(String url, String userName, String password, String tenantName) {
+  public OpenStackGlanceClient(String url, String userName, String password, String tenantName) throws IOException {
     this.url = url;
     this.userName = userName;
     this.password = password;
@@ -83,11 +83,7 @@ public class OpenStackGlanceClient {
     javaStack.setProjectId(null);
     javaStack.setAuthenticated(false);
     // Authenticate
-    try {
-      javaStack.authenticateClientV3();
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
+    javaStack.authenticateClientV3();
   }
 
 

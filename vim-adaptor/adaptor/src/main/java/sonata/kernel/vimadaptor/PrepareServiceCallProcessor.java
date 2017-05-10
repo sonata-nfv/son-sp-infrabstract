@@ -104,7 +104,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         Logger.info("Wrapper retrieved");
 
         for (VnfImage vnfImage : vim.getImages()) {
-          if (!wr.isImageStored(vnfImage)) {
+          if (!wr.isImageStored(vnfImage, message.getSid())) {
             wr.uploadImage(vnfImage);
           } else {
             Logger.info("Image already stored in the VIM image repository");

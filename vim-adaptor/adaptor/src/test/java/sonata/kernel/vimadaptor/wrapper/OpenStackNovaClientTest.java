@@ -46,11 +46,12 @@ public class OpenStackNovaClientTest {
   private OpenStackNovaClient novaClient;
 
   @Before
-  public void initClient() {
+  public void initClient() throws IOException{
 
     // todo - this needs to be moved to configuration file
     this.novaClient =
         new OpenStackNovaClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@", "op_sonata");
+
   }
 
 
