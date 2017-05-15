@@ -1028,8 +1028,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       // HeatServer matchingServer = null;
       for (HeatServer server : composition.getServers()) {
         String[] identifiers = server.getServerName().split(":");
-        // String vnfName = identifiers[0];
+        String vnfName = identifiers[0];
         String vduName = identifiers[1];
+        if(!vnfName.equals(vnfd.getName())){
+          continue;
+        }
         String instanceId = identifiers[2];
         if (vdu.getId().equals(vduName)) {
           VnfcInstance vnfc = new VnfcInstance();
