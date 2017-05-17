@@ -42,6 +42,7 @@ import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
 import sonata.kernel.vimadaptor.commons.IpNetPool;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VduRecord;
 import sonata.kernel.vimadaptor.commons.VimNetTable;
@@ -309,11 +310,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatTemplate template = createInitStackTemplate(instanceId);
 
     Logger.info("Deploying new stack for service preparation.");
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
     Logger.info("Serializing stack...");
     try {
       String stackString = mapper.writeValueAsString(template);
@@ -873,6 +870,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       this.notifyObservers(errorUpdate);
       return;
     }
+
+    Logger.debug("Getting VIM stack name and UUID for service instance ID "+data.getServiceInstanceId());
     String stackUuid = WrapperBay.getInstance().getVimRepo()
         .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.getConfig().getUuid());
     String stackName = WrapperBay.getInstance().getVimRepo()
