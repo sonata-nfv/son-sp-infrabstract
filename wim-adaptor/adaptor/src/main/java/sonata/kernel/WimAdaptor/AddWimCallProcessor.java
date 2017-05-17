@@ -26,15 +26,14 @@
 
 package sonata.kernel.WimAdaptor;
 
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.UUID;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.WimAdaptor.wrapper.WimVendor;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
 
@@ -74,7 +73,7 @@ public class AddWimCallProcessor extends AbstractCallProcessor {
 
     config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType("WIM");
-    config.setWimVendor(wimVendor);
+    config.setWimVendor(WimVendor.getByName(wimVendor));
     config.setWimEndpoint(vimEndpoint);
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);

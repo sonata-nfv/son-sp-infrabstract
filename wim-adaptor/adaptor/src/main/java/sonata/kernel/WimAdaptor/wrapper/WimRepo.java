@@ -197,7 +197,7 @@ public class WimRepo {
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
       stmt.setString(2, record.getConfig().getWrapperType());
-      stmt.setString(3, record.getConfig().getWimVendor());
+      stmt.setString(3, record.getConfig().getWimVendor().toString());
       stmt.setString(4, record.getConfig().getWimEndpoint().toString());
       stmt.setString(5, record.getConfig().getAuthUserName());
       stmt.setString(6, record.getConfig().getAuthPass());
@@ -307,7 +307,7 @@ public class WimRepo {
 
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, record.getConfig().getWrapperType());
-      stmt.setString(2, record.getConfig().getWimVendor());
+      stmt.setString(2, record.getConfig().getWimVendor().toString());
       stmt.setString(3, record.getConfig().getWimEndpoint().toString());
       stmt.setString(4, record.getConfig().getAuthUserName());
       stmt.setString(5, record.getConfig().getAuthPass());
@@ -383,7 +383,7 @@ public class WimRepo {
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
-        config.setWimVendor(vendor);
+        config.setWimVendor(WimVendor.getByName(vendor));
         config.setWimEndpoint(urlString);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
@@ -467,7 +467,7 @@ public class WimRepo {
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
-        config.setWimVendor(vendor);
+        config.setWimVendor(WimVendor.getByName(vendor));
         config.setWimEndpoint(urlString);
         config.setAuthUserName(user);
         config.setAuthPass(pass);

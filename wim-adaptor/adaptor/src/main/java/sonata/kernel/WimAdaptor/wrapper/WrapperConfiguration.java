@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class WrapperConfiguration {
 
   private String wimEndpoint;
-  private String wimVendor;
+  private WimVendor wimVendor;
   private String wrapperType;
   private String authUserName;
   private String authPass;
@@ -56,11 +56,11 @@ public class WrapperConfiguration {
     this.wimEndpoint = wimEndpoint;
   }
 
-  public String getWimVendor() {
+  public WimVendor getWimVendor() {
     return wimVendor;
   }
 
-  public void setWimVendor(String wimType) {
+  public void setWimVendor(WimVendor wimType) {
     this.wimVendor = wimType;
   }
 

@@ -34,13 +34,11 @@ import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
 
 public class VtnWrapper extends WimWrapper {
 
-  private WrapperConfiguration config;
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(ConfigureWimCallProcessor.class);
 
   public VtnWrapper(WrapperConfiguration config) {
-    super();
-    this.config = config;
+    super(config);
   }
 
   @Override

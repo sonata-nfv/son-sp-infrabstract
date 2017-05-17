@@ -40,8 +40,10 @@ public class WrapperFactory {
     Wrapper output = null;
     System.out.println("  [WrapperFactory] - creating wrapper...");
 
-    if (config.getWimVendor().equals("VTN")) {
+    if (config.getWimVendor().equals(WimVendor.VTN)) {
       output = new VtnWrapper(config);
+    } else if (config.getWimVendor().equals(WimVendor.MOCK)){
+      output = new MockWrapper(config);
     }
 
     System.out.println("  [WrapperFactory] - Wrapper created...");
