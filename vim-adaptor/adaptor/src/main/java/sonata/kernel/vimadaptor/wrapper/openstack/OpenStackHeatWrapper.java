@@ -136,7 +136,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String cidr = subnets.get(subnetIndex);
     mgmtSubnet.putProperty("cidr", cidr);
     mgmtSubnet.putProperty("gateway_ip", myPool.getGateway(cidr));
-
+    String[] dnsArray = {"8.8.8.8"};
+    mgmtSubnet.putProperty("dns_nameservers", dnsArray);
     subnetIndex++;
     HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
     mgmtNetMap.put("get_resource", "SonataService:mgmt:net:" + instanceId);
