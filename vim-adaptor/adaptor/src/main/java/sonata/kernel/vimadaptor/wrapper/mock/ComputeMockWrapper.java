@@ -34,14 +34,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
-import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
-import sonata.kernel.vimadaptor.commons.ServiceDeployResponse;
-import sonata.kernel.vimadaptor.commons.ServiceRecord;
-import sonata.kernel.vimadaptor.commons.Status;
-import sonata.kernel.vimadaptor.commons.VduRecord;
-import sonata.kernel.vimadaptor.commons.VnfImage;
-import sonata.kernel.vimadaptor.commons.VnfRecord;
+import sonata.kernel.vimadaptor.commons.*;
 import sonata.kernel.vimadaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
@@ -194,11 +187,16 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
     // TODO Auto-generated method stub
   }
 
+  @Override
+  public void scaleFunction(FunctionScalePayload data, String sid) {
+    //TODO - smendel - add implementation and comments on function
+  }
+
   /*
-   * (non-Javadoc)
-   * 
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
-   */
+     * (non-Javadoc)
+     *
+     * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#isImageStored(java.lang.String)
+     */
   @Override
   public boolean isImageStored(VnfImage image, String callSid) {
     boolean out = true;

@@ -38,16 +38,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
-import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
-import sonata.kernel.vimadaptor.commons.IpNetPool;
-import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
-import sonata.kernel.vimadaptor.commons.Status;
-import sonata.kernel.vimadaptor.commons.VduRecord;
-import sonata.kernel.vimadaptor.commons.VimNetTable;
-import sonata.kernel.vimadaptor.commons.VnfImage;
-import sonata.kernel.vimadaptor.commons.VnfRecord;
-import sonata.kernel.vimadaptor.commons.VnfcInstance;
+import sonata.kernel.vimadaptor.commons.*;
 import sonata.kernel.vimadaptor.commons.heat.HeatModel;
 import sonata.kernel.vimadaptor.commons.heat.HeatPort;
 import sonata.kernel.vimadaptor.commons.heat.HeatResource;
@@ -1113,11 +1104,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   }
 
+  @Override
+  public void scaleFunction(FunctionScalePayload data, String sid) {
+    //TODO - add implementation and documentation on function
+  }
+
   /*
-   * (non-Javadoc)
-   * 
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#uploadImage(java.lang.String)
-   */
+     * (non-Javadoc)
+     *
+     * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#uploadImage(java.lang.String)
+     */
   @Override
   public void uploadImage(VnfImage image) throws IOException {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
