@@ -110,7 +110,7 @@ sock.bind(server_address)
 while True:
     print ""
     print "Waiting for data ..."
-    logger.info("Waiting for data")
+    logger.info(" --- Waiting for data ---")
     data, address = sock.recvfrom(4096)
     #print >>sys.stderr, data
     print "received from: "
@@ -254,7 +254,8 @@ while True:
         logger.info("Sending return flag: " +returnflag)
         sock.sendto(returnflag, address)
         fo.close()       
-        
+        logger.info("Proccess Completed. Returning to Start")
+
     #if request is to delete, then:      
     elif (jsonMANA=="delete"):
         print "DELETING-> "+jsonData0
@@ -267,7 +268,7 @@ while True:
             logger.info(line)
             os.system(line)
         sock.sendto("SUCCESS", address)
-
+        logger.info("Proccess Completed. Returning to Start")
     # not add or delete 
     else:
         message = "This function is not supported. Please check your json file"
@@ -275,3 +276,4 @@ while True:
         logger.info(message)
         print message
         sock.sendto(message, address)
+        logger.info("Proccess Completed. Returning to Start")
