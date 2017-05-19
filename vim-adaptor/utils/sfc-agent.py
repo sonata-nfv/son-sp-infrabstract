@@ -36,6 +36,15 @@ import time
 import json
 import argparse
 import parser
+import logging 
+
+### Logging Config ### 
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.DEBUG)
+fh = logging.FileHandler('sfc.log')
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+fh.setFormatter(formatter)
+logger.addHandler(fh)
 
 ### Functions ###
 
@@ -77,7 +86,7 @@ print "===SONATA PROJECT==="
 print "SFC-AGENT Initializing..."
 print ""
 print ""
-
+logger.info("Started SFC-AGENT")
 if args.server:  # parse the server adress passed
     server = args.server
 else:
@@ -95,16 +104,19 @@ sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 # Bind the socket to the port
 server_address = (server, 55555)
 print >>sys.stderr, 'starting up on %s port %s' % server_address
+logger.info('starting up on %s port %s' % server_address)
 sock.bind(server_address)
 
 while True:
     print ""
     print "Waiting for data ..."
+    logger.info("Waiting for data")
     data, address = sock.recvfrom(4096)
     #print >>sys.stderr, data
     print "received from: "
     print address
     print ""
+    logger.info("Recieved data from:" + str(address))
 
     jsonResponse=json.loads(data)
     returnflag = "SUCCESS"
@@ -113,8 +125,10 @@ while True:
         jsonData0 = jsonResponse["instance_id"]
     except KeyError:
         message="There is some error with json file"
-        print message
+        logger.error(message)
+        print message 
         sock.sendto(message, address)
+        continue
 
     if (jsonMANA=="add"):
         try:
@@ -123,7 +137,11 @@ while True:
         except:
             message="There is some error with json file"
             print message
+            logger.error(message)
             sock.sendto(message, address)
+            continue
+
+        logger.info("Json message succesfully accepted: "+data)
         print "SOURCE SEGMENT -> "+jsonData
         print "DESTINATION SEGMENT -> "+jsonData2
         uuid = jsonData0
@@ -132,19 +150,37 @@ while True:
         dst = jsonData2
         #for the rules to be installed: print them, install and log them, ready to be deleted.
         print "PoP first-in rule:" #take the incoming traffic from src to dst and pass it to br-ex
+        logger.info("PoP first-in rule:")
+        logger.info("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+breth0port)
         print "ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+breth0port
         os.system("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+breth0port)
         fo.write("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
+        logger.info("PoP first-in rule;reverse")
+        logger.info("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+dst+",nw_dst="+src+",actions=output:"+breth0port)
+        os.system("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+dst+",nw_dst="+src+",actions=output:"+breth0port)
+        fo.write("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+dst+",nw_dst="+src+"\n")
 
         print "PoP in rule:" #take traffic from 1st port of br-ex and take it to phy-br-ex (to br-int essentialy)
+        logger.info("PoP in rule")
         print "ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brexport
+        logger.info("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brexport)
         os.system("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brexport)
         fo.write("ovs-ofctl --strict del-flows br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
-
+        logger.info( "PoP in rule; reverse") #take traffic from 1st port of br-ex and take it to phy-br-ex (to br-int essentialy)
+        logger.info( "ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+dst+",nw_dst="+src+",actions=output:"+brexport)
+        os.system("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+dst+",nw_dst="+src+",actions=output:"+brexport)
+        fo.write("ovs-ofctl --strict del-flows br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+dst+",nw_dst="+src+"\n")
+ 
         print "PoP out rule:" #take traffic from incoming traffic from br-int to br-eth0
+        logger.info("PoP out rule")
         print "ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+src+",nw_dst="+dst+",actions=output:1"
+        logger.info("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
         os.system("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
         fo.write("ovs-ofctl --strict del-flows br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+src+",nw_dst="+dst+"\n")
+        logger.info("PoP out rule; reverse") #take traffic from incoming traffic from br-int to br-eth0
+        logger.info("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+dst+",nw_dst="+src+",actions=output:1")
+        os.system("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+dst+",nw_dst="+src+",actions=output:1")
+        fo.write("ovs-ofctl --strict del-flows br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+dst+",nw_dst="+src+"\n")
 
         jsonData3 = jsonResponse["port_list"] #get the port list
         portlist = []
@@ -154,53 +190,88 @@ while True:
             portlist.append(port)
 
         # Install the redirection rules
-        print "Rule First: " # take the traffic from br-int to the first virtual interface  
+        print "Rule First: " # take the traffic from br-int to the first virtual interface 
+        logger.info("Rule First: ") 
         firstport = findPort(portlist[0])
         if (firstport==""):
+            logger.error("Error in finding port_list")
             returnflag = "Error in finding port list"
+        logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+firstport)
         print "ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+firstport
         os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+firstport)
         fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+src+",nw_dst="+dst+"\n")
+
+        logger.info("And in reverse:")
+        logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+firstport)
+        print "ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+firstport
+        os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+firstport)
+        fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+dst+",nw_dst="+src+"\n")
 
         for i in range (2,len(portlist)-1,2):   #take the traffic from one virtual interface to another 
             #print "in-> "+portlist[i-1]+" - out-> "+portlist[i]
             inport = findPort(portlist[i-1])
             if (inport==""):
                 returnflag = "Error in finding port list"
+                logger.error("ERROR in finding port list")
             outport = findPort(portlist[i])
             if (outport==""):
                 returnflag = "Error in finding port list"
+                logger.error("ERROR in finding port list")
+
+            logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+outport)
             print "ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+outport
             os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+outport)
             fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+src+",nw_dst="+dst+"\n")
 
+            logger.info("And in reverse:")
+            logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+outport)
+            print "ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+outport
+            os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+outport)
+            fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x800,in_port="+inport+",nw_src="+dst+",nw_dst="+src+"\n")
+
 
         print "Last Rule: " #take the traffic from the last virtual inteface to br-int 
+        logger.info("Last Rule: ")
 
         lastport = findPort(portlist[len(portlist)-1])
         if (lastport==""):
             returnflag = "Error in finding port list"
+            logger.error("ERROR in finding port list")
+
+        logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+brintport)
         print "ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+brintport
         os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+src+",nw_dst="+dst+",actions=output:"+brintport)
         fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+src+",nw_dst="+dst+"\n")
 
+        logger.info("And in reverse:")
+        logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+brintport)
+        print "ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+brintport
+        os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+dst+",nw_dst="+src+",actions=output:"+brintport)
+        fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+dst+",nw_dst="+src+"\n")        
+
         # Reply Success or Error 
         print returnflag
+        logger.info("Sending return flag: " +returnflag)
         sock.sendto(returnflag, address)
         fo.close()       
         
     #if request is to delete, then:      
     elif (jsonMANA=="delete"):
         print "DELETING-> "+jsonData0
+        logger.info("Message to delete recieved")
+        logger.info(" DELETING --> "+jsonData0)
         #os.system("rm "+jsonData0)
         f = open(jsonData0, 'r')
         for line in f:
             print line
+            logger.info(line)
             os.system(line)
         sock.sendto("SUCCESS", address)
 
     # not add or delete 
     else:
         message = "This function is not supported. Please check your json file"
+        logger.info("Recieved not supported function. Sending message")
+        logger.info(message)
         print message
         sock.sendto(message, address)
