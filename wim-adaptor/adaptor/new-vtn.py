@@ -67,6 +67,13 @@ def set_redirect(cond_name, vbr, port_id_in, port_id_out):
         exit(1)
 
 
+def get_info():
+    username = "null"
+    password = "null"
+    host = "null"
+    url = 'http://' + host + ':8181/restconf/'
+    return username, password, host, url 
+
 def get_vtn_name():
     s_url = 'operational/vtn:vtns/'
     r = requests.get(url + s_url, headers=headers, auth=(username, password))
@@ -86,11 +93,7 @@ if args.configuration:
 '''
 
 if __name__ == "__main__":
-	username = "admin"
-    password = "admin"
-    host = "10.30.0.13"
-    url = 'http://' + host + ':8181/restconf/'
-    headers = {'Content type': 'application/json'}
-
-    vtn_name = get_vtn_name()
-    print vtn_name
+	username, password, host, url = get_info()
+	headers = {'Content type': 'application/json'}
+	vtn_name = get_vtn_name()
+	print vtn_name
