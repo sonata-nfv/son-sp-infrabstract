@@ -1098,7 +1098,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             cpRecords.add(cpr);
           }
           vnfc.setConnectionPoints(cpRecords);
-          VduRecord referenceVdur = vdurTable.get(vnfd.getName() + "." + vdu.getId());
+          VduRecord referenceVdur = vdurTable.get(vnfd.getName() + ":" + vdu.getId());
           referenceVdur.addVnfcInstance(vnfc);
 
         }
