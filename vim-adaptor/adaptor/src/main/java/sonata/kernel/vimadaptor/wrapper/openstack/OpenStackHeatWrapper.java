@@ -1106,7 +1106,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   @Override
   public void scaleFunction(FunctionScalePayload data, String sid) {
-    //TODO - add implementation and documentation on function
+    //TODO - smendel - add implementation and documentation on function
   }
 
   /*

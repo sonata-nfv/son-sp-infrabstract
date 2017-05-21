@@ -47,7 +47,7 @@ public class ScaleFunctionCallProcessor extends AbstractCallProcessor  {
 
     private FunctionScalePayload data;
     private static final org.slf4j.Logger Logger =
-            LoggerFactory.getLogger(DeployFunctionCallProcessor.class);
+            LoggerFactory.getLogger(ScaleFunctionCallProcessor.class);
 
     public ScaleFunctionCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
         super(message, sid, mux);
