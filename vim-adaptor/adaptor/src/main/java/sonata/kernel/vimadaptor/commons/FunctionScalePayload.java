@@ -39,6 +39,13 @@ public class FunctionScalePayload {
 
     //TODO  - smendel - add additional params that are part of the api
 
+    @JsonProperty("function_instance_id")
+    private String functionInstanceId;
+
+    @JsonProperty("service_instance_id")
+    private String serviceInstanceId;
+
+
     public String getFunctionInstanceId() {
         return functionInstanceId;
     }
@@ -47,10 +54,11 @@ public class FunctionScalePayload {
         this.functionInstanceId = functionInstanceId;
     }
 
-    @JsonProperty("function_instance_id")
-    private String functionInstanceId;
+    public String getServiceInstanceId() {
+        return serviceInstanceId;
+    }
 
-
-
-
+    public void setServiceInstanceId(String serviceInstanceId) {
+        this.serviceInstanceId = serviceInstanceId;
+    }
 }

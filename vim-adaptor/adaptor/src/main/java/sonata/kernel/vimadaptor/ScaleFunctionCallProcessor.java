@@ -79,7 +79,7 @@ public class ScaleFunctionCallProcessor extends AbstractCallProcessor  {
                 out = false;
             } else {
                 // use wrapper interface to send the NSD/VNFD, along with meta-data
-                // to the wrapper, triggering the service instantiation.
+                // to the wrapper, triggering the service scaling.
                 Logger.info("Calling wrapper: " + wr);
                 wr.addObserver(this);
                 wr.scaleFunction(data, this.getSid());
