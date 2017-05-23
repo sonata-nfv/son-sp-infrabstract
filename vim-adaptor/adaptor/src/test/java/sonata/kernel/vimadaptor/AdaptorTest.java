@@ -97,6 +97,141 @@ public class AdaptorTest implements MessageReceiver {
 
 
   /**
+   * Create two wrappers with the same endpoint but using different tenants
+   * 
+   * @throws IOException
+   */
+  @Test
+  public void testCreateTwoWrappers() throws InterruptedException, IOException {
+    String message =
+        "{\"vim_type\":\"Mock\",\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
+            +"\"name\":\"Athens.100.Demo\"," + "\"pass\":\"s0n@t@.dem\",\"city\":\"Athens\",\"country\":\"Greece\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
+    String topic = "infrastructure.management.compute.add";
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+
+    core.start();
+
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String uuid1 = jsonObject.getString("uuid");
+    String status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    output = null;
+    message =
+        "{\"vim_type\":\"Mock\",\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
+            +"\"name\":\"Athens.100.Dario\"," + "\"pass\":\"s0n@t@.dario\",\"city\":\"Athens\",\"country\":\"Greece\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
+    
+    
+    addVimMessage = new ServicePlatformMessage(message, "application/json",
+      topic, UUID.randomUUID().toString(), topic);
+    
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    String uuid2 = jsonObject.getString("uuid");
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    
+    // List installed VIMS
+    output=null;
+    topic = "infrastructure.management.compute.list";
+    ServicePlatformMessage listVimMessage =
+        new ServicePlatformMessage(null, null, topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(listVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    VimResources[] vimList = mapper.readValue(output, VimResources[].class);
+    ArrayList<String> vimArrayList = new ArrayList<String>();
+
+    for (VimResources resource : vimList) {
+      Assert.assertNotNull("Resource not set 'VIM UUID'", resource.getVimUuid());
+      Assert.assertNotNull("Resource not set 'tot_cores'", resource.getCoreTotal());
+      Assert.assertNotNull("Resource not set 'used_cores'", resource.getCoreUsed());
+      Assert.assertNotNull("Resource not set 'tot_mem'", resource.getMemoryTotal());
+      Assert.assertNotNull("Resource not set 'used_mem'", resource.getMemoryUsed());
+      vimArrayList.add(resource.getVimUuid());
+    }
+
+    Assert.assertTrue("VIMs List doesn't contain vim " + uuid1,
+      vimArrayList.contains(uuid1));
+    Assert.assertTrue("VIMs List doesn't contain vim " + uuid2,
+      vimArrayList.contains(uuid2));
+    
+    
+    
+    // Clear the environment
+    output = null;
+    message = "{\"uuid\":\"" + uuid1 + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    
+    output = null;
+    message = "{\"uuid\":\"" + uuid2 + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    core.stop();
+  }
+  
+  /**
    * Create a Mock wrapper
    * 
    * @throws IOException
