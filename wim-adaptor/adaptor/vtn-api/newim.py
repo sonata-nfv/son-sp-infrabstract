@@ -52,7 +52,7 @@ if args.configuration:
 '''
 
 
-api.add_resource(FlowChart, '/')
+api.add_resource(FlowChart, '/flowchart/')
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
