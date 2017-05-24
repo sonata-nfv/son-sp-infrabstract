@@ -124,6 +124,7 @@ public class OpenStackHeatClient {
     } catch (Exception e) {
       Logger.error(
           "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+      return null;
     }
 
     return uuid;
