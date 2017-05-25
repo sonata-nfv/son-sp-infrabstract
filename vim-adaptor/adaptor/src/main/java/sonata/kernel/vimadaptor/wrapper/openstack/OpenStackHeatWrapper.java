@@ -797,6 +797,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         port.setName(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         port.putProperty("name", vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
         HashMap<String, Object> netMap = new HashMap<String, Object>();
+        Logger.debug("Mapping CP Type to the relevant network");
         if (cp.getType().equals(ConnectionPointType.INT)) {
           netMap.put("get_resource", "SonataService:data:net:" + instanceUuid);
         } else if (cp.getType().equals(ConnectionPointType.EXT)) {
@@ -804,6 +805,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         } else if (cp.getType().equals(ConnectionPointType.MANAGEMENT)) {
           netMap.put("get_resource", "SonataService:mgmt:net:" + instanceUuid);
           publicPortNames.add(vnfd.getName() + ":" + cp.getId() + ":" + instanceUuid);
+        } else{
+          Logger.error("Cannot map the parsed CP type " + cp.getType() + " to a known one");
+          throw new Exception("Unable to translate CP "+ vnfd.getName()+":"+cp.getId());
         }
         port.putProperty("network", netMap);
         model.addResource(port);
@@ -924,8 +928,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       return;
     }
     Logger.debug(stackString);
+    try{
     client.updateStack(stackName, stackUuid, stackString);
-
+    } catch (Exception e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
     int counter = 0;
     int wait = 1000;
     int maxCounter = 10;
