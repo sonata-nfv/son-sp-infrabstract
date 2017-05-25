@@ -130,7 +130,7 @@ public class OpenStackHeatClient {
     return uuid;
   }
 
-  public void updateStack(String stackName, String stackUuid, String template) {
+  public void updateStack(String stackName, String stackUuid, String template) throws Exception {
 
     Logger.info("Creating stack: " + stackName);
     // Logger.debug("Template:\n" + template);
@@ -143,6 +143,7 @@ public class OpenStackHeatClient {
     } catch (Exception e) {
       Logger.error(
           "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+      throw new Exception("Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
     }
 
     return;

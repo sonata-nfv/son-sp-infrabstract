@@ -928,8 +928,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       return;
     }
     Logger.debug(stackString);
+    try{
     client.updateStack(stackName, stackUuid, stackString);
-
+    } catch (Exception e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
     int counter = 0;
     int wait = 1000;
     int maxCounter = 10;
