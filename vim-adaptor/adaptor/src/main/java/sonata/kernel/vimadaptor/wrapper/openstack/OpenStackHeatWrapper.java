@@ -1060,8 +1060,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           continue;
         }
         String vduName = identifiers[1];
-        //String instanceId = identifiers[3];
-        String vnfcIndex = identifiers[2];
+        //String instanceId = identifiers[2];
+        String vnfcIndex = identifiers[3];
         if (vdu.getId().equals(vduName)) {
           VnfcInstance vnfc = new VnfcInstance();
           vnfc.setId(vnfcIndex);
