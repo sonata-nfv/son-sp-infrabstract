@@ -29,15 +29,21 @@ __author__ = "Stavros Kolometsos - NCSR Demokritos, Dario Valocchi(Ph.D.) - UCL"
 
 import argparse
 import requests
+import socket 
 import json
 import utils
-from flowchart import FlowChart
+from flowchart import FlowChart, Flows
 import logging
 from flask import Flask, jsonify
 from flask_restful import Resource, Api
 
 app = Flask(__name__)
 api = Api(app)
+
+def get_ip():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]
 
 def get_info():
     logging.debug("Request for info")
@@ -53,10 +59,12 @@ if args.configuration:
 
 
 api.add_resource(FlowChart, '/flowchart/')
+api.add_resource(Flows, '/flowchart/<string:res_name>')
 
 if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG)
     vtn_name = utils.get_vtn_name()
     logging.debug("VTN name recieved: " + vtn_name)
+    local = get_ip()
     app.run(debug=True)
 
