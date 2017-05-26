@@ -54,8 +54,6 @@ import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.stacks.
 import java.io.IOException;
 import java.util.ArrayList;
 
-import javax.ws.rs.NotFoundException;
-
 /**
  * Created by smendel on 4/20/16.
  * <p/>
