@@ -42,6 +42,7 @@ import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
 import sonata.kernel.vimadaptor.commons.IpNetPool;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VduRecord;
 import sonata.kernel.vimadaptor.commons.VimNetTable;
@@ -135,7 +136,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String cidr = subnets.get(subnetIndex);
     mgmtSubnet.putProperty("cidr", cidr);
     mgmtSubnet.putProperty("gateway_ip", myPool.getGateway(cidr));
-
+    String[] dnsArray = {"8.8.8.8"};
+    mgmtSubnet.putProperty("dns_nameservers", dnsArray);
     subnetIndex++;
     HashMap<String, Object> mgmtNetMap = new HashMap<String, Object>();
     mgmtNetMap.put("get_resource", "SonataService.mgmt.net." + instanceId);
@@ -313,11 +315,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatTemplate template = createInitStackTemplate(instanceId);
 
     Logger.info("Deploying new stack for service preparation.");
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
     Logger.info("Serializing stack...");
     try {
       String stackString = mapper.writeValueAsString(template);
@@ -809,6 +807,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         port.setName(vnfd.getName() + "." + cp.getId() + "." + instanceUuid);
         port.putProperty("name", vnfd.getName() + "." + cp.getId() + "." + instanceUuid);
         HashMap<String, Object> netMap = new HashMap<String, Object>();
+        Logger.debug("Mapping CP Type to the relevant network");
         if (cp.getType().equals(ConnectionPointType.INT)) {
           //Only able access other VNFC from this port
           netMap.put("get_resource", "SonataService.data.net." + instanceUuid);
@@ -819,6 +818,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           //Get a public IP
           netMap.put("get_resource", "SonataService.mgmt.net." + instanceUuid);
           publicPortNames.add(vnfd.getName() + "." + cp.getId() + "." + instanceUuid);
+        } else{
+          Logger.error("Cannot map the parsed CP type " + cp.getType() + " to a known one");
+          throw new Exception("Unable to translate CP "+ vnfd.getName()+":"+cp.getId());
         }
         port.putProperty("network", netMap);
         model.addResource(port);
@@ -888,6 +890,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       this.notifyObservers(errorUpdate);
       return;
     }
+
+    Logger.debug("Getting VIM stack name and UUID for service instance ID "+data.getServiceInstanceId());
     String stackUuid = WrapperBay.getInstance().getVimRepo()
         .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.getConfig().getUuid());
     String stackName = WrapperBay.getInstance().getVimRepo()
@@ -939,8 +943,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       return;
     }
     Logger.debug(stackString);
+    try{
     client.updateStack(stackName, stackUuid, stackString);
-
+    } catch (Exception e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
     int counter = 0;
     int wait = 1000;
     int maxCounter = 10;

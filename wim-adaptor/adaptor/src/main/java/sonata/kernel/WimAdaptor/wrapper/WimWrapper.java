@@ -2,11 +2,15 @@ package sonata.kernel.WimAdaptor.wrapper;
 
 public abstract class WimWrapper extends AbstractWrapper implements Wrapper {
 
+  protected WrapperConfiguration config;
+
+  
+  
   /**
    * general constructor for wrappers of type compute.
    */
-  public WimWrapper() {
-
+  public WimWrapper(WrapperConfiguration config) {
+    this.config=config;
     this.setType("wim");
 
   }
@@ -27,5 +31,9 @@ public abstract class WimWrapper extends AbstractWrapper implements Wrapper {
    * @return true if the WAN has been de-configured correctly.
    */
   public abstract boolean removeNetConfiguration(String instanceId);
+
+  public WrapperConfiguration getConfig() {
+    return config;
+  }
 
 }

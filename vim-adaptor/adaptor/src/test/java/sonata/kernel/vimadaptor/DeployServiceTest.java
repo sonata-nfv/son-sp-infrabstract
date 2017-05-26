@@ -447,11 +447,11 @@ public class DeployServiceTest implements MessageReceiver {
 
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
-        +"\"name\":\"Athens1\","
         + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
+        +"\"name\":\"Athens1\","
         + "\"pass\":\"s0n@t@.d@ri0\"}";
 
     // PoP Athens.10 Mitaka
