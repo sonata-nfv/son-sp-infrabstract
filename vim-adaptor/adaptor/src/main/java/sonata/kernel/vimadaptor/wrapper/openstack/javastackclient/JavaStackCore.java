@@ -353,7 +353,7 @@ public class JavaStackCore {
                 break;
 
               default:
-                System.out.println("Invalid Type");
+                Logger.warn("[JavaStack]Unhandled endpoint type: "+type+". skipping");
             }
           }
         }

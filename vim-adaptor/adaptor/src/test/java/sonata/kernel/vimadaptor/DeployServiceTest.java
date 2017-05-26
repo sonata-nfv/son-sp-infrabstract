@@ -1041,6 +1041,17 @@ public class DeployServiceTest implements MessageReceiver {
     }
 
 
+    // Test PoP
+    // PoP Athens.200 Newton
+//    String addVimBody = "{\"vim_type\":\"Heat\", " +"\"name\":\"Athens1\"," + "\"configuration\":{"
+//        + "\"tenant_ext_router\":\"9303604f-bbf1-457a-824a-0229d103398e\", "
+//        + "\"tenant_ext_net\":\"7666cbd8-6795-4fc3-a08c-af410b63ee43\"," + "\"tenant\":\"admin\""
+//        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+//        + "\"vim_address\":\"10.101.20.2\",\"username\":\"dario\","
+//        + "\"pass\":\"d@rio\"}";
+//    System.out.println("[TwoPoPTest] Adding test PoP .20.2");
+    
+    
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " +"\"name\":\"Athens1\"," + "\"configuration\":{"
@@ -1049,8 +1060,8 @@ public class DeployServiceTest implements MessageReceiver {
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
         + "\"pass\":\"s0n@t@.d@ri0\"}";
-
     System.out.println("[TwoPoPTest] Adding PoP .200");
+    
     // Add first PoP
     // PoP Athens.201 Newton
     // String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
