@@ -2,7 +2,17 @@ from newim import get_info
 import requests
 import json
 import logging 
+from sqlalchemy import create_engine
 
+e = create_engine('sqlite:///wim_info_first.db')
+
+def get_switch(segment):
+	conn = e.connect()
+	query = conn.execute('SELECT port_id, bridge_name FROM connectivity WHERE segment="%s";'%segment)
+	dt = query.fetchone()
+	#implement try 
+	port, switch = dt[0],dt[1]
+	return port, switch
 
 def set_condition(cond_name, source, dest):
     s_url = 'operations/vtn-flow-condition:set-flow-condition'

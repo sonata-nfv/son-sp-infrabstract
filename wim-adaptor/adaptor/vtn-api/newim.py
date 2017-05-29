@@ -57,6 +57,9 @@ if args.configuration:
     headers = {'Content type' : 'application/json'} #also this
 '''
 
+headers = {'Content type': 'application/json'}
+username = "admin"
+headers = {'Content type': 'application/json'}
 
 api.add_resource(FlowChart, '/flowchart/')
 api.add_resource(Flows, '/flowchart/<string:res_name>')

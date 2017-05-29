@@ -18,16 +18,30 @@ class FlowChart(Resource):
 		cond_name = data["instance_id"]
 		in_seg = data["in_seg"]
 		out_seg = data["out_seg"]
-		order_pop = data["order_pop"]
+		pops = data["ports"]
+		ordered_pop =[]
+		for item in pops:
+			ordered_pop.append((item["port"],item["order"]))
+		ordered_pop.sort(key=lambda tup: tup[1])
+		logging.debug("Ordered the port list")
+		# Put the incoming PoPs in order 
 		logging.debug("Calling set_condition method")
 		utils.set_condition(cond_name,in_seg, out_seg)
 		logging.info("Conditon set completed")
-		### TODO 
-		##  Implement logic to connection with database getting switch IDs and etcetera 
-		### We need. the Vbridge where it will be. the Interface for in & out 
-
-		# utils.set_redirect(cond_name, vbr, port_id_in, port_id_out)
-
+		port_in, vbr1 = utils.get_switch(in_seg)
+		port_out, vbr2 = utils.get_switch(ordered_ports[0][0])
+		logging.info("Redirect from SOURCE to First PoP completed")
+		# Redirecting through the PoPs now
+		for i in range(1,len(ordered_ports)):
+		    port_in, vbr1 = utils.get_switch(ordered_ports[i-1][0])
+		    logging.debug("port coming is : "+port_in+" with vbridge "+vbr1)
+		    port_out, vbr2 = utils.get_switch(ordered_ports[i][0])
+		    logging.debug("port to redirect is : "+port_out+" with vbridge "+vbr2)
+		    utils.set_redirect(cond_name, vbr1, port_in, port_out)
+		logging.debug(" Inter PoP redirections completed ")
+		# TODO
+		# Need to implement (or not) going from last PoP to Outer Segment -- leaving Wan 
+		#Just add to the flow array 
 		flow = {'data': data}
 		flows.append(flow)
 		logging.debug("call to POST new flow chart")
