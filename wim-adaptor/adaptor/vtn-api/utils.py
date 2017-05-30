@@ -4,7 +4,7 @@ import json
 import logging 
 from sqlalchemy import create_engine
 
-e = create_engine('sqlite:///wim_info_first.db')
+e = create_engine('sqlite:///database/wim_info.db')
 
 def get_switch(segment):
 	conn = e.connect()
