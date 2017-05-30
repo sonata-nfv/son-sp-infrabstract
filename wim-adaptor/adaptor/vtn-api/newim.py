@@ -63,10 +63,7 @@ try:
         username = args.user
     if args.password:
         password = args.password
-except:
-    password = "admin"
-    host = "10.30.0.13"
-    username = "admin"
+
 url = 'http://'+host+':8181/restconf/' #this is should be the same always
 headers = {'Content type' : 'application/json'} #also this
 
