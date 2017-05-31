@@ -45,6 +45,7 @@ def delete_condition(cond_name):
 def set_redirect(cond_name, vbr, port_id_in, port_id_out):
     s_url = 'operations/vtn-flow-filter:set-flow-filter'
     username, password, host, url, headers = get_info()
+    vtn_name = get_vtn_name()
     data = {"input": {"output": "false", "tenant-name": vtn_name, "bridge-name": vbr, "interface-name": port_id_in, "vtn-flow-filter": [
         {"index": "1", "condition": cond_name, "vtn-redirect-filter": {"redirect-destination": {"bridge-name": vbr, "interface-name": port_id_out}, "output": "true"}}]}}
     '''
