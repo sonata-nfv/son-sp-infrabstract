@@ -45,6 +45,7 @@ def delete_condition(cond_name):
     logging.info("Got response:" +str(r))
     if not r.status_code == 200:
     	logging.error("Condition removal ERROR " + str(r.status_code))
+    return r.status_code
 
 def set_redirect(cond_name, vbr, port_id_in, port_id_out):
 	s_url = 'operations/vtn-flow-filter:set-flow-filter'
@@ -77,5 +78,12 @@ def get_vtn_name():
 	logging.info("VTN name recieved. Sending back: "+name)
 	return name
 
+def order_pop(pops):
+	ordered_pop = []
+	for item in pops:
+		ordered_pop.append((item["port"],item["order"]))
+		ordered_pop.sort(key=lambda tup: tup[1])
+		logging.debug("Ordered the PoP list")
+	return ordered_pop
 
 

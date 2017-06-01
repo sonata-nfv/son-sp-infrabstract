@@ -22,21 +22,18 @@ class FlowChart(Resource):
 		in_seg = data["in_seg"]
 		out_seg = data["out_seg"]
 		pops = data["ports"]
-		ordered_pop =[]
 		logging.debug("Starting ordering PoPs")
-		for item in pops:
-			ordered_pop.append((item["port"],item["order"]))
-		ordered_pop.sort(key=lambda tup: tup[1])
-		logging.debug("Ordered the PoP list")
+		ordered_pop = utils.order_pop(pops) 
 		# Put the incoming PoPs in order 
 		logging.info("Calling set_condition method")
 		flag = utils.set_condition(cond_name,in_seg, out_seg)
 		logging.debug("Flag incoming:" +str(flag))
 		if flag != 200:
-			abort(500)
+			abort(500, message="Set condition uncompleted")
 		logging.info("Condition set completed")
 		port_in, vbr1 = utils.get_switch(in_seg)
 		port_out, vbr2 = utils.get_switch(ordered_pop[0][0])
+		utils.set_redirect(cond_name, vbr1, port_in, port_out)
 		logging.info("Redirect from source to First PoP completed")
 		# Redirecting through the PoPs now
 		logging.debug("Redirect traffic through PoPs")
@@ -62,13 +59,20 @@ class Flows(Resource):
 		logging.info("Requesting "+res_name+" flow")
 		for flow in flows:
 			if flow['data']['instance_id'] == res_name:
-				return flow 
+				return flow
+		abort(404, message="Resource not found") 
 
 	def delete(self, res_name):
 		logging.debug("Call to delete condition: " +res_name)
-		utils.delete_condition(res_name)
+		
 		for flow in flows:
 			if flow['data']['instance_id'] == res_name:
 				flows.remove(flow)
-		return "Success"
-
+				logging.info("Resource found. Proceed to removal")
+				flag = utils.delete_condition(res_name)
+				if flag == 200: 
+					return "Resource was deleted"
+				else:
+					abort(406, message="Resource was not found in VTN and not deleted")
+		logging.info("Resource not found. No action taken")
+		abort(404, message="Resource not found")
