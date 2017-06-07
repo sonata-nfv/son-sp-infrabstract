@@ -12,7 +12,7 @@ class FlowChart(Resource):
 	def get(self):
 		logging.debug("call for flow chart. Returning: " + str(flows))
 		logging.info("Call for flow accepted")
-		return str(flows)
+		return jsonify(flows = flows)
 
 	def post(self):
 		logging.info("POST API call incoming")
@@ -31,10 +31,12 @@ class FlowChart(Resource):
 		if flag != 200:
 			abort(500, message="Set condition uncompleted")
 		logging.info("Condition set completed")
+
 		port_in, vbr1 = utils.get_switch(in_seg)
 		port_out, vbr2 = utils.get_switch(ordered_pop[0][0])
 		utils.set_redirect(cond_name, vbr1, port_in, port_out)
 		logging.info("Redirect from source to First PoP completed")
+
 		# Redirecting through the PoPs now
 		logging.debug("Redirect traffic through PoPs")
 		for i in range(1,len(ordered_pop)):

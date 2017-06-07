@@ -82,8 +82,8 @@ def order_pop(pops):
 	ordered_pop = []
 	for item in pops:
 		ordered_pop.append((item["port"],item["order"]))
-		ordered_pop.sort(key=lambda tup: tup[1])
-		logging.debug("Ordered the PoP list")
+	ordered_pop.sort(key=lambda tup: tup[1])
+	logging.debug("Ordered the PoP list")
 	return ordered_pop
 
 
