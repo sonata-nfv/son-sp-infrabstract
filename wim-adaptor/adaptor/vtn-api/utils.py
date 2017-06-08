@@ -86,4 +86,16 @@ def order_pop(pops):
 	logging.debug("Ordered the PoP list")
 	return ordered_pop
 
-
+def get_locations():
+	logging.debug("Incoming request for location")
+	conn = e.connect()
+	query = conn.execute('SELECT segment, location FROM connectivity;')
+	dt = query.fetchall()
+	logging.debug("Show locations: " + str(dt))
+	locations = []
+	for d in dt:
+		dicti = {"segment" : d[0], "location" : d[1]}
+		locations.append(dicti)	
+	return locations 	 
+	
+	

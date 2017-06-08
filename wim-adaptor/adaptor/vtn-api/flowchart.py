@@ -78,3 +78,12 @@ class Flows(Resource):
 					abort(406, message="Resource was not found in VTN and not deleted")
 		logging.info("Resource not found. No action taken")
 		abort(404, message="Resource not found")
+
+class Location(Resource):
+
+	def get(self):
+		logging.info("Request for Location Information incoming ")
+		locations = utils.get_locations()
+		if not locations:
+			abort(500, message = "Unknown error, Locations couldn't be received")
+		return jsonify(locations = locations)
