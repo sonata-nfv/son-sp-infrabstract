@@ -32,7 +32,7 @@ import requests
 import socket 
 import json
 import utils
-from flowchart import FlowChart, Flows
+from flowchart import FlowChart, Flows, Location
 import logging
 from flask import Flask, jsonify
 from flask_restful import Resource, Api
@@ -71,11 +71,12 @@ headers = {'Content type' : 'application/json'} #also this
 
 api.add_resource(FlowChart, '/flowchart/')
 api.add_resource(Flows, '/flowchart/<string:res_name>')
+api.add_resource(Location, '/location/')
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.DEBUG, filename='log.log', format='%(asctime)s - %(levelname)s - %(message)s')
     vtn_name = utils.get_vtn_name()
     logging.debug("VTN name recieved: " + vtn_name)
     local = get_ip()
-    app.run(debug=True)
+    app.run(debug=True,host="10.30.0.13")
 
