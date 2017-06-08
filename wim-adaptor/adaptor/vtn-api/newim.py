@@ -78,5 +78,5 @@ if __name__ == "__main__":
     vtn_name = utils.get_vtn_name()
     logging.debug("VTN name recieved: " + vtn_name)
     local = get_ip()
-    app.run(debug=True,host="10.30.0.13")
+    app.run(debug=True,host=local)
 
