@@ -573,7 +573,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           subnetIndex++;
           HashMap<String, Object> netMap = new HashMap<String, Object>();
           netMap.put("get_resource",
-              vnfd.getName() + "." + link.getId() + ":net:" + nsd.getInstanceUuid());
+              vnfd.getName() + "." + link.getId() + ".net." + nsd.getInstanceUuid());
           subnet.putProperty("network", netMap);
           model.addResource(subnet);
         }
