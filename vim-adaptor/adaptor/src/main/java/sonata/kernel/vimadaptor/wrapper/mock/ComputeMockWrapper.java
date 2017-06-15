@@ -163,6 +163,12 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
   @Override
   public ResourceUtilisation getResourceUtilisation() {
 
+    try {
+      Thread.sleep(1900);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }   
+    
     ResourceUtilisation resources = new ResourceUtilisation();
     resources.setTotCores(10);
     resources.setUsedCores(0);
