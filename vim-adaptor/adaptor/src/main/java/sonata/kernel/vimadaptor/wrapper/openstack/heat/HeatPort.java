@@ -22,69 +22,57 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
- * @author Guy Paz, Nokia
- * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
+public class HeatPort {
 
-public class InstanceFlavor {
+  @JsonProperty("name")
+  private String portName;
 
-  @JsonProperty("cpu_core")
-  private int cpu;
+  @JsonProperty("IP_address")
+  private String ipAddress;
 
-  private int memory;
-  @JsonProperty("memory_unit")
-  private MemoryUnit memoryUnit;
+  @JsonProperty("MAC_address")
+  private String macAddress;
 
-  private int storage;
-  @JsonProperty("storage_unit")
-  private MemoryUnit storageUnit;
+  @JsonProperty("floating_IP")
+  private String floatinIp;
 
-  public int getCpu() {
-    return cpu;
+  public String getPortName() {
+    return portName;
   }
 
-  public int getMemory() {
-    return memory;
+  public String getIpAddress() {
+    return ipAddress;
   }
 
-  public MemoryUnit getMemoryUnit() {
-    return memoryUnit;
+  public String getMacAddress() {
+    return macAddress;
   }
 
-  public int getStorage() {
-    return storage;
+  public void setPortName(String portName) {
+    this.portName = portName;
   }
 
-  public MemoryUnit getStorageUnit() {
-    return storageUnit;
+  public void setIpAddress(String ipAddress) {
+    this.ipAddress = ipAddress;
   }
 
-  public void setCpu(int cpu) {
-    this.cpu = cpu;
+  public void setMacAddress(String macAddress) {
+    this.macAddress = macAddress;
   }
 
-  public void setMemory(int memory) {
-    this.memory = memory;
+  public String getFloatinIp() {
+    return floatinIp;
   }
 
-  public void setMemoryUnit(MemoryUnit memoryUnit) {
-    this.memoryUnit = memoryUnit;
+  public void setFloatinIp(String floatinIp) {
+    this.floatinIp = floatinIp;
   }
-
-  public void setStorage(int storage) {
-    this.storage = storage;
-  }
-
-  public void setStorageUnit(MemoryUnit storageUnit) {
-    this.storageUnit = storageUnit;
-  }
-
 
 
 }

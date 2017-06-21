@@ -24,76 +24,30 @@
  * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.Collections;
 
-public class HeatNet {
+public class HeatModel {
 
+  private ArrayList<HeatResource> resources;
 
-  @JsonProperty("net_name")
-  private String netName;
-
-  @JsonProperty("net_id")
-  private String netId;
-
-  @JsonProperty("subnet_name")
-  private String subnetName;
-
-  @JsonProperty("subnet_id")
-  private String subnetId;
-
-  @JsonProperty("segmentation_id")
-  private int segmentationId;
-
-  private String cidr;
-
-  public String getNetName() {
-    return netName;
+  public HeatModel() {
+    this.resources = new ArrayList<HeatResource>();
   }
 
-  public String getNetId() {
-    return netId;
+  public void addResource(HeatResource res) {
+    this.resources.add(res);
   }
 
-  public String getSubnetName() {
-    return subnetName;
+  public void prepare() {
+    Collections.sort(resources);
+    return;
   }
 
-  public String getSubnetId() {
-    return subnetId;
-  }
-
-  public int getSegmentationId() {
-    return segmentationId;
-  }
-
-  public String getCidr() {
-    return cidr;
-  }
-
-  public void setNetName(String netName) {
-    this.netName = netName;
-  }
-
-  public void setNetId(String netId) {
-    this.netId = netId;
-  }
-
-  public void setSubnetName(String subnetName) {
-    this.subnetName = subnetName;
-  }
-
-  public void setSubnetId(String subnetId) {
-    this.subnetId = subnetId;
-  }
-
-  public void setSegmentationId(int segmentationId) {
-    this.segmentationId = segmentationId;
-  }
-
-  public void setCidr(String cidr) {
-    this.cidr = cidr;
+  public ArrayList<HeatResource> getResources() {
+    return this.resources;
   }
 
 }

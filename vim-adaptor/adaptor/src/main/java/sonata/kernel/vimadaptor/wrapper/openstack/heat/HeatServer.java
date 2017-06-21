@@ -26,33 +26,41 @@
  * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HeatRouter {
+public class HeatServer {
 
-  @JsonProperty("router_name")
-  private String routerName;
+  @JsonProperty("server_name")
+  private String serverName;
+  @JsonProperty("server_id")
+  private String serverId;
 
-  @JsonProperty("router_id")
-  private String routerId;
+  private InstanceFlavor flavor;
 
-  public String getRouterName() {
-    return routerName;
+  public String getServerName() {
+    return serverName;
   }
 
-  public String getRouterId() {
-    return routerId;
+  public String getServerId() {
+    return serverId;
   }
 
-  public void setRouterName(String routerName) {
-    this.routerName = routerName;
+  public InstanceFlavor getFlavor() {
+    return flavor;
   }
 
-  public void setRouterId(String routerId) {
-    this.routerId = routerId;
+  public void setServerName(String serverName) {
+    this.serverName = serverName;
   }
 
+  public void setServerId(String serverId) {
+    this.serverId = serverId;
+  }
+
+  public void setFlavor(InstanceFlavor flavor) {
+    this.flavor = flavor;
+  }
 
 }

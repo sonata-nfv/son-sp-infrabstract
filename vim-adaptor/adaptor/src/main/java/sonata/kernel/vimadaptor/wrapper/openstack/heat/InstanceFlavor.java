@@ -26,41 +26,65 @@
  * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HeatServer {
+import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
 
-  @JsonProperty("server_name")
-  private String serverName;
-  @JsonProperty("server_id")
-  private String serverId;
+public class InstanceFlavor {
 
-  private InstanceFlavor flavor;
+  @JsonProperty("cpu_core")
+  private int cpu;
 
-  public String getServerName() {
-    return serverName;
+  private int memory;
+  @JsonProperty("memory_unit")
+  private MemoryUnit memoryUnit;
+
+  private int storage;
+  @JsonProperty("storage_unit")
+  private MemoryUnit storageUnit;
+
+  public int getCpu() {
+    return cpu;
   }
 
-  public String getServerId() {
-    return serverId;
+  public int getMemory() {
+    return memory;
   }
 
-  public InstanceFlavor getFlavor() {
-    return flavor;
+  public MemoryUnit getMemoryUnit() {
+    return memoryUnit;
   }
 
-  public void setServerName(String serverName) {
-    this.serverName = serverName;
+  public int getStorage() {
+    return storage;
   }
 
-  public void setServerId(String serverId) {
-    this.serverId = serverId;
+  public MemoryUnit getStorageUnit() {
+    return storageUnit;
   }
 
-  public void setFlavor(InstanceFlavor flavor) {
-    this.flavor = flavor;
+  public void setCpu(int cpu) {
+    this.cpu = cpu;
   }
+
+  public void setMemory(int memory) {
+    this.memory = memory;
+  }
+
+  public void setMemoryUnit(MemoryUnit memoryUnit) {
+    this.memoryUnit = memoryUnit;
+  }
+
+  public void setStorage(int storage) {
+    this.storage = storage;
+  }
+
+  public void setStorageUnit(MemoryUnit storageUnit) {
+    this.storageUnit = storageUnit;
+  }
+
+
 
 }

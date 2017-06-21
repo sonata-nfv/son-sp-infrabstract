@@ -38,13 +38,13 @@ import org.junit.Test;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimNetTable;
-import sonata.kernel.vimadaptor.commons.heat.HeatResource;
-import sonata.kernel.vimadaptor.commons.heat.HeatTemplate;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.vimadaptor.wrapper.openstack.Flavor;
 import sonata.kernel.vimadaptor.wrapper.openstack.OpenStackHeatWrapper;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatResource;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;

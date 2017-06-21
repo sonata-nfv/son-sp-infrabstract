@@ -23,51 +23,36 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  * @author Guy Paz, Nokia
+ * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
-import java.util.ArrayList;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class StackComposition {
+public class HeatRouter {
 
+  @JsonProperty("router_name")
+  private String routerName;
 
-  private ArrayList<HeatServer> servers;
-  private ArrayList<HeatNet> nets;
-  private ArrayList<HeatPort> ports;
-  private ArrayList<HeatRouter> routers;
-  // private ArrayList<HeatFloatingIp> ips;
+  @JsonProperty("router_id")
+  private String routerId;
 
-  public void setServers(ArrayList<HeatServer> servers) {
-    this.servers = servers;
+  public String getRouterName() {
+    return routerName;
   }
 
-  public void setNets(ArrayList<HeatNet> nets) {
-    this.nets = nets;
+  public String getRouterId() {
+    return routerId;
   }
 
-  public void setPorts(ArrayList<HeatPort> ports) {
-    this.ports = ports;
+  public void setRouterName(String routerName) {
+    this.routerName = routerName;
   }
 
-  public void setRouters(ArrayList<HeatRouter> routers) {
-    this.routers = routers;
+  public void setRouterId(String routerId) {
+    this.routerId = routerId;
   }
 
-  public ArrayList<HeatServer> getServers() {
-    return servers;
-  }
-
-  public ArrayList<HeatNet> getNets() {
-    return nets;
-  }
-
-  public ArrayList<HeatPort> getPorts() {
-    return ports;
-  }
-
-  public ArrayList<HeatRouter> getRouters() {
-    return routers;
-  }
 
 }

@@ -22,57 +22,52 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
+ * @author Guy Paz, Nokia
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 
-public class HeatPort {
+public class StackComposition {
 
-  @JsonProperty("name")
-  private String portName;
 
-  @JsonProperty("IP_address")
-  private String ipAddress;
+  private ArrayList<HeatServer> servers;
+  private ArrayList<HeatNet> nets;
+  private ArrayList<HeatPort> ports;
+  private ArrayList<HeatRouter> routers;
+  // private ArrayList<HeatFloatingIp> ips;
 
-  @JsonProperty("MAC_address")
-  private String macAddress;
-
-  @JsonProperty("floating_IP")
-  private String floatinIp;
-
-  public String getPortName() {
-    return portName;
+  public void setServers(ArrayList<HeatServer> servers) {
+    this.servers = servers;
   }
 
-  public String getIpAddress() {
-    return ipAddress;
+  public void setNets(ArrayList<HeatNet> nets) {
+    this.nets = nets;
   }
 
-  public String getMacAddress() {
-    return macAddress;
+  public void setPorts(ArrayList<HeatPort> ports) {
+    this.ports = ports;
   }
 
-  public void setPortName(String portName) {
-    this.portName = portName;
+  public void setRouters(ArrayList<HeatRouter> routers) {
+    this.routers = routers;
   }
 
-  public void setIpAddress(String ipAddress) {
-    this.ipAddress = ipAddress;
+  public ArrayList<HeatServer> getServers() {
+    return servers;
   }
 
-  public void setMacAddress(String macAddress) {
-    this.macAddress = macAddress;
+  public ArrayList<HeatNet> getNets() {
+    return nets;
   }
 
-  public String getFloatinIp() {
-    return floatinIp;
+  public ArrayList<HeatPort> getPorts() {
+    return ports;
   }
 
-  public void setFloatinIp(String floatinIp) {
-    this.floatinIp = floatinIp;
+  public ArrayList<HeatRouter> getRouters() {
+    return routers;
   }
-
 
 }

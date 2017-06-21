@@ -34,12 +34,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.vimadaptor.commons.heat.HeatNet;
-import sonata.kernel.vimadaptor.commons.heat.HeatPort;
-import sonata.kernel.vimadaptor.commons.heat.HeatRouter;
-import sonata.kernel.vimadaptor.commons.heat.HeatServer;
-import sonata.kernel.vimadaptor.commons.heat.HeatTemplate;
-import sonata.kernel.vimadaptor.commons.heat.StackComposition;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatNet;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatPort;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatRouter;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatServer;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.composition.FloatingIpAttributes;
