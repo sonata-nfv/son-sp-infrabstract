@@ -42,7 +42,7 @@ ENV repo_port 5432
 ENV repo_user sonatatest
 ENV repo_pass sonata
 
-RUN mvn compile assembly:single;
+RUN mvn -q compile assembly:single;
 
 CMD ["/docker-entrypoint.sh","/test.sh"]
 
