@@ -51,7 +51,7 @@ public class VtnWrapperTest {
     segmentList[1] = "10.100.0.5/24";
   }
 
-  @Test
+  @Ignore
   public void testVtnWrapperConfigure() {
 
     System.out.println();
@@ -64,7 +64,7 @@ public class VtnWrapperTest {
   }
 
 
-  @Test
+  @Ignore
   public void testVtnWrapperConfigureTwice() {
 
     System.out.println();
@@ -78,7 +78,7 @@ public class VtnWrapperTest {
     Assert.assertTrue("Configuration call returned failed and returned \"false\" value", out);
   }
   
-  @Test
+  @Ignore
   public void testVtnWrapperList() {
     System.out.println();
     System.out.println("List VTN rules test");

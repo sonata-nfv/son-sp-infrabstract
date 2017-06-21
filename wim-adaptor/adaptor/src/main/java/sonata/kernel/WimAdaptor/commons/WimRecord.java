@@ -9,7 +9,7 @@ public class WimRecord {
   private String uuid;
   private String name;
   @JsonProperty("attached_vims")
-  private ArrayList<String> attachedVims;
+  private ArrayList<String> attachedVims = new ArrayList<String>();
   
   public String getUuid() {
     return uuid;
