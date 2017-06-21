@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+ * Copyright (c) 2015 SONATA-NFV, UCL.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -57,7 +57,7 @@ public class VimNetTable {
 
   public void registerVim(String vimUuid) {
     if (this.vimTable.containsKey(vimUuid)) return;
-    IpNetPool pool = new IpNetPool("172.0.0.0/8");
+    IpNetPool pool = new IpNetPool("10.0.0.0/8");
     this.vimTable.put(vimUuid, pool);
   }
 

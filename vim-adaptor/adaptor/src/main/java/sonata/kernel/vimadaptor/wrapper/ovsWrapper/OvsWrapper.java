@@ -178,19 +178,21 @@ public class OvsWrapper extends NetworkWrapper {
 
         Logger.debug("Searching for CpRecord of Cp: " + vnfcCpName);
         ConnectionPointRecord matchingCpRec = null;
+        String vcId = null;
         for (VduRecord vdu : vnfr.getVirtualDeploymentUnits()) {
           for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
             for (ConnectionPointRecord cpRec : vnfc.getConnectionPoints()) {
               Logger.debug("Checking " + cpRec.getId());
               if (vnfcCpName.equals(cpRec.getId())) {
                 matchingCpRec = cpRec;
+                vcId = vnfc.getVcId();
                 break;
               }
             }
           }
 
         }
-
+        
         String qualifiedName = vnfName + "." + vnfcCpName + "." + nsd.getInstanceUuid();
         // HeatPort connectedPort = null;
         // for (HeatPort port : composition.getPorts()) {
@@ -207,6 +209,7 @@ public class OvsWrapper extends NetworkWrapper {
           OrderedMacAddress mac = new OrderedMacAddress();
           mac.setMac(matchingCpRec.getInterface().getHardwareAddress());
           mac.setPosition(portIndex);
+          mac.setVcId(vcId);
           mac.setReferenceCp(qualifiedName);
           portIndex++;
           odlList.add(mac);
