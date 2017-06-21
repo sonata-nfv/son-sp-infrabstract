@@ -31,6 +31,7 @@ public class SonataManifestMapper {
 
   private static SonataManifestMapper myInstance = null;
   private ObjectMapper mapper;
+  private ObjectMapper mapperJson;
 
   private SonataManifestMapper() {
     this.mapper = new ObjectMapper(new YAMLFactory());
@@ -45,10 +46,28 @@ public class SonataManifestMapper {
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
+    
+    this.mapperJson = new ObjectMapper();
+    module = new SimpleModule();
+    module.addDeserializer(Unit.class, new UnitDeserializer());
+    // module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
+    mapperJson.registerModule(module);
+    mapperJson.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    mapperJson.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    mapperJson.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapperJson.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapperJson.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapperJson.setSerializationInclusion(Include.NON_NULL);
+    
   }
 
   private ObjectMapper getMapper() {
     return this.mapper;
+  }
+
+  private ObjectMapper getMapperJson() {
+    return this.mapperJson;
   }
 
   public static ObjectMapper getSonataMapper() {
@@ -56,4 +75,8 @@ public class SonataManifestMapper {
     return myInstance.getMapper();
   }
 
+  public static ObjectMapper getSonataMapperJson() {
+    if (myInstance == null) myInstance = new SonataManifestMapper();
+    return myInstance.getMapperJson();
+  }
 }

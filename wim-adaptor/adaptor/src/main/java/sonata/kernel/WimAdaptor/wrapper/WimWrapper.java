@@ -15,15 +15,18 @@ public abstract class WimWrapper extends AbstractWrapper implements Wrapper {
 
   }
 
+
   /**
-   * Configure the WAN for a service instance.
+   * Configure the WAN for a service instance. V2 with multiple NFVi-PoP.
    * 
    * @param instanceId the ID of the service instance
    * 
    * @return true if the WAN has been configured correctly.
    */
-  public abstract boolean configureNetwork(String instanceId);
+  public abstract boolean configureNetwork(String instanceId, String inputSegment, String outputSegment, String[] segmentList);
 
+  
+  
   /**
    * Remove the WAN configuration for a given service instance.
    * 

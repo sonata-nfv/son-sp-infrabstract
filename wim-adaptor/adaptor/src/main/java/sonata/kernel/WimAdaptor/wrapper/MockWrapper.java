@@ -7,7 +7,7 @@ public class MockWrapper extends WimWrapper {
   }
 
   @Override
-  public boolean configureNetwork(String instanceId) {
+  public boolean configureNetwork(String instanceId, String inSeg, String outSeg, String[] segments) {
 
     return true;
   }
