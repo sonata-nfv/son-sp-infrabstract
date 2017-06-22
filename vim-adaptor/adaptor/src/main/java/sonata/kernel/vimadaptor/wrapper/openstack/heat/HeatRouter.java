@@ -22,78 +22,37 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
+ * @author Guy Paz, Nokia
+ * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HeatNet {
+public class HeatRouter {
 
+  @JsonProperty("router_name")
+  private String routerName;
 
-  @JsonProperty("net_name")
-  private String netName;
+  @JsonProperty("router_id")
+  private String routerId;
 
-  @JsonProperty("net_id")
-  private String netId;
-
-  @JsonProperty("subnet_name")
-  private String subnetName;
-
-  @JsonProperty("subnet_id")
-  private String subnetId;
-
-  @JsonProperty("segmentation_id")
-  private int segmentationId;
-
-  private String cidr;
-
-  public String getNetName() {
-    return netName;
+  public String getRouterName() {
+    return routerName;
   }
 
-  public String getNetId() {
-    return netId;
+  public String getRouterId() {
+    return routerId;
   }
 
-  public String getSubnetName() {
-    return subnetName;
+  public void setRouterName(String routerName) {
+    this.routerName = routerName;
   }
 
-  public String getSubnetId() {
-    return subnetId;
+  public void setRouterId(String routerId) {
+    this.routerId = routerId;
   }
 
-  public int getSegmentationId() {
-    return segmentationId;
-  }
-
-  public String getCidr() {
-    return cidr;
-  }
-
-  public void setNetName(String netName) {
-    this.netName = netName;
-  }
-
-  public void setNetId(String netId) {
-    this.netId = netId;
-  }
-
-  public void setSubnetName(String subnetName) {
-    this.subnetName = subnetName;
-  }
-
-  public void setSubnetId(String subnetId) {
-    this.subnetId = subnetId;
-  }
-
-  public void setSegmentationId(int segmentationId) {
-    this.segmentationId = segmentationId;
-  }
-
-  public void setCidr(String cidr) {
-    this.cidr = cidr;
-  }
 
 }

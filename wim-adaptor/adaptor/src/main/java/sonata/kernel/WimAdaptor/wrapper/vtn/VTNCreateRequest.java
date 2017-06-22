@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -22,37 +22,56 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
- * @author Guy Paz, Nokia
- * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.WimAdaptor.wrapper.vtn;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HeatRouter {
+public class VTNCreateRequest {
 
-  @JsonProperty("router_name")
-  private String routerName;
+  @JsonProperty("instance_id")
+  private String instanceId;
+  @JsonProperty("in_seg")
+  private String inSeg;
+  @JsonProperty("out_seg")
+  private String outSeg;
+  
+  private OrderedSegment[] ports;
 
-  @JsonProperty("router_id")
-  private String routerId;
-
-  public String getRouterName() {
-    return routerName;
+  public String getInstanceId() {
+    return instanceId;
   }
 
-  public String getRouterId() {
-    return routerId;
+  public String getInSeg() {
+    return inSeg;
   }
 
-  public void setRouterName(String routerName) {
-    this.routerName = routerName;
+  public String getOutSeg() {
+    return outSeg;
   }
 
-  public void setRouterId(String routerId) {
-    this.routerId = routerId;
+  public OrderedSegment[] getPorts() {
+    return ports;
   }
 
+  public void setInstanceId(String instanceId) {
+    this.instanceId = instanceId;
+  }
 
+  public void setInSeg(String inSeg) {
+    this.inSeg = inSeg;
+  }
+
+  public void setOutSeg(String outSeg) {
+    this.outSeg = outSeg;
+  }
+
+  public void setPorts(OrderedSegment[] ports) {
+    this.ports = ports;
+  }
+  
+  
+  
+  
 }

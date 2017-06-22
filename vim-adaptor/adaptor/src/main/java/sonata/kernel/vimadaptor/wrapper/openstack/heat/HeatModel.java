@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -24,17 +24,30 @@
  * 
  */
 
-package sonata.kernel.WimAdaptor;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
-import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import java.util.ArrayList;
+import java.util.Collections;
 
-public interface MessageReceiver {
+public class HeatModel {
 
+  private ArrayList<HeatResource> resources;
 
-  public void receiveHeartbeat(ServicePlatformMessage message);
+  public HeatModel() {
+    this.resources = new ArrayList<HeatResource>();
+  }
 
-  public void receive(ServicePlatformMessage message);
+  public void addResource(HeatResource res) {
+    this.resources.add(res);
+  }
 
-  public void forwardToConsumer(ServicePlatformMessage message);
+  public void prepare() {
+    Collections.sort(resources);
+    return;
+  }
+
+  public ArrayList<HeatResource> getResources() {
+    return this.resources;
+  }
 
 }

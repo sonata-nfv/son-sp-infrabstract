@@ -221,18 +221,18 @@ public class JavaStackCore {
    *
    * @throws IOException
    */
-  public synchronized void authenticateClientV3() throws IOException {
+  public synchronized void authenticateClientV3(String customIdentityPort) throws IOException {
     HttpClient httpClient = HttpClientBuilder.create().build();
     HttpPost post;
     HttpResponse response = null;
     HashMap<String, String> endpoint_details = new HashMap<>();
-
+    String identityPort = (customIdentityPort==null)?Constants.AUTH_PORT.toString():customIdentityPort;
     if (!isAuthenticated) {
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
       buildUrl.append(endpoint);
       buildUrl.append(":");
-      buildUrl.append(Constants.AUTH_PORT.toString());
+      buildUrl.append(identityPort);
       buildUrl.append(Constants.AUTH_URI_V3.toString());
 
       post = new HttpPost(buildUrl.toString());

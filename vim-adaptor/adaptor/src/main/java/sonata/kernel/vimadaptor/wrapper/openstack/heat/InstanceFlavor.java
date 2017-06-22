@@ -20,28 +20,71 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.)
+ * @author Dario Valocchi (Ph.D.), UCL
+ * 
+ * @author Guy Paz, Nokia
  * 
  */
 
-package sonata.kernel.vimadaptor.commons.vnfd;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public enum VmFormat {
-  RAW("raw"), VHD("vhd"), VMDK("vmdk"), VDI("vdi"), ISO("iso"), QCOW2("qcow2"), DOCKER(
-      "docker"), OVA("ova"), OVF("ovf"), BARE("bare");
+import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
 
-  private final String name;
+public class InstanceFlavor {
 
-  @JsonCreator
-  VmFormat(String name) {
-    this.name = name.toLowerCase();
+  @JsonProperty("cpu_core")
+  private int cpu;
+
+  private int memory;
+  @JsonProperty("memory_unit")
+  private MemoryUnit memoryUnit;
+
+  private int storage;
+  @JsonProperty("storage_unit")
+  private MemoryUnit storageUnit;
+
+  public int getCpu() {
+    return cpu;
   }
 
-  @Override
-  public String toString() {
-    return this.name;
+  public int getMemory() {
+    return memory;
   }
+
+  public MemoryUnit getMemoryUnit() {
+    return memoryUnit;
+  }
+
+  public int getStorage() {
+    return storage;
+  }
+
+  public MemoryUnit getStorageUnit() {
+    return storageUnit;
+  }
+
+  public void setCpu(int cpu) {
+    this.cpu = cpu;
+  }
+
+  public void setMemory(int memory) {
+    this.memory = memory;
+  }
+
+  public void setMemoryUnit(MemoryUnit memoryUnit) {
+    this.memoryUnit = memoryUnit;
+  }
+
+  public void setStorage(int storage) {
+    this.storage = storage;
+  }
+
+  public void setStorageUnit(MemoryUnit storageUnit) {
+    this.storageUnit = storageUnit;
+  }
+
+
 
 }

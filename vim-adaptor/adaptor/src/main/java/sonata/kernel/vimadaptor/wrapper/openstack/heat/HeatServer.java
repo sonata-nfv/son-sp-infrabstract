@@ -22,57 +22,45 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
+ * @author Guy Paz, Nokia
+ * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HeatPort {
+public class HeatServer {
 
-  @JsonProperty("name")
-  private String portName;
+  @JsonProperty("server_name")
+  private String serverName;
+  @JsonProperty("server_id")
+  private String serverId;
 
-  @JsonProperty("IP_address")
-  private String ipAddress;
+  private InstanceFlavor flavor;
 
-  @JsonProperty("MAC_address")
-  private String macAddress;
-
-  @JsonProperty("floating_IP")
-  private String floatinIp;
-
-  public String getPortName() {
-    return portName;
+  public String getServerName() {
+    return serverName;
   }
 
-  public String getIpAddress() {
-    return ipAddress;
+  public String getServerId() {
+    return serverId;
   }
 
-  public String getMacAddress() {
-    return macAddress;
+  public InstanceFlavor getFlavor() {
+    return flavor;
   }
 
-  public void setPortName(String portName) {
-    this.portName = portName;
+  public void setServerName(String serverName) {
+    this.serverName = serverName;
   }
 
-  public void setIpAddress(String ipAddress) {
-    this.ipAddress = ipAddress;
+  public void setServerId(String serverId) {
+    this.serverId = serverId;
   }
 
-  public void setMacAddress(String macAddress) {
-    this.macAddress = macAddress;
+  public void setFlavor(InstanceFlavor flavor) {
+    this.flavor = flavor;
   }
-
-  public String getFloatinIp() {
-    return floatinIp;
-  }
-
-  public void setFloatinIp(String floatinIp) {
-    this.floatinIp = floatinIp;
-  }
-
 
 }

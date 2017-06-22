@@ -22,45 +22,78 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
- * @author Guy Paz, Nokia
- * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HeatServer {
+public class HeatNet {
 
-  @JsonProperty("server_name")
-  private String serverName;
-  @JsonProperty("server_id")
-  private String serverId;
 
-  private InstanceFlavor flavor;
+  @JsonProperty("net_name")
+  private String netName;
 
-  public String getServerName() {
-    return serverName;
+  @JsonProperty("net_id")
+  private String netId;
+
+  @JsonProperty("subnet_name")
+  private String subnetName;
+
+  @JsonProperty("subnet_id")
+  private String subnetId;
+
+  @JsonProperty("segmentation_id")
+  private int segmentationId;
+
+  private String cidr;
+
+  public String getNetName() {
+    return netName;
   }
 
-  public String getServerId() {
-    return serverId;
+  public String getNetId() {
+    return netId;
   }
 
-  public InstanceFlavor getFlavor() {
-    return flavor;
+  public String getSubnetName() {
+    return subnetName;
   }
 
-  public void setServerName(String serverName) {
-    this.serverName = serverName;
+  public String getSubnetId() {
+    return subnetId;
   }
 
-  public void setServerId(String serverId) {
-    this.serverId = serverId;
+  public int getSegmentationId() {
+    return segmentationId;
   }
 
-  public void setFlavor(InstanceFlavor flavor) {
-    this.flavor = flavor;
+  public String getCidr() {
+    return cidr;
+  }
+
+  public void setNetName(String netName) {
+    this.netName = netName;
+  }
+
+  public void setNetId(String netId) {
+    this.netId = netId;
+  }
+
+  public void setSubnetName(String subnetName) {
+    this.subnetName = subnetName;
+  }
+
+  public void setSubnetId(String subnetId) {
+    this.subnetId = subnetId;
+  }
+
+  public void setSegmentationId(int segmentationId) {
+    this.segmentationId = segmentationId;
+  }
+
+  public void setCidr(String cidr) {
+    this.cidr = cidr;
   }
 
 }

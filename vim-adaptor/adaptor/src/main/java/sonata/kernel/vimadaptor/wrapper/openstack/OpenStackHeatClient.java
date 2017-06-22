@@ -34,12 +34,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.vimadaptor.commons.heat.HeatNet;
-import sonata.kernel.vimadaptor.commons.heat.HeatPort;
-import sonata.kernel.vimadaptor.commons.heat.HeatRouter;
-import sonata.kernel.vimadaptor.commons.heat.HeatServer;
-import sonata.kernel.vimadaptor.commons.heat.HeatTemplate;
-import sonata.kernel.vimadaptor.commons.heat.StackComposition;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatNet;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatPort;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatRouter;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatServer;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.composition.FloatingIpAttributes;
@@ -65,10 +65,10 @@ public class OpenStackHeatClient {
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackHeatClient.class);
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
   private ObjectMapper mapper;
-  private String url; // url of the OpenStack Client
-  private String userName; // OpenStack Client user
-  private String password; // OpenStack Client password
-  private String tenantName; // OpenStack tenant name
+//  private String url; // url of the OpenStack Client
+//  private String userName; // OpenStack Client user
+//  private String password; // OpenStack Client password
+//  private String tenantName; // OpenStack tenant name
 
 
   /**
@@ -80,12 +80,12 @@ public class OpenStackHeatClient {
    * @param tenantName to log into the OpenStack service
    * @throws IOException if the client cannoct connect to the VIM
    */
-  public OpenStackHeatClient(String url, String userName, String password, String tenantName)
+  public OpenStackHeatClient(String url, String userName, String password, String tenantName, String identityPort)
       throws IOException {
-    this.url = url;
-    this.userName = userName;
-    this.password = password;
-    this.tenantName = tenantName;
+//    this.url = url;
+//    this.userName = userName;
+//    this.password = password;
+//    this.tenantName = tenantName;
 
     Logger.debug(
         "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
@@ -98,7 +98,7 @@ public class OpenStackHeatClient {
     javaStack.setProjectId(null);
     javaStack.setAuthenticated(false);
     // Authenticate
-    javaStack.authenticateClientV3();
+    javaStack.authenticateClientV3(identityPort);
 
   }
 
@@ -237,11 +237,11 @@ public class OpenStackHeatClient {
     return isDeleted;
   }
 
-  @Override
-  public String toString() {
-    return "OpenStackHeatClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
-        + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
-  }
+//  @Override
+//  public String toString() {
+//    return "OpenStackHeatClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
+//        + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
+//  }
 
   /**
    * Get stack composition.

@@ -6,7 +6,7 @@
 ##
 descriptor_version: "vnfd-schema-01"
 vendor: "eu.sonata-nfv"
-name: "fw-vnf"
+name: "vFoo-vnf"
 version: "0.1"
 author: "Steven Van Rossem, Ghent University, steven.vanrossem@intec.ugent.be"
 description: "A firewall based on Ryu Openflow controller + openvswitch (2 ports: input+output) in a single VNF"
@@ -15,7 +15,7 @@ description: "A firewall based on Ryu Openflow controller + openvswitch (2 ports
 ##
 virtual_deployment_units:
   - id: "1"
-    vm_image: "sonata-vfw"
+    vm_image: "sonata-vFoo"
     vm_image_format: "qcow2"
     resource_requirements:
       cpu:

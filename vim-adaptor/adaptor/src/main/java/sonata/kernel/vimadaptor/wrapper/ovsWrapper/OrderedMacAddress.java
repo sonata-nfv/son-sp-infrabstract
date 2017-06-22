@@ -35,6 +35,8 @@ public class OrderedMacAddress implements Comparable<OrderedMacAddress> {
   private String mac;
   @JsonProperty("order")
   private int position;
+  @JsonProperty("vc_id")
+  private String vcId;
 
   @JsonIgnore
   private String referenceCp;
@@ -72,6 +74,14 @@ public class OrderedMacAddress implements Comparable<OrderedMacAddress> {
 
   public void setReferenceCp(String referenceCp) {
     this.referenceCp = referenceCp;
+  }
+
+  public String getVcId() {
+    return vcId;
+  }
+
+  public void setVcId(String vcId) {
+    this.vcId = vcId;
   }
 
 }

@@ -49,12 +49,6 @@ import sonata.kernel.vimadaptor.commons.VimNetTable;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.VnfcInstance;
-import sonata.kernel.vimadaptor.commons.heat.HeatModel;
-import sonata.kernel.vimadaptor.commons.heat.HeatPort;
-import sonata.kernel.vimadaptor.commons.heat.HeatResource;
-import sonata.kernel.vimadaptor.commons.heat.HeatServer;
-import sonata.kernel.vimadaptor.commons.heat.HeatTemplate;
-import sonata.kernel.vimadaptor.commons.heat.StackComposition;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPoint;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointRecord;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
@@ -71,6 +65,12 @@ import sonata.kernel.vimadaptor.wrapper.VimRepo;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatModel;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatPort;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatResource;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatServer;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.Image.Image;
 
 import java.io.File;
@@ -193,17 +193,21 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
+    String identityPort = null;
+    if(object.has("identity_port")){
+      object.getString("identity_port");
+    }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
     OpenStackHeatClient client = null;
     OpenStackNovaClient novaClient = null;
-
+    
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
       novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -263,6 +267,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
+    String identityPort = null;
+    if(object.has("identity_port")){
+      object.getString("identity_port");
+    }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
@@ -272,7 +280,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackNovaClient client;
     try {
       client = new OpenStackNovaClient(getConfig().getVimEndpoint(), getConfig().getAuthUserName(),
-          getConfig().getAuthPass(), tenant);
+          getConfig().getAuthPass(), tenant, identityPort);
       output = client.getResourceUtilizasion();
       Logger.info("OpenStack wrapper - Resource utilisation retrieved.");
     } catch (IOException e) {
@@ -303,6 +311,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
+    String identityPort = null;
+    if(object.has("identity_port")){
+      object.getString("identity_port");
+    }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
@@ -310,7 +322,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // To prepare a service instance management and data networks/subnets
     // must be created. The Management Network must also be attached to the external router.
     OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
 
     HeatTemplate template = createInitStackTemplate(instanceId);
 
@@ -381,6 +393,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
+    String identityPort = null;
+    if(object.has("identity_port")){
+      object.getString("identity_port");
+    }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
@@ -397,7 +413,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -873,6 +889,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
+    String identityPort = null;
+    if(object.has("identity_port")){
+      object.getString("identity_port");
+    }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
@@ -882,9 +902,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
       novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -903,15 +923,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     Collections.sort(vimFlavors);
     HeatModel stackAddendum;
 
-    HeatTemplate template = client.getStackTemplate(stackName, stackUuid);
-    if (template == null) {
-      Logger.error("Error retrieveing the stack template.");
-      WrapperStatusUpdate update =
-          new WrapperStatusUpdate(sid, "ERROR", "Cannot retrieve service stack from VIM.");
-      this.markAsChanged();
-      this.notifyObservers(update);
-      return;
-    }
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    
     try {
       stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
     } catch (Exception e) {
@@ -923,16 +940,20 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       this.notifyObservers(update);
       return;
     }
+    HeatTemplate template = client.getStackTemplate(stackName, stackUuid);
+    if (template == null) {
+      Logger.error("Error retrieveing the stack template.");
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Cannot retrieve service stack from VIM.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
     for (HeatResource resource : stackAddendum.getResources()) {
       template.putResource(resource.getResourceName(), resource);
     }
 
-    Logger.info("Deploying new stack for service preparation.");
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    Logger.info("Updated stack for VNF deployment created.");
     Logger.info("Serializing updated stack...");
     String stackString = null;
     try {
@@ -1159,11 +1180,15 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
+    String identityPort = null;
+    if(object.has("identity_port")){
+      object.getString("identity_port");
+    }
     // END COMMENT
 
     OpenStackGlanceClient glance =
         new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
-            getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+            getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
 
     Logger.debug("Creating new image: " + image.getUuid());
     String imageUuid = glance.createImage(image.getUuid());
@@ -1210,13 +1235,17 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
+    String identityPort = null;
+    if(object.has("identity_port")){
+      object.getString("identity_port");
+    }
     // END COMMENT
 
 
     OpenStackGlanceClient glance = null;
     try {
       glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();

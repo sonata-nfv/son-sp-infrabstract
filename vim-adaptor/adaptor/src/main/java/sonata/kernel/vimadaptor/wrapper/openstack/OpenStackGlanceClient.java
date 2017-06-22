@@ -34,6 +34,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.Image.Image;
@@ -47,43 +48,38 @@ public class OpenStackGlanceClient {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
 
-  private String url; // url of the OpenStack Client
-
-  private String userName; // OpenStack Client user
-
-  private String password; // OpenStack Client password
-
-  private String tenantName; // OpenStack tenant name
+//  private String url; // url of the OpenStack Client
+//
+//  private String userName; // OpenStack Client user
+//
+//  private String password; // OpenStack Client password
+//
+//  private String tenantName; // OpenStack tenant name
 
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
 
   private ObjectMapper mapper;
 
-  public OpenStackGlanceClient(String url, String userName, String password, String tenantName) throws IOException {
-    this.url = url;
-    this.userName = userName;
-    this.password = password;
-    this.tenantName = tenantName;
+  public OpenStackGlanceClient(String url, String userName, String password, String tenantName, String identityPort) throws IOException {
+//    this.url = url;
+//    this.userName = userName;
+//    this.password = password;
+//    this.tenantName = tenantName;
 
-    this.mapper = new ObjectMapper(new YAMLFactory());
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    this.mapper = SonataManifestMapper.getSonataMapper();
 
     Logger.debug(
         "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
 
     javaStack = JavaStackCore.getJavaStackCore();
-    javaStack.setEndpoint(this.url);
-    javaStack.setUsername(this.userName);
-    javaStack.setPassword(this.password);
-    javaStack.setProjectName(this.tenantName);
+    javaStack.setEndpoint(url);
+    javaStack.setUsername(userName);
+    javaStack.setPassword(password);
+    javaStack.setProjectName(tenantName);
     javaStack.setProjectId(null);
     javaStack.setAuthenticated(false);
     // Authenticate
-    javaStack.authenticateClientV3();
+    javaStack.authenticateClientV3(identityPort);
   }
 
 

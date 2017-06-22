@@ -1126,10 +1126,10 @@ public class DeployServiceTest implements MessageReceiver {
     VimPreDeploymentList vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
-    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vtc-vnf_0.1_vdu01",
+    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vBar-vnf_0.1_vdu01",
         "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vtcImgade);
-    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_fw-vnf_0.1_1",
+    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vFoo-vnf_0.1_1",
         "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);

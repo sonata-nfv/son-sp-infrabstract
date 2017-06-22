@@ -22,19 +22,39 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
+ * @author Bruno Vidalenc, THALES
+ * 
  */
 
-package sonata.kernel.WimAdaptor;
+package sonata.kernel.WimAdaptor.wrapper.vtn;
 
-import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-public interface MessageReceiver {
+public class OrderedSegment {
 
-
-  public void receiveHeartbeat(ServicePlatformMessage message);
-
-  public void receive(ServicePlatformMessage message);
-
-  public void forwardToConsumer(ServicePlatformMessage message);
-
+  @JsonProperty("port")
+  private String segment;
+  private int order;
+  public OrderedSegment(String segment, int order) {
+    this.segment=segment;
+    this.order=order;
+  }
+  
+  public OrderedSegment(){}
+  
+  public String getSegment() {
+    return segment;
+  }
+  public int getOrder() {
+    return order;
+  }
+  public void setSegment(String segment) {
+    this.segment = segment;
+  }
+  public void setOrder(int order) {
+    this.order = order;
+  }
+  
+  
+  
 }

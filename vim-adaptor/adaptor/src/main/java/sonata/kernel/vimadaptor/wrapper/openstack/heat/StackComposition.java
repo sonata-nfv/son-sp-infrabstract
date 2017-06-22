@@ -23,68 +23,51 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  * @author Guy Paz, Nokia
- * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 
-import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
+public class StackComposition {
 
-public class InstanceFlavor {
 
-  @JsonProperty("cpu_core")
-  private int cpu;
+  private ArrayList<HeatServer> servers;
+  private ArrayList<HeatNet> nets;
+  private ArrayList<HeatPort> ports;
+  private ArrayList<HeatRouter> routers;
+  // private ArrayList<HeatFloatingIp> ips;
 
-  private int memory;
-  @JsonProperty("memory_unit")
-  private MemoryUnit memoryUnit;
-
-  private int storage;
-  @JsonProperty("storage_unit")
-  private MemoryUnit storageUnit;
-
-  public int getCpu() {
-    return cpu;
+  public void setServers(ArrayList<HeatServer> servers) {
+    this.servers = servers;
   }
 
-  public int getMemory() {
-    return memory;
+  public void setNets(ArrayList<HeatNet> nets) {
+    this.nets = nets;
   }
 
-  public MemoryUnit getMemoryUnit() {
-    return memoryUnit;
+  public void setPorts(ArrayList<HeatPort> ports) {
+    this.ports = ports;
   }
 
-  public int getStorage() {
-    return storage;
+  public void setRouters(ArrayList<HeatRouter> routers) {
+    this.routers = routers;
   }
 
-  public MemoryUnit getStorageUnit() {
-    return storageUnit;
+  public ArrayList<HeatServer> getServers() {
+    return servers;
   }
 
-  public void setCpu(int cpu) {
-    this.cpu = cpu;
+  public ArrayList<HeatNet> getNets() {
+    return nets;
   }
 
-  public void setMemory(int memory) {
-    this.memory = memory;
+  public ArrayList<HeatPort> getPorts() {
+    return ports;
   }
 
-  public void setMemoryUnit(MemoryUnit memoryUnit) {
-    this.memoryUnit = memoryUnit;
+  public ArrayList<HeatRouter> getRouters() {
+    return routers;
   }
-
-  public void setStorage(int storage) {
-    this.storage = storage;
-  }
-
-  public void setStorageUnit(MemoryUnit storageUnit) {
-    this.storageUnit = storageUnit;
-  }
-
-
 
 }

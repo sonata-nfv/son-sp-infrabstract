@@ -1,6 +1,6 @@
 descriptor_version: "vnfd-schema-01"
 vendor: "eu.sonata-nfv"
-name: "vtc-vnf"
+name: "vBar-vnf"
 version: "0.1"
 author: "George Xilouris, NCSRD"
 description: >
@@ -27,16 +27,16 @@ function_specific_managers:
 virtual_deployment_units:
   - id: "vdu01"
     description: "VNFC for the dashboard and the time-series database"
-    vm_image: "sonata-vtc"
+    vm_image: "sonata-vBar"
     vm_image_format: "qcow2"
     resource_requirements:
       cpu:
         vcpus: 1
       memory:
-        size: 2
-        size_unit: "GB"
+        size: 512
+        size_unit: "MB"
       storage:
-        size: 20
+        size: 1
         size_unit: "GB"
     monitoring_parameters:
       - name: "vm_cpu_perc"

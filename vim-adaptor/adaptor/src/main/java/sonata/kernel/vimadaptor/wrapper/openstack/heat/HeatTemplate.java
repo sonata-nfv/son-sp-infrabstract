@@ -22,72 +22,46 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
+ * @author Guy Paz, Nokia
+ * 
  */
 
-package sonata.kernel.vimadaptor.commons.heat;
+package sonata.kernel.vimadaptor.wrapper.openstack.heat;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import java.util.HashMap;
 
-@JsonPropertyOrder({"type", "properties"})
-public class HeatResource implements Comparable<HeatResource> {
+@JsonPropertyOrder({"templateVersion", "resources"})
+public class HeatTemplate {
 
-  @JsonIgnore
-  private String resourceName;
-  private String type;
-  private HashMap<String, Object> properties;
+  @JsonProperty("heat_template_version")
+  private String templateVersion = "2015-04-30";
 
-  public HeatResource() {
-    this.properties = new HashMap<String, Object>();
+  private HashMap<String, Object> resources;
+
+  public HeatTemplate() {
+    resources = new HashMap<String, Object>();
   }
 
-  public String getType() {
-    return type;
+  public String getTemplateVersion() {
+    return templateVersion;
   }
 
-  public HashMap<String, Object> getProperties() {
-    return properties;
+  public HashMap<String, Object> getResources() {
+    return resources;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public void setTemplateVersion(String templateVersion) {
+    this.templateVersion = templateVersion;
   }
 
-  public void setProperties(HashMap<String, Object> properties) {
-    this.properties = properties;
+  public void setResources(HashMap<String, Object> resources) {
+    this.resources = resources;
   }
 
-  public void putProperty(String key, Object value) {
-    this.properties.put(key, value);
+  public void putResource(String key, Object value) {
+    this.resources.put(key, value);
   }
-
-  public void setName(String name) {
-    this.resourceName = name;
-  }
-
-  public String getResourceName() {
-    return resourceName;
-  }
-
-  @Override
-  public int compareTo(HeatResource object) {
-    return this.type.compareTo(object.getType());
-  }
-
-  @Override
-  public boolean equals(Object object) {
-    if (object instanceof HeatResource) {
-      return this.type.equals(((HeatResource) object).getType());
-    } else {
-      return false;
-    }
-  }
-
-  @Override
-  public int hashCode() {
-    return this.getType().hashCode();
-  }
-
 }
