@@ -195,7 +195,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     String identityPort = null;
     if(object.has("identity_port")){
-      object.getString("identity_port");
+      identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
@@ -269,7 +269,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     String identityPort = null;
     if(object.has("identity_port")){
-      object.getString("identity_port");
+      identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
@@ -313,7 +313,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     String identityPort = null;
     if(object.has("identity_port")){
-      object.getString("identity_port");
+      identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
@@ -395,7 +395,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     String identityPort = null;
     if(object.has("identity_port")){
-      object.getString("identity_port");
+      identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
@@ -891,7 +891,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     String identityPort = null;
     if(object.has("identity_port")){
-      object.getString("identity_port");
+      identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
@@ -1182,7 +1182,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     String identityPort = null;
     if(object.has("identity_port")){
-      object.getString("identity_port");
+      identityPort = object.getString("identity_port");
     }
     // END COMMENT
 
@@ -1237,7 +1237,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenant = object.getString("tenant");
     String identityPort = null;
     if(object.has("identity_port")){
-      object.getString("identity_port");
+      identityPort = object.getString("identity_port");
     }
     // END COMMENT
 
