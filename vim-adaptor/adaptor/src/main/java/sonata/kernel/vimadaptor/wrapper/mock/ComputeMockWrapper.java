@@ -35,6 +35,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
+import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployResponse;
 import sonata.kernel.vimadaptor.commons.ServiceRecord;
@@ -50,6 +51,7 @@ import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
 
 import java.io.IOException;
+import java.util.Random;
 
 
 public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
@@ -61,12 +63,14 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    */
   private ServiceDeployPayload data;
   private String sid;
+  private Random r;
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComputeMockWrapper.class);
   private static final long THREAD_SLEEP = 1000;
 
   public ComputeMockWrapper(WrapperConfiguration config) {
     super(config);
+    this.r = new Random(System.currentTimeMillis());
   }
 
   @Override
@@ -163,12 +167,16 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
   @Override
   public ResourceUtilisation getResourceUtilisation() {
 
+    double avgTime = 1933.8804347826;
+    double stdTime = 1705.7419631608;
+    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
+
     try {
-      Thread.sleep(1900);
+      Thread.sleep((long) waitTime);
     } catch (InterruptedException e) {
       e.printStackTrace();
-    }   
-    
+    }
+
     ResourceUtilisation resources = new ResourceUtilisation();
     resources.setTotCores(10);
     resources.setUsedCores(0);
@@ -185,6 +193,15 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    */
   @Override
   public boolean prepareService(String instanceId) {
+    double avgTime = 15361.9655172414;
+    double stdTime = 28969.9330556487;
+    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
+
+    try {
+      Thread.sleep((long) waitTime);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
     return true;
   }
 
@@ -197,7 +214,59 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    */
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
-    // TODO Auto-generated method stub
+    double avgTime = 55478.0363636364;
+    double stdTime = 23335.6200514115;
+    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
+
+    try {
+      Thread.sleep((long) waitTime);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+
+    VnfDescriptor vnf = data.getVnfd();
+    VnfRecord vnfr = new VnfRecord();
+    vnfr.setDescriptorVersion("vnfr-schema-01");
+    vnfr.setStatus(Status.normal_operation);
+    vnfr.setDescriptorReference(vnf.getUuid());
+    // vnfr.setDescriptorReferenceName(vnf.getName());
+    // vnfr.setDescriptorReferenceVendor(vnf.getVendor());
+    // vnfr.setDescriptorReferenceVersion(vnf.getVersion());
+
+    vnfr.setId(vnf.getInstanceUuid());
+    for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
+      VduRecord vdur = new VduRecord();
+      vdur.setId(vdu.getId());
+      vdur.setNumberOfInstances(1);
+      vdur.setVduReference(vnf.getName() + ":" + vdu.getId());
+      vdur.setVmImage(vdu.getVmImage());
+      vnfr.addVdu(vdur);
+    }
+    FunctionDeployResponse response = new FunctionDeployResponse();
+    response.setRequestStatus("COMPLETED");
+    response.setInstanceVimUuid("Stack-" + vnf.getInstanceUuid());
+    response.setInstanceName("Stack-" + vnf.getInstanceUuid());
+    response.setVimUuid(this.getConfig().getUuid());
+    response.setMessage("");
+    response.setVnfr(vnfr);
+    Logger.info("Response created. Serializing...");
+
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    String body;
+    try {
+      body = mapper.writeValueAsString(response);
+      this.setChanged();
+      Logger.info("Serialized. notifying call processor");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+      this.notifyObservers(update);
+    } catch (JsonProcessingException e) {
+      Logger.error(e.getMessage(), e);
+    }
+
   }
 
   /*
@@ -207,8 +276,16 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    */
   @Override
   public boolean isImageStored(VnfImage image, String callSid) {
-    boolean out = true;
-    return out;
+    double avgTime = 1300.2574257426;
+    double stdTime = 1050.6156067132;
+    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
+
+    try {
+      Thread.sleep((long) waitTime);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    return true;
   }
 
   /*

@@ -119,7 +119,7 @@ public class OvsWrapper extends NetworkWrapper {
 
     for (ConnectionPointReference cpr : pathCp) {
       String name = cpr.getConnectionPointRef();
-      if (name.startsWith("ns")) {
+      if (!name.contains(":")) {
         continue;
       } else {
         String[] split = name.split(":");
@@ -146,7 +146,7 @@ public class OvsWrapper extends NetworkWrapper {
 
         VnfVirtualLink inputLink = null;
         for (VnfVirtualLink link : vnfd.getVirtualLinks()) {
-          if (link.getConnectionPointsReference().contains("vnf:" + cpRef)) {
+          if (link.getConnectionPointsReference().contains(cpRef)) {
             inputLink = link;
             break;
           }
@@ -164,36 +164,46 @@ public class OvsWrapper extends NetworkWrapper {
               "Illegal Format: A vnf in/out vl should connect exactly two CPs. found: "
                   + inputLink.getConnectionPointsReference().size());
         }
-        String vnfcCpName = null;
+        String vnfcCpReference = null;
         for (String cp : inputLink.getConnectionPointsReference()) {
           if (!cp.equals(cpRef)) {
-            vnfcCpName = cp;
+            vnfcCpReference = cp;
             break;
           }
         }
-        if (vnfcCpName == null) {
+        if (vnfcCpReference == null) {
           throw new Exception(
               "Illegal Format: Unable to find the VNFC Cp name connected to this in/out VNF VL");
         }
 
-        Logger.debug("Searching for CpRecord of Cp: " + vnfcCpName);
+        Logger.debug("Searching for CpRecord of Cp: " + vnfcCpReference);
         ConnectionPointRecord matchingCpRec = null;
         String vcId = null;
+        split = vnfcCpReference.split(":");
+        String vduId = split[0];
+        String vnfcCpName = split[1];
+        if (split.length != 2) {
+          throw new Exception(
+              "Illegal Format: A VL connection point reference should be in the format vdu_id:cp_name. Found: "
+                  + vnfcCpReference);
+        }
+
         for (VduRecord vdu : vnfr.getVirtualDeploymentUnits()) {
-          for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
-            for (ConnectionPointRecord cpRec : vnfc.getConnectionPoints()) {
-              Logger.debug("Checking " + cpRec.getId());
-              if (vnfcCpName.equals(cpRec.getId())) {
-                matchingCpRec = cpRec;
-                vcId = vnfc.getVcId();
-                break;
+          if (vdu.getId().equals(vduId)) {
+            for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
+              for (ConnectionPointRecord cpRec : vnfc.getConnectionPoints()) {
+                Logger.debug("Checking " + cpRec.getId());
+                if (vnfcCpName.equals(cpRec.getId())) {
+                  matchingCpRec = cpRec;
+                  vcId = vnfc.getVcId();
+                  break;
+                }
               }
             }
           }
-
         }
-        
-        String qualifiedName = vnfName + "." + vnfcCpName + "." + nsd.getInstanceUuid();
+
+        String qualifiedName = vnfName + "." + vnfcCpReference + "." + nsd.getInstanceUuid();
         // HeatPort connectedPort = null;
         // for (HeatPort port : composition.getPorts()) {
         // if (port.getPortName().equals(qualifiedName)) {
@@ -203,7 +213,7 @@ public class OvsWrapper extends NetworkWrapper {
         // }
         if (matchingCpRec == null) {
           throw new Exception(
-              "Illegal Format: cannot find the VNFR.VDU.VNFC.CPR matching: " + vnfcCpName);
+              "Illegal Format: cannot find the VNFR.VDU.VNFC.CPR matching: " + vnfcCpReference);
         } else {
           // Eureka!
           OrderedMacAddress mac = new OrderedMacAddress();
