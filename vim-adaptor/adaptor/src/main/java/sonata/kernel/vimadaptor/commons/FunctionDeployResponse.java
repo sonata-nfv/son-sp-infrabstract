@@ -70,10 +70,6 @@ public class FunctionDeployResponse {
   }
 
 
-  public void setVnfrs(VnfRecord vnfr) {
-    this.vnfr = vnfr;
-  }
-
   public String getVimUuid() {
     return vimUuid;
   }

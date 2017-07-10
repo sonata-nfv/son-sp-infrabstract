@@ -59,7 +59,7 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   public abstract boolean prepareService(String instanceId) throws Exception;
 
   /**
-   * Remove a service instance from this VIM.
+   * Deploy a service instance on this VIM.
    * 
    * @param data the payload containing the service descriptors and the metadata for this service
    *        deployment
@@ -67,6 +67,7 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * 
    * @return true if the remove process has started correctly, false otherwise
    */
+  @Deprecated
   public abstract boolean deployService(ServiceDeployPayload data, String callSid) throws Exception;
 
   /**

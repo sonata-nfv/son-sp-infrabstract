@@ -186,6 +186,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   }
 
   @Override
+  @Deprecated
   public boolean deployService(ServiceDeployPayload data, String callSid) {
 
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
@@ -194,7 +195,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String identityPort = null;
-    if(object.has("identity_port")){
+    if (object.has("identity_port")) {
       identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -202,7 +203,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // END COMMENT
     OpenStackHeatClient client = null;
     OpenStackNovaClient novaClient = null;
-    
+
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
           getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
@@ -268,7 +269,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String identityPort = null;
-    if(object.has("identity_port")){
+    if (object.has("identity_port")) {
       identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -312,7 +313,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String identityPort = null;
-    if(object.has("identity_port")){
+    if (object.has("identity_port")) {
       identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -394,7 +395,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String identityPort = null;
-    if(object.has("identity_port")){
+    if (object.has("identity_port")) {
       identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -461,6 +462,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return null;
   }
 
+  @Deprecated
   private HeatModel translate(ServiceDeployPayload data, ArrayList<Flavor> vimFlavors)
       throws Exception {
 
@@ -822,8 +824,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         // create the port resource
         HeatResource port = new HeatResource();
         port.setType("OS::Neutron::Port");
-        port.setName(vnfd.getName() + "." + cp.getId() + "." + instanceUuid);
-        port.putProperty("name", vnfd.getName() + "." + cp.getId() + "." + instanceUuid);
+        port.setName(vnfd.getName() + "." + vdu.getId() + "." + cp.getId() + "." + instanceUuid);
+        port.putProperty("name",
+            vnfd.getName() + "." + vdu.getId() + "." + cp.getId() + "." + instanceUuid);
         HashMap<String, Object> netMap = new HashMap<String, Object>();
         Logger.debug("Mapping CP Type to the relevant network");
         if (cp.getType().equals(ConnectionPointType.INT)) {
@@ -835,10 +838,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         } else if (cp.getType().equals(ConnectionPointType.MANAGEMENT)) {
           // Get a public IP
           netMap.put("get_resource", "SonataService.mgmt.net." + instanceUuid);
-          publicPortNames.add(vnfd.getName() + "." + cp.getId() + "." + instanceUuid);
+          publicPortNames
+              .add(vnfd.getName() + "." + vdu.getId() + "." + cp.getId() + "." + instanceUuid);
         } else {
           Logger.error("Cannot map the parsed CP type " + cp.getType() + " to a known one");
-          throw new Exception("Unable to translate CP " + vnfd.getName() + ":" + cp.getId());
+          throw new Exception(
+              "Unable to translate CP " + vnfd.getName() + "." + vdu.getId() + "." + cp.getId());
         }
         port.putProperty("network", netMap);
         model.addResource(port);
@@ -846,7 +851,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         // add the port to the server
         HashMap<String, Object> n1 = new HashMap<String, Object>();
         HashMap<String, Object> portMap = new HashMap<String, Object>();
-        portMap.put("get_resource", vnfd.getName() + "." + cp.getId() + "." + instanceUuid);
+        portMap.put("get_resource",
+            vnfd.getName() + "." + vdu.getId() + "." + cp.getId() + "." + instanceUuid);
         n1.put("port", portMap);
         net.add(n1);
       }
@@ -859,7 +865,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       // allocate floating IP
       HeatResource floatingIp = new HeatResource();
       floatingIp.setType("OS::Neutron::FloatingIP");
-      floatingIp.setName("floating:" + portName);
+      floatingIp.setName("floating." + portName);
 
 
       floatingIp.putProperty("floating_network_id", tenantExtNet);
@@ -890,7 +896,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String identityPort = null;
-    if(object.has("identity_port")){
+    if (object.has("identity_port")) {
       identityPort = object.getString("identity_port");
     }
     // String tenantExtNet = object.getString("tenant_ext_net");
@@ -928,7 +934,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
-    
+
     try {
       stackAddendum = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
     } catch (Exception e) {
@@ -1094,8 +1100,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           ArrayList<ConnectionPointRecord> cpRecords = new ArrayList<ConnectionPointRecord>();
           for (ConnectionPoint cp : vdu.getConnectionPoints()) {
             Logger.debug("Mapping CP " + cp.getId());
-            Logger.debug("Looking for port " + vnfd.getName() + "." + cp.getId() + "."
-                + data.getServiceInstanceId());
+            Logger.debug("Looking for port " + vnfd.getName() + "." + vdu.getId() + "." + cp.getId()
+                + "." + data.getServiceInstanceId());
             ConnectionPointRecord cpr = new ConnectionPointRecord();
             cpr.setId(cp.getId());
 
@@ -1105,8 +1111,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             boolean found = false;
             for (HeatPort port : composition.getPorts()) {
               Logger.debug("port " + port.getPortName());
-              if (port.getPortName()
-                  .equals(vnfd.getName() + "." + cp.getId() + "." + data.getServiceInstanceId())) {
+              if (port.getPortName().equals(vnfd.getName() + "." + vdu.getId() + "." + cp.getId()
+                  + "." + data.getServiceInstanceId())) {
                 found = true;
                 Logger.debug("Found! Filling VDUR parameters");
                 InterfaceRecord ip = new InterfaceRecord();
@@ -1142,7 +1148,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     }
 
-    response.setVnfrs(vnfr);
+    response.setVnfr(vnfr);
     String body = null;
     try {
       body = mapper.writeValueAsString(response);
@@ -1181,7 +1187,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String identityPort = null;
-    if(object.has("identity_port")){
+    if (object.has("identity_port")) {
       identityPort = object.getString("identity_port");
     }
     // END COMMENT
@@ -1236,7 +1242,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String identityPort = null;
-    if(object.has("identity_port")){
+    if (object.has("identity_port")) {
       identityPort = object.getString("identity_port");
     }
     // END COMMENT
