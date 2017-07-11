@@ -62,9 +62,9 @@ parser.add_argument("-e", "--brex",help="pass the connection of br-ex to br-int 
 parser.add_argument("-t", "--breth",help="pass the connection of br-eth0 to br-ex port, or use default '3' ",type=str)
 args = parser.parse_args()  # pass the arguments to the parser
 # default values for ports 
-brint-tun = "2"
+brintTun = "2"
 brintport = "2"
-brprovider-port = "2"
+brprovider = "2"
 
 logger.info("")
 logger.info("===SONATA PROJECT===")
@@ -77,9 +77,13 @@ else:
 if args.brint:
     brintport = args.brint
 if args.brex:
-   brint-tun = brex
+   brintTun = brex
 if args.breth:
-    brprovider-port = args.breth 
+    brprovider = args.breth 
+
+
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 
 server_address = (server, 55555)
 logger.info('starting up on %s port %s' % server_address)
@@ -116,14 +120,14 @@ while True:
         fo = open(uuid, "w")
         # Starting to place rules, beggining from driving external traffic inside to br-tun 
         logger.info("PoP incoming traffic to br-int :")
-        logger.info("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brprovider-port)
-        os.system("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brprovider-port)
+        logger.info("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brprovider)
+        os.system("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brprovider)
         fo.write("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
 
         logger.info("PoP from br-int to br-tun :")
-        print "ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brint-tun
-        logger.info("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brint-tun)
-        os.system("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brint-tun)
+        print "ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintTun
+        logger.info("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintTun)
+        os.system("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintTun)
 
 
 
