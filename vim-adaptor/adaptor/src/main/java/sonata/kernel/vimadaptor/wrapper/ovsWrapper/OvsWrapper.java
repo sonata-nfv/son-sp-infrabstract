@@ -80,6 +80,8 @@ public class OvsWrapper extends NetworkWrapper {
     if (data.getNsd().getForwardingGraphs().size() <= 0)
       throw new Exception("No Forwarding Graph specified in the descriptor");
 
+    long start = System.currentTimeMillis();
+    
     // TODO the NSD specifies more than one graph, and the selected one is given in the flavor
     // section.
     // This is not implemented in the first version.
@@ -268,12 +270,16 @@ public class OvsWrapper extends NetworkWrapper {
       throw new Exception(
           "Unexpected response from OVS SFC agent while trying to add a configuration.");
     }
+    long stop = System.currentTimeMillis();
+
+    Logger.info("[OvsWrapper]networkConfigure-time: " + (stop - start) + " ms");
+    
     return;
   }
 
   @Override
   public void deconfigureNetworking(String instanceId) throws Exception {
-
+    long start = System.currentTimeMillis();
     OvsPayload odlPayload = new OvsPayload("delete", instanceId, null, null, null);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
@@ -312,6 +318,10 @@ public class OvsWrapper extends NetworkWrapper {
       throw new Exception(
           "Unexcepted response from ODL SFC agent while trying to delete a configuration.");
     }
+    
+    long stop = System.currentTimeMillis();
+    Logger.info("[OvsWrapper]networkDeconfigure-time: " + (stop - start) + " ms");
+    
     return;
   }
 }
