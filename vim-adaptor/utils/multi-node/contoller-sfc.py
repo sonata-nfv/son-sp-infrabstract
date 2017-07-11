@@ -57,9 +57,11 @@ logger.addHandler(fh)
 #configurations 
 parser = argparse.ArgumentParser()   #handler for arguments passed 
 parser.add_argument("-s", "--server",help="pass the local server ip. If not, it finds it automatically",type=str)  # option configurations, needs to be required
-parser.add_argument("-i", "--brint",help="pass the connection of br-int to br-ex port, or use default '2' ",type=str)
-parser.add_argument("-e", "--brex",help="pass the connection of br-ex to br-int port, or use default '2' ",type=str)
-parser.add_argument("-t", "--breth",help="pass the connection of br-eth0 to br-ex port, or use default '3' ",type=str)
+parser.add_argument("-i", "--brint",help="pass the connection of br-int to br-tun port, or use default '2' ",type=str)
+parser.add_argument("-p", "--provider",help="pass the connection of br-provider to br-int port, or use default '2' ",type=str)
+
+parser.add_argument("-t", "--tun",help="pass the connection of br-tun to br-int port, or use default '2' ",type=str)   # TODO number of nodes. and port corresponding to nodes
+ 
 args = parser.parse_args()  # pass the arguments to the parser
 # default values for ports 
 brintTun = "2"
@@ -76,10 +78,10 @@ else:
     server = get_ip() #finds IP to set up the socket 
 if args.brint:
     brintport = args.brint
-if args.brex:
-   brintTun = brex
-if args.breth:
-    brprovider = args.breth 
+if args.tun:
+   brintTun = tun
+if args.provider:
+    brprovider = args.provider 
 
 
 # Create a TCP/IP socket
@@ -119,16 +121,16 @@ while True:
         logger.info("DESTINATION SEGMENT -> "+dst)
         fo = open(uuid, "w")
         # Starting to place rules, beggining from driving external traffic inside to br-tun 
-        logger.info("PoP incoming traffic to br-int :")
+        logger.info("PoP incoming traffic to br-provider :")
         logger.info("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brprovider)
         os.system("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brprovider)
-        fo.write("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
+        fo.write("ovs-ofctl --strict del-flows br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
 
+        # From br-int towards br-tun 
         logger.info("PoP from br-int to br-tun :")
-        print "ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintTun
-        logger.info("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintTun)
-        os.system("ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintTun)
+        logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintport)
+        os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintport)
+        fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
 
-
-
+        #Now the traffic is inside br-tun, and logic must be applied to find out at which node has to go 
 
