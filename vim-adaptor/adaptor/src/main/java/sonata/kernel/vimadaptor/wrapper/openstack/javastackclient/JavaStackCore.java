@@ -53,10 +53,8 @@ import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authent
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authenticationv3.CatalogItem;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authenticationv3.EndpointItem;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -223,57 +221,18 @@ public class JavaStackCore {
    *
    * @throws IOException
    */
-  public synchronized void authenticateClientV3() throws IOException {
+  public synchronized void authenticateClientV3(String customIdentityPort) throws IOException {
     HttpClient httpClient = HttpClientBuilder.create().build();
     HttpPost post;
     HttpResponse response = null;
     HashMap<String, String> endpoint_details = new HashMap<>();
-
-    //<<<<<<< HEAD
-    // <<<<<<< HEAD
-    // StringBuilder buildUrl = new StringBuilder();
-    // buildUrl.append("http://");
-    // buildUrl.append(this.endpoint);
-    // buildUrl.append(":");
-    // buildUrl.append(Constants.AUTH_PORT.toString());
-    // buildUrl.append(Constants.AUTH_URI.toString());
-    //
-    // post = new HttpPost(buildUrl.toString());
-    //
-    // String body = String.format(
-    // // "{ \"auth\": {\"scope\": {\"project\": {\"name\": \"%s\"}}, \"identity\": { \"methods\":
-    // // [\"password\"], \"password\": { \"user\": { \"name\": \"%s\", \"domain\": { \"name\":
-    // // \"default\" }, \"password\": \"%s\" }}}}}",
-    // "{ \"auth\": {\"identity\": { \"methods\": [\"password\"], \"password\": { \"user\": {
-    // \"name\": \"%s\", \"domain\": { \"name\": \"default\" }, \"password\": \"%s\" }}}}}",
-    // // this.getTenantId(),
-    // this.username, this.password);
-    // Logger.debug("[JavaStack] Authenticating client...");
-    // post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
-    // Logger.debug("[JavaStack] " + post.toString());
-    // Logger.debug("[JavaStack] " + body);
-    // response = httpClient.execute(post);
-    // Logger.debug("[JavaStack] Authentication response:");
-    // Logger.debug(response.toString());
-    // mapper = new ObjectMapper();
-    //
-    // AuthenticationData auth =
-    // mapper.readValue(JavaStackUtils.convertHttpResponseToString(response),
-    // AuthenticationData.class);
-    // if (response.containsHeader("X-Subject-Token")) {
-    // this.tokenId = response.getFirstHeader("X-Subject-Token").getValue();
-    // if (auth.getToken().getProject() != null) {
-    // this.projectId = auth.getToken().getProject().getId();
-    // }
-    // =======
-    // =======
-
+    String identityPort = (customIdentityPort==null)?Constants.AUTH_PORT.toString():customIdentityPort;
     if (!isAuthenticated) {
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
       buildUrl.append(endpoint);
       buildUrl.append(":");
-      buildUrl.append(Constants.AUTH_PORT.toString());
+      buildUrl.append(identityPort);
       buildUrl.append(Constants.AUTH_URI_V3.toString());
 
       post = new HttpPost(buildUrl.toString());
@@ -353,7 +312,7 @@ public class JavaStackCore {
                 break;
 
               default:
-                System.out.println("Invalid Type");
+                Logger.warn("[JavaStack]Unhandled endpoint type: "+type+". skipping");
             }
           }
         }
@@ -506,7 +465,6 @@ public class JavaStackCore {
     modifiedObject.put("template", new JSONObject(jsonTemplate));
 
     if (this.isAuthenticated) {
-      Logger.debug("");
       StringBuilder buildUrl = new StringBuilder();
       buildUrl.append("http://");
       buildUrl.append(this.endpoint);

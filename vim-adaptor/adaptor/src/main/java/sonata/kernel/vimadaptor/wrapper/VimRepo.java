@@ -117,9 +117,10 @@ public class VimRepo {
       rs = findTablesStmt.executeQuery();
       while (rs.next()) {
         String tablename = rs.getString("tablename");
-        if (tablename.equals("vim") || tablename.equals("VIM") || tablename.equals("instances")
-            || tablename.equals("INSTANCES") || tablename.equals("link_vim")
-            || tablename.equals("LINK_VIM")) {
+        if (tablename.toLowerCase().equals("vim")
+            || tablename.toLowerCase().equals("service_instances")
+            || tablename.toLowerCase().equals("function_instances")
+            || tablename.toLowerCase().equals("link_vim")) {
           isEnvironmentSet = true;
           break;
         }
@@ -129,10 +130,10 @@ public class VimRepo {
       }
       if (!isEnvironmentSet) {
         stmt = connection.createStatement();
-        sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," +"NAME TEXT," + " TYPE TEXT NOT NULL,"
-            + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
-            + " CONFIGURATION TEXT NOT NULL," + " CITY TEXT," + "COUNTRY TEXT," + " PASS TEXT,"
-            + " AUTHKEY TEXT" + ");";
+        sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," + "NAME TEXT,"
+            + " TYPE TEXT NOT NULL," + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL,"
+            + " USERNAME TEXT NOT NULL," + " CONFIGURATION TEXT NOT NULL," + " CITY TEXT,"
+            + "COUNTRY TEXT," + " PASS TEXT," + " AUTHKEY TEXT" + ");";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE service_instances " + "(" + "INSTANCE_UUID TEXT NOT NULL,"
             + " VIM_INSTANCE_UUID TEXT NOT NULL," + " VIM_INSTANCE_NAME TEXT NOT NULL,"
@@ -404,7 +405,7 @@ public class VimRepo {
         String country = rs.getString("COUNTRY");
         String key = rs.getString("AUTHKEY");
         String name = rs.getString("NAME");
-            
+
         WrapperConfiguration config = new WrapperConfiguration();
         config.setUuid(uuid);
         config.setWrapperType(wrapperType);
@@ -416,7 +417,7 @@ public class VimRepo {
         config.setAuthPass(pass);
         config.setAuthKey(key);
         config.setName(name);
-        
+
         if (wrapperType.equals(WrapperType.COMPUTE)) {
           VimVendor vendor = ComputeVimVendor.getByName(vendorString);
           config.setVimVendor(vendor);
@@ -702,7 +703,7 @@ public class VimRepo {
         config.setCountry(country);
 
         output = (NetworkWrapper) WrapperFactory.createWrapper(config);
-        
+
 
       } else {
         output = null;

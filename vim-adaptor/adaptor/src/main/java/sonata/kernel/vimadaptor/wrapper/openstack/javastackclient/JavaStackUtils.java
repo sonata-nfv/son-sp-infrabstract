@@ -38,6 +38,8 @@ import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import javax.ws.rs.NotFoundException;
+
 public class JavaStackUtils {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
@@ -77,6 +79,8 @@ public class JavaStackUtils {
       } else {
         return null;
       }
+    } else if(status == 404){
+      throw new NotFoundException("Resource doesn't exists");
     } else if (status == 403) {
       throw new IOException(
           "Access forbidden, make sure you are using the correct credentials: " + reasonPhrase);

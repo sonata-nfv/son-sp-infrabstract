@@ -145,7 +145,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
 
         for (ConnectionPointReference cpr : pathCp) {
           String name = cpr.getConnectionPointRef();
-          if (name.startsWith("ns")) {
+          if (!name.contains(":")) {
             continue;
           } else {
             String[] split = name.split(":");

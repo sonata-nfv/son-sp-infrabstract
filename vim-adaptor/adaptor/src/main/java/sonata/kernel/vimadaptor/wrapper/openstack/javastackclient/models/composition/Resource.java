@@ -28,13 +28,20 @@ package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.compos
 
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Resource<T> {
-
+  
+  @JsonProperty("parent_resource")
+  String parent_resource;
+  
   String resource_name;
   String resource_type;
   String physical_resource_id;
+  ArrayList<Link> links;
 
   T attributes;
 
@@ -70,5 +77,20 @@ public class Resource<T> {
     this.resource_type = resource_type;
   }
 
+  public ArrayList<Link> getLinks() {
+    return links;
+  }
+
+  public void setLinks(ArrayList<Link> links) {
+    this.links = links;
+  }
+
+  public String getParent_resource() {
+    return parent_resource;
+  }
+
+  public void setParent_resource(String parent_resource) {
+    this.parent_resource = parent_resource;
+  }
 
 }

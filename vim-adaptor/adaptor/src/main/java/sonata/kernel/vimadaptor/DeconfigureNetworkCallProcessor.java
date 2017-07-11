@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.NetworkDeconfigurePayload;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
@@ -75,9 +76,7 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
 
     NetworkDeconfigurePayload data = null;
-    ObjectMapper mapper = new ObjectMapper();
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
     try {
       data = mapper.readValue(message.getBody(), NetworkDeconfigurePayload.class);
       Logger.info("payload parsed");

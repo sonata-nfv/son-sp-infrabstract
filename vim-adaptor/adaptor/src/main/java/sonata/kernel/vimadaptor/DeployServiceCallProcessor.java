@@ -59,6 +59,17 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
 
   @Override
   public boolean process(ServicePlatformMessage message) {
+    
+    Logger.warn("Received a DeployService call. This call is deprecated. Send back error");
+    
+    this.sendToMux(new ServicePlatformMessage(
+      "{\"request_status\":\"ERROR\",\"message\":\"This function is deprecated\"}", "application/json",
+      message.getReplyTo(), message.getSid(), null));
+    return true;
+  }
+
+  @Deprecated
+  private void deprecatedUse(ServicePlatformMessage message){
     boolean out = true;
     Logger.info("Call received...");
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
@@ -99,9 +110,8 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
           message.getReplyTo(), message.getSid(), null));
       out = false;
     }
-    return out;
   }
-
+  
   @Override
   public void update(Observable arg0, Object arg1) {
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg1;

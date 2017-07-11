@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+/*
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -24,6 +24,7 @@
  * 
  */
 
+
 package sonata.kernel.WimAdaptor;
 
 
@@ -34,6 +35,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import sonata.kernel.WimAdaptor.wrapper.WimRepo;
+import sonata.kernel.WimAdaptor.wrapper.WimVendor;
 import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.WimAdaptor.wrapper.WrapperRecord;
 import sonata.kernel.WimAdaptor.wrapper.vtn.VtnWrapper;
@@ -67,7 +69,7 @@ public class WimRepoTest {
     repoInstance = new WimRepo();
     WrapperConfiguration config = new WrapperConfiguration();
     config.setWimEndpoint("x.x.x.x");
-    config.setWimVendor("compute");
+    config.setWimVendor(WimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setUuid("12345");
@@ -96,7 +98,7 @@ public class WimRepoTest {
     repoInstance = new WimRepo();
     WrapperConfiguration config = new WrapperConfiguration();
     config.setWimEndpoint("x.x.x.x");
-    config.setWimVendor("mock");
+    config.setWimVendor(WimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
     config.setUuid("1");

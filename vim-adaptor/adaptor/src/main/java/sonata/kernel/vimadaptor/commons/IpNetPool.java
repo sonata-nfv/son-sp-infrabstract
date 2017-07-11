@@ -109,6 +109,7 @@ public class IpNetPool {
     }
 
     reservationTable.put(instanceUuid, subnetPool);
+    
     return output;
   }
 

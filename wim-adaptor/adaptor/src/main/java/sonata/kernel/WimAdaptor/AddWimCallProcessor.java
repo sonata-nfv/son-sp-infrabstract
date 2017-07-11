@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+/*
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -26,15 +26,14 @@
 
 package sonata.kernel.WimAdaptor;
 
-import java.util.ArrayList;
 import java.util.Observable;
 import java.util.UUID;
 
-import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
+import sonata.kernel.WimAdaptor.wrapper.WimVendor;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 import sonata.kernel.WimAdaptor.wrapper.WrapperConfiguration;
 
@@ -74,7 +73,7 @@ public class AddWimCallProcessor extends AbstractCallProcessor {
 
     config.setUuid(UUID.randomUUID().toString());
     config.setWrapperType("WIM");
-    config.setWimVendor(wimVendor);
+    config.setWimVendor(WimVendor.getByName(wimVendor));
     config.setWimEndpoint(vimEndpoint);
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);

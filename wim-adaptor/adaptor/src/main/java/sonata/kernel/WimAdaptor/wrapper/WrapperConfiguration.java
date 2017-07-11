@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+/*
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -31,7 +31,7 @@ import java.util.ArrayList;
 public class WrapperConfiguration {
 
   private String wimEndpoint;
-  private String wimVendor;
+  private WimVendor wimVendor;
   private String wrapperType;
   private String authUserName;
   private String authPass;
@@ -56,11 +56,11 @@ public class WrapperConfiguration {
     this.wimEndpoint = wimEndpoint;
   }
 
-  public String getWimVendor() {
+  public WimVendor getWimVendor() {
     return wimVendor;
   }
 
-  public void setWimVendor(String wimType) {
+  public void setWimVendor(WimVendor wimType) {
     this.wimVendor = wimType;
   }
 

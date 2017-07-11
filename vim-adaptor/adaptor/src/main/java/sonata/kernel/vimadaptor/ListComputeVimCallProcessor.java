@@ -34,6 +34,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
@@ -89,14 +90,24 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
         bodyElement.setMemoryTotal(resource.getTotMemory());
         bodyElement.setMemoryUsed(resource.getUsedMemory());
         resList.add(bodyElement);
+      } else {
+        VimResources bodyElement = new VimResources();
+
+        bodyElement.setVimUuid(vimUuid);
+        bodyElement.setVimCity(wr.getConfig().getCity());
+        bodyElement.setVimName(wr.getConfig().getName());
+        bodyElement.setVimEndpoint(wr.getConfig().getVimEndpoint());
+        bodyElement.setCoreTotal(-1);
+        bodyElement.setCoreUsed(-1);
+        bodyElement.setMemoryTotal(-1);
+        bodyElement.setMemoryUsed(-1);
+        resList.add(bodyElement);
+
       }
     }
 
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
+    
     String body;
     try {
       Logger.info("Sending back response...");

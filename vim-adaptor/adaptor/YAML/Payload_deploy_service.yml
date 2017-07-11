@@ -27,11 +27,11 @@ nsd:
     vnf_name: "tcpdump-vnf"
     vnf_version: "0.1"
   connection_points:
-  - id: "ns:mgmt"
+  - id: "mgmt"
     type: "public"
-  - id: "ns:input"
+  - id: "input"
     type: "internal"
-  - id: "ns:output"
+  - id: "output"
     type: "internal"
   virtual_links:
   - id: "mgmt"
@@ -42,14 +42,14 @@ nsd:
     - "vnf_iperf:mgmt"
     - "vnf_firewall:mgmt"
     - "vnf_tcpdump:mgmt"
-    - "ns:mgmt"
+    - "mgmt"
     external_access: false
   - id: "input-2-iperf"
     access: false
     dhcp: false
     connectivity_type: "E-Line"
     connection_points_reference:
-    - "ns:input"
+    - "input"
     - "vnf_iperf:input"
     external_access: false
   - id: "iperf-2-firewall"
@@ -74,7 +74,7 @@ nsd:
     connectivity_type: "E-Line"
     connection_points_reference:
     - "vnf_tcpdump:output"
-    - "ns:output"
+    - "output"
     external_access: false
   forwarding_graphs:
   - fg_id: "ns:fg01"
@@ -89,7 +89,7 @@ nsd:
       fp_id: "ns:fg01:fp01"
       connection_points:
       - position: 1
-        connection_point_ref: "ns:input"
+        connection_point_ref: "input"
       - position: 2
         connection_point_ref: "vnf_iperf:input"
       - position: 3
@@ -103,7 +103,7 @@ nsd:
       - position: 7
         connection_point_ref: "vnf_tcpdump:output"
       - position: 8
-        connection_point_ref: "ns:output"
+        connection_point_ref: "output"
 vnfdList:
 - vendor: "eu.sonata-nfv"
   name: "iperf-vnf"
@@ -132,18 +132,18 @@ vnfdList:
         persistence: false
         size_unit: "GB"
     connection_points:
-    - id: "vdu01:cp01"
+    - id: "cp01"
       type: "public"
-    - id: "vdu01:cp02"
+    - id: "cp02"
       type: "internal"
-    - id: "vdu01:cp03"
+    - id: "cp03"
       type: "internal"
   connection_points:
-  - id: "vnf:mgmt"
+  - id: "mgmt"
     type: "public"
-  - id: "vnf:input"
+  - id: "input"
     type: "internal"
-  - id: "vnf:output"
+  - id: "output"
     type: "internal"
   virtual_links:
   - id: "mgmt"
@@ -152,7 +152,7 @@ vnfdList:
     connectivity_type: "E-LAN"
     connection_points_reference:
     - "vdu01:cp01"
-    - "vnf:mgmt"
+    - "mgmt"
     external_access: false
   - id: "input"
     access: false
@@ -160,7 +160,7 @@ vnfdList:
     connectivity_type: "E-Line"
     connection_points_reference:
     - "vdu01:cp02"
-    - "vnf:input"
+    - "input"
     external_access: false
   - id: "output"
     access: false
@@ -168,7 +168,7 @@ vnfdList:
     connectivity_type: "E-Line"
     connection_points_reference:
     - "vdu01:cp03"
-    - "vnf:output"
+    - "output"
     external_access: false
 - vendor: "eu.sonata-nfv"
   name: "firewall-vnf"
@@ -196,18 +196,18 @@ vnfdList:
         persistence: false
         size_unit: "GB"
     connection_points:
-    - id: "vdu01:cp01"
+    - id: "cp01"
       type: "public"
-    - id: "vdu01:cp02"
+    - id: "cp02"
       type: "internal"
-    - id: "vdu01:cp03"
+    - id: "cp03"
       type: "internal"
   connection_points:
-  - id: "vnf:mgmt"
+  - id: "mgmt"
     type: "public"
-  - id: "vnf:input"
+  - id: "input"
     type: "internal"
-  - id: "vnf:output"
+  - id: "output"
     type: "internal"
   virtual_links:
   - id: "mgmt"
@@ -216,7 +216,7 @@ vnfdList:
     connectivity_type: "E-LAN"
     connection_points_reference:
     - "vdu01:cp01"
-    - "vnf:mgmt"
+    - "mgmt"
     external_access: false
   - id: "input"
     access: false
@@ -224,7 +224,7 @@ vnfdList:
     connectivity_type: "E-Line"
     connection_points_reference:
     - "vdu01:cp02"
-    - "vnf:input"
+    - "input"
     external_access: false
   - id: "output"
     access: false
@@ -232,7 +232,7 @@ vnfdList:
     connectivity_type: "E-Line"
     connection_points_reference:
     - "vdu01:cp03"
-    - "vnf:output"
+    - "output"
     external_access: false
 - vendor: "eu.sonata-nfv"
   name: "tcpdump-vnf"
@@ -261,18 +261,18 @@ vnfdList:
         persistence: false
         size_unit: "GB"
     connection_points:
-    - id: "vdu01:cp01"
+    - id: "cp01"
       type: "public"
-    - id: "vdu01:cp02"
+    - id: "cp02"
       type: "internal"
-    - id: "vdu01:cp03"
+    - id: "cp03"
       type: "internal"
   connection_points:
-  - id: "vnf:mgmt"
+  - id: "mgmt"
     type: "public"
-  - id: "vnf:input"
+  - id: "input"
     type: "internal"
-  - id: "vnf:output"
+  - id: "output"
     type: "internal"
   virtual_links:
   - id: "mgmt"
@@ -281,7 +281,7 @@ vnfdList:
     connectivity_type: "E-LAN"
     connection_points_reference:
     - "vdu01:cp01"
-    - "vnf:mgmt"
+    - "mgmt"
     external_access: false
   - id: "input"
     access: false
@@ -289,7 +289,7 @@ vnfdList:
     connectivity_type: "E-Line"
     connection_points_reference:
     - "vdu01:cp02"
-    - "vnf:input"
+    - "input"
     external_access: false
   - id: "output"
     access: false
@@ -297,6 +297,6 @@ vnfdList:
     connectivity_type: "E-Line"
     connection_points_reference:
     - "vdu01:cp03"
-    - "vnf:output"
+    - "output"
     external_access: false
 
