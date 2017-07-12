@@ -37,6 +37,7 @@ import json
 import argparse
 import parser
 import logging 
+import glob
 
 ### Logging Config ### 
 logger = logging.getLogger(__name__)
@@ -269,11 +270,14 @@ while True:
         logger.info(" DELETING --> "+jsonData0)
         #os.system("rm "+jsonData0)
         try:
-          f = open(jsonData0, 'r')
-          for line in f:
-            print line
-            logger.info(line)
-            os.system(line)
+         for fi in glob.glob(jsonData0+"*"):
+            logger.info("Deleting --> "+fi)
+            f = open(fi, 'r')
+            for line in f:
+              print line
+              logger.info(line)
+              os.system(line)
+            logger.info("SFC Chain rules deleted")
           conn.send("SUCCESS")
           conn.close()
           logger.info("Proccess Completed. Returning to Start")
