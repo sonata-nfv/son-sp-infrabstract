@@ -39,6 +39,7 @@ import org.junit.Test;
 import sonata.kernel.vimadaptor.AdaptorCore;
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
+import sonata.kernel.vimadaptor.commons.NetworkAttachmentPoints;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
@@ -64,6 +65,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -341,8 +343,8 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
-  public void testDeployServiceIncremental() throws Exception {
+  @Test
+  public void testDeployServiceV2() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -534,11 +536,19 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
 
+    NetworkAttachmentPoints nap = new NetworkAttachmentPoints();
+    String[] ingresses = {"10.100.32.40","10.100.0.40"};
+    String[] egresses = {"10.100.0.40","10.100.32.40"};
+    nap.setEgresses(new ArrayList<String>(Arrays.asList(egresses)));
+    nap.setIngresses(new ArrayList<String>(Arrays.asList(ingresses)));
+
+    
     NetworkConfigurePayload netPayload = new NetworkConfigurePayload();
     netPayload.setNsd(nsdPayload.getNsd());
     netPayload.setVnfds(nsdPayload.getVnfdList());
     netPayload.setVnfrs(records);
     netPayload.setServiceInstanceId(nsdPayload.getNsd().getInstanceUuid());
+    netPayload.setNap(nap);
 
 
     body = mapper.writeValueAsString(netPayload);
