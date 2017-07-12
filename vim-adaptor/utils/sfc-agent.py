@@ -99,20 +99,23 @@ if args.breth:
     breth0port = args.breth 
 
 # Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
 server_address = (server, 55555)
 print >>sys.stderr, 'starting up on %s port %s' % server_address
 logger.info('starting up on %s port %s' % server_address)
 sock.bind(server_address)
+sock.listen(5)
 
 while True:
     print ""
     print "Waiting for data ..."
     logger.info(" --- Waiting for data ---")
-    data, address = sock.recvfrom(4096)
-    #print >>sys.stderr, data
+    conn, address = sock.accept()
+    logger.info("connection established with "+str(address))
+    data = conn.recv(4096)
+    print >>sys.stderr, data
     print "received from: "
     print address
     print ""
