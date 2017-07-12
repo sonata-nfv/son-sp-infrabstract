@@ -237,9 +237,10 @@ public class OvsWrapper extends NetworkWrapper {
     // segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
 
     Collections.sort(odlList);
+    int ruleNumber= 0;
     for (String inSeg : data.getNap().getIngresses()) {
       for (String outSeg : data.getNap().getEgresses()) {
-        OvsPayload odlPayload = new OvsPayload("add", serviceInstanceId, inSeg, outSeg, odlList);
+        OvsPayload odlPayload = new OvsPayload("add", serviceInstanceId+"."+ruleNumber, inSeg, outSeg, odlList);
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());
         mapper.setSerializationInclusion(Include.NON_NULL);
         // Logger.info(compositionString);
@@ -250,16 +251,15 @@ public class OvsWrapper extends NetworkWrapper {
         InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
         int sfcAgentPort = 55555;
         Socket clientSocket = new Socket(IPAddress, sfcAgentPort);
+        clientSocket.setSoTimeout(10000);        
         byte[] sendData = new byte[1024];
-        byte[] receiveData = new byte[1024];
         sendData = payload.getBytes(Charset.forName("UTF-8"));
         PrintStream out = new PrintStream(clientSocket.getOutputStream());
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         
         out.write(sendData);
         out.flush();
-        out.close();
-        clientSocket.setSoTimeout(10000);
+        
         String response; 
         try {
           response = in.readLine();
@@ -270,10 +270,12 @@ public class OvsWrapper extends NetworkWrapper {
         }
         if (response==null){
           in.close();
+          out.close();
           clientSocket.close();          
           throw new Exception("null response received from OVS VIM ");
         }
-        
+        in.close();
+        out.close();
         clientSocket.close();
        
         Logger.info("SFC Agent response:\n" + response);
@@ -284,6 +286,7 @@ public class OvsWrapper extends NetworkWrapper {
           throw new Exception(
               "Unexpected response from OVS SFC agent while trying to add a configuration.");
         }
+        ruleNumber++;
       }
     }
     long stop = System.currentTimeMillis();
@@ -307,16 +310,14 @@ public class OvsWrapper extends NetworkWrapper {
 
     InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
     Socket clientSocket = new Socket(IPAddress, sfcAgentPort);
+    clientSocket.setSoTimeout(10000);
     byte[] sendData = new byte[1024];
-    byte[] receiveData = new byte[1024];
     sendData = payload.getBytes(Charset.forName("UTF-8"));
     PrintStream out = new PrintStream(clientSocket.getOutputStream());
     BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
     
     out.write(sendData);
     out.flush();
-    out.close();
-    clientSocket.setSoTimeout(10000);
     String response; 
     try {
       response = in.readLine();
@@ -327,10 +328,13 @@ public class OvsWrapper extends NetworkWrapper {
     }
     if (response==null){
       in.close();
+      out.close();
       clientSocket.close();          
       throw new Exception("null response received from OVS VIM ");
     }
     
+    in.close();
+    out.close();
     clientSocket.close();
    
     Logger.info("SFC Agent response:\n" + response);
