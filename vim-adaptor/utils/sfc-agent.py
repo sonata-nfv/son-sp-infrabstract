@@ -130,7 +130,8 @@ while True:
         message="There is some error with json file"
         logger.error(message)
         print message 
-        sock.sendto(message, address)
+        conn.send(message)
+        conn.close()
         continue
 
     if (jsonMANA=="add"):
@@ -141,7 +142,8 @@ while True:
             message="There is some error with json file"
             print message
             logger.error(message)
-            sock.sendto(message, address)
+            conn.send(message)
+            conn.close()
             continue
 
         logger.info("Json message succesfully accepted: "+data)
@@ -266,14 +268,20 @@ while True:
         logger.info("Message to delete recieved")
         logger.info(" DELETING --> "+jsonData0)
         #os.system("rm "+jsonData0)
-        f = open(jsonData0, 'r')
-        for line in f:
+        try:
+          f = open(jsonData0, 'r')
+          for line in f:
             print line
             logger.info(line)
             os.system(line)
-        conn.send("SUCCESS")
-        conn.close()
-        logger.info("Proccess Completed. Returning to Start")
+          conn.send("SUCCESS")
+          conn.close()
+          logger.info("Proccess Completed. Returning to Start")
+        except IOError:
+          logger.error("No such name file")
+          conn.send("No instance-ID SFC rules with this name")
+          conn.close()
+          logger.info("Returning to Start")
     # not add or delete 
     else:
         message = "This function is not supported. Please check your json file"
