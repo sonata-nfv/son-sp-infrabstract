@@ -85,16 +85,18 @@ if args.provider:
 
 
 # Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 server_address = (server, 55555)
 logger.info('starting up on %s port %s' % server_address)
 sock.bind(server_address)
+sock.listen(5)
 
 while True: 
     logger.info(" --- Waiting for data ---")
-    data, address = sock.recvfrom(4096)
-    logger.info("Recieved data from:" + str(address))
+    conn, address = sock.accept()
+    logger.info("connection established with "+str(address))
+    data = conn.recv(4096)
     jsonResponse=json.loads(data)
     returnflag = "SUCCESS"    
     try: 
@@ -103,7 +105,8 @@ while True:
     except KeyError:
         message="There is some error with json file"
         logger.error(message)
-        sock.sendto(message, address)
+        conn.send(message)
+        conn.close()
         continue
     if (jsonMANA=="add"):
         try:
@@ -113,7 +116,8 @@ while True:
             message="There is some error with json file"
             print message
             logger.error(message)
-            sock.sendto(message, address)
+            conn.send(message)
+            conn.close()
             continue
 
         logger.info("Json message succesfully ACCEPTED : "+data)
