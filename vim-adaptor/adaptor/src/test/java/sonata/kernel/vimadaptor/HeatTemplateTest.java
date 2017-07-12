@@ -85,7 +85,7 @@ public class HeatTemplateTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -94,7 +94,7 @@ public class HeatTemplateTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");

@@ -51,7 +51,7 @@ public class IpNetPoolTest {
    */
   @Before
   public void setUp() {
-    VimNetTable.getInstance().registerVim("1111-1111");
+    VimNetTable.getInstance().registerVim("1111-1111",null);
     pool = VimNetTable.getInstance().getNetPool("1111-1111");
   }
 

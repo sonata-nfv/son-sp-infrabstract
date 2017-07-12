@@ -55,9 +55,9 @@ public class VimNetTable {
     this.vimTable = new Hashtable<String, IpNetPool>();
   }
 
-  public void registerVim(String vimUuid) {
+  public void registerVim(String vimUuid, String cidr) {
     if (this.vimTable.containsKey(vimUuid)) return;
-    IpNetPool pool = new IpNetPool("10.0.0.0/8");
+    IpNetPool pool = new IpNetPool(cidr);
     this.vimTable.put(vimUuid, pool);
   }
 

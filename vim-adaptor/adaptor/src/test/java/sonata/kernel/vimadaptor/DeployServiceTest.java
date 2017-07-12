@@ -105,7 +105,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -113,7 +113,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -384,6 +384,7 @@ public class DeployServiceTest implements MessageReceiver {
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"name\":\"Athens1\"," + "\"configuration\":{"
+        + "\"tenant_private_cidr\":\"10.128.0.0/9\","
         + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
@@ -455,10 +456,10 @@ public class DeployServiceTest implements MessageReceiver {
     VimPreDeploymentList vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
-    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vBar-vnf_0.1_vdu01",
+    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vbar-vnf_0.1_vdu01",
         "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vtcImgade);
-    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vFoo-vnf_0.1_1",
+    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vfoo-vnf_0.1_1",
         "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
