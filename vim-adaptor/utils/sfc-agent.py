@@ -255,8 +255,9 @@ while True:
         # Reply Success or Error 
         print returnflag
         logger.info("Sending return flag: " +returnflag)
-        sock.sendto(returnflag, address)
-        fo.close()       
+        conn.send(returnflag)
+        fo.close()  
+        conn.close()
         logger.info("Proccess Completed. Returning to Start")
 
     #if request is to delete, then:      
@@ -270,7 +271,8 @@ while True:
             print line
             logger.info(line)
             os.system(line)
-        sock.sendto("SUCCESS", address)
+        conn.send("SUCCESS")
+        conn.close()
         logger.info("Proccess Completed. Returning to Start")
     # not add or delete 
     else:
@@ -278,5 +280,6 @@ while True:
         logger.info("Recieved not supported function. Sending message")
         logger.info(message)
         print message
-        sock.sendto(message, address)
+        conn.send(message)
+        conn.close()
         logger.info("Proccess Completed. Returning to Start")
