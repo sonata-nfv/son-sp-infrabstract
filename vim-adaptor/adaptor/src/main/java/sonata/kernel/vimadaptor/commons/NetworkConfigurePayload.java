@@ -43,6 +43,8 @@ public class NetworkConfigurePayload {
   private ArrayList<VnfDescriptor> vnfds;
   @JsonProperty("vnfrs")
   private ArrayList<VnfRecord> vnfrs;
+  private NetworkAttachmentPoints nap;
+  
 
   public String getServiceInstanceId() {
     return serviceInstanceId;
@@ -74,6 +76,14 @@ public class NetworkConfigurePayload {
 
   public void setVnfrs(ArrayList<VnfRecord> vnfrs) {
     this.vnfrs = vnfrs;
+  }
+
+  public NetworkAttachmentPoints getNap() {
+    return nap;
+  }
+
+  public void setNap(NetworkAttachmentPoints nap) {
+    this.nap = nap;
   }
 
 }

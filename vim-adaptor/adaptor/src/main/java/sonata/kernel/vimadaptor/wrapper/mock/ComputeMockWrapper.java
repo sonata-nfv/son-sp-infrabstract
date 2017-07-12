@@ -54,7 +54,7 @@ import java.io.IOException;
 import java.util.Random;
 
 
-public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
+public class ComputeMockWrapper extends ComputeWrapper {
 
   /*
    * Utility fields to implement the mock response creation. A real wrapper should instantiate a
@@ -66,7 +66,6 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
   private Random r;
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComputeMockWrapper.class);
-  private static final long THREAD_SLEEP = 1000;
 
   public ComputeMockWrapper(WrapperConfiguration config) {
     super(config);
@@ -78,6 +77,7 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
     return "MockWrapper";
   }
 
+  @Deprecated
   @Override
   public boolean deployService(ServiceDeployPayload data, String callSid) {
     this.data = data;
@@ -90,72 +90,17 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
      * if the request is acceptable, and if so start a new thread to deal with the perform the
      * needed actions.
      */
-    Thread thread = new Thread(this);
-    thread.start();
-    return true;
-  }
-
-  @Override
-  public void run() {
-
-    Logger.info("Deploying Service...");
-    try {
-      Thread.sleep(THREAD_SLEEP);
-    } catch (InterruptedException e) {
-      Logger.error(e.getMessage(), e);
-    }
-    Logger.info("Service DEPLOYED. Creating response");
-    ServiceDeployResponse response = new ServiceDeployResponse();
-    response.setRequestStatus("DEPLOYED");;
-    ServiceRecord sr = new ServiceRecord();
-    sr.setStatus(Status.normal_operation);
-    sr.setId(data.getNsd().getInstanceUuid());
-    sr.setDescriptorReference(data.getNsd().getUuid());
-    for (VnfDescriptor vnf : data.getVnfdList()) {
-      VnfRecord vnfr = new VnfRecord();
-      vnfr.setDescriptorVersion("vnfr-schema-01");
-      vnfr.setStatus(Status.normal_operation);
-      vnfr.setDescriptorReference(vnf.getUuid());
-      // vnfr.setDescriptorReferenceName(vnf.getName());
-      // vnfr.setDescriptorReferenceVendor(vnf.getVendor());
-      // vnfr.setDescriptorReferenceVersion(vnf.getVersion());
-
-      vnfr.setId(vnf.getInstanceUuid());
-      for (VirtualDeploymentUnit vdu : vnf.getVirtualDeploymentUnits()) {
-        VduRecord vdur = new VduRecord();
-        vdur.setId(vdu.getId());
-        vdur.setNumberOfInstances(1);
-        vdur.setVduReference(vnf.getName() + ":" + vdu.getId());
-        vdur.setVmImage(vdu.getVmImage());
-        vnfr.addVdu(vdur);
-      }
-      response.addVnfRecord(vnfr);
-    }
-    response.setNsr(sr);
-
-    Logger.info("Response created. Serializing...");
-
-    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
-    String body;
-    try {
-      body = mapper.writeValueAsString(response);
-      this.setChanged();
-      Logger.info("Serialized. notifying call processor");
-      WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
-      this.notifyObservers(update);
-    } catch (JsonProcessingException e) {
-      Logger.error(e.getMessage(), e);
-    }
+    return false;
   }
 
   @Override
   public boolean removeService(String instanceUuid, String callSid) {
     boolean out = true;
-
+    
+    double avgTime=1309;
+    double stdTime=343;
+    waitGaussianTime(avgTime, stdTime);
+    
     this.setChanged();
     String body = "{\"status\":\"SUCCESS\"}";
     WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
@@ -167,15 +112,9 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
   @Override
   public ResourceUtilisation getResourceUtilisation() {
 
-    double avgTime = 1933.8804347826;
-    double stdTime = 1705.7419631608;
-    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
-
-    try {
-      Thread.sleep((long) waitTime);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    double avgTime = 1769.39;
+    double stdTime =  1096.48;
+    waitGaussianTime(avgTime, stdTime);
 
     ResourceUtilisation resources = new ResourceUtilisation();
     resources.setTotCores(10);
@@ -186,15 +125,7 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
     return resources;
   }
 
-  /*
-   * (non-Javadoc)
-   * 
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
-   */
-  @Override
-  public boolean prepareService(String instanceId) {
-    double avgTime = 15361.9655172414;
-    double stdTime = 28969.9330556487;
+  private void waitGaussianTime(double avgTime, double stdTime) {
     double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
 
     try {
@@ -202,6 +133,18 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
+   */
+  @Override
+  public boolean prepareService(String instanceId) {
+    double avgTime = 10576.52;
+    double stdTime = 1683.12;
+    waitGaussianTime(avgTime, stdTime);
     return true;
   }
 
@@ -214,15 +157,9 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    */
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
-    double avgTime = 55478.0363636364;
-    double stdTime = 23335.6200514115;
-    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
-
-    try {
-      Thread.sleep((long) waitTime);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    double avgTime = 51987.21;
+    double stdTime = 14907.12;
+    waitGaussianTime(avgTime, stdTime);
 
     VnfDescriptor vnf = data.getVnfd();
     VnfRecord vnfr = new VnfRecord();
@@ -276,15 +213,9 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    */
   @Override
   public boolean isImageStored(VnfImage image, String callSid) {
-    double avgTime = 1300.2574257426;
-    double stdTime = 1050.6156067132;
-    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
-
-    try {
-      Thread.sleep((long) waitTime);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
+    double avgTime = 1357.34;
+    double stdTime = 683.96;
+    waitGaussianTime(avgTime, stdTime);
     return true;
   }
 
@@ -310,6 +241,12 @@ public class ComputeMockWrapper extends ComputeWrapper implements Runnable {
    */
   @Override
   public void uploadImage(VnfImage image) throws IOException {
+    
+    double avgTime=7538.75;
+    double stdTime=1342.06;
+    
+    waitGaussianTime(avgTime, stdTime);
+    
     this.setChanged();
     String body = "{\"status\":\"SUCCESS\"}";
     WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
