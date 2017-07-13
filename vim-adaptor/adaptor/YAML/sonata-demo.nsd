@@ -21,13 +21,13 @@ description: >
 ## is composed of.
 ##
 network_functions:
-  - vnf_id: "vnf_vBar"
+  - vnf_id: "vnf_vbar"
     vnf_vendor: "eu.sonata-nfv"
-    vnf_name: "vBar-vnf"
+    vnf_name: "vbar-vnf"
     vnf_version: "0.1"
-  - vnf_id: "vnf_vFoo"
+  - vnf_id: "vnf_vfoo"
     vnf_vendor: "eu.sonata-nfv"
-    vnf_name: "vFoo-vnf"
+    vnf_name: "vfoo-vnf"
     vnf_version: "0.1"
 ##
 ## The NS connection points to the
@@ -49,23 +49,23 @@ virtual_links:
   - id: "mgmt"
     connectivity_type: "E-LAN"
     connection_points_reference:
-      - "vnf_vBar:mgmt"
-      - "vnf_vFoo:mgmt"
+      - "vnf_vbar:mgmt"
+      - "vnf_vfoo:mgmt"
       - "mgmt"
   - id: "input-2-fw"
     connectivity_type: "E-Line"
     connection_points_reference:
       - "input"
-      - "vnf_vFoo:input"
+      - "vnf_vfoo:input"
   - id: "fw-2-vtc"
     connectivity_type: "E-Line"
     connection_points_reference:
-      - "vnf_vFoo:output"
-      - "vnf_vBar:input"
+      - "vnf_vfoo:output"
+      - "vnf_vbar:input"
   - id: "vtc-2-output"
     connectivity_type: "E-Line"
     connection_points_reference:
-      - "vnf_vBar:output"
+      - "vnf_vbar:output"
       - "output"
 ##
 ## The forwarding graphs.
@@ -75,20 +75,21 @@ forwarding_graphs:
     number_of_endpoints: 2
     number_of_virtual_links: 3
     constituent_vnfs:
-      - "vnf_vBar"
+      - "vnf_vbar"
+      - "vnf_vfoo"
     network_forwarding_paths:
       - fp_id: "fg01:fp01"
         policy: "none"
         connection_points:
           - connection_point_ref: "input"
             position: 1
-          - connection_point_ref: "vnf_vFoo:input"
+          - connection_point_ref: "vnf_vfoo:input"
             position: 2
-          - connection_point_ref: "vnf_vFoo:output"
+          - connection_point_ref: "vnf_vfoo:output"
             position: 3
-          - connection_point_ref: "vnf_vBar:input"
+          - connection_point_ref: "vnf_vbar:input"
             position: 4
-          - connection_point_ref: "vnf_vBar:output"
+          - connection_point_ref: "vnf_vbar:output"
             position: 5
           - connection_point_ref: "output"
             position: 6

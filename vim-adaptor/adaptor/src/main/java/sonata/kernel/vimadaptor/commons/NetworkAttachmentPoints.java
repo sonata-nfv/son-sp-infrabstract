@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL.
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -23,49 +23,30 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
-
 package sonata.kernel.vimadaptor.commons;
 
-import java.util.Hashtable;
+import java.util.ArrayList;
 
-public class VimNetTable {
+public class NetworkAttachmentPoints {
 
+  private ArrayList<NapPair> ingresses;
+  private ArrayList<NapPair> egresses;
 
-  private Hashtable<String, IpNetPool> vimTable;
-
-  private static VimNetTable myInstance = null;
-
-  /**
-   * get Singleton instance method.
-   * 
-   * @return the singleton instance of IpNetPool
-   */
-  public static VimNetTable getInstance() {
-    if (myInstance == null) {
-      myInstance = new VimNetTable();
-    }
-    return myInstance;
+  public ArrayList<NapPair> getIngresses() {
+    return ingresses;
   }
 
-  public static void resetInstance() {
-    myInstance = null;
+  public ArrayList<NapPair> getEgresses() {
+    return egresses;
   }
 
-  private VimNetTable() {
-    this.vimTable = new Hashtable<String, IpNetPool>();
+  public void setIngresses(ArrayList<NapPair> ingresses) {
+    this.ingresses = ingresses;
   }
 
-  public void registerVim(String vimUuid, String cidr) {
-    if (this.vimTable.containsKey(vimUuid)) return;
-    IpNetPool pool = new IpNetPool(cidr);
-    this.vimTable.put(vimUuid, pool);
+  public void setEgresses(ArrayList<NapPair> egresses) {
+    this.egresses = egresses;
   }
 
-  public IpNetPool getNetPool(String vimUuid) {
-    return vimTable.get(vimUuid);
-  }
 
-  public void deregisterVim(String vimUuid) {
-    this.vimTable.remove(vimUuid);
-  }
 }

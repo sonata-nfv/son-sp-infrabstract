@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL.
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -23,49 +23,36 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
+package sonata.kernel.vimadaptor.wrapper.sp;
 
-package sonata.kernel.vimadaptor.commons;
+import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
+import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;
+import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 
-import java.util.Hashtable;
-
-public class VimNetTable {
-
-
-  private Hashtable<String, IpNetPool> vimTable;
-
-  private static VimNetTable myInstance = null;
+public class NetworkSPWrapper extends NetworkWrapper {
 
   /**
-   * get Singleton instance method.
-   * 
-   * @return the singleton instance of IpNetPool
+   * @param config
    */
-  public static VimNetTable getInstance() {
-    if (myInstance == null) {
-      myInstance = new VimNetTable();
-    }
-    return myInstance;
+  public NetworkSPWrapper(WrapperConfiguration config) {
+    super(config);
+    // TODO Auto-generated constructor stub
   }
 
-  public static void resetInstance() {
-    myInstance = null;
+  /* (non-Javadoc)
+   * @see sonata.kernel.vimadaptor.wrapper.NetworkWrapper#configureNetworking(sonata.kernel.vimadaptor.commons.NetworkConfigurePayload)
+   */
+  @Override
+  public void configureNetworking(NetworkConfigurePayload data) throws Exception {
+    // This Wrapper ignores this call
   }
 
-  private VimNetTable() {
-    this.vimTable = new Hashtable<String, IpNetPool>();
+  /* (non-Javadoc)
+   * @see sonata.kernel.vimadaptor.wrapper.NetworkWrapper#deconfigureNetworking(java.lang.String)
+   */
+  @Override
+  public void deconfigureNetworking(String instanceId) throws Exception {
+    // This Wrapper ignores this call
   }
 
-  public void registerVim(String vimUuid, String cidr) {
-    if (this.vimTable.containsKey(vimUuid)) return;
-    IpNetPool pool = new IpNetPool(cidr);
-    this.vimTable.put(vimUuid, pool);
-  }
-
-  public IpNetPool getNetPool(String vimUuid) {
-    return vimTable.get(vimUuid);
-  }
-
-  public void deregisterVim(String vimUuid) {
-    this.vimTable.remove(vimUuid);
-  }
 }

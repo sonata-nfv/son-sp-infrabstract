@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL.
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -23,49 +23,37 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
-
 package sonata.kernel.vimadaptor.commons;
 
-import java.util.Hashtable;
+public class NapPair {
 
-public class VimNetTable {
-
-
-  private Hashtable<String, IpNetPool> vimTable;
-
-  private static VimNetTable myInstance = null;
-
+  private String location;
+  private String nap;
+  
+  
+  public NapPair(){}
+  
   /**
-   * get Singleton instance method.
-   * 
-   * @return the singleton instance of IpNetPool
+   * @param string
+   * @param object
    */
-  public static VimNetTable getInstance() {
-    if (myInstance == null) {
-      myInstance = new VimNetTable();
-    }
-    return myInstance;
+  public NapPair(String location, String nap) {
+    this.location = location;
+    this.nap = nap;
   }
-
-  public static void resetInstance() {
-    myInstance = null;
+  public String getLocation() {
+    return location;
   }
-
-  private VimNetTable() {
-    this.vimTable = new Hashtable<String, IpNetPool>();
+  public String getNap() {
+    return nap;
   }
-
-  public void registerVim(String vimUuid, String cidr) {
-    if (this.vimTable.containsKey(vimUuid)) return;
-    IpNetPool pool = new IpNetPool(cidr);
-    this.vimTable.put(vimUuid, pool);
+  public void setLocation(String location) {
+    this.location = location;
   }
-
-  public IpNetPool getNetPool(String vimUuid) {
-    return vimTable.get(vimUuid);
+  public void setNap(String nap) {
+    this.nap = nap;
   }
-
-  public void deregisterVim(String vimUuid) {
-    this.vimTable.remove(vimUuid);
-  }
+  
+  
+  
 }

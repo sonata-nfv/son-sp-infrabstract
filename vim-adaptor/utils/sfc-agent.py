@@ -37,6 +37,7 @@ import json
 import argparse
 import parser
 import logging 
+import glob
 
 ### Logging Config ### 
 logger = logging.getLogger(__name__)
@@ -99,20 +100,23 @@ if args.breth:
     breth0port = args.breth 
 
 # Create a TCP/IP socket
-sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 # Bind the socket to the port
 server_address = (server, 55555)
 print >>sys.stderr, 'starting up on %s port %s' % server_address
 logger.info('starting up on %s port %s' % server_address)
 sock.bind(server_address)
+sock.listen(5)
 
 while True:
     print ""
     print "Waiting for data ..."
     logger.info(" --- Waiting for data ---")
-    data, address = sock.recvfrom(4096)
-    #print >>sys.stderr, data
+    conn, address = sock.accept()
+    logger.info("connection established with "+str(address))
+    data = conn.recv(4096)
+    print >>sys.stderr, data
     print "received from: "
     print address
     print ""
@@ -127,7 +131,8 @@ while True:
         message="There is some error with json file"
         logger.error(message)
         print message 
-        sock.sendto(message, address)
+        conn.send(message)
+        conn.close()
         continue
 
     if (jsonMANA=="add"):
@@ -138,7 +143,8 @@ while True:
             message="There is some error with json file"
             print message
             logger.error(message)
-            sock.sendto(message, address)
+            conn.send(message)
+            conn.close()
             continue
 
         logger.info("Json message succesfully accepted: "+data)
@@ -252,8 +258,9 @@ while True:
         # Reply Success or Error 
         print returnflag
         logger.info("Sending return flag: " +returnflag)
-        sock.sendto(returnflag, address)
-        fo.close()       
+        conn.send(returnflag)
+        fo.close()  
+        conn.close()
         logger.info("Proccess Completed. Returning to Start")
 
     #if request is to delete, then:      
@@ -262,18 +269,29 @@ while True:
         logger.info("Message to delete recieved")
         logger.info(" DELETING --> "+jsonData0)
         #os.system("rm "+jsonData0)
-        f = open(jsonData0, 'r')
-        for line in f:
-            print line
-            logger.info(line)
-            os.system(line)
-        sock.sendto("SUCCESS", address)
-        logger.info("Proccess Completed. Returning to Start")
+        try:
+         for fi in glob.glob(jsonData0+"*"):
+            logger.info("Deleting --> "+fi)
+            f = open(fi, 'r')
+            for line in f:
+              print line
+              logger.info(line)
+              os.system(line)
+            logger.info("SFC Chain rules deleted")
+          conn.send("SUCCESS")
+          conn.close()
+          logger.info("Proccess Completed. Returning to Start")
+        except IOError:
+          logger.error("No such name file")
+          conn.send("No instance-ID SFC rules with this name")
+          conn.close()
+          logger.info("Returning to Start")
     # not add or delete 
     else:
         message = "This function is not supported. Please check your json file"
         logger.info("Recieved not supported function. Sending message")
         logger.info(message)
         print message
-        sock.sendto(message, address)
+        conn.send(message)
+        conn.close()
         logger.info("Proccess Completed. Returning to Start")

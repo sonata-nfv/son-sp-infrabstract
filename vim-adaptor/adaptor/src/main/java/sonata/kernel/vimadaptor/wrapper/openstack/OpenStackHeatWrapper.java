@@ -97,7 +97,14 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    */
   public OpenStackHeatWrapper(WrapperConfiguration config) {
     super(config);
-    VimNetTable.getInstance().registerVim(this.getConfig().getUuid());
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String tenantCidr = null;
+    if (object.has("tenant_private_cidr")) {
+      tenantCidr = object.getString("tenant_private_cidr");
+    }
+    VimNetTable.getInstance().registerVim(this.getConfig().getUuid(),tenantCidr);
     this.myPool = VimNetTable.getInstance().getNetPool(this.getConfig().getUuid());
   }
 

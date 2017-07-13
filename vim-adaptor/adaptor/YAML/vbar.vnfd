@@ -1,6 +1,6 @@
 descriptor_version: "vnfd-schema-01"
 vendor: "eu.sonata-nfv"
-name: "vBar-vnf"
+name: "vbar-vnf"
 version: "0.1"
 author: "George Xilouris, NCSRD"
 description: >

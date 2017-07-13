@@ -38,6 +38,7 @@ public class IpNetPool {
           0xFFFC0000, 0xFFFE0000, 0xFFFF0000, 0xFFFF8000, 0xFFFFC000, 0xFFFFE000, 0xFFFFF000,
           0xFFFFF800, 0xFFFFFC00, 0xFFFFFE00, 0xFFFFFF00, 0xFFFFFF80, 0xFFFFFFC0, 0xFFFFFFE0,
           0xFFFFFFF0, 0xFFFFFFF8, 0xFFFFFFFC, 0xFFFFFFFE, 0xFFFFFFFF};
+  private static final String DEFAULT_CIDR = "10.0.0.0/8";
 
   private Hashtable<String, String> reservedSubnets;
   private Hashtable<String, ArrayList<String>> reservationTable;
@@ -50,7 +51,8 @@ public class IpNetPool {
    * @param cidr the base tenant subnet to manage in CIDR format
    */
   IpNetPool(String cidr) {
-
+    if (cidr==null)
+      cidr=IpNetPool.DEFAULT_CIDR;
     reservedSubnets = new Hashtable<String, String>();
     freeSubnets = new ArrayList<String>();
     reservationTable = new Hashtable<String, ArrayList<String>>();

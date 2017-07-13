@@ -75,7 +75,7 @@ public class ServiceDescriptorTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -84,7 +84,7 @@ public class ServiceDescriptorTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -162,12 +162,12 @@ public class ServiceDescriptorTest {
    * @throws IOException
    */
   @Test
-  public void testParseFirewallVNFDescriptor() throws IOException {
+  public void testParseVFooVNFDescriptor() throws IOException {
 
     VnfDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -193,12 +193,12 @@ public class ServiceDescriptorTest {
    * @throws IOException
    */
   @Test
-  public void testParseVtcVNFDescriptor() throws IOException {
+  public void testParseVBarVNFDescriptor() throws IOException {
 
     VnfDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");

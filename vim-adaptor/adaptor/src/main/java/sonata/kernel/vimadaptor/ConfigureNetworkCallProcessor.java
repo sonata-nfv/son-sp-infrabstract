@@ -224,6 +224,7 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           wrapperPayload.setVnfds(descriptorsSublist);
           wrapperPayload.setVnfrs(recordsSublist);
           wrapperPayload.setServiceInstanceId(serviceInstaceId);
+          wrapperPayload.setNap(data.getNap());
 
           // try {
           // Logger.debug("Partial configuration for PoP "+netVimUuid+":");

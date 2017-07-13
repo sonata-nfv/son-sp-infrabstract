@@ -32,6 +32,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
+import sonata.kernel.vimadaptor.commons.NapPair;
+import sonata.kernel.vimadaptor.commons.NetworkAttachmentPoints;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.VduRecord;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
@@ -47,11 +49,15 @@ import sonata.kernel.vimadaptor.commons.vnfd.VnfVirtualLink;
 import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
+import java.net.Socket;
 import java.net.SocketTimeoutException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -79,6 +85,8 @@ public class OvsWrapper extends NetworkWrapper {
   public void configureNetworking(NetworkConfigurePayload data) throws Exception {
     if (data.getNsd().getForwardingGraphs().size() <= 0)
       throw new Exception("No Forwarding Graph specified in the descriptor");
+
+    long start = System.currentTimeMillis();
 
     // TODO the NSD specifies more than one graph, and the selected one is given in the flavor
     // section.
@@ -226,54 +234,85 @@ public class OvsWrapper extends NetworkWrapper {
         }
       }
     }
-    Properties segments = new Properties();
-    segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
 
+    if (data.getNap() == null) {
+      Logger.warn("NAP not specified, using default ones from default config file");
+      Properties segments = new Properties();
+      segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
+      NetworkAttachmentPoints nap = new NetworkAttachmentPoints();
+      ArrayList<NapPair> ingresses = new ArrayList<NapPair>();
+      ArrayList<NapPair> egresses = new ArrayList<NapPair>();
+      ingresses.add(new NapPair("Athens",segments.getProperty("in")));
+      egresses.add(new NapPair("Athens",segments.getProperty("out")));
+      nap.setEgresses(egresses);
+      nap.setIngresses(ingresses);
+      data.setNap(nap);
+    }
     Collections.sort(odlList);
-    OvsPayload odlPayload = new OvsPayload("add", serviceInstanceId, segments.getProperty("in"),
-        segments.getProperty("out"), odlList);
-    ObjectMapper mapper = new ObjectMapper(new JsonFactory());
-    mapper.setSerializationInclusion(Include.NON_NULL);
-    // Logger.info(compositionString);
-    String payload = mapper.writeValueAsString(odlPayload);
-    Logger.debug(this.getConfig().getUuid() + " - " + this.getConfig().getVimEndpoint());
-    Logger.debug(payload);
+    int ruleNumber = 0;
+    for (NapPair inNap : data.getNap().getIngresses()) {
+      for (NapPair outNap : data.getNap().getEgresses()) {
+        OvsPayload odlPayload = new OvsPayload("add", serviceInstanceId + "." + ruleNumber,
+            inNap.getNap(), outNap.getNap(), odlList);
+        ObjectMapper mapper = new ObjectMapper(new JsonFactory());
+        mapper.setSerializationInclusion(Include.NON_NULL);
+        // Logger.info(compositionString);
+        String payload = mapper.writeValueAsString(odlPayload);
+        Logger.debug(this.getConfig().getUuid() + " - " + this.getConfig().getVimEndpoint());
+        Logger.debug(payload);
 
-    int sfcAgentPort = 55555;
-    DatagramSocket clientSocket = new DatagramSocket(sfcAgentPort);
-    InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
-    byte[] sendData = new byte[1024];
-    byte[] receiveData = new byte[1024];
-    sendData = payload.getBytes(Charset.forName("UTF-8"));
-    DatagramPacket sendPacket =
-        new DatagramPacket(sendData, sendData.length, IPAddress, sfcAgentPort);
-    clientSocket.send(sendPacket);
-    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-    clientSocket.setSoTimeout(10000);
-    try {
-      clientSocket.receive(receivePacket);
-    } catch (SocketTimeoutException e) {
-      clientSocket.close();
-      Logger.error("Timeout exception from the OVS SFC agent");
-      throw new Exception("Request to OVS VIM agent timed out.");
+        InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
+        int sfcAgentPort = 55555;
+        Socket clientSocket = new Socket(IPAddress, sfcAgentPort);
+        clientSocket.setSoTimeout(10000);
+        byte[] sendData = new byte[1024];
+        sendData = payload.getBytes(Charset.forName("UTF-8"));
+        PrintStream out = new PrintStream(clientSocket.getOutputStream());
+        BufferedReader in =
+            new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        out.write(sendData);
+        out.flush();
+
+        String response;
+        try {
+          response = in.readLine();
+        } catch (SocketTimeoutException e) {
+          clientSocket.close();
+          Logger.error("Timeout exception from the OVS SFC agent");
+          throw new Exception("Request to OVS VIM agent timed out.");
+        }
+        if (response == null) {
+          in.close();
+          out.close();
+          clientSocket.close();
+          throw new Exception("null response received from OVS VIM ");
+        }
+        in.close();
+        out.close();
+        clientSocket.close();
+
+        Logger.info("SFC Agent response:\n" + response);
+        if (!response.equals("SUCCESS")) {
+          Logger.error("Unexpected response.");
+          Logger.error("received string length: " + response.length());
+          Logger.error("received string: " + response);
+          throw new Exception(
+              "Unexpected response from OVS SFC agent while trying to add a configuration.");
+        }
+        ruleNumber++;
+      }
     }
-    clientSocket.close();
-    String response =
-        new String(receivePacket.getData(), 0, receivePacket.getLength(), Charset.forName("UTF-8"));
-    Logger.info("SFC Agent response:\n" + response);
-    if (!response.equals("SUCCESS")) {
-      Logger.error("Unexpected response.");
-      Logger.error("received string length: " + response.length());
-      Logger.error("received string: " + response);
-      throw new Exception(
-          "Unexpected response from OVS SFC agent while trying to add a configuration.");
-    }
+    long stop = System.currentTimeMillis();
+
+    Logger.info("[OvsWrapper]networkConfigure-time: " + (stop - start) + " ms");
+
     return;
   }
 
   @Override
   public void deconfigureNetworking(String instanceId) throws Exception {
-
+    long start = System.currentTimeMillis();
     OvsPayload odlPayload = new OvsPayload("delete", instanceId, null, null, null);
     ObjectMapper mapper = new ObjectMapper(new JsonFactory());
     mapper.setSerializationInclusion(Include.NON_NULL);
@@ -284,34 +323,46 @@ public class OvsWrapper extends NetworkWrapper {
     int sfcAgentPort = 55555;
 
     InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
-    byte[] sendData = new byte[1024];
-    byte[] receiveData = new byte[1024];
-    sendData = payload.getBytes(Charset.forName("UTF-8"));
-    DatagramPacket sendPacket =
-        new DatagramPacket(sendData, sendData.length, IPAddress, sfcAgentPort);
-    DatagramSocket clientSocket = new DatagramSocket(sfcAgentPort);
-    clientSocket.send(sendPacket);
-    DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+    Socket clientSocket = new Socket(IPAddress, sfcAgentPort);
     clientSocket.setSoTimeout(10000);
+    byte[] sendData = new byte[1024];
+    sendData = payload.getBytes(Charset.forName("UTF-8"));
+    PrintStream out = new PrintStream(clientSocket.getOutputStream());
+    BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+    out.write(sendData);
+    out.flush();
+    String response;
     try {
-      clientSocket.receive(receivePacket);
+      response = in.readLine();
     } catch (SocketTimeoutException e) {
       clientSocket.close();
       Logger.error("Timeout exception from the OVS SFC agent");
       throw new Exception("Request to OVS VIM agent timed out.");
     }
-    clientSocket.close();
-    String response =
-        new String(receivePacket.getData(), 0, receivePacket.getLength(), Charset.forName("UTF-8"));
-    Logger.info("SFC Agent response:\n" + response);
-
-
-    if (!response.equals("SUCCESS")) {
-      Logger.error("received string length: " + response.length());
-      Logger.error("received string: " + response + " not equal SUCCESS");
-      throw new Exception(
-          "Unexcepted response from ODL SFC agent while trying to delete a configuration.");
+    if (response == null) {
+      in.close();
+      out.close();
+      clientSocket.close();
+      throw new Exception("null response received from OVS VIM ");
     }
+
+    in.close();
+    out.close();
+    clientSocket.close();
+
+    Logger.info("SFC Agent response:\n" + response);
+    if (!response.equals("SUCCESS")) {
+      Logger.error("Unexpected response.");
+      Logger.error("received string length: " + response.length());
+      Logger.error("received string: " + response);
+      throw new Exception(
+          "Unexpected response from OVS SFC agent while trying to add a configuration.");
+    }
+
+    long stop = System.currentTimeMillis();
+    Logger.info("[OvsWrapper]networkDeconfigure-time: " + (stop - start) + " ms");
+
     return;
   }
 }

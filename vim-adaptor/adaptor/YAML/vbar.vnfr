@@ -5,7 +5,7 @@ descriptor_reference: "6a15313f-cb0a-4540-baa2-77cc6b3f1234"
 virtual_deployment_units:
 - id: "vdu01"
   vm_image: "sonata-vtc"
-  vdu_reference: "vtc-vnf:vdu01"
+  vdu_reference: "vbar-vnf:vdu01"
   number_of_instances: 1
   vnfc_instance:
   - id: "9df6a98f-9e11-4cb7-b3c0-InAdUnitTest-01"

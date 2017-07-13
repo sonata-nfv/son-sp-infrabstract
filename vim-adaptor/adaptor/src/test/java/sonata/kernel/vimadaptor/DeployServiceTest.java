@@ -39,6 +39,8 @@ import org.junit.Test;
 import sonata.kernel.vimadaptor.AdaptorCore;
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
+import sonata.kernel.vimadaptor.commons.NapPair;
+import sonata.kernel.vimadaptor.commons.NetworkAttachmentPoints;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
@@ -64,6 +66,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -103,7 +106,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -111,7 +114,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf.vnfd")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -342,7 +345,7 @@ public class DeployServiceTest implements MessageReceiver {
    * @throws Exception
    */
   @Ignore
-  public void testDeployServiceIncremental() throws Exception {
+  public void testDeployServiceV2() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -382,6 +385,7 @@ public class DeployServiceTest implements MessageReceiver {
     // Add first PoP
     // PoP Athens.200 Mitaka
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"name\":\"Athens1\"," + "\"configuration\":{"
+        + "\"tenant_private_cidr\":\"10.128.0.0/9\","
         + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
@@ -453,10 +457,10 @@ public class DeployServiceTest implements MessageReceiver {
     VimPreDeploymentList vimDepList = new VimPreDeploymentList();
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
-    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vBar-vnf_0.1_vdu01",
+    VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vbar-vnf_0.1_vdu01",
         "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vtcImgade);
-    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vFoo-vnf_0.1_1",
+    VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vfoo-vnf_0.1_1",
         "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
@@ -534,11 +538,32 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
 
+    NetworkAttachmentPoints nap = new NetworkAttachmentPoints();
+    NapPair in1 = new NapPair();
+    NapPair in2 = new NapPair();
+    NapPair out1 = new NapPair();
+    NapPair out2 = new NapPair();
+    in1.setLocation("Athens");
+    in2.setLocation("Athens");
+    in1.setNap("10.100.32.40/32");
+    in2.setNap("10.100.0.40/32");
+    
+    out1.setLocation("Athens");
+    out2.setLocation("Athens");
+    out1.setNap("10.100.32.40/32");
+    out2.setNap("10.100.0.40/32");
+    NapPair[] ingresses = {in1,in2};
+    NapPair[] egresses = {out1,out2};
+    nap.setEgresses(new ArrayList<NapPair>(Arrays.asList(egresses)));
+    nap.setIngresses(new ArrayList<NapPair>(Arrays.asList(ingresses)));
+
+    
     NetworkConfigurePayload netPayload = new NetworkConfigurePayload();
     netPayload.setNsd(nsdPayload.getNsd());
     netPayload.setVnfds(nsdPayload.getVnfdList());
     netPayload.setVnfrs(records);
     netPayload.setServiceInstanceId(nsdPayload.getNsd().getInstanceUuid());
+    netPayload.setNap(nap);
 
 
     body = mapper.writeValueAsString(netPayload);
@@ -590,6 +615,69 @@ public class DeployServiceTest implements MessageReceiver {
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
         status.equals("COMPLETED"));
 
+ // Configure it again with default NAP
+
+    output = null;
+
+    
+    netPayload = new NetworkConfigurePayload();
+    netPayload.setNsd(nsdPayload.getNsd());
+    netPayload.setVnfds(nsdPayload.getVnfdList());
+    netPayload.setVnfrs(records);
+    netPayload.setServiceInstanceId(nsdPayload.getNsd().getInstanceUuid());
+    netPayload.setNap(null);
+
+
+    body = mapper.writeValueAsString(netPayload);
+
+    topic = "infrastructure.service.chain.configure";
+    networkConfigureMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(networkConfigureMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
+        status.equals("COMPLETED"));
+    System.out.println(
+        "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
+
+    // Clean everything again:
+    // 1. De-configure SFC
+    output = null;
+    message = "{\"service_instance_id\":\"" + nsdPayload.getNsd().getInstanceUuid() + "\"}";
+    topic = "infrastructure.service.chain.deconfigure";
+    deconfigureNetworkMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(deconfigureNetworkMessage);
+    try {
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(2000);
+          System.out.println(output);
+        }
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
+
+    
     // 2. Remove Service
     // Service removal
     output = null;
@@ -665,7 +753,7 @@ public class DeployServiceTest implements MessageReceiver {
    * @throws Exception
    */
   @Ignore
-  public void testDeployServiceIncrementalMultiPoP() throws Exception {
+  public void testDeployServiceV2MultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
