@@ -35,12 +35,17 @@ public class ConnectionPointReference implements Comparable<ConnectionPointRefer
   private int position;
 
 
-  public int getPosition() {
-    return position;
+  @Override
+  public int compareTo(ConnectionPointReference o) {
+    return (int) Math.signum(position - o.getPosition());
   }
 
   public String getConnectionPointRef() {
     return connectionPointRef;
+  }
+
+  public int getPosition() {
+    return position;
   }
 
   public void setConnectionPointRef(String connectionPointRef) {
@@ -49,11 +54,6 @@ public class ConnectionPointReference implements Comparable<ConnectionPointRefer
 
   public void setPosition(int position) {
     this.position = position;
-  }
-
-  @Override
-  public int compareTo(ConnectionPointReference o) {
-    return (int) Math.signum(position - o.getPosition());
   }
 
   @Override

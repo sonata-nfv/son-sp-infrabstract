@@ -39,6 +39,11 @@ import sonata.kernel.vimadaptor.commons.vnfd.UnitDeserializer;
 public class SonataManifestMapper {
 
   private static SonataManifestMapper myInstance = null;
+  public static ObjectMapper getSonataMapper() {
+    if (myInstance == null) myInstance = new SonataManifestMapper();
+    return myInstance.getMapper();
+  }
+
   private ObjectMapper mapper;
 
   private SonataManifestMapper() {
@@ -58,11 +63,6 @@ public class SonataManifestMapper {
 
   private ObjectMapper getMapper() {
     return this.mapper;
-  }
-
-  public static ObjectMapper getSonataMapper() {
-    if (myInstance == null) myInstance = new SonataManifestMapper();
-    return myInstance.getMapper();
   }
 
 }

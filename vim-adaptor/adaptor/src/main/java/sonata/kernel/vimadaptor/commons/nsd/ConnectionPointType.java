@@ -27,7 +27,7 @@
 package sonata.kernel.vimadaptor.commons.nsd;
 
 public enum ConnectionPointType {
-  MANAGEMENT("management"), EXT("external"), INT("internal"), INTERFACE("interface");
+  EXT("external"), INT("internal"), INTERFACE("interface"), MANAGEMENT("management");
   private final String name;
 
   ConnectionPointType(String name) {

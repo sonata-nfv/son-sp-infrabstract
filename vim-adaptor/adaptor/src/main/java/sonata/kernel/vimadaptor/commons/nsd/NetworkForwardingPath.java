@@ -35,22 +35,26 @@ import java.util.ArrayList;
 
 public class NetworkForwardingPath {
 
+  @JsonProperty("connection_points")
+  private ArrayList<ConnectionPointReference> connectionPoints;
   @JsonProperty("fp_id")
   private String fpId;
   private String policy;
-  @JsonProperty("connection_points")
-  private ArrayList<ConnectionPointReference> connectionPoints;
 
-  public String getPolicy() {
-    return policy;
+  public ArrayList<ConnectionPointReference> getConnectionPoints() {
+    return connectionPoints;
   }
 
   public String getFpId() {
     return fpId;
   }
 
-  public ArrayList<ConnectionPointReference> getConnectionPoints() {
-    return connectionPoints;
+  public String getPolicy() {
+    return policy;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPointReference> connectionPoints) {
+    this.connectionPoints = connectionPoints;
   }
 
   public void setFpId(String fpId) {
@@ -59,10 +63,6 @@ public class NetworkForwardingPath {
 
   public void setPolicy(String policy) {
     this.policy = policy;
-  }
-
-  public void setConnectionPoints(ArrayList<ConnectionPointReference> connectionPoints) {
-    this.connectionPoints = connectionPoints;
   }
 
 }

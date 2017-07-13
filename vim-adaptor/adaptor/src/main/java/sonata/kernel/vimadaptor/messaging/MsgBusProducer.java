@@ -39,6 +39,11 @@ public interface MsgBusProducer {
   public void connectToBus() throws IOException;
 
   /**
+   * Send a message on the Message Bus.
+   */
+  public boolean sendMessage(ServicePlatformMessage message);
+
+  /**
    * Start producing messages in the bus de-queuing them from the mux queue.
    */
   public boolean startProducing();
@@ -47,10 +52,5 @@ public interface MsgBusProducer {
    * Stop producing messages.
    */
   public boolean stopProducing();
-
-  /**
-   * Send a message on the Message Bus.
-   */
-  public boolean sendMessage(ServicePlatformMessage message);
 
 }

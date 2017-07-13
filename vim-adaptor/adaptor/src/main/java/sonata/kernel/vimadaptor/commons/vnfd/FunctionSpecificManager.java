@@ -37,9 +37,9 @@ public class FunctionSpecificManager {
   private String image;
   @JsonProperty("image_md5")
   private String imageMd5;
+  private ArrayList<FsmOption> options;
   @JsonProperty("resource_requirements")
   private FsmResourceRequirements resourceRequirements;
-  private ArrayList<FsmOption> options;
 
   public String getDescription() {
     return description;
@@ -57,12 +57,12 @@ public class FunctionSpecificManager {
     return imageMd5;
   }
 
-  public FsmResourceRequirements getResourceRequirements() {
-    return resourceRequirements;
-  }
-
   public ArrayList<FsmOption> getOptions() {
     return options;
+  }
+
+  public FsmResourceRequirements getResourceRequirements() {
+    return resourceRequirements;
   }
 
   public void setDescription(String description) {
@@ -81,12 +81,12 @@ public class FunctionSpecificManager {
     this.imageMd5 = imageMd5;
   }
 
-  public void setResourceRequirements(FsmResourceRequirements resourceRequirements) {
-    this.resourceRequirements = resourceRequirements;
-  }
-
   public void setOptions(ArrayList<FsmOption> options) {
     this.options = options;
+  }
+
+  public void setResourceRequirements(FsmResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
   }
 
 

@@ -32,79 +32,55 @@ import java.util.ArrayList;
 
 public class ForwardingGraph {
 
+  @JsonProperty("constituent_services")
+  private ArrayList<String> constituentServices;
+  @JsonProperty("constituent_vnfs")
+  private ArrayList<String> constituentVnfs;
+  @JsonProperty("dependent_virtual_links")
+  private ArrayList<String> dependentVirtualLinks;
+  @JsonProperty("fg_description")
+  private String fgDescription;
+
   // Forwarding Graph reference case.
   @JsonProperty("fg_group")
   private String fgGroup;
+  // Forwarding Graph description case.
+  @JsonProperty("fg_id")
+  private String fgId;
   @JsonProperty("fg_name")
   private String fgName;
   @JsonProperty("fg_version")
   private String fgVersion;
-  @JsonProperty("fg_description")
-  private String fgDescription;
-
-  // Forwarding Graph description case.
-  @JsonProperty("fg_id")
-  private String fgId;
+  @JsonProperty("network_forwarding_paths")
+  private ArrayList<NetworkForwardingPath> networkForwardingPaths;
   @JsonProperty("number_of_endpoints")
   private int numberOfEndpoints;
   @JsonProperty("number_of_virtual_links")
   private int numberOfVirtualLinks;
-  @JsonProperty("dependent_virtual_links")
-  private ArrayList<String> dependentVirtualLinks;
-  @JsonProperty("constituent_vnfs")
-  private ArrayList<String> constituentVnfs;
-  @JsonProperty("constituent_services")
-  private ArrayList<String> constituentServices;
-  @JsonProperty("network_forwarding_paths")
-  private ArrayList<NetworkForwardingPath> networkForwardingPaths;
 
 
-  public void setFgGroup(String fgGroup) {
-    this.fgGroup = fgGroup;
+  public ArrayList<String> getConstituentServices() {
+    return constituentServices;
   }
 
-  public void setFgName(String fgName) {
-    this.fgName = fgName;
+  public ArrayList<String> getConstituentVnfs() {
+    return constituentVnfs;
   }
 
-  public void setFgVersion(String fgVersion) {
-    this.fgVersion = fgVersion;
+  public ArrayList<String> getDependentVirtualLinks() {
+    return dependentVirtualLinks;
   }
 
-  public void setFgDescription(String fgDescription) {
-    this.fgDescription = fgDescription;
-  }
-
-  public void setFgId(String fgId) {
-    this.fgId = fgId;
-  }
-
-  public void setNumberOfEndpoints(int numberOfEndpoints) {
-    this.numberOfEndpoints = numberOfEndpoints;
-  }
-
-  public void setNumberOfVirtualLinks(int numberOfVirtualLinks) {
-    this.numberOfVirtualLinks = numberOfVirtualLinks;
-  }
-
-  public void setDependentVirtualLinks(ArrayList<String> dependentVirtualLinks) {
-    this.dependentVirtualLinks = dependentVirtualLinks;
-  }
-
-  public void setConstituentVnfs(ArrayList<String> constituentVnfs) {
-    this.constituentVnfs = constituentVnfs;
-  }
-
-  public void setConstituentServices(ArrayList<String> constituentServices) {
-    this.constituentServices = constituentServices;
-  }
-
-  public void setNetworkForwardingPaths(ArrayList<NetworkForwardingPath> networkForwardingPaths) {
-    this.networkForwardingPaths = networkForwardingPaths;
+  public String getFgDescription() {
+    return fgDescription;
   }
 
   public String getFgGroup() {
     return fgGroup;
+  }
+
+  public String getFgId() {
+    return fgId;
   }
 
   public String getFgName() {
@@ -115,12 +91,8 @@ public class ForwardingGraph {
     return fgVersion;
   }
 
-  public String getFgDescription() {
-    return fgDescription;
-  }
-
-  public String getFgId() {
-    return fgId;
+  public ArrayList<NetworkForwardingPath> getNetworkForwardingPaths() {
+    return networkForwardingPaths;
   }
 
   public int getNumberOfEndpoints() {
@@ -131,20 +103,48 @@ public class ForwardingGraph {
     return numberOfVirtualLinks;
   }
 
-  public ArrayList<String> getDependentVirtualLinks() {
-    return dependentVirtualLinks;
+  public void setConstituentServices(ArrayList<String> constituentServices) {
+    this.constituentServices = constituentServices;
   }
 
-  public ArrayList<String> getConstituentVnfs() {
-    return constituentVnfs;
+  public void setConstituentVnfs(ArrayList<String> constituentVnfs) {
+    this.constituentVnfs = constituentVnfs;
   }
 
-  public ArrayList<String> getConstituentServices() {
-    return constituentServices;
+  public void setDependentVirtualLinks(ArrayList<String> dependentVirtualLinks) {
+    this.dependentVirtualLinks = dependentVirtualLinks;
   }
 
-  public ArrayList<NetworkForwardingPath> getNetworkForwardingPaths() {
-    return networkForwardingPaths;
+  public void setFgDescription(String fgDescription) {
+    this.fgDescription = fgDescription;
+  }
+
+  public void setFgGroup(String fgGroup) {
+    this.fgGroup = fgGroup;
+  }
+
+  public void setFgId(String fgId) {
+    this.fgId = fgId;
+  }
+
+  public void setFgName(String fgName) {
+    this.fgName = fgName;
+  }
+
+  public void setFgVersion(String fgVersion) {
+    this.fgVersion = fgVersion;
+  }
+
+  public void setNetworkForwardingPaths(ArrayList<NetworkForwardingPath> networkForwardingPaths) {
+    this.networkForwardingPaths = networkForwardingPaths;
+  }
+
+  public void setNumberOfEndpoints(int numberOfEndpoints) {
+    this.numberOfEndpoints = numberOfEndpoints;
+  }
+
+  public void setNumberOfVirtualLinks(int numberOfVirtualLinks) {
+    this.numberOfVirtualLinks = numberOfVirtualLinks;
   }
 
 }

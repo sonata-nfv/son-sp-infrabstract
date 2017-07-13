@@ -36,84 +36,44 @@ import java.util.ArrayList;
 public class VnfVirtualLink {
 
 
-  private String id;
-  @JsonProperty("connectivity_type")
-  private ConnectivityType connectivityType;
+  private boolean access;
   @JsonProperty("connection_points_reference")
   private ArrayList<String> connectionPointsReference;
-  private boolean access;
+  @JsonProperty("connectivity_type")
+  private ConnectivityType connectivityType;
+  private boolean dhcp;
   @JsonProperty("external_access")
   private boolean externalAccess;
-  @JsonProperty("root_requirement")
-  private String rootRequirement;
+  private String id;
   @JsonProperty("leaf_requirement")
   private String leafRequirement;
-  private boolean dhcp;
   private String qos;
+  @JsonProperty("root_requirement")
+  private String rootRequirement;
 
 
-  public String getQos() {
-    return qos;
+  public ArrayList<String> getConnectionPointsReference() {
+    return connectionPointsReference;
   }
 
   public ConnectivityType getConnectivityType() {
     return connectivityType;
   }
 
-  public ArrayList<String> getConnectionPointsReference() {
-    return connectionPointsReference;
-  }
-
-  public boolean isExternalAccess() {
-    return externalAccess;
-  }
-
-  public String getRootRequirement() {
-    return rootRequirement;
+  public String getId() {
+    return id;
   }
 
   public String getLeafRequirement() {
     return leafRequirement;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public String getQos() {
+    return qos;
   }
 
-  public void setConnectivityType(ConnectivityType connectivityType) {
-    this.connectivityType = connectivityType;
-  }
-
-  public void setConnectionPointsReference(ArrayList<String> connectionPointsReference) {
-    this.connectionPointsReference = connectionPointsReference;
-  }
-
-  public void setAccess(boolean access) {
-    this.access = access;
-  }
-
-  public void setExternalAccess(boolean externalAccess) {
-    this.externalAccess = externalAccess;
-  }
-
-  public void setRootRequirement(String rootRequirement) {
-    this.rootRequirement = rootRequirement;
-  }
-
-  public void setLeafRequirement(String leafRequirement) {
-    this.leafRequirement = leafRequirement;
-  }
-
-  public void setDhcp(boolean dhcp) {
-    this.dhcp = dhcp;
-  }
-
-  public void setQos(String qos) {
-    this.qos = qos;
-  }
-
-  public String getId() {
-    return id;
+  public String getRootRequirement() {
+    return rootRequirement;
   }
 
   public boolean isAccess() {
@@ -122,5 +82,45 @@ public class VnfVirtualLink {
 
   public boolean isDhcp() {
     return dhcp;
+  }
+
+  public boolean isExternalAccess() {
+    return externalAccess;
+  }
+
+  public void setAccess(boolean access) {
+    this.access = access;
+  }
+
+  public void setConnectionPointsReference(ArrayList<String> connectionPointsReference) {
+    this.connectionPointsReference = connectionPointsReference;
+  }
+
+  public void setConnectivityType(ConnectivityType connectivityType) {
+    this.connectivityType = connectivityType;
+  }
+
+  public void setDhcp(boolean dhcp) {
+    this.dhcp = dhcp;
+  }
+
+  public void setExternalAccess(boolean externalAccess) {
+    this.externalAccess = externalAccess;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setLeafRequirement(String leafRequirement) {
+    this.leafRequirement = leafRequirement;
+  }
+
+  public void setQos(String qos) {
+    this.qos = qos;
+  }
+
+  public void setRootRequirement(String rootRequirement) {
+    this.rootRequirement = rootRequirement;
   }
 }

@@ -35,17 +35,13 @@ import java.util.ArrayList;
 
 public class ServiceDeployPayload {
 
+  private ServiceDescriptor nsd;
   @JsonProperty("vim_uuid")
   private String vimUuid;
-  private ServiceDescriptor nsd;
   private ArrayList<VnfDescriptor> vnfds;
 
   public ServiceDeployPayload() {
     this.vnfds = new ArrayList<VnfDescriptor>();
-  }
-
-  public void setServiceDescriptor(ServiceDescriptor descriptor) {
-    this.nsd = descriptor;
   }
 
   public void addVnfDescriptor(VnfDescriptor descriptor) {
@@ -56,20 +52,24 @@ public class ServiceDeployPayload {
     return nsd;
   }
 
-  public ArrayList<VnfDescriptor> getVnfdList() {
-    return vnfds;
-  }
-
   public String getVimUuid() {
     return vimUuid;
   }
 
-  public void setVimUuid(String vimUuid) {
-    this.vimUuid = vimUuid;
+  public ArrayList<VnfDescriptor> getVnfdList() {
+    return vnfds;
   }
 
   public void setNsd(ServiceDescriptor nsd) {
     this.nsd = nsd;
+  }
+
+  public void setServiceDescriptor(ServiceDescriptor descriptor) {
+    this.nsd = descriptor;
+  }
+
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
   }
 
   public void setVnfds(ArrayList<VnfDescriptor> vnfds) {

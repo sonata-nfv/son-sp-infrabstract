@@ -27,6 +27,7 @@
 package sonata.kernel.vimadaptor.wrapper.sp;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
+import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
@@ -36,45 +37,12 @@ import java.io.IOException;
 
 public class ComputeSPWrapper extends ComputeWrapper {
 
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
-   */
-  @Override
-  public boolean prepareService(String instanceId) throws Exception {
-    // This Wrapper ignores this call
-    return true;
-  }
-
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#deployService(sonata.kernel.vimadaptor.commons.ServiceDeployPayload, java.lang.String)
-   */
-  @Deprecated
-  @Override
-  public boolean deployService(ServiceDeployPayload data, String callSid) throws Exception {
-       
-    return false;
-  }
-
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeService(java.lang.String, java.lang.String)
-   */
-  @Override
-  public boolean removeService(String instanceUuid, String callSid) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#getResourceUtilisation()
-   */
-  @Override
-  public ResourceUtilisation getResourceUtilisation() {
-    // TODO Auto-generated method stub
-    return null;
-  }
-
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#deployFunction(sonata.kernel.vimadaptor.commons.FunctionDeployPayload, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#deployFunction(sonata.kernel.vimadaptor.commons
+   * .FunctionDeployPayload, java.lang.String)
    */
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
@@ -85,21 +53,90 @@ public class ComputeSPWrapper extends ComputeWrapper {
 
   }
 
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#uploadImage(sonata.kernel.vimadaptor.commons.VnfImage)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#deployService(sonata.kernel.vimadaptor.commons.
+   * ServiceDeployPayload, java.lang.String)
    */
+  @Deprecated
   @Override
-  public void uploadImage(VnfImage image) throws IOException {
-    // This Wrapper ignores this call
+  public boolean deployService(ServiceDeployPayload data, String callSid) throws Exception {
+
+    return false;
   }
 
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#isImageStored(sonata.kernel.vimadaptor.commons.VnfImage, java.lang.String)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#getResourceUtilisation()
+   */
+  @Override
+  public ResourceUtilisation getResourceUtilisation() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#isImageStored(sonata.kernel.vimadaptor.commons.
+   * VnfImage, java.lang.String)
    */
   @Override
   public boolean isImageStored(VnfImage image, String callSid) {
     // This Wrapper ignores this call
     return true;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
+   */
+  @Override
+  public boolean prepareService(String instanceId) throws Exception {
+    // This Wrapper ignores this call
+    return true;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeService(java.lang.String,
+   * java.lang.String)
+   */
+  @Override
+  public boolean removeService(String instanceUuid, String callSid) {
+    // TODO Auto-generated method stub
+    return false;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#scaleFunction(sonata.kernel.vimadaptor.commons.
+   * FunctionScalePayload, java.lang.String)
+   */
+  @Override
+  public void scaleFunction(FunctionScalePayload data, String sid) {
+    // TODO Auto-generated method stub
+
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#uploadImage(sonata.kernel.vimadaptor.commons.
+   * VnfImage)
+   */
+  @Override
+  public void uploadImage(VnfImage image) throws IOException {
+    // This Wrapper ignores this call
   }
 
 }

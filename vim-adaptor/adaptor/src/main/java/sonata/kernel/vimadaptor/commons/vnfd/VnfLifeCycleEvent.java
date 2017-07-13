@@ -30,40 +30,24 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VnfLifeCycleEvent {
 
+  private String authentication;
+  @JsonProperty("authentication_type")
+  private String authenticationType;
   @JsonProperty("authentication_username")
   private String authenticationUsername;
   private String driver;
-  @JsonProperty("authentication_type")
-  private String authenticationType;
-  private String authentication;
+  private Events events;
   @JsonProperty("vnf_container")
   private String vnfContainer;
-  private Events events;
 
 
 
-  public void setAuthenticationUsername(String authenticationUsername) {
-    this.authenticationUsername = authenticationUsername;
+  public String getAuthentication() {
+    return authentication;
   }
 
-  public void setDriver(String driver) {
-    this.driver = driver;
-  }
-
-  public void setAuthenticationType(String authenticationType) {
-    this.authenticationType = authenticationType;
-  }
-
-  public void setAuthentication(String authentication) {
-    this.authentication = authentication;
-  }
-
-  public void setVnfContainer(String vnfContainer) {
-    this.vnfContainer = vnfContainer;
-  }
-
-  public void setEvents(Events events) {
-    this.events = events;
+  public String getAuthenticationType() {
+    return authenticationType;
   }
 
   public String getAuthenticationUsername() {
@@ -74,20 +58,36 @@ public class VnfLifeCycleEvent {
     return driver;
   }
 
-  public String getAuthenticationType() {
-    return authenticationType;
-  }
-
-  public String getAuthentication() {
-    return authentication;
+  public Events getEvents() {
+    return events;
   }
 
   public String getVnfContainer() {
     return vnfContainer;
   }
 
-  public Events getEvents() {
-    return events;
+  public void setAuthentication(String authentication) {
+    this.authentication = authentication;
+  }
+
+  public void setAuthenticationType(String authenticationType) {
+    this.authenticationType = authenticationType;
+  }
+
+  public void setAuthenticationUsername(String authenticationUsername) {
+    this.authenticationUsername = authenticationUsername;
+  }
+
+  public void setDriver(String driver) {
+    this.driver = driver;
+  }
+
+  public void setEvents(Events events) {
+    this.events = events;
+  }
+
+  public void setVnfContainer(String vnfContainer) {
+    this.vnfContainer = vnfContainer;
   }
 
 }

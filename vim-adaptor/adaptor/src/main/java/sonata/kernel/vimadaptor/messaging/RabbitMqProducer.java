@@ -51,15 +51,15 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitMqProducer extends AbstractMsgBusProducer {
 
+  private static final String configFilePath = "/etc/son-mano/broker.config";
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqProducer.class);
+  private Properties brokerConfig;
+
+  private Connection connection;
   public RabbitMqProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
     super(muxQueue);
   }
-
-  private static final String configFilePath = "/etc/son-mano/broker.config";
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqProducer.class);
-
-  private Connection connection;
-  private Properties brokerConfig;
 
   @Override
   public void connectToBus() {

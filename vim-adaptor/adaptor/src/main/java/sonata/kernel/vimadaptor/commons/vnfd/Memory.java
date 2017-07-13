@@ -33,30 +33,18 @@ import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
 public class Memory {
 
 
-  private double size;
-  @JsonProperty("size_unit")
-  private MemoryUnit sizeUnit;
   @JsonProperty("large_pages_required")
   private boolean largePagesRequired;
   @JsonProperty("numa_allocation_policy")
   private String numaAllocationPolicy;
+  private double size;
+  @JsonProperty("size_unit")
+  private MemoryUnit sizeUnit;
 
 
 
-  public void setSize(double size) {
-    this.size = size;
-  }
-
-  public void setSizeUnit(MemoryUnit sizeUnit) {
-    this.sizeUnit = sizeUnit;
-  }
-
-  public void setLargePagesRequired(boolean largePagesRequired) {
-    this.largePagesRequired = largePagesRequired;
-  }
-
-  public void setNumaAllocationPolicy(String numaAllocationPolicy) {
-    this.numaAllocationPolicy = numaAllocationPolicy;
+  public String getNumaAllocationPolicy() {
+    return numaAllocationPolicy;
   }
 
   public double getSize() {
@@ -71,8 +59,20 @@ public class Memory {
     return largePagesRequired;
   }
 
-  public String getNumaAllocationPolicy() {
-    return numaAllocationPolicy;
+  public void setLargePagesRequired(boolean largePagesRequired) {
+    this.largePagesRequired = largePagesRequired;
+  }
+
+  public void setNumaAllocationPolicy(String numaAllocationPolicy) {
+    this.numaAllocationPolicy = numaAllocationPolicy;
+  }
+
+  public void setSize(double size) {
+    this.size = size;
+  }
+
+  public void setSizeUnit(MemoryUnit sizeUnit) {
+    this.sizeUnit = sizeUnit;
   }
 
 }

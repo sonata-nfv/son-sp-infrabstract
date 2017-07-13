@@ -35,109 +35,97 @@ import java.util.ArrayList;
 
 public class ServiceDescriptor {
 
-  @JsonProperty("descriptor_version")
-  private String descriptorVersion;
-  private String vendor;
+  private String author;
+  @JsonProperty("auto_scale_policy")
+  private AutoScalePolicy autoScalePolicy;
+  @JsonProperty("connection_points")
+  private ArrayList<ConnectionPoint> connectionPoints;
   @JsonProperty("created_at")
   private String createdAt;
-  @JsonProperty("updated_at")
-  private String updatedAt;
+  private String description;
+  @JsonProperty("descriptor_version")
+  private String descriptorVersion;
+  @JsonProperty("forwarding_graphs")
+  private ArrayList<ForwardingGraph> forwardingGraphs;
   @JsonProperty("instance_uuid")
   private String instanceUuid;
-  private String uuid;
-  private String status;
+  @JsonProperty("lifecycle_events")
+  private LifeCycleEvent lifecycleEvents;
+  @JsonProperty("monitoring_parameters")
+  private ArrayList<MonitoringParameter> monitoringParameters;
   private String name;
-  private String version;
-  private String author;
-  private String description;
   @JsonProperty("network_functions")
   private ArrayList<NetworkFunction> networkFunctions;
   @JsonProperty("network_services")
   private ArrayList<String> networkServices;
-  @JsonProperty("connection_points")
-  private ArrayList<ConnectionPoint> connectionPoints;
-  @JsonProperty("virtual_links")
-  private ArrayList<VirtualLink> virtualLinks;
-  @JsonProperty("forwarding_graphs")
-  private ArrayList<ForwardingGraph> forwardingGraphs;
-  @JsonProperty("lifecycle_events")
-  private LifeCycleEvent lifecycleEvents;
-  @JsonProperty("vnf_depencency")
-  private ArrayList<String> vnfDepencency;
   @JsonProperty("services_dependency")
   private ArrayList<String> servicesDependency;
-  @JsonProperty("monitoring_parameters")
-  private ArrayList<MonitoringParameter> monitoringParameters;
-  @JsonProperty("auto_scale_policy")
-  private AutoScalePolicy autoScalePolicy;
+  private String status;
+  @JsonProperty("updated_at")
+  private String updatedAt;
+  private String uuid;
+  private String vendor;
+  private String version;
+  @JsonProperty("virtual_links")
+  private ArrayList<VirtualLink> virtualLinks;
+  @JsonProperty("vnf_depencency")
+  private ArrayList<String> vnfDepencency;
 
 
-  public void setDescriptorVersion(String descriptorVersion) {
-    this.descriptorVersion = descriptorVersion;
+  public String getAuthor() {
+    return author;
   }
 
-  public void setVendor(String vendor) {
-    this.vendor = vendor;
+  public AutoScalePolicy getAutoScalePolicy() {
+    return autoScalePolicy;
   }
 
-  public void setCreatedAt(String createdAt) {
-    this.createdAt = createdAt;
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
+    return connectionPoints;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public String getCreatedAt() {
+    return createdAt;
   }
 
-  public void setVersion(String version) {
-    this.version = version;
+  public String getDescription() {
+    return description;
   }
 
-  public void setAuthor(String author) {
-    this.author = author;
+  public String getDescriptorVersion() {
+    return descriptorVersion;
   }
 
-  public void setDescription(String description) {
-    this.description = description;
+  public ArrayList<ForwardingGraph> getForwardingGraphs() {
+    return forwardingGraphs;
   }
 
-  public void setNetworkFunctions(ArrayList<NetworkFunction> networkFunctions) {
-    this.networkFunctions = networkFunctions;
+  public String getInstanceUuid() {
+    return instanceUuid;
   }
 
-  public void setNetworkServices(ArrayList<String> networkServices) {
-    this.networkServices = networkServices;
+  public LifeCycleEvent getLifecycleEvents() {
+    return lifecycleEvents;
   }
 
-  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
-    this.connectionPoints = connectionPoints;
+  public ArrayList<MonitoringParameter> getMonitoringParameters() {
+    return monitoringParameters;
   }
 
-  public void setVirtualLinks(ArrayList<VirtualLink> virtualLinks) {
-    this.virtualLinks = virtualLinks;
+  public String getName() {
+    return name;
   }
 
-  public void setForwardingGraphs(ArrayList<ForwardingGraph> forwardingGraphs) {
-    this.forwardingGraphs = forwardingGraphs;
+  public ArrayList<NetworkFunction> getNetworkFunctions() {
+    return networkFunctions;
   }
 
-  public void setLifecycleEvents(LifeCycleEvent lifecycleEvents) {
-    this.lifecycleEvents = lifecycleEvents;
+  public ArrayList<String> getNetworkServices() {
+    return networkServices;
   }
 
-  public void setVnfDepencency(ArrayList<String> vnfDepencency) {
-    this.vnfDepencency = vnfDepencency;
-  }
-
-  public void setServicesDependency(ArrayList<String> servicesDependency) {
-    this.servicesDependency = servicesDependency;
-  }
-
-  public void setMonitoringParameters(ArrayList<MonitoringParameter> monitoringParameters) {
-    this.monitoringParameters = monitoringParameters;
-  }
-
-  public void setAutoScalePolicy(AutoScalePolicy autoScalePolicy) {
-    this.autoScalePolicy = autoScalePolicy;
+  public ArrayList<String> getServicesDependency() {
+    return servicesDependency;
   }
 
   public String getStatus() {
@@ -152,6 +140,82 @@ public class ServiceDescriptor {
     return uuid;
   }
 
+  public String getVendor() {
+    return vendor;
+  }
+
+  public String getVersion() {
+    return version;
+  }
+
+  public ArrayList<VirtualLink> getVirtualLinks() {
+    return virtualLinks;
+  }
+
+  public ArrayList<String> getVnfDepencency() {
+    return vnfDepencency;
+  }
+
+  public void setAuthor(String author) {
+    this.author = author;
+  }
+
+  public void setAutoScalePolicy(AutoScalePolicy autoScalePolicy) {
+    this.autoScalePolicy = autoScalePolicy;
+  }
+
+  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setDescriptorVersion(String descriptorVersion) {
+    this.descriptorVersion = descriptorVersion;
+  }
+
+  public void setForwardingGraphs(ArrayList<ForwardingGraph> forwardingGraphs) {
+    this.forwardingGraphs = forwardingGraphs;
+  }
+
+  public void setInstanceUuid(String instanceUuid) {
+    this.instanceUuid = instanceUuid;
+  }
+
+  public void setLifecycleEvents(LifeCycleEvent lifecycleEvents) {
+    this.lifecycleEvents = lifecycleEvents;
+  }
+
+  public void setMonitoringParameters(ArrayList<MonitoringParameter> monitoringParameters) {
+    this.monitoringParameters = monitoringParameters;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setNetworkFunctions(ArrayList<NetworkFunction> networkFunctions) {
+    this.networkFunctions = networkFunctions;
+  }
+
+  public void setNetworkServices(ArrayList<String> networkServices) {
+    this.networkServices = networkServices;
+  }
+
+  public void setServicesDependency(ArrayList<String> servicesDependency) {
+    this.servicesDependency = servicesDependency;
+  }
+
+  public void setStatus(String status) {
+    this.status = status;
+  }
+
   public void setUpdatedAt(String updatedAt) {
     this.updatedAt = updatedAt;
   }
@@ -160,84 +224,20 @@ public class ServiceDescriptor {
     this.uuid = uuid;
   }
 
-  public void setStatus(String status) {
-    this.status = status;
+  public void setVendor(String vendor) {
+    this.vendor = vendor;
   }
 
-  public String getDescriptorVersion() {
-    return descriptorVersion;
+  public void setVersion(String version) {
+    this.version = version;
   }
 
-  public String getVendor() {
-    return vendor;
+  public void setVirtualLinks(ArrayList<VirtualLink> virtualLinks) {
+    this.virtualLinks = virtualLinks;
   }
 
-  public String getCreatedAt() {
-    return createdAt;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public String getVersion() {
-    return version;
-  }
-
-  public String getAuthor() {
-    return author;
-  }
-
-  public String getDescription() {
-    return description;
-  }
-
-  public ArrayList<NetworkFunction> getNetworkFunctions() {
-    return networkFunctions;
-  }
-
-  public ArrayList<String> getNetworkServices() {
-    return networkServices;
-  }
-
-  public ArrayList<ConnectionPoint> getConnectionPoints() {
-    return connectionPoints;
-  }
-
-  public ArrayList<VirtualLink> getVirtualLinks() {
-    return virtualLinks;
-  }
-
-  public ArrayList<ForwardingGraph> getForwardingGraphs() {
-    return forwardingGraphs;
-  }
-
-  public LifeCycleEvent getLifecycleEvents() {
-    return lifecycleEvents;
-  }
-
-  public ArrayList<String> getVnfDepencency() {
-    return vnfDepencency;
-  }
-
-  public ArrayList<String> getServicesDependency() {
-    return servicesDependency;
-  }
-
-  public ArrayList<MonitoringParameter> getMonitoringParameters() {
-    return monitoringParameters;
-  }
-
-  public AutoScalePolicy getAutoScalePolicy() {
-    return autoScalePolicy;
-  }
-
-  public String getInstanceUuid() {
-    return instanceUuid;
-  }
-
-  public void setInstanceUuid(String instanceUuid) {
-    this.instanceUuid = instanceUuid;
+  public void setVnfDepencency(ArrayList<String> vnfDepencency) {
+    this.vnfDepencency = vnfDepencency;
   }
 
 

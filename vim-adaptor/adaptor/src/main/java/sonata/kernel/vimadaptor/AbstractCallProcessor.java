@@ -33,36 +33,11 @@ import java.util.Observer;
 
 public abstract class AbstractCallProcessor implements Runnable, Observer {
 
-  /**
-   * Getter for the Message handled by the processor.
-   * 
-   * @return the ServicePlatformMessage object representing the message.
-   */
-  public ServicePlatformMessage getMessage() {
-    return message;
-  }
-
-  /**
-   * Getter for the session ID of the call handled by the processor.
-   * 
-   * @return a String object representing the session id.
-   */
-  public String getSid() {
-    return sid;
-  }
-
-  /**
-   * Getter for multiplexer used by this processor to publish messages.
-   * 
-   * @return an AdaptorMux object.
-   */
-  public AdaptorMux getMux() {
-    return mux;
-  }
-
   private ServicePlatformMessage message;
-  private String sid;
+
   private AdaptorMux mux;
+
+  private String sid;
 
   /**
    * Abstract class for an API call processor. The processor runs on a thread an processes a
@@ -77,16 +52,30 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
     this.sid = sid;
     this.mux = mux;
   }
-
-  protected void sendToMux(ServicePlatformMessage message) {
-    mux.enqueue(message);
+  /**
+   * Getter for the Message handled by the processor.
+   * 
+   * @return the ServicePlatformMessage object representing the message.
+   */
+  public ServicePlatformMessage getMessage() {
+    return message;
+  }
+  /**
+   * Getter for multiplexer used by this processor to publish messages.
+   * 
+   * @return an AdaptorMux object.
+   */
+  public AdaptorMux getMux() {
+    return mux;
   }
 
-  @Override
-  public void run() {
-
-    this.process(message);
-
+  /**
+   * Getter for the session ID of the call handled by the processor.
+   * 
+   * @return a String object representing the session id.
+   */
+  public String getSid() {
+    return sid;
   }
 
   /**
@@ -96,5 +85,16 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
    * 
    */
   public abstract boolean process(ServicePlatformMessage message);
+
+  @Override
+  public void run() {
+
+    this.process(message);
+
+  }
+
+  protected void sendToMux(ServicePlatformMessage message) {
+    mux.enqueue(message);
+  }
 
 }

@@ -30,26 +30,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Pcie {
 
-  @JsonProperty("SR-IOV")
-  private boolean srIov;
-
   @JsonProperty("device_pass_through")
   private boolean devicePassThrough;
 
-  public boolean isSrIov() {
-    return srIov;
-  }
+  @JsonProperty("SR-IOV")
+  private boolean srIov;
 
   public boolean isDevicePassThrough() {
     return devicePassThrough;
   }
 
-  public void setSrIov(boolean srIov) {
-    this.srIov = srIov;
+  public boolean isSrIov() {
+    return srIov;
   }
 
   public void setDevicePassThrough(boolean devicePassThrough) {
     this.devicePassThrough = devicePassThrough;
+  }
+
+  public void setSrIov(boolean srIov) {
+    this.srIov = srIov;
   }
 
 }

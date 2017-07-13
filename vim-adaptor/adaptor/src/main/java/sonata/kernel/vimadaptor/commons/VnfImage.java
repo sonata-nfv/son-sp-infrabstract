@@ -30,10 +30,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VnfImage {
 
-  @JsonProperty("image_uuid")
-  private String uuid;
   @JsonProperty("image_url")
   private String url;
+  @JsonProperty("image_uuid")
+  private String uuid;
 
   public VnfImage() {}
 
@@ -47,20 +47,20 @@ public class VnfImage {
     this.url = url;
   }
 
-  public String getUuid() {
-    return uuid;
-  }
-
   public String getUrl() {
     return url;
   }
 
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
+  public String getUuid() {
+    return uuid;
   }
 
   public void setUrl(String url) {
     this.url = url;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
 

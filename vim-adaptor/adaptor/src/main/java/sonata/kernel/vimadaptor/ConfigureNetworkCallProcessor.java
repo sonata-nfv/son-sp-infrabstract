@@ -52,10 +52,10 @@ import java.util.Observable;
 
 public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
 
-  NetworkConfigurePayload data = null;
-
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(DeployFunctionCallProcessor.class);
+
+  NetworkConfigurePayload data = null;
 
   /**
    * @param message
@@ -64,16 +64,6 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
    */
   public ConfigureNetworkCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-   */
-  @Override
-  public void update(Observable arg0, Object arg1) {
-
   }
 
   /*
@@ -254,6 +244,16 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+   */
+  @Override
+  public void update(Observable arg0, Object arg1) {
+
   }
 
 }

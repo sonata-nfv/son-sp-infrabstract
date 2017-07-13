@@ -32,35 +32,35 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class HeatServer {
 
-  @JsonProperty("server_name")
-  private String serverName;
+  private InstanceFlavor flavor;
   @JsonProperty("server_id")
   private String serverId;
 
-  private InstanceFlavor flavor;
+  @JsonProperty("server_name")
+  private String serverName;
 
-  public String getServerName() {
-    return serverName;
+  public InstanceFlavor getFlavor() {
+    return flavor;
   }
 
   public String getServerId() {
     return serverId;
   }
 
-  public InstanceFlavor getFlavor() {
-    return flavor;
+  public String getServerName() {
+    return serverName;
   }
 
-  public void setServerName(String serverName) {
-    this.serverName = serverName;
+  public void setFlavor(InstanceFlavor flavor) {
+    this.flavor = flavor;
   }
 
   public void setServerId(String serverId) {
     this.serverId = serverId;
   }
 
-  public void setFlavor(InstanceFlavor flavor) {
-    this.flavor = flavor;
+  public void setServerName(String serverName) {
+    this.serverName = serverName;
   }
 
 }

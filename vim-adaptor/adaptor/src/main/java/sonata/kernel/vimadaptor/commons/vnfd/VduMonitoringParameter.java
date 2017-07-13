@@ -32,43 +32,35 @@ import sonata.kernel.vimadaptor.commons.vnfd.Unit.FrequencyUnit;
 
 public class VduMonitoringParameter {
 
-  private String name;
   private String description;
-  private Unit unit;
   private double frequency;
   @JsonProperty("frequency_unit")
   private FrequencyUnit frequencyUnit;
-
-  public double getFrequency() {
-    return frequency;
-  }
+  private String name;
+  private Unit unit;
 
   public String getDescription() {
     return description;
   }
 
-  public Unit getUnit() {
-    return unit;
-  }
-
-  public String getName() {
-    return name;
+  public double getFrequency() {
+    return frequency;
   }
 
   public FrequencyUnit getFrequencyUnit() {
     return frequencyUnit;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public String getName() {
+    return name;
+  }
+
+  public Unit getUnit() {
+    return unit;
   }
 
   public void setDescription(String description) {
     this.description = description;
-  }
-
-  public void setUnit(Unit unit) {
-    this.unit = unit;
   }
 
   public void setFrequency(double frequency) {
@@ -77,5 +69,13 @@ public class VduMonitoringParameter {
 
   public void setFrequencyUnit(FrequencyUnit frequencyUnit) {
     this.frequencyUnit = frequencyUnit;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setUnit(Unit unit) {
+    this.unit = unit;
   }
 }

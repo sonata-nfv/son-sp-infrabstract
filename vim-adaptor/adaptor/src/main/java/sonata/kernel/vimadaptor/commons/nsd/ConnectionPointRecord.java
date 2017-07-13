@@ -39,17 +39,17 @@ public class ConnectionPointRecord {
   private String virtualLinkReference;
 
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
-
-  public void setVirtualLinkReference(String virtualLinkReference) {
-    this.virtualLinkReference = virtualLinkReference;
-  }
-
   public String getId() {
     return id;
+  }
+
+
+  public InterfaceRecord getInterface() {
+    return interData;
+  }
+
+  public ConnectionPointType getType() {
+    return type;
   }
 
   public String getVirtualLinkReference() {
@@ -57,8 +57,8 @@ public class ConnectionPointRecord {
   }
 
 
-  public InterfaceRecord getInterface() {
-    return interData;
+  public void setId(String id) {
+    this.id = id;
   }
 
 
@@ -72,7 +72,7 @@ public class ConnectionPointRecord {
   }
 
 
-  public ConnectionPointType getType() {
-    return type;
+  public void setVirtualLinkReference(String virtualLinkReference) {
+    this.virtualLinkReference = virtualLinkReference;
   }
 }

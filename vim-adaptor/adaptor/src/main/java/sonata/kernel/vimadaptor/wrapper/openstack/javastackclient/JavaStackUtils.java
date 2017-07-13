@@ -44,18 +44,6 @@ public class JavaStackUtils {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
 
-  public static String readFile(String filePath) throws IOException {
-    return new String(Files.readAllBytes(Paths.get(filePath)));
-  }
-
-  public static String convertYamlToJson(String yamlToConvert) throws IOException {
-    ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
-    Object obj = yamlReader.readValue(yamlToConvert, Object.class);
-
-    ObjectMapper jsonWriter = new ObjectMapper();
-    return jsonWriter.writeValueAsString(obj);
-  }
-
   public static String convertHttpResponseToString(HttpResponse response) throws IOException {
 
     int status = response.getStatusLine().getStatusCode();
@@ -74,12 +62,12 @@ public class JavaStackUtils {
         while ((line = reader.readLine()) != null) {
           sb.append(line);
         }
-        //Logger.debug("Response: " + sb.toString());
+        // Logger.debug("Response: " + sb.toString());
         return sb.toString();
       } else {
         return null;
       }
-    } else if(status == 404){
+    } else if (status == 404) {
       throw new NotFoundException("Resource doesn't exists");
     } else if (status == 403) {
       throw new IOException(
@@ -89,6 +77,18 @@ public class JavaStackUtils {
     } else {
       throw new IOException("Failed Request: " + reasonPhrase);
     }
+  }
+
+  public static String convertYamlToJson(String yamlToConvert) throws IOException {
+    ObjectMapper yamlReader = new ObjectMapper(new YAMLFactory());
+    Object obj = yamlReader.readValue(yamlToConvert, Object.class);
+
+    ObjectMapper jsonWriter = new ObjectMapper();
+    return jsonWriter.writeValueAsString(obj);
+  }
+
+  public static String readFile(String filePath) throws IOException {
+    return new String(Files.readAllBytes(Paths.get(filePath)));
   }
 }
 

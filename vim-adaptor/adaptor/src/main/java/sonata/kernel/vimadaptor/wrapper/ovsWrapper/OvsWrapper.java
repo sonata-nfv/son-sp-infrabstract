@@ -54,8 +54,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketTimeoutException;
@@ -68,9 +66,9 @@ import java.util.Properties;
 
 public class OvsWrapper extends NetworkWrapper {
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OvsWrapper.class);
-
   private static final String ADAPTOR_SEGMENTS_CONF = "/adaptor/segments.conf";
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OvsWrapper.class);
 
   /**
    * Basic constructor.
@@ -242,8 +240,8 @@ public class OvsWrapper extends NetworkWrapper {
       NetworkAttachmentPoints nap = new NetworkAttachmentPoints();
       ArrayList<NapPair> ingresses = new ArrayList<NapPair>();
       ArrayList<NapPair> egresses = new ArrayList<NapPair>();
-      ingresses.add(new NapPair("Athens",segments.getProperty("in")));
-      egresses.add(new NapPair("Athens",segments.getProperty("out")));
+      ingresses.add(new NapPair("Athens", segments.getProperty("in")));
+      egresses.add(new NapPair("Athens", segments.getProperty("out")));
       nap.setEgresses(egresses);
       nap.setIngresses(ingresses);
       data.setNap(nap);

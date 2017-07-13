@@ -35,27 +35,27 @@ import java.util.ArrayList;
 
 public class NetworkConfigurePayload {
 
-  @JsonProperty("service_instance_id")
-  private String serviceInstanceId;
+  private NetworkAttachmentPoints nap;
   @JsonProperty("nsd")
   private ServiceDescriptor nsd;
+  @JsonProperty("service_instance_id")
+  private String serviceInstanceId;
   @JsonProperty("vnfds")
   private ArrayList<VnfDescriptor> vnfds;
   @JsonProperty("vnfrs")
   private ArrayList<VnfRecord> vnfrs;
-  private NetworkAttachmentPoints nap;
-  
 
-  public String getServiceInstanceId() {
-    return serviceInstanceId;
-  }
 
-  public void setServiceInstanceId(String serviceInstanceId) {
-    this.serviceInstanceId = serviceInstanceId;
+  public NetworkAttachmentPoints getNap() {
+    return nap;
   }
 
   public ServiceDescriptor getNsd() {
     return nsd;
+  }
+
+  public String getServiceInstanceId() {
+    return serviceInstanceId;
   }
 
   public ArrayList<VnfDescriptor> getVnfds() {
@@ -66,8 +66,16 @@ public class NetworkConfigurePayload {
     return vnfrs;
   }
 
+  public void setNap(NetworkAttachmentPoints nap) {
+    this.nap = nap;
+  }
+
   public void setNsd(ServiceDescriptor nsd) {
     this.nsd = nsd;
+  }
+
+  public void setServiceInstanceId(String serviceInstanceId) {
+    this.serviceInstanceId = serviceInstanceId;
   }
 
   public void setVnfds(ArrayList<VnfDescriptor> vnfds) {
@@ -76,14 +84,6 @@ public class NetworkConfigurePayload {
 
   public void setVnfrs(ArrayList<VnfRecord> vnfrs) {
     this.vnfrs = vnfrs;
-  }
-
-  public NetworkAttachmentPoints getNap() {
-    return nap;
-  }
-
-  public void setNap(NetworkAttachmentPoints nap) {
-    this.nap = nap;
   }
 
 }

@@ -36,14 +36,12 @@ import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
+import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
-import sonata.kernel.vimadaptor.commons.ServiceDeployResponse;
-import sonata.kernel.vimadaptor.commons.ServiceRecord;
 import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VduRecord;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
-import sonata.kernel.vimadaptor.commons.*;
 import sonata.kernel.vimadaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
@@ -57,96 +55,21 @@ import java.util.Random;
 
 public class ComputeMockWrapper extends ComputeWrapper {
 
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComputeMockWrapper.class);
   /*
    * Utility fields to implement the mock response creation. A real wrapper should instantiate a
    * suitable object with these fields, able to handle the API call asynchronously, generate a
    * response and update the observer
    */
+  @SuppressWarnings("unused")
   private ServiceDeployPayload data;
-  private String sid;
   private Random r;
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComputeMockWrapper.class);
+  private String sid;
 
   public ComputeMockWrapper(WrapperConfiguration config) {
     super(config);
     this.r = new Random(System.currentTimeMillis());
-  }
-
-  @Override
-  public String toString() {
-    return "MockWrapper";
-  }
-
-  @Deprecated
-  @Override
-  public boolean deployService(ServiceDeployPayload data, String callSid) {
-    this.data = data;
-    this.sid = callSid;
-    // This is a mock compute wrapper.
-
-    /*
-     * Just use the SD to forge the response message for the SLM with a success. In general Wrappers
-     * would need a complex set of actions to deploy the service, so this function should just check
-     * if the request is acceptable, and if so start a new thread to deal with the perform the
-     * needed actions.
-     */
-    return false;
-  }
-
-  @Override
-  public boolean removeService(String instanceUuid, String callSid) {
-    boolean out = true;
-    
-    double avgTime=1309;
-    double stdTime=343;
-    waitGaussianTime(avgTime, stdTime);
-    
-    this.setChanged();
-    String body = "{\"status\":\"SUCCESS\"}";
-    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
-    this.notifyObservers(update);
-
-    return out;
-  }
-
-  @Override
-  public ResourceUtilisation getResourceUtilisation() {
-
-    double avgTime = 1769.39;
-    double stdTime =  1096.48;
-    waitGaussianTime(avgTime, stdTime);
-
-    ResourceUtilisation resources = new ResourceUtilisation();
-    resources.setTotCores(10);
-    resources.setUsedCores(0);
-    resources.setTotMemory(10000);
-    resources.setUsedMemory(0);
-
-    return resources;
-  }
-
-  private void waitGaussianTime(double avgTime, double stdTime) {
-    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
-
-    try {
-      Thread.sleep((long) waitTime);
-    } catch (InterruptedException e) {
-      e.printStackTrace();
-    }
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
-   */
-  @Override
-  public boolean prepareService(String instanceId) {
-    double avgTime = 10576.52;
-    double stdTime = 1683.12;
-    waitGaussianTime(avgTime, stdTime);
-    return true;
   }
 
   /*
@@ -207,9 +130,36 @@ public class ComputeMockWrapper extends ComputeWrapper {
 
   }
 
+  @Deprecated
   @Override
-  public void scaleFunction(FunctionScalePayload data, String sid) {
-    //TODO - smendel - add implementation and comments on function
+  public boolean deployService(ServiceDeployPayload data, String callSid) {
+    this.data = data;
+    this.sid = callSid;
+    // This is a mock compute wrapper.
+
+    /*
+     * Just use the SD to forge the response message for the SLM with a success. In general Wrappers
+     * would need a complex set of actions to deploy the service, so this function should just check
+     * if the request is acceptable, and if so start a new thread to deal with the perform the
+     * needed actions.
+     */
+    return false;
+  }
+
+  @Override
+  public ResourceUtilisation getResourceUtilisation() {
+
+    double avgTime = 1769.39;
+    double stdTime = 1096.48;
+    waitGaussianTime(avgTime, stdTime);
+
+    ResourceUtilisation resources = new ResourceUtilisation();
+    resources.setTotCores(10);
+    resources.setUsedCores(0);
+    resources.setTotMemory(10000);
+    resources.setUsedMemory(0);
+
+    return resources;
   }
 
   /*
@@ -228,6 +178,19 @@ public class ComputeMockWrapper extends ComputeWrapper {
   /*
    * (non-Javadoc)
    * 
+   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#prepareService(java.lang.String)
+   */
+  @Override
+  public boolean prepareService(String instanceId) {
+    double avgTime = 10576.52;
+    double stdTime = 1683.12;
+    waitGaussianTime(avgTime, stdTime);
+    return true;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
    * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeImage(java.lang.String)
    */
   @Override
@@ -236,6 +199,32 @@ public class ComputeMockWrapper extends ComputeWrapper {
     String body = "{\"status\":\"SUCCESS\"}";
     WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
     this.notifyObservers(update);
+  }
+
+  @Override
+  public boolean removeService(String instanceUuid, String callSid) {
+    boolean out = true;
+
+    double avgTime = 1309;
+    double stdTime = 343;
+    waitGaussianTime(avgTime, stdTime);
+
+    this.setChanged();
+    String body = "{\"status\":\"SUCCESS\"}";
+    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+    this.notifyObservers(update);
+
+    return out;
+  }
+
+  @Override
+  public void scaleFunction(FunctionScalePayload data, String sid) {
+    // TODO - smendel - add implementation and comments on function
+  }
+
+  @Override
+  public String toString() {
+    return "MockWrapper";
   }
 
   /*
@@ -247,18 +236,28 @@ public class ComputeMockWrapper extends ComputeWrapper {
    */
   @Override
   public void uploadImage(VnfImage image) throws IOException {
-    
-    double avgTime=7538.75;
-    double stdTime=1342.06;
-    
+
+    double avgTime = 7538.75;
+    double stdTime = 1342.06;
+
     waitGaussianTime(avgTime, stdTime);
-    
+
     this.setChanged();
     String body = "{\"status\":\"SUCCESS\"}";
     WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
     this.notifyObservers(update);
 
     return;
+  }
+
+  private void waitGaussianTime(double avgTime, double stdTime) {
+    double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
+
+    try {
+      Thread.sleep((long) waitTime);
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
   }
 
 }

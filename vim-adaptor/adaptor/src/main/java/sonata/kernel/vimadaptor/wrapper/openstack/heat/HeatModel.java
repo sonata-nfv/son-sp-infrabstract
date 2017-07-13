@@ -41,13 +41,13 @@ public class HeatModel {
     this.resources.add(res);
   }
 
+  public ArrayList<HeatResource> getResources() {
+    return this.resources;
+  }
+
   public void prepare() {
     Collections.sort(resources);
     return;
-  }
-
-  public ArrayList<HeatResource> getResources() {
-    return this.resources;
   }
 
 }

@@ -41,12 +41,12 @@ public class Token {
     return catalog;
   }
 
-  public void setCatalog(ArrayList<CatalogItem> catalog) {
-    this.catalog = catalog;
-  }
-
   public Project getProject() {
     return project;
+  }
+
+  public void setCatalog(ArrayList<CatalogItem> catalog) {
+    this.catalog = catalog;
   }
 
   public void setProject(Project project) {
