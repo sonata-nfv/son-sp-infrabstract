@@ -32,11 +32,17 @@ import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
 import sonata.kernel.vimadaptor.wrapper.ResourceUtilisation;
+import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 
 import java.io.IOException;
 
 public class ComputeSPWrapper extends ComputeWrapper {
-
+  
+  
+  public ComputeSPWrapper(WrapperConfiguration config){
+    super(config);
+  }
+  
   /*
    * (non-Javadoc)
    * 
