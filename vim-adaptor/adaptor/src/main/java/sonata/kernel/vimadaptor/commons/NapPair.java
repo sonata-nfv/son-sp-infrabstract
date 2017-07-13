@@ -29,10 +29,10 @@ public class NapPair {
 
   private String location;
   private String nap;
-  
-  
-  public NapPair(){}
-  
+
+
+  public NapPair() {}
+
   /**
    * @param string
    * @param object
@@ -41,19 +41,23 @@ public class NapPair {
     this.location = location;
     this.nap = nap;
   }
+
   public String getLocation() {
     return location;
   }
+
   public String getNap() {
     return nap;
   }
+
   public void setLocation(String location) {
     this.location = location;
   }
+
   public void setNap(String nap) {
     this.nap = nap;
   }
-  
-  
-  
+
+
+
 }

@@ -26,11 +26,7 @@
 
 package sonata.kernel.vimadaptor.wrapper.openstack;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
@@ -48,23 +44,24 @@ public class OpenStackGlanceClient {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
 
-//  private String url; // url of the OpenStack Client
-//
-//  private String userName; // OpenStack Client user
-//
-//  private String password; // OpenStack Client password
-//
-//  private String tenantName; // OpenStack tenant name
+  // private String url; // url of the OpenStack Client
+  //
+  // private String userName; // OpenStack Client user
+  //
+  // private String password; // OpenStack Client password
+  //
+  // private String tenantName; // OpenStack tenant name
 
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
 
   private ObjectMapper mapper;
 
-  public OpenStackGlanceClient(String url, String userName, String password, String tenantName, String identityPort) throws IOException {
-//    this.url = url;
-//    this.userName = userName;
-//    this.password = password;
-//    this.tenantName = tenantName;
+  public OpenStackGlanceClient(String url, String userName, String password, String tenantName,
+      String identityPort) throws IOException {
+    // this.url = url;
+    // this.userName = userName;
+    // this.password = password;
+    // this.tenantName = tenantName;
 
     this.mapper = SonataManifestMapper.getSonataMapper();
 
@@ -80,28 +77,6 @@ public class OpenStackGlanceClient {
     javaStack.setAuthenticated(false);
     // Authenticate
     javaStack.authenticateClientV3(identityPort);
-  }
-
-
-  /**
-   * List glance Images.
-   *
-   * @return - A list of image objects containing name, id, and other useful parameters
-   */
-  public ArrayList<Image> listImages() {
-
-    Logger.debug("Listing available Images");
-    Images images = null;
-
-    String listImages = null;
-    try {
-      listImages = JavaStackUtils.convertHttpResponseToString(javaStack.listImages());
-      images = mapper.readValue(listImages, Images.class);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return images.getImages();
   }
 
 
@@ -124,6 +99,28 @@ public class OpenStackGlanceClient {
     Logger.debug("[Glance-client] Image container creade with UUID: " + imageContainerData.getId());
 
     return imageContainerData.getId();
+  }
+
+
+  /**
+   * List glance Images.
+   *
+   * @return - A list of image objects containing name, id, and other useful parameters
+   */
+  public ArrayList<Image> listImages() {
+
+    Logger.debug("Listing available Images");
+    Images images = null;
+
+    String listImages = null;
+    try {
+      listImages = JavaStackUtils.convertHttpResponseToString(javaStack.listImages());
+      images = mapper.readValue(listImages, Images.class);
+
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return images.getImages();
   }
 
   /**

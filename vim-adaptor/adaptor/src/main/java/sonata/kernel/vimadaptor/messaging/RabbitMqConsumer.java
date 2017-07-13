@@ -50,12 +50,12 @@ import java.util.concurrent.TimeoutException;
 public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
   private static final String configFilePath = "/etc/son-mano/broker.config";
-  DefaultConsumer consumer;
-  private Connection connection;
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqConsumer.class);
   private Channel channel;
+  private Connection connection;
   private String queueName;
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqConsumer.class);
+  DefaultConsumer consumer;
 
   public RabbitMqConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
     super(dispatcherQueue);
@@ -107,6 +107,16 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
   }
 
   @Override
+  public void run() {
+    try {
+      Logger.info("Starting consumer thread");
+      channel.basicConsume(queueName, true, consumer);
+    } catch (IOException e) {
+      Logger.error(e.getMessage(), e);
+    }
+  }
+
+  @Override
   public boolean startConsuming() {
     boolean out = true;
     Thread thread;
@@ -135,16 +145,6 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     }
 
     return out;
-  }
-
-  @Override
-  public void run() {
-    try {
-      Logger.info("Starting consumer thread");
-      channel.basicConsume(queueName, true, consumer);
-    } catch (IOException e) {
-      Logger.error(e.getMessage(), e);
-    }
   }
 
   /**

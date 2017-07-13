@@ -32,26 +32,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class HeatRouter {
 
-  @JsonProperty("router_name")
-  private String routerName;
-
   @JsonProperty("router_id")
   private String routerId;
 
-  public String getRouterName() {
-    return routerName;
-  }
+  @JsonProperty("router_name")
+  private String routerName;
 
   public String getRouterId() {
     return routerId;
   }
 
-  public void setRouterName(String routerName) {
-    this.routerName = routerName;
+  public String getRouterName() {
+    return routerName;
   }
 
   public void setRouterId(String routerId) {
     this.routerId = routerId;
+  }
+
+  public void setRouterName(String routerName) {
+    this.routerName = routerName;
   }
 
 

@@ -135,14 +135,14 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
   // this.sendToMux(spMessage);
   // }
 
+  @Override
+  public void update(Observable observable, Object arg) {
+    // This call does not need to be updated by any observable (wrapper).
+  }
+
   private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
         this.getMessage().getTopic(), this.getMessage().getSid(), null);
     this.sendToMux(spMessage);
-  }
-
-  @Override
-  public void update(Observable observable, Object arg) {
-    // This call does not need to be updated by any observable (wrapper).
   }
 }

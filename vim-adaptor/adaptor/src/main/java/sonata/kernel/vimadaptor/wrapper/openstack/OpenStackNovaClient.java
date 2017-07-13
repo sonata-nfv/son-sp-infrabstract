@@ -44,16 +44,16 @@ public class OpenStackNovaClient {
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
 
-//  private String url; // url of the OpenStack Client
+  // private String url; // url of the OpenStack Client
 
-//  private String userName; // OpenStack Client user
-//
-//  private String password; // OpenStack Client password
-//
-//  private String tenantName; // OpenStack tenant name
-//
-//  private String identityPort; // Custom Identity Port
-  
+  // private String userName; // OpenStack Client user
+  //
+  // private String password; // OpenStack Client password
+  //
+  // private String tenantName; // OpenStack tenant name
+  //
+  // private String identityPort; // Custom Identity Port
+
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
 
   private ObjectMapper mapper;
@@ -67,12 +67,13 @@ public class OpenStackNovaClient {
    * @param tenantName to log into the OpenStack service
    * @throws IOException if the authentication process fails
    */
-  public OpenStackNovaClient(String url, String userName, String password, String tenantName, String identityPort) throws IOException {
-//    this.url = url;
-//    this.userName = userName;
-//    this.password = password;
-//    this.tenantName = tenantName;
-//    this.identityPort = identityPort;
+  public OpenStackNovaClient(String url, String userName, String password, String tenantName,
+      String identityPort) throws IOException {
+    // this.url = url;
+    // this.userName = userName;
+    // this.password = password;
+    // this.tenantName = tenantName;
+    // this.identityPort = identityPort;
 
     Logger.debug(
         "URL:" + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
@@ -87,11 +88,51 @@ public class OpenStackNovaClient {
     // javaStack.setTenantId(tenantName);
 
     // Authenticate
-//    try {
-      javaStack.authenticateClientV3(identityPort);
-//    } catch (IOException e) {
-//      e.printStackTrace();
-//    }
+    // try {
+    javaStack.authenticateClientV3(identityPort);
+    // } catch (IOException e) {
+    // e.printStackTrace();
+    // }
+  }
+
+  /**
+   * Get the flavors.
+   *
+   * @return the flavors
+   */
+  public ArrayList<Flavor> getFlavors() {
+
+    Flavor output_flavor = null;
+    String flavorName = null;
+    int cpu, ram, disk;
+
+    ArrayList<Flavor> output_flavors = new ArrayList<>();
+    Logger.info("Getting flavors");
+    try {
+      mapper = new ObjectMapper();
+      String listFlavors =
+          JavaStackUtils.convertHttpResponseToString(javaStack.listComputeFlavors());
+      System.out.println(listFlavors);
+      FlavorsData inputFlavors = mapper.readValue(listFlavors, FlavorsData.class);
+      System.out.println(inputFlavors.getFlavors());
+      for (FlavorProperties input_flavor : inputFlavors.getFlavors()) {
+        System.out.println(input_flavor.getId() + ": " + input_flavor.getName());
+
+        flavorName = input_flavor.getName();
+        cpu = Integer.parseInt(input_flavor.getVcpus());
+        ram = Integer.parseInt(input_flavor.getRam());
+        disk = Integer.parseInt(input_flavor.getDisk());
+
+        output_flavor = new Flavor(flavorName, cpu, ram, disk);
+        output_flavors.add(output_flavor);
+      }
+
+    } catch (Exception e) {
+      Logger.error("Runtime error getting openstack flavors" + " error message: " + e.getMessage());
+    }
+
+    return output_flavors;
+
   }
 
   /**
@@ -138,51 +179,11 @@ public class OpenStackNovaClient {
     return resources;
   }
 
-  /**
-   * Get the flavors.
-   *
-   * @return the flavors
-   */
-  public ArrayList<Flavor> getFlavors() {
 
-    Flavor output_flavor = null;
-    String flavorName = null;
-    int cpu, ram, disk;
-
-    ArrayList<Flavor> output_flavors = new ArrayList<>();
-    Logger.info("Getting flavors");
-    try {
-      mapper = new ObjectMapper();
-      String listFlavors =
-          JavaStackUtils.convertHttpResponseToString(javaStack.listComputeFlavors());
-      System.out.println(listFlavors);
-      FlavorsData inputFlavors = mapper.readValue(listFlavors, FlavorsData.class);
-      System.out.println(inputFlavors.getFlavors());
-      for (FlavorProperties input_flavor : inputFlavors.getFlavors()) {
-        System.out.println(input_flavor.getId() + ": " + input_flavor.getName());
-
-        flavorName = input_flavor.getName();
-        cpu = Integer.parseInt(input_flavor.getVcpus());
-        ram = Integer.parseInt(input_flavor.getRam());
-        disk = Integer.parseInt(input_flavor.getDisk());
-
-        output_flavor = new Flavor(flavorName, cpu, ram, disk);
-        output_flavors.add(output_flavor);
-      }
-
-    } catch (Exception e) {
-      Logger.error("Runtime error getting openstack flavors" + " error message: " + e.getMessage());
-    }
-
-    return output_flavors;
-
-  }
-
-
-//  @Override
-//  public String toString() {
-//    return "OpenStackNovaClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
-//        + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
-//  }
+  // @Override
+  // public String toString() {
+  // return "OpenStackNovaClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
+  // + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
+  // }
 
 }

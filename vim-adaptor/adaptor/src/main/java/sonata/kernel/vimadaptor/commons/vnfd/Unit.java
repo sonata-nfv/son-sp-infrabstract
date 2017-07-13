@@ -29,10 +29,8 @@ package sonata.kernel.vimadaptor.commons.vnfd;
 
 public interface Unit {
 
-  public double getMultiplier();
-
   public enum BandwidthUnit implements Unit {
-    bps(Math.pow(10, -6)), kbps(Math.pow(10, -3)), Mbps(1), Gbps(Math.pow(10, 3)), Tbps(
+    bps(Math.pow(10, -6)), Gbps(Math.pow(10, 3)), kbps(Math.pow(10, -3)), Mbps(1), Tbps(
         Math.pow(10, 6));
 
     double multiplier;
@@ -54,55 +52,8 @@ public interface Unit {
     }
   }
 
-  public enum TimeUnit implements Unit {
-    ns(0.000001), ms(0.001), s(1), m(60), h(3600), d(3600 * 24);
-
-    double multiplier;
-
-    TimeUnit(double multiplier) {
-      this.multiplier = multiplier;
-    }
-
-    /**
-     * Utility method to retrieve the multiplicative factor associated with this Time Unit (in
-     * multiple or sub-multiple of the second).
-     * 
-     * 
-     * @return a double with the multiplicative factor.
-     */
-    @Override
-    public double getMultiplier() {
-      return this.multiplier;
-    }
-
-  }
-
-  public enum MemoryUnit implements Unit {
-    B(Math.pow(10, -9)), kB(Math.pow(10, -6)), KiB(Math.pow(2, 10)), MB(Math.pow(10, -3)), MiB(
-        Math.pow(2, 20)), GB(1), GiB(1.074), TB(Math.pow(10, 3)), TiB(
-            1.074 * Math.pow(2, 10)), PB(Math.pow(10, 3)), PiB(1.074 * Math.pow(2, 20));
-
-    double multiplier;
-
-    MemoryUnit(double multiplier) {
-      this.multiplier = multiplier;
-    }
-
-    /**
-     * Utility method to retrieve the multiplicative factor associated with this Memory Unit (in
-     * multiple or sub-multiple of the GigaByte).
-     * 
-     * 
-     * @return a double with the multiplicative factor.
-     */
-    @Override
-    public double getMultiplier() {
-      return this.multiplier;
-    }
-  }
-
   public enum FrequencyUnit implements Unit {
-    Hz(Math.pow(10, -6)), kHz(Math.pow(10, -3)), MHz(1), GHz(Math.pow(10, 3)), THz(Math.pow(10, 6));
+    GHz(Math.pow(10, 3)), Hz(Math.pow(10, -6)), kHz(Math.pow(10, -3)), MHz(1), THz(Math.pow(10, 6));
 
     double multiplier;
 
@@ -131,5 +82,54 @@ public interface Unit {
       return 0.01;
     }
   }
+
+  public enum MemoryUnit implements Unit {
+    B(Math.pow(10, -9)), GB(1), GiB(1.074), kB(Math.pow(10, -6)), KiB(Math.pow(2, 10)), MB(
+        Math.pow(10, -3)), MiB(Math.pow(2, 20)), PB(Math.pow(10, 3)), PiB(
+            1.074 * Math.pow(2, 20)), TB(Math.pow(10, 3)), TiB(1.074 * Math.pow(2, 10));
+
+    double multiplier;
+
+    MemoryUnit(double multiplier) {
+      this.multiplier = multiplier;
+    }
+
+    /**
+     * Utility method to retrieve the multiplicative factor associated with this Memory Unit (in
+     * multiple or sub-multiple of the GigaByte).
+     * 
+     * 
+     * @return a double with the multiplicative factor.
+     */
+    @Override
+    public double getMultiplier() {
+      return this.multiplier;
+    }
+  }
+
+  public enum TimeUnit implements Unit {
+    d(3600 * 24), h(3600), m(60), ms(0.001), ns(0.000001), s(1);
+
+    double multiplier;
+
+    TimeUnit(double multiplier) {
+      this.multiplier = multiplier;
+    }
+
+    /**
+     * Utility method to retrieve the multiplicative factor associated with this Time Unit (in
+     * multiple or sub-multiple of the second).
+     * 
+     * 
+     * @return a double with the multiplicative factor.
+     */
+    @Override
+    public double getMultiplier() {
+      return this.multiplier;
+    }
+
+  }
+
+  public double getMultiplier();
 }
 

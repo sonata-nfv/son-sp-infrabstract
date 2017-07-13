@@ -27,56 +27,55 @@
 package sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.authentication;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Token {
-  private String id;
-  private Tenant tenant;
-  private String issued_at;
-  private String expires;
   private List<String> audit_ids;
+  private String expires;
+  private String id;
+  private String issued_at;
+  private Tenant tenant;
 
 
-  public Tenant getTenant() {
-    return this.tenant;
-  }
-
-  public void setTenant(Tenant tenant) {
-    this.tenant = tenant;
-  }
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public String getIssued_at() {
-    return issued_at;
-  }
-
-  public void setIssued_at(String issued_at) {
-    this.issued_at = issued_at;
+  public List<String> getAudit_ids() {
+    return audit_ids;
   }
 
   public String getExpires() {
     return expires;
   }
 
-  public void setExpires(String expires) {
-    this.expires = expires;
+  public String getId() {
+    return this.id;
   }
 
-  public List<String> getAudit_ids() {
-    return audit_ids;
+  public String getIssued_at() {
+    return issued_at;
+  }
+
+  public Tenant getTenant() {
+    return this.tenant;
   }
 
   public void setAudit_ids(List<String> audit_ids) {
     this.audit_ids = audit_ids;
+  }
+
+  public void setExpires(String expires) {
+    this.expires = expires;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setIssued_at(String issued_at) {
+    this.issued_at = issued_at;
+  }
+
+  public void setTenant(Tenant tenant) {
+    this.tenant = tenant;
   }
 }

@@ -28,40 +28,40 @@ package sonata.kernel.vimadaptor.commons.vnfd;
 
 public class Penalty {
 
-  private String type;
   private int expression;
-  private String validity;
+  private String type;
   private String unit;
-
-  public String getType() {
-    return type;
-  }
+  private String validity;
 
   public int getExpression() {
     return expression;
   }
 
-  public String getValidity() {
-    return validity;
+  public String getType() {
+    return type;
   }
 
   public String getUnit() {
     return unit;
   }
 
-  public void setType(String type) {
-    this.type = type;
+  public String getValidity() {
+    return validity;
   }
 
   public void setExpression(int expression) {
     this.expression = expression;
   }
 
-  public void setValidity(String validity) {
-    this.validity = validity;
+  public void setType(String type) {
+    this.type = type;
   }
 
   public void setUnit(String unit) {
     this.unit = unit;
+  }
+
+  public void setValidity(String validity) {
+    this.validity = validity;
   }
 }

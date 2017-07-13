@@ -32,74 +32,19 @@ import java.util.ArrayList;
 
 public class AssuranceParameter {
 
-  private ArrayList<Violation> violation;
-  private int value;
-  private Penalty penalty;
   private String formula;
+  private String id;
+  private Penalty penalty;
   @JsonProperty("rel_id")
   private String relId;
-  private String id;
   private String unit;
+  private int value;
+  private ArrayList<Violation> violation;
 
-
-
-  public void setViolation(ArrayList<Violation> violation) {
-    this.violation = violation;
-  }
-
-
-  public void setValue(int value) {
-    this.value = value;
-  }
-
-
-  public void setPenalty(Penalty penalty) {
-    this.penalty = penalty;
-  }
-
-
-  public void setFormula(String formula) {
-    this.formula = formula;
-  }
-
-
-  public void setRelId(String relId) {
-    this.relId = relId;
-  }
-
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-
-  public void setUnit(String unit) {
-    this.unit = unit;
-  }
-
-
-  public ArrayList<Violation> getViolation() {
-    return violation;
-  }
-
-
-  public int getValue() {
-    return value;
-  }
-
-
-  public Penalty getPenalty() {
-    return penalty;
-  }
 
 
   public String getFormula() {
     return formula;
-  }
-
-
-  public String getRelId() {
-    return relId;
   }
 
 
@@ -108,7 +53,62 @@ public class AssuranceParameter {
   }
 
 
+  public Penalty getPenalty() {
+    return penalty;
+  }
+
+
+  public String getRelId() {
+    return relId;
+  }
+
+
   public String getUnit() {
     return unit;
+  }
+
+
+  public int getValue() {
+    return value;
+  }
+
+
+  public ArrayList<Violation> getViolation() {
+    return violation;
+  }
+
+
+  public void setFormula(String formula) {
+    this.formula = formula;
+  }
+
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+
+  public void setPenalty(Penalty penalty) {
+    this.penalty = penalty;
+  }
+
+
+  public void setRelId(String relId) {
+    this.relId = relId;
+  }
+
+
+  public void setUnit(String unit) {
+    this.unit = unit;
+  }
+
+
+  public void setValue(int value) {
+    this.value = value;
+  }
+
+
+  public void setViolation(ArrayList<Violation> violation) {
+    this.violation = violation;
   }
 }

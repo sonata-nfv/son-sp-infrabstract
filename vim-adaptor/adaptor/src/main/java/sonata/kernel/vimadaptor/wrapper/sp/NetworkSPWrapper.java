@@ -39,15 +39,21 @@ public class NetworkSPWrapper extends NetworkWrapper {
     // TODO Auto-generated constructor stub
   }
 
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.NetworkWrapper#configureNetworking(sonata.kernel.vimadaptor.commons.NetworkConfigurePayload)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.NetworkWrapper#configureNetworking(sonata.kernel.vimadaptor.
+   * commons.NetworkConfigurePayload)
    */
   @Override
   public void configureNetworking(NetworkConfigurePayload data) throws Exception {
     // This Wrapper ignores this call
   }
 
-  /* (non-Javadoc)
+  /*
+   * (non-Javadoc)
+   * 
    * @see sonata.kernel.vimadaptor.wrapper.NetworkWrapper#deconfigureNetworking(java.lang.String)
    */
   @Override

@@ -28,73 +28,107 @@ package sonata.kernel.vimadaptor.wrapper;
 
 public class WrapperConfiguration {
 
-  private String vimEndpoint;
+  private String authKey;
+  private String authPass;
+  private String authUserName;
+  private String city;
+  private String configuration;
+  private String country;
   private String name;
+  private String uuid;
+  private String vimEndpoint;
   private VimVendor vimVendor;
   private WrapperType wrapperType;
-  private String authUserName;
-  private String authPass;
-  private String authKey;
-  private String uuid;
-  private String city;
-  private String country;
-  private String configuration;
 
 
-  public WrapperType getWrapperType() {
-    return wrapperType;
-  }
-
-  public void setWrapperType(WrapperType wrapperType) {
-    this.wrapperType = wrapperType;
-  }
-
-  public String getVimEndpoint() {
-    return vimEndpoint;
-  }
-
-  public void setVimEndpoint(String vimEndpoint2) {
-    this.vimEndpoint = vimEndpoint2;
-  }
-
-  public VimVendor getVimVendor() {
-    return vimVendor;
-  }
-
-  public void setVimVendor(VimVendor vimVendor) {
-    this.vimVendor = vimVendor;
-  }
-
-  public String getAuthUserName() {
-    return authUserName;
-  }
-
-  public void setAuthUserName(String authUserName) {
-    this.authUserName = authUserName;
+  public String getAuthKey() {
+    return authKey;
   }
 
   public String getAuthPass() {
     return authPass;
   }
 
-  public void setAuthPass(String authPass) {
-    this.authPass = authPass;
+  public String getAuthUserName() {
+    return authUserName;
   }
 
-  public String getAuthKey() {
-    return authKey;
+  public String getCity() {
+    return city;
   }
 
-  public void setAuthKey(String authKey) {
-    this.authKey = authKey;
+  public String getConfiguration() {
+    return configuration;
+  }
+
+  public String getCountry() {
+    return country;
+  }
+
+  public String getName() {
+    return name;
   }
 
   public String getUuid() {
     return this.uuid;
   }
 
+  public String getVimEndpoint() {
+    return vimEndpoint;
+  }
+
+  public VimVendor getVimVendor() {
+    return vimVendor;
+  }
+
+  public WrapperType getWrapperType() {
+    return wrapperType;
+  }
+
+  public void setAuthKey(String authKey) {
+    this.authKey = authKey;
+  }
+
+  public void setAuthPass(String authPass) {
+    this.authPass = authPass;
+  }
+
+  public void setAuthUserName(String authUserName) {
+    this.authUserName = authUserName;
+  }
+
+  public void setCity(String city) {
+    this.city = city;
+  }
+
+
+
+  public void setConfiguration(String configuration) {
+    this.configuration = configuration;
+  }
+
+  public void setCountry(String country) {
+    this.country = country;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
   public void setUuid(String uuid) {
     this.uuid = uuid;
+  }
+
+  public void setVimEndpoint(String vimEndpoint2) {
+    this.vimEndpoint = vimEndpoint2;
+  }
+
+  public void setVimVendor(VimVendor vimVendor) {
+    this.vimVendor = vimVendor;
+  }
+
+  public void setWrapperType(WrapperType wrapperType) {
+    this.wrapperType = wrapperType;
   }
 
   @Override
@@ -110,40 +144,6 @@ public class WrapperConfiguration {
     out += "config:\n";
     out += configuration;
     return out;
-  }
-
-
-
-  public String getCity() {
-    return city;
-  }
-
-  public String getCountry() {
-    return country;
-  }
-
-  public void setCity(String city) {
-    this.city = city;
-  }
-
-  public void setCountry(String country) {
-    this.country = country;
-  }
-
-  public String getConfiguration() {
-    return configuration;
-  }
-
-  public void setConfiguration(String configuration) {
-    this.configuration = configuration;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public void setName(String name) {
-    this.name = name;
   }
 
 }

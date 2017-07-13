@@ -34,41 +34,13 @@ import java.util.HashMap;
 @JsonPropertyOrder({"type", "properties"})
 public class HeatResource implements Comparable<HeatResource> {
 
+  private HashMap<String, Object> properties;
   @JsonIgnore
   private String resourceName;
   private String type;
-  private HashMap<String, Object> properties;
 
   public HeatResource() {
     this.properties = new HashMap<String, Object>();
-  }
-
-  public String getType() {
-    return type;
-  }
-
-  public HashMap<String, Object> getProperties() {
-    return properties;
-  }
-
-  public void setType(String type) {
-    this.type = type;
-  }
-
-  public void setProperties(HashMap<String, Object> properties) {
-    this.properties = properties;
-  }
-
-  public void putProperty(String key, Object value) {
-    this.properties.put(key, value);
-  }
-
-  public void setName(String name) {
-    this.resourceName = name;
-  }
-
-  public String getResourceName() {
-    return resourceName;
   }
 
   @Override
@@ -85,9 +57,37 @@ public class HeatResource implements Comparable<HeatResource> {
     }
   }
 
+  public HashMap<String, Object> getProperties() {
+    return properties;
+  }
+
+  public String getResourceName() {
+    return resourceName;
+  }
+
+  public String getType() {
+    return type;
+  }
+
   @Override
   public int hashCode() {
     return this.getType().hashCode();
+  }
+
+  public void putProperty(String key, Object value) {
+    this.properties.put(key, value);
+  }
+
+  public void setName(String name) {
+    this.resourceName = name;
+  }
+
+  public void setProperties(HashMap<String, Object> properties) {
+    this.properties = properties;
+  }
+
+  public void setType(String type) {
+    this.type = type;
   }
 
 }

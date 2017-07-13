@@ -36,32 +36,32 @@ import java.util.HashMap;
 @JsonPropertyOrder({"templateVersion", "resources"})
 public class HeatTemplate {
 
+  private HashMap<String, Object> resources;
+
   @JsonProperty("heat_template_version")
   private String templateVersion = "2015-04-30";
 
-  private HashMap<String, Object> resources;
-
   public HeatTemplate() {
     resources = new HashMap<String, Object>();
-  }
-
-  public String getTemplateVersion() {
-    return templateVersion;
   }
 
   public HashMap<String, Object> getResources() {
     return resources;
   }
 
-  public void setTemplateVersion(String templateVersion) {
-    this.templateVersion = templateVersion;
+  public String getTemplateVersion() {
+    return templateVersion;
+  }
+
+  public void putResource(String key, Object value) {
+    this.resources.put(key, value);
   }
 
   public void setResources(HashMap<String, Object> resources) {
     this.resources = resources;
   }
 
-  public void putResource(String key, Object value) {
-    this.resources.put(key, value);
+  public void setTemplateVersion(String templateVersion) {
+    this.templateVersion = templateVersion;
   }
 }

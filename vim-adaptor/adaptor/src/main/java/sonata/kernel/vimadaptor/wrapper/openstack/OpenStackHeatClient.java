@@ -65,10 +65,10 @@ public class OpenStackHeatClient {
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackHeatClient.class);
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
   private ObjectMapper mapper;
-//  private String url; // url of the OpenStack Client
-//  private String userName; // OpenStack Client user
-//  private String password; // OpenStack Client password
-//  private String tenantName; // OpenStack tenant name
+  // private String url; // url of the OpenStack Client
+  // private String userName; // OpenStack Client user
+  // private String password; // OpenStack Client password
+  // private String tenantName; // OpenStack tenant name
 
 
   /**
@@ -80,12 +80,12 @@ public class OpenStackHeatClient {
    * @param tenantName to log into the OpenStack service
    * @throws IOException if the client cannoct connect to the VIM
    */
-  public OpenStackHeatClient(String url, String userName, String password, String tenantName, String identityPort)
-      throws IOException {
-//    this.url = url;
-//    this.userName = userName;
-//    this.password = password;
-//    this.tenantName = tenantName;
+  public OpenStackHeatClient(String url, String userName, String password, String tenantName,
+      String identityPort) throws IOException {
+    // this.url = url;
+    // this.userName = userName;
+    // this.password = password;
+    // this.tenantName = tenantName;
 
     Logger.debug(
         "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
@@ -132,75 +132,6 @@ public class OpenStackHeatClient {
     return uuid;
   }
 
-  public void updateStack(String stackName, String stackUuid, String template) throws Exception {
-
-    Logger.info("Creating stack: " + stackName);
-    // Logger.debug("Template:\n" + template);
-
-    try {
-
-      JavaStackUtils
-          .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
-      // Logger.debug("Stack response: " + response);
-    } catch (Exception e) {
-      Logger.error(
-          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
-      throw new Exception("Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
-    }
-
-    return;
-  }
-
-  /**
-   * Get the heat template used to create the stack.
-   *
-   * @param stackName - the name of the stack in Heat
-   * @param stackUuid - the UUID of the stack in Heat
-   * @return - the HeatTemplate object representing the heat template.
-   */
-  public HeatTemplate getStackTemplate(String stackName, String stackUuid) {
-    HeatTemplate template = null;
-
-    try {
-      // template = JavaStackUtils.readFile("./test.yml");
-      mapper = new ObjectMapper();
-      String getStackTemplateResponse = JavaStackUtils
-          .convertHttpResponseToString(javaStack.getStackTemplate(stackName, stackUuid));
-      template = mapper.readValue(getStackTemplateResponse, HeatTemplate.class);
-
-    } catch (Exception e) {
-      Logger.error(
-          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
-    }
-
-    return template;
-  }
-
-  /**
-   * Get the status of existing stack. Using Stack Name or Stack Id
-   *
-   * @param stackName used for logging, usually service tenant
-   * @param uuid OpenStack UUID of the stack
-   * @return the OpenStack status of the stack
-   */
-  public String getStackStatus(String stackName, String uuid) {
-    String status = null;
-    Logger.debug("Getting status for stack: " + stackName + "Stack ID: " + uuid);
-    try {
-      mapper = new ObjectMapper();
-      String findStackResponse =
-          JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
-      StackData stack = mapper.readValue(findStackResponse, StackData.class);
-      status = stack.getStack().getStack_status();
-
-    } catch (Exception e) {
-      Logger.error(
-          "Runtime error getStackStatus: " + stackName + " error message: " + e.getMessage());
-    }
-    return status;
-  }
-
-
   /**
    * Delete Stack.
    *
@@ -236,12 +167,6 @@ public class OpenStackHeatClient {
 
     return isDeleted;
   }
-
-//  @Override
-//  public String toString() {
-//    return "OpenStackHeatClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
-//        + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
-//  }
 
   /**
    * Get stack composition.
@@ -294,24 +219,25 @@ public class OpenStackHeatClient {
                 + groupStackUuid);
             String groupListResources = JavaStackUtils.convertHttpResponseToString(
                 javaStack.listStackResources(groupStackName, groupStackUuid, null));
-            
+
             ArrayList<Resource> groupResources =
                 mapper.readValue(groupListResources, Resources.class).getResources();
             Logger.debug("Getting resources for resource group.");
             String serverInGroupResource = null;
             for (Resource groupResource : groupResources) {
-              HeatServer server= new HeatServer();
+              HeatServer server = new HeatServer();
               serverInGroupResource =
                   JavaStackUtils.convertHttpResponseToString(javaStack.showResourceData(
                       groupStackName, groupStackUuid, groupResource.getResource_name()));
 
               Logger.debug("group resource info: " + serverInGroupResource);
-              ResourceData<ServerAttributes> serverResourceData = mapper.readValue(serverInGroupResource,
-                  new TypeReference<ResourceData<ServerAttributes>>() {});
+              ResourceData<ServerAttributes> serverResourceData = mapper.readValue(
+                  serverInGroupResource, new TypeReference<ResourceData<ServerAttributes>>() {});
               // Set Server
               server.setServerId(serverResourceData.getResource().getPhysical_resource_id());
-              server.setServerName(serverResourceData.getResource().getParent_resource() +"."+ serverResourceData.getResource().getResource_name());
-              Logger.debug("Server Object created: "+ mapper.writeValueAsString(server));
+              server.setServerName(serverResourceData.getResource().getParent_resource() + "."
+                  + serverResourceData.getResource().getResource_name());
+              Logger.debug("Server Object created: " + mapper.writeValueAsString(server));
               servers.add(server);
             }
             break;
@@ -386,6 +312,82 @@ public class OpenStackHeatClient {
     }
 
     return composition;
+  }
+
+  /**
+   * Get the status of existing stack. Using Stack Name or Stack Id
+   *
+   * @param stackName used for logging, usually service tenant
+   * @param uuid OpenStack UUID of the stack
+   * @return the OpenStack status of the stack
+   */
+  public String getStackStatus(String stackName, String uuid) {
+    String status = null;
+    Logger.debug("Getting status for stack: " + stackName + "Stack ID: " + uuid);
+    try {
+      mapper = new ObjectMapper();
+      String findStackResponse =
+          JavaStackUtils.convertHttpResponseToString(javaStack.findStack(stackName));
+      StackData stack = mapper.readValue(findStackResponse, StackData.class);
+      status = stack.getStack().getStack_status();
+
+    } catch (Exception e) {
+      Logger.error(
+          "Runtime error getStackStatus: " + stackName + " error message: " + e.getMessage());
+    }
+    return status;
+  }
+
+
+  /**
+   * Get the heat template used to create the stack.
+   *
+   * @param stackName - the name of the stack in Heat
+   * @param stackUuid - the UUID of the stack in Heat
+   * @return - the HeatTemplate object representing the heat template.
+   */
+  public HeatTemplate getStackTemplate(String stackName, String stackUuid) {
+    HeatTemplate template = null;
+
+    try {
+      // template = JavaStackUtils.readFile("./test.yml");
+      mapper = new ObjectMapper();
+      String getStackTemplateResponse = JavaStackUtils
+          .convertHttpResponseToString(javaStack.getStackTemplate(stackName, stackUuid));
+      template = mapper.readValue(getStackTemplateResponse, HeatTemplate.class);
+
+    } catch (Exception e) {
+      Logger.error(
+          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+    }
+
+    return template;
+  }
+
+  // @Override
+  // public String toString() {
+  // return "OpenStackHeatClient{" + "url='" + url + '\'' + ", userName='" + userName + '\''
+  // + ", password='" + password + '\'' + ", tenantName='" + tenantName + '\'' + '}';
+  // }
+
+  public void updateStack(String stackName, String stackUuid, String template) throws Exception {
+
+    Logger.info("Creating stack: " + stackName);
+    // Logger.debug("Template:\n" + template);
+
+    try {
+
+      JavaStackUtils
+          .convertHttpResponseToString(javaStack.updateStack(stackName, stackUuid, template));
+      // Logger.debug("Stack response: " + response);
+    } catch (Exception e) {
+      Logger.error(
+          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+      throw new Exception(
+          "Runtime error creating stack : " + stackName + " error message: " + e.getMessage());
+    }
+
+    return;
   }
 
   /**

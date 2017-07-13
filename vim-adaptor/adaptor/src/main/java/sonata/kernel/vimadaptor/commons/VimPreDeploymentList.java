@@ -32,25 +32,25 @@ import java.util.ArrayList;
 
 public class VimPreDeploymentList {
 
-  @JsonProperty("uuid")
-  private String uuid;
   @JsonProperty("vm_images")
   private ArrayList<VnfImage> images;
-
-  public String getUuid() {
-    return uuid;
-  }
+  @JsonProperty("uuid")
+  private String uuid;
 
   public ArrayList<VnfImage> getImages() {
     return images;
   }
 
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
+  public String getUuid() {
+    return uuid;
   }
 
   public void setImages(ArrayList<VnfImage> images) {
     this.images = images;
+  }
+
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
   }
 
 }

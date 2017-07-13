@@ -30,85 +30,85 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VimResources {
 
-  @JsonProperty("vim_uuid")
-  private String vimUuid;
-  @JsonProperty("vim_city")
-  private String vimCity;
-  @JsonProperty("vim_name")
-  private String vimName;
-  @JsonProperty("vim_endpoint")
-  private String vimEndpoint;
-  @JsonProperty("memory_used")
-  private int memoryUsed;
-  @JsonProperty("memory_total")
-  private int memoryTotal;
-  @JsonProperty("core_used")
-  private int coreUsed;
   @JsonProperty("core_total")
   private int coreTotal;
+  @JsonProperty("core_used")
+  private int coreUsed;
+  @JsonProperty("memory_total")
+  private int memoryTotal;
+  @JsonProperty("memory_used")
+  private int memoryUsed;
+  @JsonProperty("vim_city")
+  private String vimCity;
+  @JsonProperty("vim_endpoint")
+  private String vimEndpoint;
+  @JsonProperty("vim_name")
+  private String vimName;
+  @JsonProperty("vim_uuid")
+  private String vimUuid;
 
-  public String getVimUuid() {
-    return vimUuid;
-  }
-
-  public int getMemoryUsed() {
-    return memoryUsed;
-  }
-
-  public int getMemoryTotal() {
-    return memoryTotal;
+  public int getCoreTotal() {
+    return coreTotal;
   }
 
   public int getCoreUsed() {
     return coreUsed;
   }
 
-  public int getCoreTotal() {
-    return coreTotal;
+  public int getMemoryTotal() {
+    return memoryTotal;
   }
 
-  public void setVimUuid(String vimUuid) {
-    this.vimUuid = vimUuid;
-  }
-
-  public void setMemoryUsed(int memoryUsed) {
-    this.memoryUsed = memoryUsed;
-  }
-
-  public void setMemoryTotal(int memoryTotal) {
-    this.memoryTotal = memoryTotal;
-  }
-
-  public void setCoreUsed(int coreUsed) {
-    this.coreUsed = coreUsed;
-  }
-
-  public void setCoreTotal(int coreTotal) {
-    this.coreTotal = coreTotal;
+  public int getMemoryUsed() {
+    return memoryUsed;
   }
 
   public String getVimCity() {
     return vimCity;
   }
 
+  public String getVimEndpoint() {
+    return vimEndpoint;
+  }
+
   public String getVimName() {
     return vimName;
   }
 
-  public String getVimEndpoint() {
-    return vimEndpoint;
+  public String getVimUuid() {
+    return vimUuid;
+  }
+
+  public void setCoreTotal(int coreTotal) {
+    this.coreTotal = coreTotal;
+  }
+
+  public void setCoreUsed(int coreUsed) {
+    this.coreUsed = coreUsed;
+  }
+
+  public void setMemoryTotal(int memoryTotal) {
+    this.memoryTotal = memoryTotal;
+  }
+
+  public void setMemoryUsed(int memoryUsed) {
+    this.memoryUsed = memoryUsed;
   }
 
   public void setVimCity(String vimCity) {
     this.vimCity = vimCity;
   }
 
+  public void setVimEndpoint(String vimEndpoint) {
+    this.vimEndpoint = vimEndpoint;
+  }
+
   public void setVimName(String vimName) {
     this.vimName = vimName;
   }
 
-  public void setVimEndpoint(String vimEndpoint) {
-    this.vimEndpoint = vimEndpoint;
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
   }
 
 

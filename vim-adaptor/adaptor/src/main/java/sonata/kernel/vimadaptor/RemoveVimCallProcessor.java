@@ -78,14 +78,14 @@ public class RemoveVimCallProcessor extends AbstractCallProcessor {
     return out;
   }
 
+  @Override
+  public void update(Observable observable, Object arg) {
+    // This call does not need to be updated by any observable (wrapper).
+  }
+
   private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
         this.getMessage().getTopic(), this.getMessage().getSid(), this.getMessage().getReplyTo());
     this.sendToMux(spMessage);
-  }
-
-  @Override
-  public void update(Observable observable, Object arg) {
-    // This call does not need to be updated by any observable (wrapper).
   }
 }

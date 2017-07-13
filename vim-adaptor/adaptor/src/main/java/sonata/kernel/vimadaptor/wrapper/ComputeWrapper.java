@@ -36,10 +36,10 @@ import java.io.IOException;
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
 
-  public ComputeWrapper(){
+  public ComputeWrapper() {
     this.setType(WrapperType.COMPUTE);
   }
-  
+
   /**
    * general constructor for wrappers of type compute.
    */
@@ -50,14 +50,12 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   }
 
   /**
-   * Prepare a service instance in this VIM for the given instance ID.
+   * Deploy a the VNF described in the payload in this compute VIM.
    * 
-   * @param instanceId the ID of the instance used as reference for the prepared environment in the
-   *        VIM
-   * 
-   * @return true if the remove process has started correctly, false otherwise
+   * @param data the payload of a Function.Deploy call
+   * @param sid the session ID for this Adaptor call.
    */
-  public abstract boolean prepareService(String instanceId) throws Exception;
+  public abstract void deployFunction(FunctionDeployPayload data, String sid);
 
   /**
    * Deploy a service instance on this VIM.
@@ -72,6 +70,41 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   public abstract boolean deployService(ServiceDeployPayload data, String callSid) throws Exception;
 
   /**
+   * Get the resource utilisation status of this compute VIM.
+   * 
+   * @return the ResourceUtilisation object representing the status of this VIM
+   */
+  public abstract ResourceUtilisation getResourceUtilisation();
+
+
+  /**
+   * Check if given image is stored in this compute VIM image repository.
+   * 
+   * @param image the object representing the VNF image
+   */
+  public abstract boolean isImageStored(VnfImage image, String callSid);
+
+  /**
+   * Prepare a service instance in this VIM for the given instance ID.
+   * 
+   * @param instanceId the ID of the instance used as reference for the prepared environment in the
+   *        VIM
+   * 
+   * @return true if the remove process has started correctly, false otherwise
+   */
+  public abstract boolean prepareService(String instanceId) throws Exception;
+
+  /**
+   * Remove the given image from this compute VIM image repository.
+   * 
+   * @param image the object representing the VNF image
+   */
+  public void removeImage(VnfImage image) {
+    // TODO Auto-generated method stub
+
+  }
+
+  /**
    * Remove a service instance from this VIM.
    * 
    * @param instanceUuid the identifier of the instance in the VIM scope
@@ -80,24 +113,9 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    */
   public abstract boolean removeService(String instanceUuid, String callSid);
 
-
-  /**
-   * Get the resource utilisation status of this compute VIM.
-   * 
-   * @return the ResourceUtilisation object representing the status of this VIM
-   */
-  public abstract ResourceUtilisation getResourceUtilisation();
-
-  /**
-   * Deploy a the VNF described in the payload in this compute VIM.
-   * 
-   * @param data the payload of a Function.Deploy call
-   * @param sid the session ID for this Adaptor call.
-   */
-  public abstract void deployFunction(FunctionDeployPayload data, String sid);
-
   /**
    * Scale the VNF described in the payload in this compute VIM
+   * 
    * @param data the payload of a Function.Scale call
    * @param sid the session ID for this Adaptor call
    */
@@ -110,21 +128,4 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * @param imageUrl the URL from which the image can be downloded.
    */
   public abstract void uploadImage(VnfImage image) throws IOException;
-
-  /**
-   * Check if given image is stored in this compute VIM image repository.
-   * 
-   * @param image the object representing the VNF image
-   */
-  public abstract boolean isImageStored(VnfImage image, String callSid);
-
-  /**
-   * Remove the given image from this compute VIM image repository.
-   * 
-   * @param image the object representing the VNF image
-   */
-  public void removeImage(VnfImage image) {
-    // TODO Auto-generated method stub
-
-  }
 }

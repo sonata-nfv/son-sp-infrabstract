@@ -34,63 +34,63 @@ import java.util.ArrayList;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Resource<T> {
-  
-  @JsonProperty("parent_resource")
-  String parent_resource;
-  
-  String resource_name;
-  String resource_type;
-  String physical_resource_id;
-  ArrayList<Link> links;
 
   T attributes;
 
-  public String getPhysical_resource_id() {
-    return physical_resource_id;
-  }
+  ArrayList<Link> links;
+  @JsonProperty("parent_resource")
+  String parent_resource;
+  String physical_resource_id;
+  String resource_name;
 
-  public void setPhysical_resource_id(String physical_resource_id) {
-    this.physical_resource_id = physical_resource_id;
-  }
+  String resource_type;
 
   public T getAttributes() {
     return attributes;
-  }
-
-  public void setAttributes(T attributes) {
-    this.attributes = attributes;
-  }
-
-  public String getResource_name() {
-    return resource_name;
-  }
-
-  public void setResource_name(String resource_name) {
-    this.resource_name = resource_name;
-  }
-
-  public String getResource_type() {
-    return resource_type;
-  }
-
-  public void setResource_type(String resource_type) {
-    this.resource_type = resource_type;
   }
 
   public ArrayList<Link> getLinks() {
     return links;
   }
 
-  public void setLinks(ArrayList<Link> links) {
-    this.links = links;
-  }
-
   public String getParent_resource() {
     return parent_resource;
   }
 
+  public String getPhysical_resource_id() {
+    return physical_resource_id;
+  }
+
+  public String getResource_name() {
+    return resource_name;
+  }
+
+  public String getResource_type() {
+    return resource_type;
+  }
+
+  public void setAttributes(T attributes) {
+    this.attributes = attributes;
+  }
+
+  public void setLinks(ArrayList<Link> links) {
+    this.links = links;
+  }
+
   public void setParent_resource(String parent_resource) {
     this.parent_resource = parent_resource;
+  }
+
+  public void setPhysical_resource_id(String physical_resource_id) {
+    this.physical_resource_id = physical_resource_id;
+  }
+
+  public void setResource_name(String resource_name) {
+    this.resource_name = resource_name;
+  }
+
+  public void setResource_type(String resource_type) {
+    this.resource_type = resource_type;
   }
 
 }

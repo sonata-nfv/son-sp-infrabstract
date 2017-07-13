@@ -55,17 +55,6 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
   /*
    * (non-Javadoc)
    * 
-   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-   */
-  @Override
-  public void update(Observable arg0, Object arg1) {
-    // TODO Auto-generated method stub
-
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
    * @see sonata.kernel.vimadaptor.AbstractCallProcessor#process(sonata.kernel.vimadaptor.messaging.
    * ServicePlatformMessage)
    */
@@ -136,6 +125,17 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
       out = false;
     }
     return out;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+   */
+  @Override
+  public void update(Observable arg0, Object arg1) {
+    // TODO Auto-generated method stub
+
   }
 
 }

@@ -32,14 +32,26 @@ import java.util.ArrayList;
 public class StackComposition {
 
 
-  private ArrayList<HeatServer> servers;
   private ArrayList<HeatNet> nets;
   private ArrayList<HeatPort> ports;
   private ArrayList<HeatRouter> routers;
   // private ArrayList<HeatFloatingIp> ips;
+  private ArrayList<HeatServer> servers;
 
-  public void setServers(ArrayList<HeatServer> servers) {
-    this.servers = servers;
+  public ArrayList<HeatNet> getNets() {
+    return nets;
+  }
+
+  public ArrayList<HeatPort> getPorts() {
+    return ports;
+  }
+
+  public ArrayList<HeatRouter> getRouters() {
+    return routers;
+  }
+
+  public ArrayList<HeatServer> getServers() {
+    return servers;
   }
 
   public void setNets(ArrayList<HeatNet> nets) {
@@ -54,20 +66,8 @@ public class StackComposition {
     this.routers = routers;
   }
 
-  public ArrayList<HeatServer> getServers() {
-    return servers;
-  }
-
-  public ArrayList<HeatNet> getNets() {
-    return nets;
-  }
-
-  public ArrayList<HeatPort> getPorts() {
-    return ports;
-  }
-
-  public ArrayList<HeatRouter> getRouters() {
-    return routers;
+  public void setServers(ArrayList<HeatServer> servers) {
+    this.servers = servers;
   }
 
 }

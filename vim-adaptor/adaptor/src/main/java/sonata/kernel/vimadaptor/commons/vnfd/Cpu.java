@@ -29,38 +29,16 @@ package sonata.kernel.vimadaptor.commons.vnfd;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Cpu {
-  private int vcpus;
-  @JsonProperty("cpu_support_accelerator")
-  private String cpuSupportAccelerator;
-  @JsonProperty("cpu_model")
-  private String cpuModel;
   @JsonProperty("cpu_clock_speed")
   private String cpuClockSpeed;
+  @JsonProperty("cpu_model")
+  private String cpuModel;
+  @JsonProperty("cpu_support_accelerator")
+  private String cpuSupportAccelerator;
+  private int vcpus;
 
-  public int getVcpus() {
-    return vcpus;
-  }
-
-
-  public void setVcpus(int vcpus) {
-    this.vcpus = vcpus;
-  }
-
-  public void setCpuSupportAccelerator(String cpuSupportAccelerator) {
-    this.cpuSupportAccelerator = cpuSupportAccelerator;
-  }
-
-  public void setCpuModel(String cpuModel) {
-    this.cpuModel = cpuModel;
-  }
-
-  public void setCpuClockSpeed(String cpuClockSpeed) {
-    this.cpuClockSpeed = cpuClockSpeed;
-  }
-
-
-  public String getCpuSupportAccelerator() {
-    return cpuSupportAccelerator;
+  public String getCpuClockSpeed() {
+    return cpuClockSpeed;
   }
 
 
@@ -68,8 +46,30 @@ public class Cpu {
     return cpuModel;
   }
 
+  public String getCpuSupportAccelerator() {
+    return cpuSupportAccelerator;
+  }
 
-  public String getCpuClockSpeed() {
-    return cpuClockSpeed;
+  public int getVcpus() {
+    return vcpus;
+  }
+
+  public void setCpuClockSpeed(String cpuClockSpeed) {
+    this.cpuClockSpeed = cpuClockSpeed;
+  }
+
+
+  public void setCpuModel(String cpuModel) {
+    this.cpuModel = cpuModel;
+  }
+
+
+  public void setCpuSupportAccelerator(String cpuSupportAccelerator) {
+    this.cpuSupportAccelerator = cpuSupportAccelerator;
+  }
+
+
+  public void setVcpus(int vcpus) {
+    this.vcpus = vcpus;
   }
 }

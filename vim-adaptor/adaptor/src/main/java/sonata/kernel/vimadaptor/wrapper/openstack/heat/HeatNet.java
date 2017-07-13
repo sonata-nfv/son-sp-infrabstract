@@ -31,69 +31,69 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class HeatNet {
 
 
-  @JsonProperty("net_name")
-  private String netName;
+  private String cidr;
 
   @JsonProperty("net_id")
   private String netId;
 
-  @JsonProperty("subnet_name")
-  private String subnetName;
-
-  @JsonProperty("subnet_id")
-  private String subnetId;
+  @JsonProperty("net_name")
+  private String netName;
 
   @JsonProperty("segmentation_id")
   private int segmentationId;
 
-  private String cidr;
+  @JsonProperty("subnet_id")
+  private String subnetId;
 
-  public String getNetName() {
-    return netName;
+  @JsonProperty("subnet_name")
+  private String subnetName;
+
+  public String getCidr() {
+    return cidr;
   }
 
   public String getNetId() {
     return netId;
   }
 
-  public String getSubnetName() {
-    return subnetName;
-  }
-
-  public String getSubnetId() {
-    return subnetId;
+  public String getNetName() {
+    return netName;
   }
 
   public int getSegmentationId() {
     return segmentationId;
   }
 
-  public String getCidr() {
-    return cidr;
+  public String getSubnetId() {
+    return subnetId;
   }
 
-  public void setNetName(String netName) {
-    this.netName = netName;
+  public String getSubnetName() {
+    return subnetName;
+  }
+
+  public void setCidr(String cidr) {
+    this.cidr = cidr;
   }
 
   public void setNetId(String netId) {
     this.netId = netId;
   }
 
-  public void setSubnetName(String subnetName) {
-    this.subnetName = subnetName;
-  }
-
-  public void setSubnetId(String subnetId) {
-    this.subnetId = subnetId;
+  public void setNetName(String netName) {
+    this.netName = netName;
   }
 
   public void setSegmentationId(int segmentationId) {
     this.segmentationId = segmentationId;
   }
 
-  public void setCidr(String cidr) {
-    this.cidr = cidr;
+  public void setSubnetId(String subnetId) {
+    this.subnetId = subnetId;
+  }
+
+  public void setSubnetName(String subnetName) {
+    this.subnetName = subnetName;
   }
 
 }

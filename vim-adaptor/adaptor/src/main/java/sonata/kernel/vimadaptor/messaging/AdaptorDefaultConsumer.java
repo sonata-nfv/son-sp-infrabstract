@@ -40,10 +40,10 @@ import java.io.IOException;
 
 public class AdaptorDefaultConsumer extends DefaultConsumer {
 
-  private RabbitMqConsumer msgBusConsumer;
-
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(AdaptorDefaultConsumer.class);
+
+  private RabbitMqConsumer msgBusConsumer;
 
   /**
    * Create a RabbitMq consumer for the MsgBus plug-in.

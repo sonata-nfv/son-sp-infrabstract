@@ -59,13 +59,13 @@ import java.util.Hashtable;
 
 public class DeployServiceFsm implements Runnable {
 
-  private String sid;
-  private ServiceDeployPayload data;
-  private OpenStackHeatWrapper wrapper;
-  private OpenStackHeatClient client;
-  private HeatTemplate stack;
-  private static final int maxCounter = 10;
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(DeployServiceFsm.class);
+  private static final int maxCounter = 10;
+  private OpenStackHeatClient client;
+  private ServiceDeployPayload data;
+  private String sid;
+  private HeatTemplate stack;
+  private OpenStackHeatWrapper wrapper;
 
 
   /**
@@ -266,8 +266,8 @@ public class DeployServiceFsm implements Runnable {
         referenceVdur.addVnfcInstance(vnfc);
       }
 
-      NetworkWrapper netVim = (NetworkWrapper) WrapperBay.getInstance()
-          .getNetworkVimFromComputeVimUuid(this.data.getVimUuid());
+      NetworkWrapper netVim =
+          WrapperBay.getInstance().getNetworkVimFromComputeVimUuid(this.data.getVimUuid());
 
       response.setVimUuid(data.getVimUuid());
       response.setInstanceName(stackName);

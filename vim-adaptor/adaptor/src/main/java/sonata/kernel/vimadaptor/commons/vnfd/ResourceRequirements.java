@@ -30,36 +30,56 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResourceRequirements {
 
+  private Cpu cpu;
   @JsonProperty("hypervisor_parameters")
   private HypervisorParameters hypervisorParameters;
-  @JsonProperty("vswitch_capabilities")
-  private VSwitchCapabilities vswitchCapabilities;
-  private Cpu cpu;
   private Memory memory;
-  private Storage storage;
   private Network network;
   private Pcie pcie;
+  private Storage storage;
+  @JsonProperty("vswitch_capabilities")
+  private VSwitchCapabilities vswitchCapabilities;
 
 
 
-  public void setHypervisorParameters(HypervisorParameters hypervisorParameters) {
-    this.hypervisorParameters = hypervisorParameters;
+  public Cpu getCpu() {
+    return cpu;
   }
 
-  public void setVswitchCapabilities(VSwitchCapabilities vswitchCapabilities) {
-    this.vswitchCapabilities = vswitchCapabilities;
+  public HypervisorParameters getHypervisorParameters() {
+    return hypervisorParameters;
+  }
+
+  public Memory getMemory() {
+    return memory;
+  }
+
+  public Network getNetwork() {
+    return network;
+  }
+
+  public Pcie getPcie() {
+    return pcie;
+  }
+
+  public Storage getStorage() {
+    return storage;
+  }
+
+  public VSwitchCapabilities getVswitchCapabilities() {
+    return vswitchCapabilities;
   }
 
   public void setCpu(Cpu cpu) {
     this.cpu = cpu;
   }
 
-  public void setMemory(Memory memory) {
-    this.memory = memory;
+  public void setHypervisorParameters(HypervisorParameters hypervisorParameters) {
+    this.hypervisorParameters = hypervisorParameters;
   }
 
-  public void setStorage(Storage storage) {
-    this.storage = storage;
+  public void setMemory(Memory memory) {
+    this.memory = memory;
   }
 
   public void setNetwork(Network network) {
@@ -70,32 +90,12 @@ public class ResourceRequirements {
     this.pcie = pcie;
   }
 
-  public HypervisorParameters getHypervisorParameters() {
-    return hypervisorParameters;
+  public void setStorage(Storage storage) {
+    this.storage = storage;
   }
 
-  public VSwitchCapabilities getVswitchCapabilities() {
-    return vswitchCapabilities;
-  }
-
-  public Cpu getCpu() {
-    return cpu;
-  }
-
-  public Memory getMemory() {
-    return memory;
-  }
-
-  public Storage getStorage() {
-    return storage;
-  }
-
-  public Network getNetwork() {
-    return network;
-  }
-
-  public Pcie getPcie() {
-    return pcie;
+  public void setVswitchCapabilities(VSwitchCapabilities vswitchCapabilities) {
+    this.vswitchCapabilities = vswitchCapabilities;
   }
 
 }

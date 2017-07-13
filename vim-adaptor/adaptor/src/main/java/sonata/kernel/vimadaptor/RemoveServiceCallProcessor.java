@@ -43,8 +43,8 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
 
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(RemoveServiceCallProcessor.class);
-  private ArrayList<String> wrapperQueue;
   private boolean errorsHappened;
+  private ArrayList<String> wrapperQueue;
 
   /**
    * Generate a CallProcessor to process an API call to create a new VIM wrapper
@@ -92,18 +92,11 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     return out;
   }
 
-  private void sendResponse(String message) {
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
-        this.getMessage().getReplyTo(), this.getMessage().getSid(), null);
-    this.sendToMux(spMessage);
-  }
-
   @Override
   public void update(Observable observable, Object arg) {
 
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
-    if(!update.getSid().equals(this.getSid()))
-      return;
+    if (!update.getSid().equals(this.getSid())) return;
     Logger.info("Received an update:\n" + update.getBody());
     JSONTokener tokener = new JSONTokener(update.getBody());
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
@@ -128,5 +121,11 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
       }
       return;
     }
+  }
+
+  private void sendResponse(String message) {
+    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
+        this.getMessage().getReplyTo(), this.getMessage().getSid(), null);
+    this.sendToMux(spMessage);
   }
 }

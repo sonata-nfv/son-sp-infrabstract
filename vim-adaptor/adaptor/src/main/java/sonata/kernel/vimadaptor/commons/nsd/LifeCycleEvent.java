@@ -32,22 +32,14 @@ import java.util.ArrayList;
 
 public class LifeCycleEvent {
 
-  private ArrayList<Event> start;
-  private ArrayList<Event> stop;
   @JsonProperty("scale_out")
   private ArrayList<Event> scaleOut;
+  private ArrayList<Event> start;
+  private ArrayList<Event> stop;
 
 
-  public void setStart(ArrayList<Event> start) {
-    this.start = start;
-  }
-
-  public void setStop(ArrayList<Event> stop) {
-    this.stop = stop;
-  }
-
-  public void setScaleOut(ArrayList<Event> scaleOut) {
-    this.scaleOut = scaleOut;
+  public ArrayList<Event> getScaleOut() {
+    return scaleOut;
   }
 
   public ArrayList<Event> getStart() {
@@ -58,8 +50,16 @@ public class LifeCycleEvent {
     return stop;
   }
 
-  public ArrayList<Event> getScaleOut() {
-    return scaleOut;
+  public void setScaleOut(ArrayList<Event> scaleOut) {
+    this.scaleOut = scaleOut;
+  }
+
+  public void setStart(ArrayList<Event> start) {
+    this.start = start;
+  }
+
+  public void setStop(ArrayList<Event> stop) {
+    this.stop = stop;
   }
 
 }

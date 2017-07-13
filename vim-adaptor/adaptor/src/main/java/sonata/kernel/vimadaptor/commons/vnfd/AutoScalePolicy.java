@@ -30,23 +30,23 @@ import java.util.ArrayList;
 
 public class AutoScalePolicy {
 
-  private ArrayList<Criterion> critaria;
   private String action;
-
-  public ArrayList<Criterion> getCritaria() {
-    return critaria;
-  }
+  private ArrayList<Criterion> critaria;
 
   public String getAction() {
     return action;
   }
 
-  public void setCritaria(ArrayList<Criterion> critaria) {
-    this.critaria = critaria;
+  public ArrayList<Criterion> getCritaria() {
+    return critaria;
   }
 
   public void setAction(String action) {
     this.action = action;
+  }
+
+  public void setCritaria(ArrayList<Criterion> critaria) {
+    this.critaria = critaria;
   }
 
 }

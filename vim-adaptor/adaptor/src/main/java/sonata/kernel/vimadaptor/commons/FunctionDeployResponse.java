@@ -33,12 +33,12 @@ public class FunctionDeployResponse {
 
   private String instanceName;
   private String instanceVimUuid;
-  private String vimUuid;
+  private String message;
   @JsonProperty("request_status")
   private String requestStatus;
-  private VnfRecord vnfr;
+  private String vimUuid;
 
-  private String message;
+  private VnfRecord vnfr;
 
 
   public String getInstanceName() {
@@ -49,8 +49,16 @@ public class FunctionDeployResponse {
     return instanceVimUuid;
   }
 
+  public String getMessage() {
+    return message;
+  }
+
   public String getRequestStatus() {
     return requestStatus;
+  }
+
+  public String getVimUuid() {
+    return vimUuid;
   }
 
   public VnfRecord getVnfr() {
@@ -61,33 +69,25 @@ public class FunctionDeployResponse {
     this.instanceName = instanceName;
   }
 
+
   public void setInstanceVimUuid(String instanceVimUuid) {
     this.instanceVimUuid = instanceVimUuid;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   public void setRequestStatus(String requestStatus) {
     this.requestStatus = requestStatus;
   }
 
-
-  public String getVimUuid() {
-    return vimUuid;
-  }
-
   public void setVimUuid(String vimUuid) {
     this.vimUuid = vimUuid;
   }
 
-  public String getMessage() {
-    return message;
-  }
-
   public void setVnfr(VnfRecord vnfr) {
     this.vnfr = vnfr;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
   }
 
 

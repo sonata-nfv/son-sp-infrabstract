@@ -31,7 +31,15 @@ package sonata.kernel.vimadaptor.wrapper.openstack;
 public class Flavor implements Comparable<Flavor> {
 
 
+  private String flavorName;
+
   private String id;
+
+  private int ram;
+
+  private int storage;
+
+  private int vcpu;
 
   /**
    * Basic flavor constructor.
@@ -47,46 +55,6 @@ public class Flavor implements Comparable<Flavor> {
     this.vcpu = vcpu;
     this.ram = ram;
     this.storage = storage;
-  }
-
-  private String flavorName;
-
-  private int vcpu;
-
-  private int ram;
-
-  private int storage;
-
-  public int getVcpu() {
-    return vcpu;
-  }
-
-  public void setVcpu(int vcpu) {
-    this.vcpu = vcpu;
-  }
-
-  public int getRam() {
-    return ram;
-  }
-
-  public void setRam(int ram) {
-    this.ram = ram;
-  }
-
-  public int getStorage() {
-    return storage;
-  }
-
-  public void setStorage(int storage) {
-    this.storage = storage;
-  }
-
-  public String getFlavorName() {
-    return flavorName;
-  }
-
-  public void setFlavorName(String flavorName) {
-    this.flavorName = flavorName;
   }
 
   /*
@@ -106,8 +74,40 @@ public class Flavor implements Comparable<Flavor> {
       return 0;
   }
 
+  public String getFlavorName() {
+    return flavorName;
+  }
 
   public String getId() {
     return id;
+  }
+
+  public int getRam() {
+    return ram;
+  }
+
+  public int getStorage() {
+    return storage;
+  }
+
+  public int getVcpu() {
+    return vcpu;
+  }
+
+  public void setFlavorName(String flavorName) {
+    this.flavorName = flavorName;
+  }
+
+  public void setRam(int ram) {
+    this.ram = ram;
+  }
+
+  public void setStorage(int storage) {
+    this.storage = storage;
+  }
+
+
+  public void setVcpu(int vcpu) {
+    this.vcpu = vcpu;
   }
 }

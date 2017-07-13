@@ -27,7 +27,6 @@
 
 package sonata.kernel.vimadaptor;
 
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
@@ -54,16 +53,6 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
   public DeconfigureNetworkCallProcessor(ServicePlatformMessage message, String sid,
       AdaptorMux mux) {
     super(message, sid, mux);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-   */
-  @Override
-  public void update(Observable arg0, Object arg1) {
-
   }
 
   /*
@@ -110,8 +99,7 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
       try {
         netVim.deconfigureNetworking(data.getServiceInstanceId());
       } catch (Exception e) {
-        Logger.error(
-            "Unable to deconfigure networking on VIM: " + netVim.getConfig().getUuid(), e);
+        Logger.error("Unable to deconfigure networking on VIM: " + netVim.getConfig().getUuid(), e);
         String responseJson =
             "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}";
         this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
@@ -125,6 +113,16 @@ public class DeconfigureNetworkCallProcessor extends AbstractCallProcessor {
     this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
         message.getReplyTo(), message.getSid(), null));
     return true;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+   */
+  @Override
+  public void update(Observable arg0, Object arg1) {
+
   }
 
 }
