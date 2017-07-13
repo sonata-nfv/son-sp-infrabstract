@@ -8,4 +8,8 @@ sed -i "s/REPOPORT/$repo_port/" /etc/son-mano/postgres.config
 sed -i "s/REPOUSER/$repo_user/" /etc/son-mano/postgres.config
 sed -i "s/REPOPASS/$repo_pass/" /etc/son-mano/postgres.config
 
+sed -i "s/MISTRALADDRESS/$mistral_server/" /etc/son-mano/mistral.config
+
 cat /etc/son-mano/postgres.config
+cat /etc/son-mano/mistral.config
+cat /etc/son-mano/broker.config
