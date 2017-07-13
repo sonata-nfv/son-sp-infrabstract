@@ -52,6 +52,7 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
     this.sid = sid;
     this.mux = mux;
   }
+
   /**
    * Getter for the Message handled by the processor.
    * 
@@ -60,6 +61,7 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
   public ServicePlatformMessage getMessage() {
     return message;
   }
+
   /**
    * Getter for multiplexer used by this processor to publish messages.
    * 

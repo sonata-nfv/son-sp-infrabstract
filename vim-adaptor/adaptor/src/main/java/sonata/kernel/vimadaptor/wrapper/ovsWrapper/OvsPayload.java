@@ -43,6 +43,7 @@ public class OvsPayload {
   ArrayList<OrderedMacAddress> odlList;
   @JsonProperty("out_segment")
   String outputSegment;
+
   /**
    * @param string
    * @param string2

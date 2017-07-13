@@ -46,10 +46,12 @@ public class IpNetPool {
     }
     return 31 - Integer.numberOfLeadingZeros(number);
   }
+
   private static long ipToLong(long[] ip) {
 
     return (ip[0] << 24) + (ip[1] << 16) + (ip[2] << 8) + ip[3];
   }
+
   private static String longToIp(long longIp) {
     StringBuffer sb = new StringBuffer("");
     sb.append(String.valueOf(longIp >>> 24));

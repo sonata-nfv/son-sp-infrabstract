@@ -29,8 +29,8 @@ package sonata.kernel.vimadaptor.commons.vnfd;
 import com.fasterxml.jackson.annotation.JsonCreator;
 
 public enum VmFormat {
-  BARE("bare"), DOCKER(
-      "docker"), ISO("iso"), OVA("ova"), OVF("ovf"), QCOW2("qcow2"), RAW("raw"), VDI("vdi"), VHD("vhd"), VMDK("vmdk");
+  BARE("bare"), DOCKER("docker"), ISO("iso"), OVA("ova"), OVF("ovf"), QCOW2("qcow2"), RAW(
+      "raw"), VDI("vdi"), VHD("vhd"), VMDK("vmdk");
 
   private final String name;
 

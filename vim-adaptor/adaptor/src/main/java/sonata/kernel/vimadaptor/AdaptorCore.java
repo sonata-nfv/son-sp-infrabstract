@@ -55,6 +55,7 @@ public class AdaptorCore {
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AdaptorCore.class);
   private static final String version = "0.0.1";
   private static final int writeLockCoolDown = 100000;
+
   /**
    * Main method. param args the adaptor take no args.
    */
@@ -69,6 +70,7 @@ public class AdaptorCore {
     core.start();
 
   }
+
   private AdaptorDispatcher dispatcher;
   private HeartBeat heartbeat;
   private AdaptorMux mux;

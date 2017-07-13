@@ -266,8 +266,8 @@ public class DeployServiceFsm implements Runnable {
         referenceVdur.addVnfcInstance(vnfc);
       }
 
-      NetworkWrapper netVim = WrapperBay.getInstance()
-          .getNetworkVimFromComputeVimUuid(this.data.getVimUuid());
+      NetworkWrapper netVim =
+          WrapperBay.getInstance().getNetworkVimFromComputeVimUuid(this.data.getVimUuid());
 
       response.setVimUuid(data.getVimUuid());
       response.setInstanceName(stackName);

@@ -84,9 +84,9 @@ public interface Unit {
   }
 
   public enum MemoryUnit implements Unit {
-    B(Math.pow(10, -9)), GB(1), GiB(1.074), kB(Math.pow(10, -6)), KiB(Math.pow(2, 10)), MB(Math.pow(10, -3)), MiB(
-            Math.pow(2, 20)), PB(Math.pow(10, 3)), PiB(1.074 * Math.pow(2, 20)), TB(Math.pow(10, 3)), TiB(
-                1.074 * Math.pow(2, 10));
+    B(Math.pow(10, -9)), GB(1), GiB(1.074), kB(Math.pow(10, -6)), KiB(Math.pow(2, 10)), MB(
+        Math.pow(10, -3)), MiB(Math.pow(2, 20)), PB(Math.pow(10, 3)), PiB(
+            1.074 * Math.pow(2, 20)), TB(Math.pow(10, 3)), TiB(1.074 * Math.pow(2, 10));
 
     double multiplier;
 

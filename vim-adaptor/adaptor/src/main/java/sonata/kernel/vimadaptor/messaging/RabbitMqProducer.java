@@ -57,6 +57,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
   private Properties brokerConfig;
 
   private Connection connection;
+
   public RabbitMqProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
     super(muxQueue);
   }

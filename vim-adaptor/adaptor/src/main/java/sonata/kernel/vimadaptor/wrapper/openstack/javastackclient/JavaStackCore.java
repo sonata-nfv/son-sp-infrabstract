@@ -161,10 +161,13 @@ public class JavaStackCore {
   private static class SingeltonJavaStackCoreHelper {
     private static final JavaStackCore _javaStackCore = new JavaStackCore();
   }
+
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
+
   public static JavaStackCore getJavaStackCore() {
     return SingeltonJavaStackCoreHelper._javaStackCore;
   }
+
   private String endpoint;
 
   // private String image_id;

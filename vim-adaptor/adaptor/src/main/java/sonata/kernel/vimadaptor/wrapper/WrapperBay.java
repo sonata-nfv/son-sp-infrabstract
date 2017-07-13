@@ -87,8 +87,7 @@ public class WrapperBay {
    *         registered VIM
    */
   public ComputeWrapper getComputeWrapper(String vimUuid) {
-    if (computeWrapperCache.containsKey(vimUuid))
-      return computeWrapperCache.get(vimUuid);
+    if (computeWrapperCache.containsKey(vimUuid)) return computeWrapperCache.get(vimUuid);
     ComputeWrapper vimEntry = (ComputeWrapper) this.repository.readVimEntry(vimUuid);
     if (vimEntry == null) {
       return null;
