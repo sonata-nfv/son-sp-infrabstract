@@ -120,6 +120,8 @@ public class AdaptorDispatcher implements Runnable {
   private void handleFunctionMessage(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new DeployFunctionCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("scale")) {
+      myThreadPool.execute(new ScaleFunctionCallProcessor(message, message.getSid(), mux));
     }
   }
 
