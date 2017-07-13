@@ -106,14 +106,6 @@ public class ConfigureNetworkCallProcessor extends AbstractCallProcessor {
           message.getReplyTo(), message.getSid(), null));
       return false;
     }
-    if(data.getNap()==null){
-      Logger.error("Received payload doesn't specify any NAP");
-      String responseJson =
-          "{\"request_status\":\"ERROR\",\"message\":\"No NAP specified for this chain\"}";
-      this.sendToMux(new ServicePlatformMessage(responseJson, "application/json",
-          message.getReplyTo(), message.getSid(), null));
-      return false;
-    }
     String serviceInstaceId = data.getServiceInstanceId();
     Logger.info("Received networking.configure call for service instance " + serviceInstaceId);
     ServiceDescriptor nsd = data.getNsd();

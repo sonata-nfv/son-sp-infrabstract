@@ -25,28 +25,35 @@
  */
 package sonata.kernel.vimadaptor.commons;
 
-import java.util.ArrayList;
+public class NapPair {
 
-public class NetworkAttachmentPoints {
-
-  private ArrayList<NapPair> ingresses;
-  private ArrayList<NapPair> egresses;
-
-  public ArrayList<NapPair> getIngresses() {
-    return ingresses;
+  private String location;
+  private String nap;
+  
+  
+  public NapPair(){}
+  
+  /**
+   * @param string
+   * @param object
+   */
+  public NapPair(String location, String nap) {
+    this.location = location;
+    this.nap = nap;
   }
-
-  public ArrayList<NapPair> getEgresses() {
-    return egresses;
+  public String getLocation() {
+    return location;
   }
-
-  public void setIngresses(ArrayList<NapPair> ingresses) {
-    this.ingresses = ingresses;
+  public String getNap() {
+    return nap;
   }
-
-  public void setEgresses(ArrayList<NapPair> egresses) {
-    this.egresses = egresses;
+  public void setLocation(String location) {
+    this.location = location;
   }
-
-
+  public void setNap(String nap) {
+    this.nap = nap;
+  }
+  
+  
+  
 }

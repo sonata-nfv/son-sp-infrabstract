@@ -39,6 +39,7 @@ import org.junit.Test;
 import sonata.kernel.vimadaptor.AdaptorCore;
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
+import sonata.kernel.vimadaptor.commons.NapPair;
 import sonata.kernel.vimadaptor.commons.NetworkAttachmentPoints;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.ResourceAvailabilityData;
@@ -343,7 +344,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceV2() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -538,10 +539,23 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
 
     NetworkAttachmentPoints nap = new NetworkAttachmentPoints();
-    String[] ingresses = {"10.100.32.40","10.100.0.40"};
-    String[] egresses = {"10.100.0.40","10.100.32.40"};
-    nap.setEgresses(new ArrayList<String>(Arrays.asList(egresses)));
-    nap.setIngresses(new ArrayList<String>(Arrays.asList(ingresses)));
+    NapPair in1 = new NapPair();
+    NapPair in2 = new NapPair();
+    NapPair out1 = new NapPair();
+    NapPair out2 = new NapPair();
+    in1.setLocation("Athens");
+    in2.setLocation("Athens");
+    in1.setNap("10.100.32.40/32");
+    in2.setNap("10.100.0.40/32");
+    
+    out1.setLocation("Athens");
+    out2.setLocation("Athens");
+    out1.setNap("10.100.32.40/32");
+    out2.setNap("10.100.0.40/32");
+    NapPair[] ingresses = {in1,in2};
+    NapPair[] egresses = {out1,out2};
+    nap.setEgresses(new ArrayList<NapPair>(Arrays.asList(egresses)));
+    nap.setIngresses(new ArrayList<NapPair>(Arrays.asList(ingresses)));
 
     
     NetworkConfigurePayload netPayload = new NetworkConfigurePayload();
@@ -601,6 +615,69 @@ public class DeployServiceTest implements MessageReceiver {
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
         status.equals("COMPLETED"));
 
+ // Configure it again with default NAP
+
+    output = null;
+
+    
+    netPayload = new NetworkConfigurePayload();
+    netPayload.setNsd(nsdPayload.getNsd());
+    netPayload.setVnfds(nsdPayload.getVnfdList());
+    netPayload.setVnfrs(records);
+    netPayload.setServiceInstanceId(nsdPayload.getNsd().getInstanceUuid());
+    netPayload.setNap(null);
+
+
+    body = mapper.writeValueAsString(netPayload);
+
+    topic = "infrastructure.service.chain.configure";
+    networkConfigureMessage = new ServicePlatformMessage(body,
+        "application/x-yaml", topic, UUID.randomUUID().toString(), topic);
+
+    consumer.injectMessage(networkConfigureMessage);
+
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Failed to configure inter-PoP SFC. status:" + status,
+        status.equals("COMPLETED"));
+    System.out.println(
+        "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
+
+    // Clean everything again:
+    // 1. De-configure SFC
+    output = null;
+    message = "{\"service_instance_id\":\"" + nsdPayload.getNsd().getInstanceUuid() + "\"}";
+    topic = "infrastructure.service.chain.deconfigure";
+    deconfigureNetworkMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(deconfigureNetworkMessage);
+    try {
+      while (output == null) {
+        synchronized (mon) {
+          mon.wait(2000);
+          System.out.println(output);
+        }
+      }
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+    System.out.println(output);
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue("Adapter returned an unexpected status: " + status,
+        status.equals("COMPLETED"));
+
+    
     // 2. Remove Service
     // Service removal
     output = null;
@@ -676,7 +753,7 @@ public class DeployServiceTest implements MessageReceiver {
    * @throws Exception
    */
   @Ignore
-  public void testDeployServiceIncrementalMultiPoP() throws Exception {
+  public void testDeployServiceV2MultiPoP() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
