@@ -33,45 +33,17 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
-import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
-import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
-import sonata.kernel.vimadaptor.commons.IpNetPool;
-import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
-import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
-import sonata.kernel.vimadaptor.commons.Status;
-import sonata.kernel.vimadaptor.commons.VduRecord;
-import sonata.kernel.vimadaptor.commons.VimNetTable;
-import sonata.kernel.vimadaptor.commons.VnfImage;
-import sonata.kernel.vimadaptor.commons.VnfRecord;
-import sonata.kernel.vimadaptor.commons.VnfcInstance;
-import sonata.kernel.vimadaptor.commons.nsd.ConnectionPoint;
-import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointRecord;
-import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
-import sonata.kernel.vimadaptor.commons.nsd.InterfaceRecord;
-import sonata.kernel.vimadaptor.commons.nsd.NetworkFunction;
-import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
-import sonata.kernel.vimadaptor.commons.nsd.VirtualLink;
+import sonata.kernel.vimadaptor.commons.*;
+import sonata.kernel.vimadaptor.commons.nsd.*;
 import sonata.kernel.vimadaptor.commons.vnfd.VirtualDeploymentUnit;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfVirtualLink;
-import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
-import sonata.kernel.vimadaptor.wrapper.ResourceUtilisation;
-import sonata.kernel.vimadaptor.wrapper.VimRepo;
-import sonata.kernel.vimadaptor.wrapper.WrapperBay;
-import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
-import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
-import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatModel;
-import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatPort;
-import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatResource;
-import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatServer;
-import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
-import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
+import sonata.kernel.vimadaptor.wrapper.*;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.*;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.Image.Image;
 
 import java.io.File;
@@ -88,7 +60,7 @@ import java.util.Hashtable;
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private static final org.slf4j.Logger Logger =
-      LoggerFactory.getLogger(OpenStackHeatWrapper.class);
+          LoggerFactory.getLogger(OpenStackHeatWrapper.class);
   private IpNetPool myPool;
 
   /**
@@ -137,9 +109,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+              getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
       novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+              getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -230,6 +202,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
       counter++;
       wait *= 2;
+
     }
 
     if (status == null) {
@@ -248,7 +221,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       this.notifyObservers(update);
       return;
     }
-
 
     counter = 0;
     wait = 1000;
@@ -674,8 +646,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
-
-
     VimRepo repo = WrapperBay.getInstance().getVimRepo();
     Logger.info("Trying to remove NS instance: " + instanceUuid);
     String stackName = repo.getServiceInstanceVimName(instanceUuid);
@@ -724,7 +694,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public void scaleFunction(FunctionScalePayload data, String sid) {
 
     String mistralIP = "";// TODO - smendel - retrieve Mistral IP (part of SONATA SP)
-
     OpenStackMistralClient mistralClient =
         new OpenStackMistralClient(mistralIP, getConfig().getVimEndpoint().toString(),
             getConfig().getAuthUserName(), getConfig().getAuthPass(), getTenant());
@@ -742,7 +711,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     Logger.info("Creating function deploy response");
 
     // TODO - smendel - create IA response to FLM - see deployFunction
-
   }
 
   /*
@@ -1174,7 +1142,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             routerInterface.setType("OS::Neutron::RouterInterface");
             routerInterface
                 .setName(vnfd.getName() + "." + cp.getId() + "." + nsd.getInstanceUuid());
-
             for (VnfVirtualLink link : links) {
               if (link.getConnectionPointsReference().contains(cp.getId())) {
                 HashMap<String, Object> subnetMap = new HashMap<String, Object>();
@@ -1201,8 +1168,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       HeatResource floatingIp = new HeatResource();
       floatingIp.setType("OS::Neutron::FloatingIP");
       floatingIp.setName("floating:" + portName);
-
-
+      
       floatingIp.putProperty("floating_network_id", tenantExtNet);
 
       HashMap<String, Object> floatMapPort = new HashMap<String, Object>();
@@ -1225,9 +1191,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenantExtNet = object.getString("tenant_ext_net");
     // String tenantExtRouter = object.getString("tenant_ext_router");
     // END COMMENT
-
     HeatModel model = new HeatModel();
-
     ArrayList<String> publicPortNames = new ArrayList<String>();
 
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
@@ -1305,7 +1269,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       resourceGroup.putProperty("resource_def", server);
       model.addResource(resourceGroup);
     }
-
+    
     for (String portName : publicPortNames) {
       // allocate floating IP
       HeatResource floatingIp = new HeatResource();
@@ -1318,7 +1282,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       HashMap<String, Object> floatMapPort = new HashMap<String, Object>();
       floatMapPort.put("get_resource", portName);
       floatingIp.putProperty("port_id", floatMapPort);
-
       model.addResource(floatingIp);
     }
     model.prepare();
