@@ -32,6 +32,7 @@ import sonata.kernel.vimadaptor.commons.VimNetTable;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WrapperBay {
 
@@ -50,14 +51,14 @@ public class WrapperBay {
     return myInstance;
   }
 
-  private Hashtable<String, ComputeWrapper> computeWrapperCache;
-  private Hashtable<String, NetworkWrapper> networkWrapperCache;
+  private ConcurrentHashMap<String, ComputeWrapper> computeWrapperCache;
+  private ConcurrentHashMap<String, NetworkWrapper> networkWrapperCache;
 
   private VimRepo repository = null;
 
   private WrapperBay() {
-    computeWrapperCache = new Hashtable<String, ComputeWrapper>();
-    networkWrapperCache = new Hashtable<String, NetworkWrapper>();
+    computeWrapperCache = new ConcurrentHashMap<String, ComputeWrapper>();
+    networkWrapperCache = new ConcurrentHashMap<String, NetworkWrapper>();
   }
 
 
