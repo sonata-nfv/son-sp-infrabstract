@@ -120,7 +120,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
       this.sendToMux(new ServicePlatformMessage(
-          "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage().replace("\"", "''") + "\"}",
+          "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage().replace("\"", "''").replace("\n", "") + "\"}",
           "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }
