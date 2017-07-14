@@ -172,7 +172,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
     double avgTime = 1357.34;
     double stdTime = 683.96;
     waitGaussianTime(avgTime, stdTime);
-    return true;
+    return r.nextBoolean();
   }
 
   /*
