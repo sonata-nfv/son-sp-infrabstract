@@ -40,6 +40,8 @@ import java.io.IOException;
 
 public class AdaptorDefaultConsumer extends DefaultConsumer {
 
+  
+  
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(AdaptorDefaultConsumer.class);
 
@@ -60,6 +62,7 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
     String message = new String(body, "UTF-8");
+    this.getChannel().basicAck(envelope.getDeliveryTag(), false);
     // Logger.info("Received message:" + message + " on " + envelope.getRoutingKey());
     Logger.info("Received message on " + envelope.getRoutingKey());
     if (properties != null && properties.getAppId() != null

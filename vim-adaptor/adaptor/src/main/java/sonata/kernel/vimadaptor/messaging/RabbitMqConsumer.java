@@ -110,7 +110,9 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
   public void run() {
     try {
       Logger.info("Starting consumer thread");
+      channel.basicQos(10);
       channel.basicConsume(queueName, true, consumer);
+      
     } catch (IOException e) {
       Logger.error(e.getMessage(), e);
     }
