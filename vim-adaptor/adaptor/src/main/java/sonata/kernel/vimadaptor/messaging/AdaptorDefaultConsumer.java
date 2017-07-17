@@ -68,6 +68,7 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
       Logger.info("Ignoring WIM adaptor response after service deployment");
     } else if (properties != null && properties.getAppId() != null
         && !properties.getAppId().equals(AdaptorCore.APP_ID)) {
+      Logger.debug("message SID-" + properties.getCorrelationId());
       this.msgBusConsumer.processMessage(message, properties.getContentType(),
           envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
     } else {
