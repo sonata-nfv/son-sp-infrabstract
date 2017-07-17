@@ -246,7 +246,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
 
   private void waitGaussianTime(double avgTime, double stdTime) {
     double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
-    Logger.debug("Simulating processing delay.Waiting "+waitTime/1000.0+"s");
+    //Logger.debug("Simulating processing delay.Waiting "+waitTime/1000.0+"s");
     try {
       Thread.sleep((long) Math.floor(waitTime));
     } catch (InterruptedException e) {
