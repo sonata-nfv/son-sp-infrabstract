@@ -62,7 +62,7 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
     if (properties != null && properties.getAppId() != null
-        && !properties.getAppId().equals(AdaptorCore.APP_ID)){
+        && properties.getAppId().equals(AdaptorCore.APP_ID)){
         Logger.info("Message ignored: " + properties);
       return;
     }
