@@ -62,8 +62,8 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
     try {
-      String message = new String(body, "UTF-8");
       Logger.info("Received message on " + envelope.getRoutingKey());
+      String message = new String(body, "UTF-8");
       // Logger.info("Received message:" + message + " on " + envelope.getRoutingKey());
       if (properties != null && properties.getAppId() != null
           && properties.getAppId().equals("sonata.kernel.WimAdapter")
@@ -79,6 +79,7 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
       }
     } finally {
       this.getChannel().basicAck(envelope.getDeliveryTag(), false);
+      Logger.debug("Message acked to broker");
     }
   }
 
