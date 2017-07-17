@@ -61,7 +61,6 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   @Override
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
-    try {
       Logger.info("Received message on " + envelope.getRoutingKey());
       String message = new String(body, "UTF-8");
       // Logger.info("Received message:" + message + " on " + envelope.getRoutingKey());
@@ -77,10 +76,6 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
       } else {
         Logger.info("Message ignored: " + properties);
       }
-    } finally {
-      this.getChannel().basicAck(envelope.getDeliveryTag(), false);
-      Logger.debug("Message acked to broker.");
-    }
   }
 
 }
