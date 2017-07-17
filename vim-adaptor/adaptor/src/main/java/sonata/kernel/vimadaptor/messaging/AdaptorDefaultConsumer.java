@@ -61,12 +61,6 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   @Override
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
-    if (properties != null && properties.getAppId() != null
-        && properties.getAppId().equals(AdaptorCore.APP_ID)){
-        Logger.info("Message ignored: " + properties);
-      return;
-    }
-    
     try {
       Logger.info("Received message on " + envelope.getRoutingKey());
       String message = new String(body, "UTF-8");
@@ -80,10 +74,12 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
         Logger.debug("message SID-" + properties.getCorrelationId());
         this.msgBusConsumer.processMessage(message, properties.getContentType(),
             envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
-      } 
+      } else {
+        Logger.info("Message ignored: " + properties);
+      }
     } finally {
       this.getChannel().basicAck(envelope.getDeliveryTag(), false);
-      Logger.debug("Message acked to broker");
+      Logger.debug("Message acked to broker.");
     }
   }
 
