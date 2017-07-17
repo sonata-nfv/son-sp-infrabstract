@@ -77,7 +77,7 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       connection = cf.newConnection();
       channel = connection.createChannel();
       String exchangeName = brokerConfig.getProperty("exchange");
-      channel.exchangeDeclare(exchangeName, "direct");
+      channel.exchangeDeclare(exchangeName, "topic");
       queueName = exchangeName + "." + "InfraAbstract";
       channel.queueDeclare(queueName, true, false, false, null);
       Logger.info("Binding queue to topics...");
