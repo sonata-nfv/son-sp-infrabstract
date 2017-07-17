@@ -100,7 +100,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
     try {
       Channel channel = connection.createChannel();
       String exchangeName = brokerConfig.getProperty("exchange");
-      channel.exchangeDeclare(exchangeName, "topic");
+      channel.exchangeDeclare(exchangeName, "fanout");
       BasicProperties properties = new BasicProperties().builder().appId(AdaptorCore.APP_ID)
           .contentType(message.getContentType()).replyTo(message.getReplyTo()).deliveryMode(2)
           .correlationId(message.getSid()).build();
