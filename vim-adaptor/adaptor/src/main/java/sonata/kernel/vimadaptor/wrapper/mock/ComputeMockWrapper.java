@@ -122,7 +122,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
       body = mapper.writeValueAsString(response);
       this.setChanged();
       Logger.info("Serialized. notifying call processor");
-      WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "SUCCESS", body);
       this.notifyObservers(update);
     } catch (JsonProcessingException e) {
       Logger.error(e.getMessage(), e);

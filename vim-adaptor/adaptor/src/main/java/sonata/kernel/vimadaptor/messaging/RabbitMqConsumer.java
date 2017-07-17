@@ -99,7 +99,6 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     boolean out = true;
     try {
       channel.close();
-      connection.close();
     } catch (IOException e) {
       Logger.error(e.getMessage(), e);
       out = false;
