@@ -141,5 +141,9 @@ public class RabbitMqHelperSingleton {
   public String getExchangeName() {
     return exchangeName;
   }
+
+  public String getQueueName() {
+    return queueName;
+  }
   
 }

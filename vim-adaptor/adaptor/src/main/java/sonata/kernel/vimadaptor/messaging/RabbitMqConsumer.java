@@ -65,6 +65,7 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
   public void connectToBus() {
     channel = RabbitMqHelperSingleton.getInstance().getChannel();
     consumer = new AdaptorDefaultConsumer(channel, this);
+    queueName = RabbitMqHelperSingleton.getInstance().getQueueName();
   }
 
   @Override
