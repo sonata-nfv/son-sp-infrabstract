@@ -183,7 +183,6 @@ while True:
             portlist = order_ports(ports) # pass it the function to order it
         except:
             message="There is some error with json file"
-            print message
             logger.error(message)
             conn.send(message)
             conn.close()
@@ -205,7 +204,7 @@ while True:
         os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brintport)
         fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
         #Now the traffic is inside br-tun, and logic must be applied to find out at which node has to go
-        logging.debug("Grabing the port list")
+        logging.debug("Grabbing the port list")
         ports = jsonResponse["port_list"]
         logging.info("Ordering the list of ports")
         portlist = order_ports(ports) # pass it the function to order it
@@ -247,7 +246,6 @@ while True:
                 logger.info("Chain Send. Answer recieved: "+resev)
                 chained_list = pairs[num] #Create clear chain with the new one
                 nodeS = pairs[num]['node'] # Set new node to be sent
-        logger.debug("For ended? ")
         chain['pairs'] = chained_list
         chain['exit'] = "control"
         logger.debug("Sending final chain ("+str(chain)+") to node: "+node)
@@ -258,12 +256,14 @@ while True:
         conn.close()
 
     elif (jsonMANA=='delete'):
+        conn.send(returnflag)
+        conn.close()
         continue
 
     else:
         message = "This function is not supported. Please check your json file"
         logger.info("Recieved not supported function. Sending message")
         logger.info(message)
-        print message
-        sock.sendto(message, address)
+        conn.send(message, address)
+        conn.close()
         logger.info("Proccess Completed. Returning to Start")
