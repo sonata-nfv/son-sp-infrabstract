@@ -77,6 +77,10 @@ while true:
         logger.info("SOURCE SEGMENT -> "+src)
         logger.info("DESTINATION SEGMENT -> "+dst)	
 
+        
+
+
+
 		#logging.info("Data received: "+jsonResponse)
 		conn.send("SUCCESS")
 		conn.close()

@@ -223,7 +223,7 @@ while True:
             node = find_node(vc_id)
             pair['node'] = node
         # create chain
-        chain = {'action': 'add', 'pairs': pairs[0], 'exit' : "control" }  # Declared more than needed, just for clarity
+        chain = {'action': 'add', 'pairs': pairs[0], 'exit' : "control", 'in_segment' : src, 'out_segment' : dst }  # Declared more than needed, just for clarity
         chained_list = [pairs[0]]
         nodeS = pairs[0]['node']
         # SEND DATA to NODE with ovs-ofctl
