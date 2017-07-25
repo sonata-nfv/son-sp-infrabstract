@@ -742,7 +742,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     mistralClient.scaleStack(stackUuid, "");
     // TODO - smendel - get execution result, if needed use polling - see deployFunction
 
-    Logger.info("Creating function deploy response");
+    Logger.info("Creating function scale response");
 
     // TODO - smendel - create IA response to FLM - see deployFunction
   }
