@@ -2,7 +2,9 @@
 import socket
 import logging
 import json
-import os 
+import os
+import argparse
+import parser 
 
 def get_ip():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
@@ -45,9 +47,32 @@ logger.info('starting up on %s port %s' % server_address)
 sock.bind(server_address)
 sock.listen(5)
 
+#configurations
+parser = argparse.ArgumentParser()   #handler for arguments passed
+parser.add_argument("-m", "--compute",help="pass the name of the other node",type=str)  # option configurations, needs to be required
+parser.add_argument("-i", "--brint",help="pass the connection of br-int to br-tun port, or use default '1' ",type=str)
+parser.add_argument("-c", "--control",help="pass the connection of br-tun to contoller, or use default '2' ",type=str)
+parser.add_argument("-n", "--node",help="pass the connection of br-int to the other node, or use default '3' ",type=str)   # TODO number of nodes. and port corresponding to nodes
 
-data = {"action": "add", "pairs": [{"node": "compute1", "out": ["fa:16:3e:00:c8:7e", 1, "fb26a078-b2e9-4767-8b55-723b4ddb35f5"], 
-"order": 0, "in": ["fa:16:3e:90:11:b5", 0, "fb26a078-b2e9-4767-8b55-723b4ddb35f5"]}], "exit": "compute2"}
+args = parser.parse_args()  # pass the arguments to the parser
+# default values for ports
+server = get_ip()
+
+if args.compute:  # parse the server adress passed
+    compute = args.compute
+if args.brint:
+    brintport = args.brint
+else:
+	brintport = '1'
+if args.control:
+   brcontrol = args.control
+else:
+	brcontrol = '2'
+if args.node:
+    brnode = args.node
+else: 
+	brnode = '3'
+
 
 while True:
 	logger.info(" --- Waiting for data ---")
@@ -69,10 +94,11 @@ while True:
 	    continue
 	if (jsonMANA=="add"):
 	    try:
-	        src = jsonResponse["in_segment"]
-	        dst = jsonResponse["out_segment"]
-	        pairs = jsonResponse["pairs"] #get the unordered port list
-	        # TODO       FIX IT 
+			src = jsonResponse["in_segment"]
+			dst = jsonResponse["out_segment"]
+			enter = jsonResponse['enter']
+			exit = jsonResponse['exit']
+			pairs = jsonResponse["pairs"] #get the unordered port list
 	    except:
 	        message="There is some error with json file"
 	        logger.error(message)
@@ -90,12 +116,19 @@ while True:
 		    port = item.get("out")
 		    portlist.append(port[0])
 		logger.info("Create port list for SFC rules: "+portlist)
+		
 		# TODO __ FIX recognise if traffic from control or some other node
-		logger.info("Taking traffic from br-tun to br-int")
-		logger.info("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+brcontrol+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
-		os.system("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+brcontrol+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
-		fo.write("ovs-ofctl --strict del-flows br-tun priority=66,dl_type=0x800,in_port="+brcontrol+",nw_src="+src+",nw_dst="+dst+"\n")
-	
+		if enter == 'control':
+			logger.info("Taking traffic from br-tun to br-int")
+			logger.info("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+brcontrol+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+			os.system("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+brcontrol+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+			fo.write("ovs-ofctl --strict del-flows br-tun priority=66,dl_type=0x800,in_port="+brcontrol+",nw_src="+src+",nw_dst="+dst+"\n")
+		elif enter == compute:
+			logger.info("Taking traffic from br-tun to br-int")
+			logger.info("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+brnode+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+			os.system("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+brnode+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+			fo.write("ovs-ofctl --strict del-flows br-tun priority=66,dl_type=0x800,in_port="+brnode+",nw_src="+src+",nw_dst="+dst+"\n")
+		
 
 		logger.info("Rule First: ") 
 		firstport = findPort(portlist[0])
@@ -154,12 +187,16 @@ while True:
 		fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x800,in_port="+lastport+",nw_src="+dst+",nw_dst="+src+"\n")        
 
 		# TODO -- recognize where to send the traffic 
-
-		logger.info("Taking traffic from br-tun to outside")
-		logger.info("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brcontrol)
-		os.system("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brcontrol)
-		fo.write("ovs-ofctl --strict del-flows br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
-
+		if exit == 'control':
+			logger.info("Taking traffic from br-tun to outside")
+			logger.info("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brcontrol)
+			os.system("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brcontrol)
+			fo.write("ovs-ofctl --strict del-flows br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
+		elif exit == compute:
+			logger.info("Taking traffic from br-tun to outside")
+			logger.info("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brnode)
+			os.system("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brnode)
+			fo.write("ovs-ofctl --strict del-flows br-tun priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
 
 		# Reply Success or Error 
 		print returnflag
@@ -170,7 +207,18 @@ while True:
 		logger.info("Proccess Completed. Returning to Start")
 
 
+	elif (jsonMANA=='delete'):
+		conn.send(returnflag)
+		conn.close()
+		continue
 
+	else:
+		message = "This function is not supported. Please check your json file"
+		logger.info("Recieved not supported function. Sending message")
+		logger.info(message)
+		conn.send(message, address)
+		conn.close()
+		logger.info("Proccess Completed. Returning to Start")
 
 	#logging.info("Data received: "+jsonResponse)
 conn.send("SUCCESS")
