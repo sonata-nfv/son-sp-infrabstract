@@ -223,7 +223,7 @@ while True:
             node = find_node(vc_id)
             pair['node'] = node
         # create chain
-        chain = {'action': 'add', 'pairs': pairs[0], 'exit' : "control", 'in_segment' : src, 'out_segment' : dst }  # Declared more than needed, just for clarity
+        chain = {'action': 'add', 'pairs': pairs[0], 'exit' : "control", 'in_segment' : src, 'out_segment' : dst, 'enter': 'control' }  # Declared more than needed, just for clarity
         chained_list = [pairs[0]]
         nodeS = pairs[0]['node']
         # SEND DATA to NODE with ovs-ofctl
@@ -244,8 +244,11 @@ while True:
                 logger.debug("Splitting chain ("+str(chain)+") and sending it to node: "+nodeS)
                 resev = sendChain(chain,nodeS) #SEND chain to node
                 logger.info("Chain Send. Answer recieved: "+resev)
+
                 chained_list = pairs[num] #Create clear chain with the new one
                 nodeS = pairs[num]['node'] # Set new node to be sent
+                chain['enter'] = nodeS
+
         chain['pairs'] = chained_list
         chain['exit'] = "control"
         logger.debug("Sending final chain ("+str(chain)+") to node: "+node)
