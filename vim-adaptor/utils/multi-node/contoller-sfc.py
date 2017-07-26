@@ -255,6 +255,23 @@ while True:
         resev = sendChain(chain,nodeS)
         logger.info("Chain Send. Answer recieved: "+resev)
         logger.info("Chains send to respective node(s)")
+        # Taking the traffic from node back outside 
+        port = choose_port(nodeS)
+        logger.info("Traffic from br-tun to br-int :")
+        logger.info("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+port+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        os.system("ovs-ofctl add-flow br-tun priority=66,dl_type=0x800,in_port="+port+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        fo.write("ovs-ofctl --strict del-flows br-tun priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
+        #Traffic from br-int to br-provider
+        logger.info("Traffic from br-int to br-provider :")
+        logger.info("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        os.system("ovs-ofctl add-flow br-int priority=66,dl_type=0x800,in_port="+brintport+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        fo.write("ovs-ofctl --strict del-flows br-int priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
+        # Traffic from br-provider to outside
+        logger.info("Traffic from br-provider to outside :")
+        logger.info("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port="+brprovider+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        os.system("ovs-ofctl add-flow br-provider priority=66,dl_type=0x0800,in_port="+brprovider+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        fo.write("ovs-ofctl --strict del-flows br-provider priority=66,dl_type=0x0800,in_port=1,nw_src="+src+",nw_dst="+dst+"\n")
+
         conn.send(returnflag)
         conn.close()
 
