@@ -49,11 +49,4 @@ public class FunctionScalePayload {
     return serviceInstanceId;
   }
 
-  public void setFunctionInstanceId(String functionInstanceId) {
-    this.functionInstanceId = functionInstanceId;
-  }
-
-  public void setServiceInstanceId(String serviceInstanceId) {
-    this.serviceInstanceId = serviceInstanceId;
-  }
 }

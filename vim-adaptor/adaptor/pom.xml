@@ -287,10 +287,10 @@
 			<type>maven-plugin</type>
 		</dependency>
 		<dependency>
-			<groupId>mistral-client</groupId>
-			<artifactId>com.nokia.cb.nfvo.mistral.client</artifactId>
-			<version>1.0</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/mistral-client.jar</systemPath>
+			<groupId>com.nokia.cb.sonata.mistral-client</groupId>
+			<artifactId>mistral-client</artifactId>
+			<version>1.0-SNAPSHOT</version>
+			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/mistral-client-1.0-SNAPSHOT.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
@@ -343,7 +343,7 @@
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
-			<version>${jetbrains.annotations.version}</version>
+			<version>13.0</version>
 			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/annotations-13.0.jar</systemPath>
 		</dependency>
 	</dependencies>
