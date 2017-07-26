@@ -85,6 +85,7 @@ while True:
 	    jsonMANA = jsonResponse["action"] # Check json request type
 	    #uuid = jsonResponse["instance_id"]
 	    # TODO ----- ADD uuid in message send from controller
+	    uuid = jsonResponse["instance_id"]
 	    exit = jsonResponse["exit"] 
 	except KeyError:
 	    message="There is some error with json file"
@@ -108,14 +109,14 @@ while True:
 		logger.info("Json message succesfully ACCEPTED : "+data)
 		logger.info("SOURCE SEGMENT -> "+src)
 		logger.info("DESTINATION SEGMENT -> "+dst)
-		fo = open("instances/"+uuid, "w")	
+		fo = open(uuid, "w")	
 		portlist = []
 		for item in pairs:
 		    port = item.get("in")
 		    portlist.append(port[0])
 		    port = item.get("out")
 		    portlist.append(port[0])
-		logger.info("Create port list for SFC rules: "+portlist)
+		logger.info("Create port list for SFC rules: "+ str(portlist))
 		
 		# TODO __ FIX recognise if traffic from control or some other node
 		if enter == 'control':
@@ -201,7 +202,7 @@ while True:
 		# Reply Success or Error 
 		print returnflag
 		logger.info("Sending return flag: " +returnflag)
-		sock.send(returnflag)
+		conn.send(returnflag)
 		conn.close()
 		fo.close()       
 		logger.info("Proccess Completed. Returning to Start")
