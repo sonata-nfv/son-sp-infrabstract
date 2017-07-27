@@ -14,6 +14,10 @@
 			<id>central</id>
 			<name>Maven Central Repository</name>
 			<url>http://repo1.maven.org/maven2</url>
+	</repository>
+		<repository>
+			<id>project-repo</id>
+			<url>file://${project.basedir}/src/main/resources</url>
 		</repository>
 	</repositories>
 
@@ -150,6 +154,7 @@
 				<artifactId>findbugs-maven-plugin</artifactId>
 				<version>${findbugs.maven.version}</version>
 			</plugin>
+
 		</plugins>
 	</reporting>
 
@@ -290,62 +295,48 @@
 			<groupId>com.nokia.cb.sonata.mistral-client</groupId>
 			<artifactId>mistral-client</artifactId>
 			<version>1.0-SNAPSHOT</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/mistral-client-1.0-SNAPSHOT.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.google.guava</groupId>
 			<artifactId>guava</artifactId>
 			<version>19.0</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/guava-19.0.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>ch.qos.logback</groupId>
-			<artifactId>logback-classic</artifactId>
-			<version>1.2.3</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/logback-classic-1.2.3.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.pacesys</groupId>
 			<artifactId>openstack4j-core</artifactId>
 			<version>2.20</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/openstack4j-core-2.20.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.pacesys.openstack4j.connectors</groupId>
 			<artifactId>openstack4j-httpclient</artifactId>
 			<version>2.20</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/openstack4j-httpclient-2.20.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>log4j-over-slf4j</artifactId>
 			<version>1.7.25</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/log4j-over-slf4j-1.7.25.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.jboss.resteasy</groupId>
 			<artifactId>resteasy-client</artifactId>
 			<version>3.0.16.Final</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/resteasy-client-3.0.16.Final.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
 			<version>3.1</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/commons-lang3-3.1.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-core</artifactId>
 			<version>3.2.14.RELEASE</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/spring-core-3.2.14.RELEASE.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.jetbrains</groupId>
 			<artifactId>annotations</artifactId>
 			<version>13.0</version>
-			<systemPath>${project.basedir}/src/main/resources/mistral_client_jar/annotations-13.0.jar</systemPath>
 		</dependency>
 	</dependencies>
+
 
 </project>
