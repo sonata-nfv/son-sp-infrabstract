@@ -74,12 +74,11 @@ import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
 import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.Image.Image;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -87,9 +86,13 @@ import java.util.Hashtable;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
+  private static final String mistralConfigFilePath = "/etc/son-mano/mistal.config";
+
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(OpenStackHeatWrapper.class);
   private IpNetPool myPool;
+
+  private String mistralUrl;
 
   /**
    * Standard constructor for an Compute Wrapper of an OpenStack VIM using Heat.
@@ -107,6 +110,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     VimNetTable.getInstance().registerVim(this.getConfig().getUuid(), tenantCidr);
     this.myPool = VimNetTable.getInstance().getNetPool(this.getConfig().getUuid());
+    this.mistralUrl = getMistralUrl();
   }
 
   /*
@@ -721,22 +725,24 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   @Override
   public void scaleFunction(FunctionScalePayload data, String sid) {
 
-    String mistralIP = "";// TODO - smendel - retrieve Mistral IP (part of SONATA SP)
+    if (mistralUrl== null){
+      Logger.error("Failed to scale Function due to missing mistral url configuration.");
+      System.exit(1);
+    }
+
     OpenStackMistralClient mistralClient =
-        new OpenStackMistralClient(mistralIP, getConfig().getVimEndpoint().toString(),
+        new OpenStackMistralClient(mistralUrl, getConfig().getVimEndpoint().toString(),
             getConfig().getAuthUserName(), getConfig().getAuthPass(), getTenant());
 
     String stackUuid = WrapperBay.getInstance().getVimRepo()
         .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.getConfig().getUuid());
-
-
 
     Logger.info("Scaling stack");
     // TODO - smendel - need to get the number of required instances from each vdu
     mistralClient.scaleStack(stackUuid, "");
     // TODO - smendel - get execution result, if needed use polling - see deployFunction
 
-    Logger.info("Creating function deploy response");
+    Logger.info("Creating function scale response");
 
     // TODO - smendel - create IA response to FLM - see deployFunction
   }
@@ -1314,6 +1320,24 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     model.prepare();
     return model;
+  }
+
+  private String getMistralUrl(){
+
+    String mistralUrl = null ;
+    try {
+      InputStreamReader in =
+              new InputStreamReader(new FileInputStream(mistralConfigFilePath), Charset.forName("UTF-8"));
+      JSONTokener tokener = new JSONTokener(in);
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+      mistralUrl = jsonObject.getString("mistral_server_address");
+    } catch (FileNotFoundException e) {
+      Logger.error("Unable to load Mistral Config file", e);
+      System.exit(1);
+    }
+
+    return mistralUrl;
+
   }
 
 }
