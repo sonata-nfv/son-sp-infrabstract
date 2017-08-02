@@ -55,18 +55,19 @@ public class ScaleFunctionCallProcessor extends AbstractCallProcessor {
     boolean out = true;
     Logger.info("Scale function call received by call processor.");
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
-    Logger.info("Parsing payload...");
     data = null;
     ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
     try {
+      Logger.info("Parsing scaling payload...");
       data = mapper.readValue(message.getBody(), FunctionScalePayload.class);
       Logger.info("payload parsed");
 
       WrapperBay wrapperBay = WrapperBay.getInstance();
       String vimUuid = wrapperBay.getVimRepo()
           .getComputeVimUuidByFunctionInstanceId(data.getFunctionInstanceId());
+      Logger.info("Wrapper retrieved, vimUuid = " + (vimUuid==null? "null" : vimUuid));
+
       ComputeWrapper wr = wrapperBay.getComputeWrapper(vimUuid);
-      Logger.info("Wrapper retrieved");
 
       if (wr == null) {
         Logger.warn("Error retrieving the wrapper");
