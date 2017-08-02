@@ -86,7 +86,7 @@ import java.util.Hashtable;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
-  private static final String mistralConfigFilePath = "/etc/son-mano/mistal.config";
+  private static final String mistralConfigFilePath = "/etc/son-mano/mistral.config";
 
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(OpenStackHeatWrapper.class);
