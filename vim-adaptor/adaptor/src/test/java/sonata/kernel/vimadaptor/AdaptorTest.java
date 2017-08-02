@@ -231,6 +231,7 @@ public class AdaptorTest implements MessageReceiver {
     core.stop();
   }
   
+
   /**
    * Create a Mock wrapper
    * 
@@ -274,6 +275,112 @@ public class AdaptorTest implements MessageReceiver {
     message = "{\"uuid\":\"" + uuid + "\"}";
     topic = "infrastructure.management.compute.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    core.stop();
+  }
+
+  
+  /**
+   * Create a Mock wrapper
+   * 
+   * @throws IOException
+   */
+  @Test
+  public void testCreateSPWrappers() throws InterruptedException, IOException {
+    // Add the compute SP wrapper
+    String message =
+        "{\"vim_type\":\"SPVim\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
+            +"\"name\":\"SP-Athens-1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
+    String topic = "infrastructure.management.compute.add";
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+
+    core.start();
+
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String computeWrUuid = jsonObject.getString("uuid");
+    String status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    System.out.println("Compute SP Wrapper added, with uuid: " + computeWrUuid);
+
+    //Add the network SP Wrapper
+    output = null;
+
+    String addNetVimBody = "{\"vim_type\":\"SPVim\", " + "\"name\":\"SP-Athens1-net\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
+    topic = "infrastructure.management.network.add";
+    ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addNetVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("request_status");
+    String netWrUuid = jsonObject.getString("uuid");
+    Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
+        status.equals("COMPLETED"));
+    System.out.println("Network SP Wrapper added, with uuid: " + netWrUuid);
+    
+    // Remove both wrappers
+    output = null;
+    message = "{\"uuid\":\"" + computeWrUuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    output = null;
+    message = "{\"uuid\":\"" + netWrUuid + "\"}";
+    topic = "infrastructure.management.network.remove";
+    removeVimMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 

@@ -122,7 +122,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
       body = mapper.writeValueAsString(response);
       this.setChanged();
       Logger.info("Serialized. notifying call processor");
-      WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "SUCCESS", body);
       this.notifyObservers(update);
     } catch (JsonProcessingException e) {
       Logger.error(e.getMessage(), e);
@@ -172,7 +172,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
     double avgTime = 1357.34;
     double stdTime = 683.96;
     waitGaussianTime(avgTime, stdTime);
-    return true;
+    return r.nextBoolean();
   }
 
   /*
@@ -224,7 +224,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
 
   @Override
   public String toString() {
-    return "MockWrapper";
+    return "MockWrapper-"+this.getConfig().getUuid();
   }
 
   /*
@@ -236,25 +236,19 @@ public class ComputeMockWrapper extends ComputeWrapper {
    */
   @Override
   public void uploadImage(VnfImage image) throws IOException {
-
+    
     double avgTime = 7538.75;
-    double stdTime = 1342.06;
-
+    double stdTime = 1342.06;    
     waitGaussianTime(avgTime, stdTime);
-
-    this.setChanged();
-    String body = "{\"status\":\"SUCCESS\"}";
-    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
-    this.notifyObservers(update);
 
     return;
   }
 
   private void waitGaussianTime(double avgTime, double stdTime) {
     double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
-
+    //Logger.debug("Simulating processing delay.Waiting "+waitTime/1000.0+"s");
     try {
-      Thread.sleep((long) waitTime);
+      Thread.sleep((long) Math.floor(waitTime));
     } catch (InterruptedException e) {
       e.printStackTrace();
     }
