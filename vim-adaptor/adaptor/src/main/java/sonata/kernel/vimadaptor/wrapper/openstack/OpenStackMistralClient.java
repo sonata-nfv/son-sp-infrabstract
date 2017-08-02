@@ -26,6 +26,11 @@ package sonata.kernel.vimadaptor.wrapper.openstack;
 
 import com.google.common.collect.ImmutableMap;
 
+import com.nokia.cb.sonata.mistral.client.MistralClient;
+import com.nokia.cb.sonata.mistral.client.exception.MistralHttpException;
+import com.nokia.cb.sonata.mistral.client.model.Workflow;
+import com.nokia.cb.sonata.mistral.client.model.WorkflowExecution;
+import com.nokia.cb.sonata.mistral.client.model.WorkflowExecutionCreateRequest;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 
@@ -43,82 +48,10 @@ import java.util.Map;
  */
 public class OpenStackMistralClient {
 
-  // TODO - smendel - mock class to be replaced by nokia's jars
-  private class MistralClient {
-
-    private String url;
-
-    private MistralClient(String url) {
-      this.url = url;
-
-    }
-
-    private Workflow workflowCreate(String workflowDSl) throws MistralHttpException {
-
-      if (workflowDSl == null) {
-        throw new MistralHttpException();
-      }
-
-      return new Workflow();
-    }
-
-    private WorkflowExecution workflowExecutionCreate(WorkflowExecutionCreateRequest request) {
-      return new WorkflowExecution();
-
-    }
-
-
-    private Workflow workflowUpdate(String workflowDsl) throws MistralHttpException {
-
-      if (workflowDsl == null) {
-        throw new MistralHttpException();
-      }
-
-      return new Workflow();
-    }
-  }
-
-  // TODO - smendel - mock class to be replaced by nokia's jars
-  private class MistralHttpException extends Exception {
-
-    private int getHttpStatus() {
-      return 0;
-    }
-
-    private String getMassage() {
-      return "";
-    }
-
-  }
-
-  // TODO - smendel - mock class to be replaced by nokia's jars
-  private class Workflow {
-
-  }
-
-  // TODO - smendel - mock class to be replaced by nokia's jars
-  private class WorkflowExecution {
-
-  }
-
-  // TODO - smendel - mock class to be replaced by nokia's jars
-  private class WorkflowExecutionCreateRequest {
-
-    private void setInputs(Map<String, ?> params) {
-
-    }
-
-    private void setWorkflowName(String name) {
-
-    }
-  }
-
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(OpenStackMistralClient.class);
 
-
   private MistralClient mistralClient; // Mistral Client
-
 
   private String openStackUrl; // OpenStack client url
 
@@ -159,9 +92,11 @@ public class OpenStackMistralClient {
           .put("openstack_tenant_password", password).build());
 
       Logger.info("Executing scaling workflow - calling Mistral for workflow execution");
-      // TODO - smendel - get scaling result, similar to whats done in
-      // OpenStackHeatWrapper.prepareService()
+
       workflowExecution = mistralClient.workflowExecutionCreate(executionCreateRequest);
+      // TODO - smendel - get scaling result, similar to whats done in
+      //todo(gpaz) poling ?
+      //todo(gpaz) maybe look at this example: OpenStackHeatWrapper.prepareService()
 
     } catch (RuntimeException e) {
       Logger.error(
