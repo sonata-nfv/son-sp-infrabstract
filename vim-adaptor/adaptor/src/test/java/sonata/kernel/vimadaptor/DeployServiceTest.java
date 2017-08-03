@@ -39,7 +39,7 @@ import org.junit.Test;
 import sonata.kernel.vimadaptor.AdaptorCore;
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
-import sonata.kernel.vimadaptor.commons.NapPair;
+import sonata.kernel.vimadaptor.commons.NapObject;
 import sonata.kernel.vimadaptor.commons.NetworkAttachmentPoints;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.ResourceAvailabilityData;
@@ -539,10 +539,10 @@ public class DeployServiceTest implements MessageReceiver {
     output = null;
 
     NetworkAttachmentPoints nap = new NetworkAttachmentPoints();
-    NapPair in1 = new NapPair();
-    NapPair in2 = new NapPair();
-    NapPair out1 = new NapPair();
-    NapPair out2 = new NapPair();
+    NapObject in1 = new NapObject();
+    NapObject in2 = new NapObject();
+    NapObject out1 = new NapObject();
+    NapObject out2 = new NapObject();
     in1.setLocation("Athens");
     in2.setLocation("Athens");
     in1.setNap("10.100.32.40/32");
@@ -552,10 +552,10 @@ public class DeployServiceTest implements MessageReceiver {
     out2.setLocation("Athens");
     out1.setNap("10.100.32.40/32");
     out2.setNap("10.100.0.40/32");
-    NapPair[] ingresses = {in1,in2};
-    NapPair[] egresses = {out1,out2};
-    nap.setEgresses(new ArrayList<NapPair>(Arrays.asList(egresses)));
-    nap.setIngresses(new ArrayList<NapPair>(Arrays.asList(ingresses)));
+    NapObject[] ingresses = {in1,in2};
+    NapObject[] egresses = {out1,out2};
+    nap.setEgresses(new ArrayList<NapObject>(Arrays.asList(egresses)));
+    nap.setIngresses(new ArrayList<NapObject>(Arrays.asList(ingresses)));
 
     
     NetworkConfigurePayload netPayload = new NetworkConfigurePayload();

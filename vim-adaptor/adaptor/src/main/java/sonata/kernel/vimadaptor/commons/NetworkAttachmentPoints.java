@@ -29,22 +29,22 @@ import java.util.ArrayList;
 
 public class NetworkAttachmentPoints {
 
-  private ArrayList<NapPair> egresses;
-  private ArrayList<NapPair> ingresses;
+  private ArrayList<NapObject> egresses;
+  private ArrayList<NapObject> ingresses;
 
-  public ArrayList<NapPair> getEgresses() {
+  public ArrayList<NapObject> getEgresses() {
     return egresses;
   }
 
-  public ArrayList<NapPair> getIngresses() {
+  public ArrayList<NapObject> getIngresses() {
     return ingresses;
   }
 
-  public void setEgresses(ArrayList<NapPair> egresses) {
+  public void setEgresses(ArrayList<NapObject> egresses) {
     this.egresses = egresses;
   }
 
-  public void setIngresses(ArrayList<NapPair> ingresses) {
+  public void setIngresses(ArrayList<NapObject> ingresses) {
     this.ingresses = ingresses;
   }
 
