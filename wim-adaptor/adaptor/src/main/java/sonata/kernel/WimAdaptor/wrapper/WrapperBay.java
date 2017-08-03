@@ -101,8 +101,8 @@ public class WrapperBay {
     return repository.listWims();
   }
 
-  public String attachVim(String wimUuid, String vimUuid) {
-    boolean result = repository.attachVim(wimUuid, vimUuid);
+  public String attachVim(String wimUuid, String vimUuid, String vimAddress) {
+    boolean result = repository.attachVim(wimUuid, vimUuid, vimAddress);
     if(result)
       return "{\"request_status\":\"COMPLETED\"}";
     else
@@ -113,4 +113,8 @@ public class WrapperBay {
     return repository.readAttachedVim(wimUuid);
   }
 
+  public String getVimAddressFromVimUuid(String vimUuid){
+    return repository.readVimAddressFromVimUuid(vimUuid);
+  }
+  
 }

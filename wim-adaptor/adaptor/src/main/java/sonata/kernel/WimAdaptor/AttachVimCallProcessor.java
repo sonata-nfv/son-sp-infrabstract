@@ -42,23 +42,30 @@ public class AttachVimCallProcessor extends AbstractCallProcessor {
 
   @Override
   public void update(Observable arg0, Object arg1) {
-    //Nothing to do here
+    // Nothing to do here
   }
 
   @Override
   public boolean process(ServicePlatformMessage message) {
     JSONTokener tokener = new JSONTokener(message.getBody());
-    
+
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    //String wrapperType = jsonObject.getString("WIM");
+    // String wrapperType = jsonObject.getString("WIM");
+    if (!(jsonObject.has("wim_uuid") && jsonObject.has("vim_uuid")
+        && jsonObject.has("vim_address"))) {
+      sendResponse("{\"request_status\":\"ERROR\",\"message\":\"Malformed request\"}");
+      return false;
+    }
+
     String wimUuid = jsonObject.getString("wim_uuid");
     String vimUuid = jsonObject.getString("vim_uuid");
-    
-    String result = WrapperBay.getInstance().attachVim(wimUuid, vimUuid);
+    String vimAddress = jsonObject.getString("vim_address");
+
+    String result = WrapperBay.getInstance().attachVim(wimUuid, vimUuid, vimAddress);
     this.sendResponse(result);
     return true;
   }
-  
+
   private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
         this.getMessage().getTopic(), this.getMessage().getSid(), null);
