@@ -29,7 +29,9 @@ package sonata.kernel.WimAdaptor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Observable;
+import java.util.Set;
 
 import org.slf4j.LoggerFactory;
 
@@ -83,13 +85,28 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
           "{\"request_status\":\"fail\",\"message\":\"Payload parse error\"}", "application/json",
           message.getReplyTo(), message.getSid(), null));
       out = false;
+      return out;
     }
 
     String instanceId = request.getInstanceId();
 
     HashMap<String, ArrayList<String>> wim2VimsMap = new HashMap<String, ArrayList<String>>();
     ArrayList<ComparableUuid> vims = request.getVimList();
+    
+    HashSet<ComparableUuid> set = new HashSet<ComparableUuid>(vims);
+
+    if(set.size() < vims.size()){
+      Logger.error("Error with the wan configure payload: duplicate VIMS in the list. A placement error?");
+      this.sendToMux(new ServicePlatformMessage(
+          "{\"request_status\":\"fail\",\"message\":\"Duplicate VIMs in vim_list\"}", "application/json",
+          message.getReplyTo(), message.getSid(), null));
+      out = false;
+      return out;
+    }
+    
     Collections.sort(vims);
+    
+    
     ArrayList<String> vimsUuid = new ArrayList<String>(vims.size());
     for (ComparableUuid uuid : vims)
       vimsUuid.add(uuid.getUuid());

@@ -21,6 +21,16 @@ public class ComparableUuid implements Comparable<ComparableUuid> {
     return this.order-other.order;
   }
   
+  @Override
+  public boolean equals(Object obj){
+    if (!(obj instanceof ComparableUuid))
+      return false;
+    else{
+      ComparableUuid other = (ComparableUuid) obj;
+      return this.uuid.equals(other.getUuid());
+    }
+          
+  }
   
   
 }
