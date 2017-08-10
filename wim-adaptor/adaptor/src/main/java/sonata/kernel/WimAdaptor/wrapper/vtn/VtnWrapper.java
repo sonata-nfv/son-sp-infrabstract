@@ -27,8 +27,12 @@
 package sonata.kernel.WimAdaptor.wrapper.vtn;
 
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.apache.http.HttpResponse;
@@ -54,7 +58,8 @@ public class VtnWrapper extends WimWrapper {
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(VtnWrapper.class);
 
   public enum Constants {
-    VTN_SERVER_PORT("5000"), VTN_URI("/flowchart/");
+    VTN_SERVER_PORT("5000"), VTN_URI("/flowchart/"), ADAPTOR_SEGMENTS_CONF("/adaptor/segments.conf");
+
 
     private final String constantValue;
 
@@ -165,6 +170,18 @@ public class VtnWrapper extends WimWrapper {
     // Send HTTP POST to the VTN server
     HttpClient httpClient = HttpClientBuilder.create().build();
 
+    if(inputSegment==null||outputSegment==null){
+      Logger.warn("NAP not specified, using default ones from default config file");
+      Properties segments = new Properties();
+      try {
+        segments.load(new FileReader(new File(Constants.ADAPTOR_SEGMENTS_CONF.toString())));
+      inputSegment = segments.getProperty("in");
+      outputSegment = segments.getProperty("out");
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+    }
+    
     HttpPost post;
     HttpResponse response = null;
     StringBuilder buildUrl = new StringBuilder();

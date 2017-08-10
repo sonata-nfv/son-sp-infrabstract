@@ -32,7 +32,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.slf4j.LoggerFactory;
 
-import sonata.kernel.vimadaptor.commons.NapPair;
+import sonata.kernel.vimadaptor.commons.NapObject;
 import sonata.kernel.vimadaptor.commons.NetworkAttachmentPoints;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.VduRecord;
@@ -238,18 +238,18 @@ public class OvsWrapper extends NetworkWrapper {
       Properties segments = new Properties();
       segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
       NetworkAttachmentPoints nap = new NetworkAttachmentPoints();
-      ArrayList<NapPair> ingresses = new ArrayList<NapPair>();
-      ArrayList<NapPair> egresses = new ArrayList<NapPair>();
-      ingresses.add(new NapPair("Athens", segments.getProperty("in")));
-      egresses.add(new NapPair("Athens", segments.getProperty("out")));
+      ArrayList<NapObject> ingresses = new ArrayList<NapObject>();
+      ArrayList<NapObject> egresses = new ArrayList<NapObject>();
+      ingresses.add(new NapObject("Athens", segments.getProperty("in")));
+      egresses.add(new NapObject("Athens", segments.getProperty("out")));
       nap.setEgresses(egresses);
       nap.setIngresses(ingresses);
       data.setNap(nap);
     }
     Collections.sort(odlList);
     int ruleNumber = 0;
-    for (NapPair inNap : data.getNap().getIngresses()) {
-      for (NapPair outNap : data.getNap().getEgresses()) {
+    for (NapObject inNap : data.getNap().getIngresses()) {
+      for (NapObject outNap : data.getNap().getEgresses()) {
         OvsPayload odlPayload = new OvsPayload("add", serviceInstanceId + "." + ruleNumber,
             inNap.getNap(), outNap.getNap(), odlList);
         ObjectMapper mapper = new ObjectMapper(new JsonFactory());

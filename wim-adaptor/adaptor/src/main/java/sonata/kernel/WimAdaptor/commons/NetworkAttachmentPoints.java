@@ -23,7 +23,7 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
-package sonata.kernel.vimadaptor.commons;
+package sonata.kernel.WimAdaptor.commons;
 
 import java.util.ArrayList;
 

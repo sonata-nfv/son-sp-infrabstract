@@ -23,30 +23,41 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
-package sonata.kernel.vimadaptor.commons;
+package sonata.kernel.WimAdaptor.commons;
 
-import java.util.ArrayList;
+public class NapObject {
 
-public class NetworkAttachmentPoints {
+  private String location;
+  private String nap;
 
-  private ArrayList<NapObject> egresses;
-  private ArrayList<NapObject> ingresses;
 
-  public ArrayList<NapObject> getEgresses() {
-    return egresses;
+  public NapObject() {}
+
+  /**
+   * @param string
+   * @param object
+   */
+  public NapObject(String location, String nap) {
+    this.location = location;
+    this.nap = nap;
   }
 
-  public ArrayList<NapObject> getIngresses() {
-    return ingresses;
+  public String getLocation() {
+    return location;
   }
 
-  public void setEgresses(ArrayList<NapObject> egresses) {
-    this.egresses = egresses;
+  public String getNap() {
+    return nap;
   }
 
-  public void setIngresses(ArrayList<NapObject> ingresses) {
-    this.ingresses = ingresses;
+  public void setLocation(String location) {
+    this.location = location;
   }
+
+  public void setNap(String nap) {
+    this.nap = nap;
+  }
+
 
 
 }

@@ -25,19 +25,19 @@
  */
 package sonata.kernel.vimadaptor.commons;
 
-public class NapPair {
+public class NapObject {
 
   private String location;
   private String nap;
 
 
-  public NapPair() {}
+  public NapObject() {}
 
   /**
    * @param string
    * @param object
    */
-  public NapPair(String location, String nap) {
+  public NapObject(String location, String nap) {
     this.location = location;
     this.nap = nap;
   }
