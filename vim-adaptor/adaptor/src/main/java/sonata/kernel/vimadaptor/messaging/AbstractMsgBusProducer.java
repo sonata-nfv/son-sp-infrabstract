@@ -48,7 +48,8 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
   public void run() {
     do {
       try {
-        this.sendMessage(muxQueue.take());
+        ServicePlatformMessage message = muxQueue.take();
+        this.sendMessage(message);
       } catch (InterruptedException e) {
         Logger.error(e.getMessage(), e);
       }
