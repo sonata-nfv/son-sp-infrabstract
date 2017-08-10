@@ -184,9 +184,8 @@ public class WimAdaptorTest implements MessageReceiver {
 
     // attach 2 VIMs per WIM
     String vims[] = {"11111", "22222", "33333", "44444"};
-    
     for (int i = 0; i < 2; i++) {
-      message = "{\"wim_uuid\":\"" + uuid1 + "\",\"vim_uuid\":\""+vims[i]+"\"}";
+      message = "{\"wim_uuid\":\"" + uuid1 + "\",\"vim_uuid\":\""+vims[i]+"\",\"vim_address\":\""+vims[i]+"\"}";
       topic = "infrastructure.wan.attach";
       addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
           UUID.randomUUID().toString(), topic);
@@ -201,11 +200,11 @@ public class WimAdaptorTest implements MessageReceiver {
       tokener = new JSONTokener(output);
       jsonObject = (JSONObject) tokener.nextValue();
       status = jsonObject.getString("request_status");
-      Assert.assertTrue(status.equals("COMPLETED"));
+      Assert.assertTrue("Status not completed: "+status,status.equals("COMPLETED"));
     }
 
     for (int i = 2; i < 4; i++) {
-      message = "{\"wim_uuid\":\"" + uuid2 + "\",\"vim_uuid\":\""+vims[i]+"\"}";
+      message = "{\"wim_uuid\":\"" + uuid2 + "\",\"vim_uuid\":\""+vims[i]+"\",\"vim_address\":\""+vims[i]+"\"}";
       topic = "infrastructure.management.wan.attach";
       addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
           UUID.randomUUID().toString(), topic);

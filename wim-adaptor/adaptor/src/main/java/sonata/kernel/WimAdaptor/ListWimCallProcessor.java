@@ -57,13 +57,13 @@ public class ListWimCallProcessor extends AbstractCallProcessor {
 
   @Override
   public boolean process(ServicePlatformMessage message) {
-
+    Logger.info("Received a call on List WIM");
     // TODO
     // ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
     ArrayList<WimRecord> wimList = new ArrayList<WimRecord>();
     ArrayList<String> wimsUuid = WrapperBay.getInstance().getWimList();
 
-    System.out.println(wimsUuid);
+    Logger.debug(wimsUuid.toString());
 
     for(String wim : wimsUuid){
       WrapperRecord wr = WrapperBay.getInstance().getWimRecordFromWimUuid(wim);
