@@ -84,8 +84,9 @@ public class ComputeMockWrapper extends ComputeWrapper {
   public void deployFunction(FunctionDeployPayload data, String sid) {
     double avgTime = 51987.21;
     double stdTime = 14907.12;
+    Logger.debug("[MockWrapper] deploying function...");
     waitGaussianTime(avgTime, stdTime);
-
+    Logger.debug("[MockWrapper] function deployed. Generating response...");
     VnfDescriptor vnf = data.getVnfd();
     VnfRecord vnfr = new VnfRecord();
     vnfr.setDescriptorVersion("vnfr-schema-01");
@@ -128,8 +129,11 @@ public class ComputeMockWrapper extends ComputeWrapper {
     } catch (JsonProcessingException e) {
       Logger.error(e.getMessage(), e);
     }
+    Logger.debug("[MockWrapper] Response generated. Writing record in the Infr. Repos...");
     WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnf.getInstanceUuid(),
       data.getServiceInstanceId(), this.getConfig().getUuid());
+    Logger.debug("[MockWrapper] All done!");
+
   }
 
   @Deprecated
