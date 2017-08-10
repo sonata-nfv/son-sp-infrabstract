@@ -95,7 +95,7 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
       } else {
         // use wrapper interface to send the NSD/VNFD, along with meta-data
         // to the wrapper, triggering the service instantiation.
-        Logger.info("Calling wrapper: " + wr);
+        Logger.info("Calling wrapper: " + wr.getConfig().getName()+"- UUID: "+wr.getConfig().getUuid());
         wr.addObserver(this);
         wr.deployFunction(data, this.getSid());
       }
