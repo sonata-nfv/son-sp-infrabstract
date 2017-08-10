@@ -30,12 +30,17 @@ import java.util.Observable;
 
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
 
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
 
 public class AttachVimCallProcessor extends AbstractCallProcessor {
 
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(AttachVimCallProcessor.class);
+
+  
   public AttachVimCallProcessor(ServicePlatformMessage message, String sid, WimAdaptorMux mux) {
     super(message, sid, mux);
   }
@@ -48,7 +53,7 @@ public class AttachVimCallProcessor extends AbstractCallProcessor {
   @Override
   public boolean process(ServicePlatformMessage message) {
     JSONTokener tokener = new JSONTokener(message.getBody());
-
+    Logger.info("Request received to attach VIM to WIM");
     JSONObject jsonObject = (JSONObject) tokener.nextValue();
     // String wrapperType = jsonObject.getString("WIM");
     if (!(jsonObject.has("wim_uuid") && jsonObject.has("vim_uuid")

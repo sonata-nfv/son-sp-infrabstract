@@ -608,7 +608,7 @@ public class WimRepo {
           + "VALUES (?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, vimUuid);
-      stmt.setString(1, vimAddress);
+      stmt.setString(2, vimAddress);
       stmt.setString(3, wimUuid);
       stmt.executeUpdate();
       connection.commit();
