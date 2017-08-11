@@ -101,7 +101,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
    */
   public OpenStackHeatWrapper(WrapperConfiguration config) {
     super(config);
-    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
+    String configuration = getConfig().getConfiguration();
+    Logger.debug("Wrapper specific configuration: "+configuration);
+    JSONTokener tokener = new JSONTokener(configuration);
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String tenantCidr = null;
