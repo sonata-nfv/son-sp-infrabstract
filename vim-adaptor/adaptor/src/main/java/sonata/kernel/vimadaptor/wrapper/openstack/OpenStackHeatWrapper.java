@@ -102,13 +102,15 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   public OpenStackHeatWrapper(WrapperConfiguration config) {
     super(config);
     String configuration = getConfig().getConfiguration();
-    Logger.debug("Wrapper specific configuration: "+configuration);
+    Logger.debug("Wrapper specific configuration: " + configuration);
     JSONTokener tokener = new JSONTokener(configuration);
     JSONObject object = (JSONObject) tokener.nextValue();
     String tenant = object.getString("tenant");
     String tenantCidr = null;
-    if (object.has("tenant_private_cidr")) {
-      tenantCidr = object.getString("tenant_private_cidr");
+    if (object.has("tenant_private_net_id")) {
+      String tenantNetId = object.getString("tenant_private_net_id");
+      int tenantNetLength = object.getInt("tenant_private_net_length");
+      tenantCidr = tenantNetId+"/"+tenantNetLength;
     }
     VimNetTable.getInstance().registerVim(this.getConfig().getUuid(), tenantCidr);
     this.myPool = VimNetTable.getInstance().getNetPool(this.getConfig().getUuid());
@@ -727,7 +729,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   @Override
   public void scaleFunction(FunctionScalePayload data, String sid) {
 
-    if (mistralUrl== null){
+    if (mistralUrl == null) {
       Logger.error("Failed to scale Function due to missing mistral url configuration.");
       System.exit(1);
     }
@@ -1324,12 +1326,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return model;
   }
 
-  private String getMistralUrl(){
+  private String getMistralUrl() {
 
-    String mistralUrl = null ;
+    String mistralUrl = null;
     try {
-      InputStreamReader in =
-              new InputStreamReader(new FileInputStream(mistralConfigFilePath), Charset.forName("UTF-8"));
+      InputStreamReader in = new InputStreamReader(new FileInputStream(mistralConfigFilePath),
+          Charset.forName("UTF-8"));
       JSONTokener tokener = new JSONTokener(in);
       JSONObject jsonObject = (JSONObject) tokener.nextValue();
       mistralUrl = jsonObject.getString("mistral_server_address");
