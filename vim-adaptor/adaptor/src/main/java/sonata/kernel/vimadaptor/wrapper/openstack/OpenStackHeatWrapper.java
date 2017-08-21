@@ -109,7 +109,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     String tenantCidr = null;
     if (object.has("tenant_private_net_id")) {
       String tenantNetId = object.getString("tenant_private_net_id");
-      String tenantNetLength = object.getString("tenant_private_net_length");
+      int tenantNetLength = object.getInt("tenant_private_net_length");
       tenantCidr = tenantNetId+"/"+tenantNetLength;
     }
     VimNetTable.getInstance().registerVim(this.getConfig().getUuid(), tenantCidr);
