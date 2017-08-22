@@ -235,6 +235,8 @@ public class WimAdaptorTest implements MessageReceiver {
         mon.wait(1000);
       }
     }
+    
+    System.out.println("Lis results:\n" +output);
     WimRecord[] list = mapper.readValue(output, WimRecord[].class);
 
     for (WimRecord wim : list){
@@ -261,7 +263,7 @@ public class WimAdaptorTest implements MessageReceiver {
   @Test
   public void testCreateMockWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"wim_vendor\":\"Mock\",\"name\":\"area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
+        "{\"wim_vendor\":\"Mock\",\"name\":\"area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -320,7 +322,7 @@ public class WimAdaptorTest implements MessageReceiver {
   @Test
   public void testCreateVTNWrapper() throws InterruptedException, IOException {
     String message =
-        "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
+        "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -375,7 +377,7 @@ public class WimAdaptorTest implements MessageReceiver {
   public void configureService() throws IOException, InterruptedException {
 
     String message =
-        "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\",\"serviced_segments\":[\"12345678-1234567890-1234567890-1234\"]}";
+        "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
     String topic = "infrastructure.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
