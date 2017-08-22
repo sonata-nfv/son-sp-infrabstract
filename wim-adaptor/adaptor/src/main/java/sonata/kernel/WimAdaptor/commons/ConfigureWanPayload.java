@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ConfigureWanPayload {
 
-  @JsonProperty("instance_id")
+  @JsonProperty("service_instance_id")
   private String instanceId;
   @JsonProperty("vim_list")
   private ArrayList<ComparableUuid> vimList;
