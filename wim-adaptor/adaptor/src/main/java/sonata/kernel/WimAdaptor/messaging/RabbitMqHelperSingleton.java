@@ -84,8 +84,8 @@ public class RabbitMqHelperSingleton {
       channel.queueBind(queueName, exchangeName, "platform.management.plugin.deregister");
       Logger.info("Bound to topic \"platform.platform.management.plugin.deregister\"");
 
-      channel.queueBind(queueName, exchangeName, "infrastructure.wan.#");
-      Logger.info("[northbound] RabbitMqConsumer - bound to topic \"infrastructure.wan.#\"");
+      channel.queueBind(queueName, exchangeName, "infrastructure.#");
+      Logger.info("[northbound] RabbitMqConsumer - bound to topic \"infrastructure.#\"");
 
     } catch (TimeoutException e) {
       Logger.error(e.getMessage(), e);
