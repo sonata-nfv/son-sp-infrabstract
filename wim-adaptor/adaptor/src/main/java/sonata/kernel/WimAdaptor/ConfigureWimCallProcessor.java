@@ -87,7 +87,8 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
       out = false;
       return out;
     }
-
+    Logger.debug("Received request: ");
+    Logger.debug(message.getBody());
     String instanceId = request.getInstanceId();
 
     HashMap<String, ArrayList<String>> wim2VimsMap = new HashMap<String, ArrayList<String>>();
