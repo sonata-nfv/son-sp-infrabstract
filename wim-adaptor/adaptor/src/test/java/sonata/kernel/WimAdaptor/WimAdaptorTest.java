@@ -133,7 +133,7 @@ public class WimAdaptorTest implements MessageReceiver {
   public void testListWIM() throws InterruptedException, IOException {
     String message =
         "{\"wim_vendor\":\"VTN\",\"name\":\"Wan-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
-    String topic = "infrastructure.wan.add";
+    String topic = "infrastructure.management.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -165,7 +165,7 @@ public class WimAdaptorTest implements MessageReceiver {
     output = null;
     message =
         "{\"wim_vendor\":\"VTN\",\"name\":\"Wan-area-2\",\"wim_address\":\"10.20.0.12\",\"username\":\"admin\",\"pass\":\"admin\"}";
-    topic = "infrastructure.wan.add";
+    topic = "infrastructure.management.wan.add";
     addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
         UUID.randomUUID().toString(), topic);
     consumer.injectMessage(addWimMessage);
@@ -186,7 +186,7 @@ public class WimAdaptorTest implements MessageReceiver {
     String vims[] = {"11111", "22222", "33333", "44444"};
     for (int i = 0; i < 2; i++) {
       message = "{\"wim_uuid\":\"" + uuid1 + "\",\"vim_uuid\":\""+vims[i]+"\",\"vim_address\":\""+vims[i]+"\"}";
-      topic = "infrastructure.wan.attach";
+      topic = "infrastructure.management.wan.attach";
       addWimMessage = new ServicePlatformMessage(message, "application/json", topic,
           UUID.randomUUID().toString(), topic);
       consumer.injectMessage(addWimMessage);
@@ -264,7 +264,7 @@ public class WimAdaptorTest implements MessageReceiver {
   public void testCreateMockWrapper() throws InterruptedException, IOException {
     String message =
         "{\"wim_vendor\":\"Mock\",\"name\":\"area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
-    String topic = "infrastructure.wan.add";
+    String topic = "infrastructure.management.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -294,7 +294,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     output = null;
     message = "{\"wr_type\":\"WIM\",\"uuid\":\"" + uuid + "\"}";
-    topic = "infrastructure.wan.remove";
+    topic = "infrastructure.management.wan.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
@@ -323,7 +323,7 @@ public class WimAdaptorTest implements MessageReceiver {
   public void testCreateVTNWrapper() throws InterruptedException, IOException {
     String message =
         "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
-    String topic = "infrastructure.wan.add";
+    String topic = "infrastructure.management.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -353,7 +353,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     output = null;
     message = "{\"wr_type\":\"WIM\",\"uuid\":\"" + uuid + "\"}";
-    topic = "infrastructure.wan.remove";
+    topic = "infrastructure.management.wan.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
@@ -378,7 +378,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     String message =
         "{\"wim_vendor\":\"VTN\",\"name\":\"VTN-area-1\",\"wim_address\":\"10.30.0.13\",\"username\":\"admin\",\"pass\":\"admin\"}";
-    String topic = "infrastructure.wan.add";
+    String topic = "infrastructure.management.wan.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
     BlockingQueue<ServicePlatformMessage> dispatcherQueue =
@@ -407,7 +407,7 @@ public class WimAdaptorTest implements MessageReceiver {
     Assert.assertTrue(status.equals("COMPLETED"));
 
     output = null;
-    topic = "infrastructure.wan.configure";
+    topic = "infrastructure.service.wan.configure";
     message = mapper.writeValueAsString(response);
     ServicePlatformMessage configService = new ServicePlatformMessage(message, "application/json",
         topic, UUID.randomUUID().toString(), topic);
@@ -438,7 +438,7 @@ public class WimAdaptorTest implements MessageReceiver {
 
     output = null;
     message = "{\"wr_type\":\"WIM\",\"uuid\":\"" + uuid + "\"}";
-    topic = "infrastructure.wan.remove";
+    topic = "infrastructure.management.wan.remove";
     ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
         "application/json", topic, UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
