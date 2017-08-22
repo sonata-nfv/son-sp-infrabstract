@@ -710,7 +710,7 @@ public class WimRepo {
       rs = stmt.executeQuery();
 
       while (rs.next()) {
-        output = rs.getString("VIM_UUID");
+        output = rs.getString("vim_address");
          
 
       }
