@@ -68,7 +68,9 @@ public class WimAdaptorDispatcher implements Runnable {
           this.core.handleRegistrationResponse(message);
         } else if (isDeregistrationResponse(message)) {
           this.core.handleDeregistrationResponse(message);
-        } else {
+        } else if (!isWanMessage(message)){
+          continue;
+        }else {
           if (message.getTopic().endsWith("wan.add")) {
             myThreadPool.execute(new AddWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.remove")) {
@@ -85,6 +87,10 @@ public class WimAdaptorDispatcher implements Runnable {
         e.printStackTrace();
       }
     } while (!stop);
+  }
+
+  private boolean isWanMessage(ServicePlatformMessage message) {
+    return message.getTopic().contains(".wan.");
   }
 
   // private void handleManagementMessage(ServicePlatformMessage message) {
