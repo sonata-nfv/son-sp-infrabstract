@@ -63,8 +63,6 @@ if args.user:
 if args.password:
     password = args.password
 
-
-
 url = 'http://'+host+':8181/restconf/' #this is should be the same always
 headers = {'Content type' : 'application/json'} #also this
 
@@ -78,5 +76,6 @@ if __name__ == "__main__":
     vtn_name = utils.get_vtn_name()
     logging.debug("VTN name recieved: " + vtn_name)
     local = get_ip()
+    utils.pop_nets()
     app.run(debug=True,host=local)
 

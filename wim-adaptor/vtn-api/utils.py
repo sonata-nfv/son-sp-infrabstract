@@ -3,12 +3,16 @@ import requests
 import json
 import logging 
 from sqlalchemy import create_engine
+import pytricia
 
+pyt = pytricia.PyTricia()
 e = create_engine('sqlite:///database/wim_info.db')
 
-def get_switch(segment):
-	logging.debug("Incoming request for segment: "+segment)
+
+def get_switch(seg):
+	logging.debug("Incoming request for segment: "+seg)
 	conn = e.connect()
+	segment = pyt.get[seg]
 	query = conn.execute('SELECT port_id, bridge_name FROM connectivity WHERE segment="%s";'%segment)
 	dt = query.fetchone()
 	#TODO implement try 
@@ -97,5 +101,15 @@ def get_locations():
 		dicti = {"segment" : d[0], "location" : d[1]}
 		locations.append(dicti)	
 	return locations 	 
-	
-	
+
+def pop_nets():
+	logging.debug("Populating network segments table")
+	conn = e.connect()
+	query = conn.execute('SELECT segment FROM connectivity;')	
+	dt = query.fetchall()
+	logging.debug("Show segments: " + str(dt))
+	for d in dt: 
+		pyt[d[0]] = d[0]
+
+
+
