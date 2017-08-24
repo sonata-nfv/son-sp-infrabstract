@@ -52,7 +52,7 @@ class FlowChart(Resource):
 		#Just add to the flow array 
 		flow = {'data': data}
 		flows.append(flow)
-		logging.info("Posting new flow completed.")
+		logging.info("Posting new flow completed")
 		return 200
 
 class Flows(Resource):
