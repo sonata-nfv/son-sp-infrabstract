@@ -1,21 +1,8 @@
 FROM maven:3.3.9-jdk-7
 MAINTAINER Dario Valocchi <d.valocchi@ucl.ac.uk>
 
-RUN apt-get update && apt-get install -y python-pip \
-  python-dev \
-  libpython2.7-dev \
-  libyaml-dev \
-  build-essential \
-  libcurl4-gnutls-dev \
-  librtmp-dev \
-  python-setuptools \
-  python-httplib2 \
+RUN apt-get update && apt-get install -y \
   netcat
-
-RUN pip install --upgrade pip; \
-  pip install --upgrade virtualenv; \
-  pip install requests pyyaml \
-  && rm -rf /var/lib/apt/lists/*
 
 ADD adaptor /adaptor
 ADD broker.config /etc/son-mano/broker.config

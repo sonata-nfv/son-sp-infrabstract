@@ -31,30 +31,19 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Observable;
-import java.util.Set;
 
 import org.slf4j.LoggerFactory;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
-import groovy.ui.OutputTransforms;
 import sonata.kernel.WimAdaptor.commons.ComparableUuid;
 import sonata.kernel.WimAdaptor.commons.ConfigureWanPayload;
-import sonata.kernel.WimAdaptor.commons.DeployServiceResponse;
 import sonata.kernel.WimAdaptor.commons.NapObject;
 import sonata.kernel.WimAdaptor.commons.SonataManifestMapper;
-import sonata.kernel.WimAdaptor.commons.Status;
-import sonata.kernel.WimAdaptor.commons.VnfRecord;
-import sonata.kernel.WimAdaptor.commons.vnfd.UnitDeserializer;
 import sonata.kernel.WimAdaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.WimAdaptor.wrapper.WimWrapper;
 import sonata.kernel.WimAdaptor.wrapper.WrapperBay;
+import sonata.kernel.WimAdaptor.wrapper.WrapperRecord;
 
 public class ConfigureWimCallProcessor extends AbstractCallProcessor {
 
@@ -99,7 +88,7 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
     if(set.size() < vims.size()){
       Logger.error("Error with the wan configure payload: duplicate VIMS in the list. A placement error?");
       this.sendToMux(new ServicePlatformMessage(
-          "{\"request_status\":\"fail\",\"message\":\"Duplicate VIMs in vim_list\"}", "application/json",
+          "{\"request_status\":\"FAILED\",\"message\":\"Duplicate VIMs in vim_list\"}", "application/json",
           message.getReplyTo(), message.getSid(), null));
       out = false;
       return out;
@@ -112,7 +101,16 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
     for (ComparableUuid uuid : vims)
       vimsUuid.add(uuid.getUuid());
     for(String vimUuid : vimsUuid){
-      WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecordFromAttachedVim(vimUuid).getWimWrapper();
+       WrapperRecord record=  WrapperBay.getInstance().getWimRecordFromAttachedVim(vimUuid);
+       if(record==null){
+         Logger.error("Error in wan configuration call: Can't find the WIM to wich VIM "+ vimUuid+" is attached");
+         this.sendToMux(new ServicePlatformMessage(
+             "{\"request_status\":\"FAILED\",\"message\":\"Can't find the WIM to wich VIM "+ vimUuid+" is attached\"}", "application/json",
+             message.getReplyTo(), message.getSid(), null));
+         out = false;
+         return out;
+       }
+       WimWrapper wim = (WimWrapper) record.getWimWrapper();
       if (wim2VimsMap.containsKey(wim.getConfig().getUuid())){
         wim2VimsMap.get(wim.getConfig().getUuid()).add(vimUuid);
       }else{
@@ -165,9 +163,4 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
     return out;
   }
 
-  private void sendResponse(String message) {
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
-        this.getMessage().getTopic(), this.getMessage().getSid(), null);
-    this.sendToMux(spMessage);
-  }
 }
