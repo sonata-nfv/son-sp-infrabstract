@@ -12,7 +12,7 @@ e = create_engine('sqlite:///database/wim_info.db')
 def get_switch(seg):
 	logging.debug("Incoming request for segment: "+seg)
 	conn = e.connect()
-	segment = pyt.get[seg]
+	segment = pyt.get(seg)
 	query = conn.execute('SELECT port_id, bridge_name FROM connectivity WHERE segment="%s";'%segment)
 	dt = query.fetchone()
 	#TODO implement try 
