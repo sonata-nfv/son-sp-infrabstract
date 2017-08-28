@@ -20,6 +20,15 @@ def get_switch(seg):
 	logging.info("get_switch method completed. Returning: "+port+" "+switch)
 	return port, switch
 
+def get_exit(vbr):
+	logging.debug("Incoming request to find exit port of vbridge: "+vbr)
+	conn = e.connect()
+	query = conn.execute('SELECT port_id FROM connectivity WHERE segment="0.0.0.0/0" AND bridge_name="%s";'%vbr)
+	dt = query.fetchone()
+	port = dt[0]
+	logging.info("get_exit method completed. Returning: "+port )
+	return port 
+
 def set_condition(cond_name, source, dest):
 	logging.debug("Incoming set_condition call")
 	s_url = 'operations/vtn-flow-condition:set-flow-condition'
