@@ -34,11 +34,11 @@ class FlowChart(Resource):
 		#TODO FIX incoming traffic 
 		port_in, vbr1 = utils.get_switch(in_seg) 
 		port_out, vbr2 = utils.get_switch(ordered_pop[0][0])
-
-
+		if vbr1 == 'notsure':
+			port_in = utils.get_exit(vbr2)
 		bridge = vbr2 # Set final bridge
 		port = port_out
-		utils.set_redirect(cond_name, vbr1, port_in, port_out)
+		utils.set_redirect(cond_name, vbr2, port_in, port_out)
 		logging.info("Redirect from source to First PoP completed")
 		# Redirecting through the PoPs now
 		logging.debug("Redirect traffic through PoPs")
@@ -59,7 +59,11 @@ class FlowChart(Resource):
 			port = port_2
 		logging.debug(" Inter PoP redirections completed ")
 		# TODO
-		port_out = get_exit(bridge)
+		port_out, exitbridge = utils.get_switch(out_seg)
+		if exitbridge == 'notsure':
+			port_out = get_exit(bridge)
+		else:
+			bridge = exitbridge
 		utils.set_redirect(cond_name, bridge, port, port_out)
 		# Need to implement (or not) going from last PoP to Outer Segment -- leaving Wan 
 		#Just add to the flow array 

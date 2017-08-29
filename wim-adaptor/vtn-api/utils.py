@@ -13,11 +13,14 @@ def get_switch(seg):
 	logging.debug("Incoming request for segment: "+seg)
 	conn = e.connect()
 	segment = pyt.get(seg)
+	logging.debug("Segment to look in the database is: "+segment)
 	query = conn.execute('SELECT port_id, bridge_name FROM connectivity WHERE segment="%s";'%segment)
 	dt = query.fetchone()
 	#TODO implement try 
 	port, switch = dt[0],dt[1]
-	logging.info("get_switch method completed. Returning: "+port+" "+switch)
+	logging.info("get_switch method completed. Returning: "+port+" "+switch+". If segment is 0.0.0.0/0, then it may not be correct")
+	if segment == '0.0.0.0/0':
+		switch = 'norsure'
 	return port, switch
 
 def get_exit(vbr):
