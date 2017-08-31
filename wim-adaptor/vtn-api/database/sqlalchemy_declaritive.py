@@ -11,8 +11,9 @@ class Connectivity(Base):
 	# define the columns for the table
 	segment = Column(String(250),nullable=False)
 	bridge_name = Column(String(250), nullable=False)
-	port_id = Column(String(250),primary_key=True)
+	port_id = Column(String(250))
 	location = Column(String(250))
+	id = Column(Integer, primary_key=True)
 
 # Create engine that stores data in the local directory's 
 engine = create_engine('sqlite:///wim_info.db')

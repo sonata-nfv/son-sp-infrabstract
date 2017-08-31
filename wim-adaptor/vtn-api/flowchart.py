@@ -31,28 +31,45 @@ class FlowChart(Resource):
 		if flag != 200:
 			abort(500, message="Set condition uncompleted")
 		logging.info("Condition set completed")
-
-		port_in, vbr1 = utils.get_switch(in_seg)
+		#TODO FIX incoming traffic 
+		port_in, vbr1 = utils.get_switch(in_seg) 
 		port_out, vbr2 = utils.get_switch(ordered_pop[0][0])
-		utils.set_redirect(cond_name, vbr1, port_in, port_out)
+		if vbr1 == 'notsure':
+			port_in = utils.get_exit(vbr2)
+		bridge = vbr2 # Set final bridge
+		port = port_out
+		utils.set_redirect(cond_name, vbr2, port_in, port_out)
 		logging.info("Redirect from source to First PoP completed")
-
 		# Redirecting through the PoPs now
 		logging.debug("Redirect traffic through PoPs")
 		for i in range(1,len(ordered_pop)):
-		    port_in, vbr1 = utils.get_switch(ordered_pop[i-1][0])
-		    logging.debug("port coming is: "+port_in+" with vbridge "+vbr1)
-		    port_out, vbr2 = utils.get_switch(ordered_pop[i][0])
-		    logging.debug("port to redirect is: "+port_out+" with vbridge "+vbr2)
-		    utils.set_redirect(cond_name, vbr1, port_in, port_out)
+			port_1, vbr1 = utils.get_switch(ordered_pop[i-1][0])
+			logging.debug("port coming is: "+port_in+" with vbridge "+vbr1)
+			port_2, vbr2 = utils.get_switch(ordered_pop[i][0])
+			if vbr1 == vbr2:
+				logging.debug("port to redirect is: "+port_out+" with vbridge "+vbr2)
+				utils.set_redirect(cond_name, vbr1, port_1, port_2)
+			else:
+				logging.debug("redirecting through different bridges")
+				port_ex = utils.get_exit(vbr1)
+				utils.set_redirect(cond_name, vbr1, port_1, port_ex)
+				port_in = utils.get_exit(vbr2)
+				utils.set_redirect(cond_name, vbr2, port_in, port_2)
+			bridge = vbr2
+			port = port_2
 		logging.debug(" Inter PoP redirections completed ")
-	
 		# TODO
+		port_out, exitbridge = utils.get_switch(out_seg)
+		if exitbridge == 'notsure':
+			port_out = utils.get_exit(bridge)
+		else:
+			bridge = exitbridge
+		utils.set_redirect(cond_name, bridge, port, port_out)
 		# Need to implement (or not) going from last PoP to Outer Segment -- leaving Wan 
 		#Just add to the flow array 
 		flow = {'data': data}
 		flows.append(flow)
-		logging.info("Posting new flow completed.")
+		logging.info("Posting new flow completed")
 		return 200
 
 class Flows(Resource):
