@@ -20,7 +20,7 @@ def get_switch(seg):
 	port, switch = dt[0],dt[1]
 	logging.info("get_switch method completed. Returning: "+port+" "+switch+". If segment is 0.0.0.0/0, then it may not be correct")
 	if segment == '0.0.0.0/0':
-		switch = 'norsure'
+		switch = 'notsure'
 	return port, switch
 
 def get_exit(vbr):
