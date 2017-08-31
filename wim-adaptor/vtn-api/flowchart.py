@@ -61,7 +61,7 @@ class FlowChart(Resource):
 		# TODO
 		port_out, exitbridge = utils.get_switch(out_seg)
 		if exitbridge == 'notsure':
-			port_out = get_exit(bridge)
+			port_out = utils.get_exit(bridge)
 		else:
 			bridge = exitbridge
 		utils.set_redirect(cond_name, bridge, port, port_out)
