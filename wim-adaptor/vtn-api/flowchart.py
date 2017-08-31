@@ -43,12 +43,12 @@ class FlowChart(Resource):
 		# Redirecting through the PoPs now
 		logging.debug("Redirect traffic through PoPs")
 		for i in range(1,len(ordered_pop)):
-		    port_1, vbr1 = utils.get_switch(ordered_pop[i-1][0])
-		    logging.debug("port coming is: "+port_in+" with vbridge "+vbr1)
-		    port_2, vbr2 = utils.get_switch(ordered_pop[i][0])
-		    if vbr1 == vbr2:
-			    logging.debug("port to redirect is: "+port_out+" with vbridge "+vbr2)
-			    utils.set_redirect(cond_name, vbr1, port_1, port_2)
+			port_1, vbr1 = utils.get_switch(ordered_pop[i-1][0])
+			logging.debug("port coming is: "+port_in+" with vbridge "+vbr1)
+			port_2, vbr2 = utils.get_switch(ordered_pop[i][0])
+			if vbr1 == vbr2:
+				logging.debug("port to redirect is: "+port_out+" with vbridge "+vbr2)
+				utils.set_redirect(cond_name, vbr1, port_1, port_2)
 			else:
 				logging.debug("redirecting through different bridges")
 				port_ex = utils.get_exit(vbr1)
