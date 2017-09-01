@@ -82,87 +82,89 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
 
     HashMap<String, ArrayList<String>> wim2VimsMap = new HashMap<String, ArrayList<String>>();
     ArrayList<ComparableUuid> vims = request.getVimList();
-    
+
     HashSet<ComparableUuid> set = new HashSet<ComparableUuid>(vims);
 
-    if(set.size() < vims.size()){
-      Logger.error("Error with the wan configure payload: duplicate VIMS in the list. A placement error?");
+    if (set.size() < vims.size()) {
+      Logger.error(
+          "Error with the wan configure payload: duplicate VIMS in the list. A placement error?");
       this.sendToMux(new ServicePlatformMessage(
-          "{\"request_status\":\"FAILED\",\"message\":\"Duplicate VIMs in vim_list\"}", "application/json",
-          message.getReplyTo(), message.getSid(), null));
+          "{\"request_status\":\"FAILED\",\"message\":\"Duplicate VIMs in vim_list\"}",
+          "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
       return out;
     }
-    
+
     Collections.sort(vims);
-    
-    
+
+
     ArrayList<String> vimsUuid = new ArrayList<String>(vims.size());
     for (ComparableUuid uuid : vims)
       vimsUuid.add(uuid.getUuid());
-    for(String vimUuid : vimsUuid){
-       WrapperRecord record=  WrapperBay.getInstance().getWimRecordFromAttachedVim(vimUuid);
-       if(record==null){
-         Logger.error("Error in wan configuration call: Can't find the WIM to wich VIM "+ vimUuid+" is attached");
-         this.sendToMux(new ServicePlatformMessage(
-             "{\"request_status\":\"FAILED\",\"message\":\"Can't find the WIM to wich VIM "+ vimUuid+" is attached\"}", "application/json",
-             message.getReplyTo(), message.getSid(), null));
-         out = false;
-         return out;
-       }
-       WimWrapper wim = (WimWrapper) record.getWimWrapper();
-      if (wim2VimsMap.containsKey(wim.getConfig().getUuid())){
+    for (String vimUuid : vimsUuid) {
+      WrapperRecord record = WrapperBay.getInstance().getWimRecordFromAttachedVim(vimUuid);
+      if (record == null) {
+        Logger.error("Error in wan configuration call: Can't find the WIM to wich VIM " + vimUuid
+            + " is attached");
+        this.sendToMux(new ServicePlatformMessage(
+            "{\"request_status\":\"FAILED\",\"message\":\"Can't find the WIM to wich VIM " + vimUuid
+                + " is attached\"}",
+            "application/json", message.getReplyTo(), message.getSid(), null));
+        out = false;
+        return out;
+      }
+      WimWrapper wim = (WimWrapper) record.getWimWrapper();
+      if (wim2VimsMap.containsKey(wim.getConfig().getUuid())) {
         wim2VimsMap.get(wim.getConfig().getUuid()).add(vimUuid);
-      }else{
+      } else {
         ArrayList<String> vimsOfThisWim = new ArrayList<String>();
         vimsOfThisWim.add(vimUuid);
         wim2VimsMap.put(wim.getConfig().getUuid(), vimsOfThisWim);
       }
     }
 
-    if(request.getNap()==null){
-      for(String wimUuid: wim2VimsMap.keySet()){
+    if (request.getNap() == null) {
+      for (String wimUuid : wim2VimsMap.keySet()) {
         ArrayList<String> vimsOfThisWim = wim2VimsMap.get(wimUuid);
         Collections.sort(vimsOfThisWim);
         ArrayList<String> addressOfVims = new ArrayList<String>();
-        for(String uuid : vimsOfThisWim){
+        for (String uuid : vimsOfThisWim) {
           String address = WrapperBay.getInstance().getVimAddressFromVimUuid(uuid);
-          if(address!=null)
-            addressOfVims.add(address);
+          if (address != null) addressOfVims.add(address);
         }
 
-        WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecordFromWimUuid(wimUuid).getWimWrapper();
+        WimWrapper wim =
+            (WimWrapper) WrapperBay.getInstance().getWimRecordFromWimUuid(wimUuid).getWimWrapper();
         String[] addressesArray = new String[addressOfVims.size()];
         addressesArray = addressOfVims.toArray(addressesArray);
-        wim.configureNetwork(instanceId, null, null, addressesArray); 
+        wim.configureNetwork(instanceId, null, null, addressesArray);
       }
-    }
-      
-    
-    for(NapObject ingress_nap: request.getNap().getIngresses()){
-      for(NapObject eggress_nap: request.getNap().getEgresses()){        
-        for(String wimUuid: wim2VimsMap.keySet()){
-          ArrayList<String> vimsOfThisWim = wim2VimsMap.get(wimUuid);
-          Collections.sort(vimsOfThisWim);
-          ArrayList<String> addressOfVims = new ArrayList<String>();
-          for(String uuid : vimsOfThisWim){
-            String address = WrapperBay.getInstance().getVimAddressFromVimUuid(uuid);
-            if(address!=null)
-              addressOfVims.add(address);
-          }
+    } else {
+      for (NapObject ingress_nap : request.getNap().getIngresses()) {
+        for (NapObject eggress_nap : request.getNap().getEgresses()) {
+          for (String wimUuid : wim2VimsMap.keySet()) {
+            ArrayList<String> vimsOfThisWim = wim2VimsMap.get(wimUuid);
+            Collections.sort(vimsOfThisWim);
+            ArrayList<String> addressOfVims = new ArrayList<String>();
+            for (String uuid : vimsOfThisWim) {
+              String address = WrapperBay.getInstance().getVimAddressFromVimUuid(uuid);
+              if (address != null) addressOfVims.add(address);
+            }
 
-          WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecordFromWimUuid(wimUuid).getWimWrapper();
-          String[] addressesArray = new String[addressOfVims.size()];
-          addressesArray = addressOfVims.toArray(addressesArray);
-          wim.configureNetwork(instanceId, ingress_nap.getNap(), eggress_nap.getNap(), addressesArray);
-          
+            WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecordFromWimUuid(wimUuid)
+                .getWimWrapper();
+            String[] addressesArray = new String[addressOfVims.size()];
+            addressesArray = addressOfVims.toArray(addressesArray);
+            wim.configureNetwork(instanceId, ingress_nap.getNap(), eggress_nap.getNap(),
+                addressesArray);
+
+          }
         }
       }
     }
-    this.sendToMux(new ServicePlatformMessage(
-      "{\"request_status\":\"COMPLETED\",\"message\":\"\"}", "application/json",
-      message.getReplyTo(), message.getSid(), null));
-    
+    this.sendToMux(new ServicePlatformMessage("{\"request_status\":\"COMPLETED\",\"message\":\"\"}",
+        "application/json", message.getReplyTo(), message.getSid(), null));
+
     return out;
   }
 
