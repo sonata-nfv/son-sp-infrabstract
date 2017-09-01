@@ -24,20 +24,21 @@
  * 
  */
 
-package sonata.kernel.WimAdaptor.wrapper.vtn;
+package sonata.kernel.WimAdaptor.commons;
 
-public class VTNDataObject {
+import com.fasterxml.jackson.annotation.JsonProperty;
 
-  private VTNCreateRequest data;
+public class DeconfigureWanPayload {
 
-  public VTNCreateRequest getData() {
-    return data;
+  @JsonProperty("service_instance_id")
+  private String serviceInstanceId;
+
+  public String getServiceInstanceId() {
+    return serviceInstanceId;
   }
 
-  public void setData(VTNCreateRequest data) {
-    this.data = data;
+  public void setServiceInstanceId(String serviceInstanceId) {
+    this.serviceInstanceId = serviceInstanceId;
   }
-  
-  
   
 }
