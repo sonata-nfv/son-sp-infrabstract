@@ -77,6 +77,8 @@ public class WimAdaptorDispatcher implements Runnable {
             myThreadPool.execute(new RemoveWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.configure")) {
             myThreadPool.execute(new ConfigureWimCallProcessor(message, message.getSid(), mux));
+          }else if (message.getTopic().endsWith("wan.deconfigure")) {
+            myThreadPool.execute(new DeconfigureWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.list")) {
             myThreadPool.execute(new ListWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.attach")){

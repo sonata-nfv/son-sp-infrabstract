@@ -118,7 +118,10 @@ public class VtnWrapper extends WimWrapper {
     }
     
     Logger.debug("[VTN-Wrapper] Found "+numberOfRules+" rules for this UUID");
-    
+    if(numberOfRules==0){
+      Logger.debug("[VTN-Wrapper] No rule in this WIM for this service instance UUID");  
+      return true;
+    }
     for (int i = 0; i < numberOfRules; i++) {
       // Send HTTP POST to the VTN server
 
