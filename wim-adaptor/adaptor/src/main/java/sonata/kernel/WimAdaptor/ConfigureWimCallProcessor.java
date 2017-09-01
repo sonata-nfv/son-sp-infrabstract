@@ -159,6 +159,9 @@ public class ConfigureWimCallProcessor extends AbstractCallProcessor {
         }
       }
     }
+    this.sendToMux(new ServicePlatformMessage(
+      "{\"request_status\":\"COMPLETED\",\"message\":\"\"}", "application/json",
+      message.getReplyTo(), message.getSid(), null));
     
     return out;
   }
