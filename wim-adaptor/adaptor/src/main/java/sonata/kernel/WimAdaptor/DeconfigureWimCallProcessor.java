@@ -84,8 +84,11 @@ public class DeconfigureWimCallProcessor extends AbstractCallProcessor {
       WimWrapper wim = (WimWrapper) WrapperBay.getInstance().getWimRecordFromWimUuid(wimUuid).getWimWrapper();
       wim.removeNetConfiguration(instanceId);
     }
-    
-    return false;
+
+    this.sendToMux(new ServicePlatformMessage(
+      "{\"request_status\":\"COMPLETED\",\"message\":\"\"}", "application/json",
+      message.getReplyTo(), message.getSid(), null));
+    return true;
   }
 
 }
