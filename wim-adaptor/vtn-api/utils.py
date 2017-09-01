@@ -3,18 +3,34 @@ import requests
 import json
 import logging 
 from sqlalchemy import create_engine
+import pytricia
 
+pyt = pytricia.PyTricia()
 e = create_engine('sqlite:///database/wim_info.db')
 
-def get_switch(segment):
-	logging.debug("Incoming request for segment: "+segment)
+
+def get_switch(seg):
+	logging.debug("Incoming request for segment: "+seg)
 	conn = e.connect()
+	segment = pyt.get(seg)
+	logging.debug("Segment to look in the database is: "+segment)
 	query = conn.execute('SELECT port_id, bridge_name FROM connectivity WHERE segment="%s";'%segment)
 	dt = query.fetchone()
 	#TODO implement try 
 	port, switch = dt[0],dt[1]
-	logging.info("get_switch method completed. Returning: "+port+" "+switch)
+	logging.info("get_switch method completed. Returning: "+port+" "+switch+". If segment is 0.0.0.0/0, then it may not be correct")
+	if segment == '0.0.0.0/0':
+		switch = 'notsure'
 	return port, switch
+
+def get_exit(vbr):
+	logging.debug("Incoming request to find exit port of vbridge: "+vbr)
+	conn = e.connect()
+	query = conn.execute('SELECT port_id FROM connectivity WHERE segment="0.0.0.0/0" AND bridge_name="%s";'%vbr)
+	dt = query.fetchone()
+	port = dt[0]
+	logging.info("get_exit method completed. Returning: "+port )
+	return port 
 
 def set_condition(cond_name, source, dest):
 	logging.debug("Incoming set_condition call")
@@ -97,5 +113,15 @@ def get_locations():
 		dicti = {"segment" : d[0], "location" : d[1]}
 		locations.append(dicti)	
 	return locations 	 
-	
-	
+
+def pop_nets():
+	logging.debug("Populating network segments table")
+	conn = e.connect()
+	query = conn.execute('SELECT segment FROM connectivity;')	
+	dt = query.fetchall()
+	logging.debug("Show segments: " + str(dt))
+	for d in dt: 
+		pyt[d[0]] = d[0]
+
+
+
