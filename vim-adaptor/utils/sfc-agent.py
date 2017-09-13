@@ -277,7 +277,7 @@ while True:
               print line
               logger.info(line)
               os.system(line)
-          logger.info("SFC Chain rules deleted")
+         logger.info("SFC Chain rules deleted")
          conn.send("SUCCESS")
          conn.close()
          logger.info("Proccess Completed. Returning to Start")
