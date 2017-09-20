@@ -163,9 +163,9 @@ public class JavaStackCore {
   }
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
-
+  
   public static JavaStackCore getJavaStackCore() {
-    return SingeltonJavaStackCoreHelper._javaStackCore;
+    return SingeltonJavaStackCoreHelper._javaStackCore;    
   }
 
   private String endpoint;

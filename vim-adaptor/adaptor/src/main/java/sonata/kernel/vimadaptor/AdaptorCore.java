@@ -60,6 +60,16 @@ public class AdaptorCore {
    * Main method. param args the adaptor take no args.
    */
   public static void main(String[] args) throws IOException {
+    //System.setProperty("log4j.logger.httpclient.wire.header", "WARN");
+    //System.setProperty("log4j.logger.httpclient.wire.content", "WARN");
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
