@@ -28,6 +28,7 @@ package sonata.kernel.vimadaptor;
 
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.wrapper.ComputeVimVendor;
@@ -51,6 +52,18 @@ public class VimRepoTest {
 
   private VimRepo repoInstance;
 
+  
+  @Before
+  public void setUp(){
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+  }
+  
   /**
    * Register, send 4 heartbeat, deregister.
    * 

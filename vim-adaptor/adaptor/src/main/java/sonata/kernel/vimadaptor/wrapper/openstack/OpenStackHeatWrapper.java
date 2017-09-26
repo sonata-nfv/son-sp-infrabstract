@@ -557,12 +557,33 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       return false;
     }
     ArrayList<Image> glanceImages = glance.listImages();
+    boolean out = false;
+    if(image.getChecksum()==null){
+      out = searchImageByName(image.getUuid(), glanceImages);
+    }else{
+      out = searchImageByChecksum(image.getChecksum(), glanceImages);
+    }
+    long stop = System.currentTimeMillis();
+    Logger.info("[OpenStackWrapper]isImageStored-time: " + (stop - start) + " ms");
+    return out;
+  }
 
+  private boolean searchImageByName(String imageName, ArrayList<Image> glanceImages) {
+    Logger.debug("Image lookup based on image name...");
     for (Image glanceImage : glanceImages) {
       Logger.debug("Checking " + glanceImage.getName());
-      if (glanceImage.getName().equals(image.getUuid())) {
-        long stop = System.currentTimeMillis();
-        Logger.info("[OpenStackWrapper]isImageStored-time: " + (stop - start) + " ms");
+      if (glanceImage.getName().equals(imageName)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  private boolean searchImageByChecksum(String imageChecksum, ArrayList<Image> glanceImages) {
+    Logger.debug("Image lookup based on image checksum...");
+    for (Image glanceImage : glanceImages) {
+      Logger.debug("Checking " + glanceImage.getName());
+      if (glanceImage.getChecksum().equals(imageChecksum)) {
         return true;
       }
     }

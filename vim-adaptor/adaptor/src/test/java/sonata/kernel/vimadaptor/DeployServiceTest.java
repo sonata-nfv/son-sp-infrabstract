@@ -44,7 +44,6 @@ import sonata.kernel.vimadaptor.commons.NetworkAttachmentPoints;
 import sonata.kernel.vimadaptor.commons.NetworkConfigurePayload;
 import sonata.kernel.vimadaptor.commons.ResourceAvailabilityData;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
-import sonata.kernel.vimadaptor.commons.ServiceDeployResponse;
 import sonata.kernel.vimadaptor.commons.ServicePreparePayload;
 import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.Status;
@@ -93,6 +92,14 @@ public class DeployServiceTest implements MessageReceiver {
   @Before
   public void setUp() throws Exception {
 
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");   
+    
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
@@ -461,7 +468,7 @@ public class DeployServiceTest implements MessageReceiver {
         "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
     vnfImages.add(vtcImgade);
     VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vfoo-vnf_0.1_1",
-        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img","f8ab98ff5e73ebab884d80c9dc9c7290");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
