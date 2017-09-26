@@ -277,10 +277,10 @@ while True:
               print line
               logger.info(line)
               os.system(line)
-            logger.info("SFC Chain rules deleted")
-          conn.send("SUCCESS")
-          conn.close()
-          logger.info("Proccess Completed. Returning to Start")
+         logger.info("SFC Chain rules deleted")
+         conn.send("SUCCESS")
+         conn.close()
+         logger.info("Proccess Completed. Returning to Start")
         except IOError:
           logger.error("No such name file")
           conn.send("No instance-ID SFC rules with this name")
