@@ -98,7 +98,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
 
-    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");   
     
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
@@ -351,7 +351,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Test
+  @Ignore
   public void testDeployServiceV2() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
