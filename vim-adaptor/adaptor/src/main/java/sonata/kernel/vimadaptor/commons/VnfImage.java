@@ -34,6 +34,8 @@ public class VnfImage {
   private String url;
   @JsonProperty("image_uuid")
   private String uuid;
+  @JsonProperty("image_md5")
+  private String checksum;
 
   public VnfImage() {}
 
@@ -61,6 +63,16 @@ public class VnfImage {
 
   public void setUuid(String uuid) {
     this.uuid = uuid;
+  }
+
+
+  public String getChecksum() {
+    return checksum;
+  }
+
+
+  public void setChecksum(String checksum) {
+    this.checksum = checksum;
   }
 
 

@@ -35,6 +35,7 @@ public class Image {
   private String container_format;
   private String id;
   private String name;
+  private String checksum;
 
   public String getContainer_format() {
     return container_format;
@@ -58,5 +59,13 @@ public class Image {
 
   public void setName(String name) {
     this.name = name;
+  }
+
+  public String getChecksum() {
+    return checksum;
+  }
+
+  public void setChecksum(String checksum) {
+    this.checksum = checksum;
   }
 }
