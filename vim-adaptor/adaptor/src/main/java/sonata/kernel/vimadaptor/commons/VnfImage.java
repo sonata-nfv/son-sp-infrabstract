@@ -49,6 +49,16 @@ public class VnfImage {
     this.url = url;
   }
 
+  /**
+   * @param uuid
+   * @param url
+   */
+  public VnfImage(String uuid, String url, String checksum) {
+    this.uuid = uuid;
+    this.url = url;
+    this.checksum = checksum;
+  }
+  
   public String getUrl() {
     return url;
   }

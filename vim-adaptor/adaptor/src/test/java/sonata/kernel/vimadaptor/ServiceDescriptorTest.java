@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
@@ -53,6 +54,16 @@ public class ServiceDescriptorTest {
 
   ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
 
+  @Before
+  public void setUp(){
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+  }
 
   /**
    * Test the whole DeployService payload parsing it from file and doing some basic check on the

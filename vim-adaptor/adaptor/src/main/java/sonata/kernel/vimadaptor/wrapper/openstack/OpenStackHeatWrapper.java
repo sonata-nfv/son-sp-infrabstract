@@ -569,6 +569,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   }
 
   private boolean searchImageByName(String imageName, ArrayList<Image> glanceImages) {
+    Logger.debug("Image lookup based on image name...");
     for (Image glanceImage : glanceImages) {
       Logger.debug("Checking " + glanceImage.getName());
       if (glanceImage.getName().equals(imageName)) {
@@ -579,6 +580,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   }
   
   private boolean searchImageByChecksum(String imageChecksum, ArrayList<Image> glanceImages) {
+    Logger.debug("Image lookup based on image checksum...");
     for (Image glanceImage : glanceImages) {
       Logger.debug("Checking " + glanceImage.getName());
       if (glanceImage.getChecksum().equals(imageChecksum)) {

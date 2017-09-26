@@ -33,6 +33,7 @@ package sonata.kernel.vimadaptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
@@ -61,6 +62,16 @@ import java.util.HashMap;
  */
 public class HeatTemplateTest {
 
+  @Before 
+  public void setUp(){
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+  }
 
   @Test
   public void testHeatTranslate() throws IOException {
