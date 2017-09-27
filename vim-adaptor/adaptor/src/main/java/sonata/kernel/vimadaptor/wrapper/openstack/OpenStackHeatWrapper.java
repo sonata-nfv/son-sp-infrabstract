@@ -1259,13 +1259,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       resourceGroup.setType("OS::Heat::ResourceGroup");
       resourceGroup.setName(vnfd.getName() + "." + vdu.getId() + "." + instanceUuid);
       resourceGroup.putProperty("count", new Integer(1));
+      String imageName = vnfd.getVendor() + "_" + vnfd.getName() + "_" + vnfd.getVersion() + "_" + vdu.getId();
+      if(vdu.getVmImageMd5()!=null){
+        imageName = getImageNameByImageChecksum(vdu.getVmImageMd5());
+      }
       HeatResource server = new HeatResource();
       server.setType("OS::Nova::Server");
       server.setName(null);
       server.putProperty("name",
           vnfd.getName() + "." + vdu.getId() + "." + instanceUuid + ".%index%");
-      server.putProperty("image",
-          vnfd.getVendor() + "_" + vnfd.getName() + "_" + vnfd.getVersion() + "_" + vdu.getId());
+      server.putProperty("image", imageName);
       int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
       double memoryInGB = vdu.getResourceRequirements().getMemory().getSize()
           * vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
@@ -1345,6 +1348,33 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     model.prepare();
     return model;
+  }
+
+  /**
+   * @param vmImageMd5 the checksum of the image to search;
+   * @throws IOException if the VIM cannot be contacted to retrieve the list of available images;
+   */
+  private String getImageNameByImageChecksum(String vmImageMd5) throws IOException {
+    String imageName = null;
+    Logger.debug("Searching Image Checksum: " + vmImageMd5);
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String identityPort = null;
+    if (object.has("identity_port")) {
+      identityPort = object.getString("identity_port");
+    }
+    OpenStackGlanceClient glance = null;
+      glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+    ArrayList<Image> glanceImages = glance.listImages();
+    for(Image image:glanceImages){
+      if(image.getChecksum().equals(vmImageMd5)){
+        imageName = image.getName();
+        break;
+      }
+    }
+    return imageName;
   }
 
   private String getMistralUrl() {
