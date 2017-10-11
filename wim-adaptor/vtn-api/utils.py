@@ -1,4 +1,4 @@
-from newim import get_info
+from newim import get_info, get_vtn
 import requests
 import json
 import logging 
@@ -61,7 +61,7 @@ def setRules(cond_name, in_seg,out_seg,ordered_pop,index):
 		# Need to implement (or not) going from last PoP to Outer Segment -- leaving Wan 
 		#Just add to the flow array 
 		logging.info("Posting new flow completed")
-		return flag
+		return (flag)
 
 def get_switch(seg):
 	logging.debug("Incoming request for segment: "+seg)
@@ -75,7 +75,7 @@ def get_switch(seg):
 	logging.info("get_switch method completed. Returning: "+port+" "+switch+". If segment is 0.0.0.0/0, then it may not be correct")
 	if segment == '0.0.0.0/0':
 		switch = 'notsure'
-	return port, switch
+	return (port, switch)
 
 def get_exit(vbr):
 	logging.debug("Incoming request to find exit port of vbridge: "+vbr)
@@ -84,7 +84,7 @@ def get_exit(vbr):
 	dt = query.fetchone()
 	port = dt[0]
 	logging.info("get_exit method completed. Returning: "+port )
-	return port 
+	return (port )
 
 def set_condition(cond_name, source, dest):
 	logging.debug("Incoming set_condition call")
@@ -104,7 +104,7 @@ def set_condition(cond_name, source, dest):
 	logging.info("Got this as response: " +str(r) )
 	if not r.status_code == 200:
 	    logging.error('FLOW COND ERROR ' + str(r.status_code))
-	return r.status_code
+	return (r.status_code)
 
 def delete_condition(cond_name):
     s_url = 'operations/vtn-flow-condition:remove-flow-condition'
@@ -115,7 +115,7 @@ def delete_condition(cond_name):
     logging.info("Got response:" +str(r))
     if not r.status_code == 200:
     	logging.error("Condition removal ERROR " + str(r.status_code))
-    return r.status_code
+    return (r.status_code)
 
 def set_redirect(cond_name, vbr, port_id_in, port_id_out):
 	s_url = 'operations/vtn-flow-filter:set-flow-filter'
@@ -137,15 +137,7 @@ def set_redirect(cond_name, vbr, port_id_in, port_id_out):
 	    logging.error('FLOW FILTER ERROR ' + str(r.status_code))
 
 def get_vtn_name():
-	s_url = 'operational/vtn:vtns/'
-	logging.debug(" Got request for VTN name ")
-	username, password, host, url, headers = get_info()
-	r = requests.get(url + s_url, headers=headers, auth=(username, password))
-	json_data = json.loads(r.text)
-	# at the moment there is only on vtn tenant, so one name. TODO --- think
-	# about if more
-	name = json_data['vtns']['vtn'][0]['name']
-	logging.info("VTN name recieved. Sending back: "+name)
+	name = newim.get_vtn()
 	return name
 
 def order_pop(pops):

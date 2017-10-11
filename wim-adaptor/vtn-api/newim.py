@@ -49,7 +49,7 @@ def get_info():
     logging.debug("Request for info")
     return username, password, host, url, headers
 
-def get_vtn_name():
+def get_vtn():
     logging.debug("Got request for VTN name")
     try:
         vtn_name
@@ -96,7 +96,7 @@ if __name__ == "__main__":
     try:
         vtn_name
     except NameError:
-        vtn_name = get_vtn_name()
+        vtn_name = get_vtn()
     logging.debug("VTN name recieved: " + vtn_name)
     local = get_ip()
     app.run(debug=True,host=local)
