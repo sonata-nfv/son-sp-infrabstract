@@ -351,7 +351,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceV2() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -398,7 +398,7 @@ public class DeployServiceTest implements MessageReceiver {
         + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
         + "\"pass\":\"s0n@t@.d@ri0\"}";
-    System.out.println("[TwoPoPTest] Adding PoP .200");
+    System.out.println("[OnePoPTest] Adding PoP .200");
 
     // Add first PoP
     // PoP Athens.201 Newton
@@ -497,7 +497,6 @@ public class DeployServiceTest implements MessageReceiver {
     Assert.assertTrue("Failed to prepare the environment for the service deployment: " + status
         + " - message: " + message, status.equals("COMPLETED"));
     System.out.println("Service " + payload.getInstanceId() + " ready for deployment");
-
 
     // Send a VNF instantiation request for each VNFD linked by the NSD
     ArrayList<VnfRecord> records = new ArrayList<VnfRecord>();
@@ -622,7 +621,7 @@ public class DeployServiceTest implements MessageReceiver {
     Assert.assertTrue("Adapter returned an unexpected status: " + status,
         status.equals("COMPLETED"));
 
- // Configure it again with default NAP
+    // Configure it again with default NAP
 
     output = null;
 
@@ -658,7 +657,7 @@ public class DeployServiceTest implements MessageReceiver {
         status.equals("COMPLETED"));
     System.out.println(
         "Service " + payload.getInstanceId() + " deployed and configured in selected VIM(s)");
-
+    
     // Clean everything again:
     // 1. De-configure SFC
     output = null;
