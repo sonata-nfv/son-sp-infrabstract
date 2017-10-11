@@ -148,8 +148,8 @@ while True:
             continue
 
         logger.info("Json message succesfully accepted: "+data)
-        print "SOURCE SEGMENT -> "+jsonData
-        print "DESTINATION SEGMENT -> "+jsonData2
+        print ("SOURCE SEGMENT -> "+jsonData)
+        print ("DESTINATION SEGMENT -> "+jsonData2)
         uuid = jsonData0
         fo = open(uuid, "w")
         src = jsonData
@@ -166,6 +166,17 @@ while True:
         os.system("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+dst+",nw_dst="+src+",actions=output:"+breth0port)
         fo.write("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port=1,nw_src="+dst+",nw_dst="+src+"\n")
 
+        print "PoP traffic-out rule:" #take the incoming traffic from src to dst and pass it to br-ex
+        logger.info("PoP final traffic-out rule:")
+        logger.info("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port="+breth0port+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        print "ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port="+breth0port+",nw_src="+src+",nw_dst="+dst+",actions=output:1"
+        os.system("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port="+breth0port+",nw_src="+src+",nw_dst="+dst+",actions=output:1")
+        fo.write("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port="+breth0port+",nw_src="+src+",nw_dst="+dst+"\n")
+        logger.info("PoP final traffic-out rule;reverse")
+        logger.info("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port="+breth0port+",nw_src="+dst+",nw_dst="+src+",actions=output:1")
+        os.system("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port="+breth0port+",nw_src="+dst+",nw_dst="+src+",actions=output:1")
+        fo.write("ovs-ofctl add-flow br-eth0 priority=66,dl_type=0x0800,in_port="+breth0port+",nw_src="+dst+",nw_dst="+src+"\n")         
+         
         print "PoP in rule:" #take traffic from 1st port of br-ex and take it to phy-br-ex (to br-int essentialy)
         logger.info("PoP in rule")
         print "ovs-ofctl add-flow br-ex priority=66,dl_type=0x800,in_port=1,nw_src="+src+",nw_dst="+dst+",actions=output:"+brexport
