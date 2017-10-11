@@ -8,6 +8,60 @@ import pytricia
 pyt = pytricia.PyTricia()
 e = create_engine('sqlite:///database/wim_info.db')
 
+def setRules(cond_name, in_seg,out_seg,ordered_pop,index):
+		logging.info("Calling set_condition method")
+		flag = set_condition(cond_name,in_seg, out_seg,index)
+		logging.debug("Flag incoming:" +str(flag))
+		if flag != 200:
+			abort(500, message="Set condition uncompleted")
+		logging.info("Condition set completed")
+		flag = 200
+		#TODO FIX incoming traffic 
+		port_in, vbr1 = get_switch(in_seg) 
+		port_out, vbr2 = get_switch(ordered_pop[0])
+		if vbr1 == 'notsure':
+			port_in = get_exit(vbr2)
+		if vbr1 != vbr2 :
+			port_in = get_exit(vbr2)
+		bridge = vbr2 # Set final bridge
+		port = port_out
+		set_redirect(cond_name, vbr2, port_in, port_out,index)
+		logging.info("Redirect from source to First PoP completed")
+		# Redirecting through the PoPs now
+		logging.debug("Redirect traffic through PoPs")
+		for i in range(1,len(ordered_pop)):
+			port_1, vbr1 = get_switch(ordered_pop[i-1])
+			logging.debug("port coming is: "+port_in+" with vbridge "+vbr1)
+			port_2, vbr2 = get_switch(ordered_pop[i])
+			if vbr1 == vbr2:
+				logging.debug("port to redirect is: "+port_out+" with vbridge "+vbr2)
+				set_redirect(cond_name, vbr1, port_1, port_2,index)
+			else:
+				logging.debug("redirecting through different bridges")
+				port_ex = get_exit(vbr1)
+				set_redirect(cond_name, vbr1, port_1, port_ex,index)
+				port_in = get_exit(vbr2)
+				set_redirect(cond_name, vbr2, port_in, port_2,index)
+			bridge = vbr2
+			port = port_2
+		logging.debug(" Inter PoP redirections completed ")
+		port_out, exitbridge = get_switch(out_seg)
+		if exitbridge == 'notsure':
+			port_out = get_exit(bridge)
+		elif exitbridge != bridge :
+			logging.debug("redirecting through different bridges")
+			port_ex = get_exit(bridge)
+			set_redirect(cond_name, bridge, port, port_ex,index)
+			port = get_exit(exitbridge)
+			#set_redirect(cond_name, exitbridge, port_in, port_out)
+			bridge = exitbridge
+		else:
+			bridge = exitbridge
+		set_redirect(cond_name, bridge, port, port_out,index)
+		# Need to implement (or not) going from last PoP to Outer Segment -- leaving Wan 
+		#Just add to the flow array 
+		logging.info("Posting new flow completed")
+		return flag
 
 def get_switch(seg):
 	logging.debug("Incoming request for segment: "+seg)
