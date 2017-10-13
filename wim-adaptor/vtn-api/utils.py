@@ -137,7 +137,7 @@ def set_redirect(cond_name, vbr, port_id_in, port_id_out,index):
 	    logging.error('FLOW FILTER ERROR ' + str(r.status_code))
 
 def get_vtn_name():
-	name = newim.get_vtn()q
+	name = newim.get_vtn()
 	return name
 
 def order_pop(pops):
