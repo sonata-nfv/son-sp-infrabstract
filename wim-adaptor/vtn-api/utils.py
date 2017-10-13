@@ -86,12 +86,12 @@ def get_exit(vbr):
 	logging.info("get_exit method completed. Returning: "+port )
 	return (port )
 
-def set_condition(cond_name, source, dest):
+def set_condition(cond_name, source, dest,index):
 	logging.debug("Incoming set_condition call")
 	s_url = 'operations/vtn-flow-condition:set-flow-condition'
 	username, password, host, url, headers = get_info()
 	data = {'input': {'name': cond_name, 'vtn-flow-match': [
-	    {'index': '1', 'vtn-inet-match': {'source-network': source, 'destination-network': dest}}]}}
+	    {'index': index, 'vtn-inet-match': {'source-network': source, 'destination-network': dest}}]}}
 	'''
 	 this curl --user "username":"pass" -H "Content-type: application/json" -X POST http://localhost:8181/restconf/operations/vtn-flow-condition:set-flow-condition
 	# -d '{"input":{"name":"cond1", "vtn-flow-match":[{"index":"1",
@@ -117,13 +117,13 @@ def delete_condition(cond_name):
     	logging.error("Condition removal ERROR " + str(r.status_code))
     return (r.status_code)
 
-def set_redirect(cond_name, vbr, port_id_in, port_id_out):
+def set_redirect(cond_name, vbr, port_id_in, port_id_out,index):
 	s_url = 'operations/vtn-flow-filter:set-flow-filter'
 	logging.debug("Incoming set_redirect call")
 	username, password, host, url, headers = get_info()
 	vtn_name = get_vtn_name()
 	data = {"input": {"output": "false", "tenant-name": vtn_name, "bridge-name": vbr, "interface-name": port_id_in, "vtn-flow-filter": [
-	    {"index": "1", "condition": cond_name, "vtn-redirect-filter": {"redirect-destination": {"bridge-name": vbr, "interface-name": port_id_out}, "output": "true"}}]}}
+	    {"index": index, "condition": cond_name, "vtn-redirect-filter": {"redirect-destination": {"bridge-name": vbr, "interface-name": port_id_out}, "output": "true"}}]}}
 	'''
 	 this: curl --user "username":"pass" -H "Content-type: application/json" -X POST http://localhost:8181/restconf/operations/vtn-flow-filter:set-flow-filter
 	  -d '{"input":{"output":"false","tenant-name":"vtn1", "bridge-name":"vbr", interface-name":"if5", "vtn-flow-filter":[{"condition":"cond_1","index":"1","vtn-redirect-filter":
@@ -137,7 +137,7 @@ def set_redirect(cond_name, vbr, port_id_in, port_id_out):
 	    logging.error('FLOW FILTER ERROR ' + str(r.status_code))
 
 def get_vtn_name():
-	name = newim.get_vtn()
+	name = newim.get_vtn()q
 	return name
 
 def order_pop(pops):
