@@ -1389,9 +1389,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
             netMap.put("get_resource", "SonataService.output.net." + instanceUuid);
           }
           // If an input or output interface is also of type ext gets a floating IP.
-          if (cp.getType().equals(ConnectionPointType.EXT)) {
-            publicPortNames.add(cpQualifiedName);
-          }
+          // if (cp.getType().equals(ConnectionPointType.EXT)) {
+          // publicPortNames.add(cpQualifiedName);
+          // }
         } else {
           // The VDU doesn't use any template, CP are mapped depending on their type
           // (loops may occur)
