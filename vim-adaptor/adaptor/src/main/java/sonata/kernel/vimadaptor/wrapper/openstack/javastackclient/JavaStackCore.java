@@ -343,6 +343,9 @@ public class JavaStackCore {
         }
       }
 
+      if(auth.getToken().getProject()==null){
+        throw new IOException("Authentication response doesn't contain Project ID. SONATA VIM-Adaptor can't work with this Keystone configuration.");
+      }
       this.projectId = auth.getToken().getProject().getId();
       Logger.debug("[JavaStack] ProjectId set to " + projectId);
       this.isAuthenticated = true;
