@@ -158,14 +158,15 @@ public class JavaStackCore {
       Orchestration.VERSION = VERSION;
     }
   }
-  private static class SingeltonJavaStackCoreHelper {
-    private static final JavaStackCore _javaStackCore = new JavaStackCore();
-  }
+
+  //  private static class SingeltonJavaStackCoreHelper {
+//    private static final JavaStackCore _javaStackCore = new JavaStackCore();
+//  }
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
   
   public static JavaStackCore getJavaStackCore() {
-    return SingeltonJavaStackCoreHelper._javaStackCore;    
+    return new JavaStackCore();    
   }
 
   private String endpoint;
