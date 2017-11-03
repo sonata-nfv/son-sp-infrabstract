@@ -28,7 +28,7 @@ class FlowChart(Resource):
 		# Put the incoming PoPs in order 
 		logging.info("Calling set-up-the-rules method")
 		index = "1"
-		message = utils.setRules(cond_name, in_seg,out_seg,ordered_pop,index)
+		flag  = utils.setRules(cond_name, in_seg,out_seg,ordered_pop,index)
 		''' Keeping it for now, if reverse is needed 
 		index = "2" #The reverse
 		cond_name2 = (cond_name + 'R')

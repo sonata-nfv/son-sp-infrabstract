@@ -9,6 +9,8 @@ pyt = pytricia.PyTricia()
 e = create_engine('sqlite:///database/wim_info.db')
 
 def setRules(cond_name, in_seg,out_seg,ordered_pop,index):
+		logging.debug("Ordered PoPs are:")
+		logging.debug(ordered_pop)
 		logging.info("Calling set_condition method")
 		flag = set_condition(cond_name,in_seg, out_seg,index)
 		logging.debug("Flag incoming:" +str(flag))
@@ -18,7 +20,7 @@ def setRules(cond_name, in_seg,out_seg,ordered_pop,index):
 		flag = 200
 		#TODO FIX incoming traffic 
 		port_in, vbr1 = get_switch(in_seg) 
-		port_out, vbr2 = get_switch(ordered_pop[0])
+		port_out, vbr2 = get_switch(ordered_pop[0][0])
 		if vbr1 == 'notsure':
 			port_in = get_exit(vbr2)
 		if vbr1 != vbr2 :
@@ -30,9 +32,9 @@ def setRules(cond_name, in_seg,out_seg,ordered_pop,index):
 		# Redirecting through the PoPs now
 		logging.debug("Redirect traffic through PoPs")
 		for i in range(1,len(ordered_pop)):
-			port_1, vbr1 = get_switch(ordered_pop[i-1])
+			port_1, vbr1 = get_switch(ordered_pop[i-1][0])
 			logging.debug("port coming is: "+port_in+" with vbridge "+vbr1)
-			port_2, vbr2 = get_switch(ordered_pop[i])
+			port_2, vbr2 = get_switch(ordered_pop[i][0])
 			if vbr1 == vbr2:
 				logging.debug("port to redirect is: "+port_out+" with vbridge "+vbr2)
 				set_redirect(cond_name, vbr1, port_1, port_2,index)
@@ -137,7 +139,7 @@ def set_redirect(cond_name, vbr, port_id_in, port_id_out,index):
 	    logging.error('FLOW FILTER ERROR ' + str(r.status_code))
 
 def get_vtn_name():
-	name = newim.get_vtn()
+	name = get_vtn()
 	return name
 
 def order_pop(pops):
