@@ -222,7 +222,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     int counter = 0;
     int wait = 1000;
-    int maxCounter = 10;
+    int maxCounter = 50;
+    int maxWait = 15000;
     String status = null;
     while ((status == null || !status.equals("UPDATE_COMPLETE") || !status.equals("UPDATE_FAILED"))
         && counter < maxCounter) {
@@ -237,7 +238,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         Logger.error(e.getMessage(), e);
       }
       counter++;
-      wait *= 2;
+      wait = Math.min(wait * 2, maxWait);
 
     }
 
@@ -270,7 +271,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         Logger.error(e.getMessage(), e);
       }
       counter++;
-      wait *= 2;
+      wait = Math.min(wait*2, maxWait);
     }
 
     if (composition == null) {
@@ -571,6 +572,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   private boolean searchImageByName(String imageName, ArrayList<Image> glanceImages) {
     Logger.debug("Image lookup based on image name...");
     for (Image glanceImage : glanceImages) {
+      if(glanceImage.getName()==null)
+        continue;
       Logger.debug("Checking " + glanceImage.getName());
       if (glanceImage.getName().equals(imageName)) {
         return true;
@@ -582,7 +585,11 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   private boolean searchImageByChecksum(String imageChecksum, ArrayList<Image> glanceImages) {
     Logger.debug("Image lookup based on image checksum...");
     for (Image glanceImage : glanceImages) {
+      if(glanceImage.getName()==null)
+        continue;
       Logger.debug("Checking " + glanceImage.getName());
+      if (glanceImage.getChecksum()==null)
+        continue;
       if (glanceImage.getChecksum().equals(imageChecksum)) {
         return true;
       }
@@ -634,7 +641,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       }
       int counter = 0;
       int wait = 1000;
-      int maxCounter = 10;
+      int maxWait = 15000;
+      int maxCounter = 50;
       String status = null;
       while ((status == null || !status.equals("CREATE_COMPLETE")
           || !status.equals("CREATE_FAILED")) && counter < maxCounter) {
@@ -650,7 +658,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           Logger.error(e.getMessage(), e);
         }
         counter++;
-        wait *= 2;
+        wait = Math.min(wait*2, maxWait);
       }
 
       if (status == null) {
@@ -910,7 +918,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     extRouterInterface.putProperty("subnet", extSubnetMapInt);
     extRouterInterface.putProperty("router", tenantExtRouter);
     model.addResource(extRouterInterface);
-    
+
     // Create the internal net and subnet
     HeatResource internalNetwork = new HeatResource();
     internalNetwork.setType("OS::Neutron::Net");
@@ -931,7 +939,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     internalNetMap.put("get_resource", "SonataService.internal.net." + instanceId);
     internalSubnet.putProperty("network", internalNetMap);
     model.addResource(internalSubnet);
-    
+
     // Create the input net and subnet
     HeatResource inputNetwork = new HeatResource();
     inputNetwork.setType("OS::Neutron::Net");
