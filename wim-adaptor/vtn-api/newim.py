@@ -49,11 +49,29 @@ def get_info():
     logging.debug("Request for info")
     return username, password, host, url, headers
 
+def get_vtn():
+    logging.debug("Got request for VTN name")
+    try:
+        vtn_name
+        logging.debug("VTN name was defined already: "+vtn_name)
+    except NameError:
+        logging.debug("VTN name not defined")    
+        s_url = 'operational/vtn:vtns/'
+        username, password, host, url, headers = get_info()
+        r = requests.get(url + s_url, headers=headers, auth=(username, password))
+        json_data = json.loads(r.text)
+        # at the moment there is only on vtn tenant, so one name. TODO --- think
+        # about if more
+        vtn_name = json_data['vtns']['vtn'][0]['name']
+        logging.info("VTN name recieved. Sending back: "+vtn_name)
+    finally:
+        return vtn_name
 
 parser = argparse.ArgumentParser()   #handler for arguments passed 
 parser.add_argument("-v", "--host",help="Enter the address for the host containing VTN",type=str, required=True)  # option configurations, needs to be required
 parser.add_argument("-u", "--user",help="Enter Username",type=str,required=True)
 parser.add_argument("-p", "--password",help="Enter Password",type=str, required=True)
+parser.add_argument("-n", "--name",help="Enter VTN user name",type=str)
 args = parser.parse_args()
 
 if args.host:
@@ -62,6 +80,8 @@ if args.user:
     username = args.user
 if args.password:
     password = args.password
+if args.name:
+    vtn_name = args.name
 
 url = 'http://'+host+':8181/restconf/' #this is should be the same always
 headers = {'Content type' : 'application/json'} #also this
@@ -72,10 +92,12 @@ api.add_resource(Flows, '/flowchart/<string:res_name>')
 api.add_resource(Location, '/location/')
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG, filename='log.log', format='%(asctime)s - %(levelname)s - %(message)s')
-    vtn_name = utils.get_vtn_name()
+    logging.basicConfig(level=logging.DEBUG, filename='wicm.log', format='%(asctime)s - %(levelname)s - %(message)s')
+    try:
+        vtn_name
+    except NameError:
+        vtn_name = get_vtn()
     logging.debug("VTN name recieved: " + vtn_name)
     local = get_ip()
-    utils.pop_nets()
     app.run(debug=True,host=local)
 

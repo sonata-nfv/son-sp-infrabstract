@@ -18,6 +18,7 @@ class FlowChart(Resource):
 		logging.info("POST API call incoming")
 		data = request.json
 		logging.debug("Recieved the following: "+str(data))
+		utils.pop_nets()
 		cond_name = data["instance_id"]
 		in_seg = data["in_seg"]
 		out_seg = data["out_seg"]
@@ -25,52 +26,21 @@ class FlowChart(Resource):
 		logging.debug("Starting ordering PoPs")
 		ordered_pop = utils.order_pop(pops) 
 		# Put the incoming PoPs in order 
-		logging.info("Calling set_condition method")
-		flag = utils.set_condition(cond_name,in_seg, out_seg)
-		logging.debug("Flag incoming:" +str(flag))
-		if flag != 200:
-			abort(500, message="Set condition uncompleted")
-		logging.info("Condition set completed")
-		#TODO FIX incoming traffic 
-		port_in, vbr1 = utils.get_switch(in_seg) 
-		port_out, vbr2 = utils.get_switch(ordered_pop[0][0])
-		if vbr1 == 'notsure':
-			port_in = utils.get_exit(vbr2)
-		bridge = vbr2 # Set final bridge
-		port = port_out
-		utils.set_redirect(cond_name, vbr2, port_in, port_out)
-		logging.info("Redirect from source to First PoP completed")
-		# Redirecting through the PoPs now
-		logging.debug("Redirect traffic through PoPs")
-		for i in range(1,len(ordered_pop)):
-			port_1, vbr1 = utils.get_switch(ordered_pop[i-1][0])
-			logging.debug("port coming is: "+port_in+" with vbridge "+vbr1)
-			port_2, vbr2 = utils.get_switch(ordered_pop[i][0])
-			if vbr1 == vbr2:
-				logging.debug("port to redirect is: "+port_out+" with vbridge "+vbr2)
-				utils.set_redirect(cond_name, vbr1, port_1, port_2)
-			else:
-				logging.debug("redirecting through different bridges")
-				port_ex = utils.get_exit(vbr1)
-				utils.set_redirect(cond_name, vbr1, port_1, port_ex)
-				port_in = utils.get_exit(vbr2)
-				utils.set_redirect(cond_name, vbr2, port_in, port_2)
-			bridge = vbr2
-			port = port_2
-		logging.debug(" Inter PoP redirections completed ")
-		# TODO
-		port_out, exitbridge = utils.get_switch(out_seg)
-		if exitbridge == 'notsure':
-			port_out = utils.get_exit(bridge)
+		logging.info("Calling set-up-the-rules method")
+		index = "1"
+		flag  = utils.setRules(cond_name, in_seg,out_seg,ordered_pop,index)
+		''' Keeping it for now, if reverse is needed 
+		index = "2" #The reverse
+		cond_name2 = (cond_name + 'R')
+		ordered_pop.reverse()
+		flag = utils.setRules(cond_name2, out_seg,in_seg,ordered_pop,index)
+		'''
+		flow = {"data" : data}
+		if flag == 200:
+			flows.append(flow)
+			return jsonify({'flow': flow}, 200)
 		else:
-			bridge = exitbridge
-		utils.set_redirect(cond_name, bridge, port, port_out)
-		# Need to implement (or not) going from last PoP to Outer Segment -- leaving Wan 
-		#Just add to the flow array 
-		flow = {'data': data}
-		flows.append(flow)
-		logging.info("Posting new flow completed")
-		return 200
+			abort(500, message = "Unknown Error")
 
 class Flows(Resource):
 
