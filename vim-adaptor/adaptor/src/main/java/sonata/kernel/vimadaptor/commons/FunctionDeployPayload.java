@@ -38,6 +38,8 @@ public class FunctionDeployPayload {
   private String vimUuid;
   @JsonProperty("vnfd")
   private VnfDescriptor vnfd;
+  @JsonProperty("public_key")
+  private String publicKey;
 
   public String getServiceInstanceId() {
     return serviceInstanceId;
@@ -61,6 +63,14 @@ public class FunctionDeployPayload {
 
   public void setVnfd(VnfDescriptor vnfd) {
     this.vnfd = vnfd;
+  }
+
+  public String getPublicKey() {
+    return publicKey;
+  }
+
+  public void setPublicKey(String publicKey) {
+    this.publicKey = publicKey;
   }
 
 

@@ -69,7 +69,7 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
         WrapperBay.getInstance().getVimRepo().getComputeVimUuidFromInstance(instanceUuid);
     if (vimUuidList == null || vimUuidList.length == 0) {
       this.sendResponse(
-          "{\"request_status\":\"ERROR\",\"message\":\"can't find instance UUID or associated VIMs\"}");
+          "{\"request_status\":\"WARNING\",\"message\":\"can't find instance UUID or associated VIMs in Infrastructure repository\"}");
       return false;
     }
     this.wrapperQueue = new ArrayList<String>(Arrays.asList(vimUuidList));
@@ -81,9 +81,11 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
         Logger.warn("Error retrieving the wrapper");
 
         this.sendToMux(new ServicePlatformMessage(
-            "{\"request_status\":\"ERROR\",\"message\":\"VIM not found\"}", "application/json",
-            message.getReplyTo(), message.getSid(), null));
+            "{\"request_status\":\"WARNING\",\"message\":\"can't build a wrapper for VIM UUID "
+                + vimUuid + "\"}",
+            "application/json", message.getReplyTo(), message.getSid(), null));
         // return false;
+        continue;
       }
       wr.addObserver(this);
       wr.removeService(instanceUuid, this.getSid());
@@ -124,8 +126,10 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
   }
 
   private void sendResponse(String message) {
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
-        this.getMessage().getReplyTo(), this.getMessage().getSid(), null);
-    this.sendToMux(spMessage);
+    if (this.getMessage().getReplyTo() != null) {
+      ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
+          this.getMessage().getReplyTo(), this.getMessage().getSid(), null);
+      this.sendToMux(spMessage);
+    }
   }
 }

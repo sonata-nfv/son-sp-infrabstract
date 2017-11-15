@@ -173,7 +173,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     mapper.setSerializationInclusion(Include.NON_NULL);
 
     try {
-      stackAddition = translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId());
+      stackAddition =
+          translate(data.getVnfd(), vimFlavors, data.getServiceInstanceId(), data.getPublicKey());
     } catch (Exception e) {
       Logger.error("Error: " + e.getMessage());
       e.printStackTrace();
@@ -271,7 +272,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         Logger.error(e.getMessage(), e);
       }
       counter++;
-      wait = Math.min(wait*2, maxWait);
+      wait = Math.min(wait * 2, maxWait);
     }
 
     if (composition == null) {
@@ -572,8 +573,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   private boolean searchImageByName(String imageName, ArrayList<Image> glanceImages) {
     Logger.debug("Image lookup based on image name...");
     for (Image glanceImage : glanceImages) {
-      if(glanceImage.getName()==null)
-        continue;
+      if (glanceImage.getName() == null) continue;
       Logger.debug("Checking " + glanceImage.getName());
       if (glanceImage.getName().equals(imageName)) {
         return true;
@@ -585,11 +585,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   private boolean searchImageByChecksum(String imageChecksum, ArrayList<Image> glanceImages) {
     Logger.debug("Image lookup based on image checksum...");
     for (Image glanceImage : glanceImages) {
-      if(glanceImage.getName()==null)
-        continue;
+      if (glanceImage.getName() == null) continue;
       Logger.debug("Checking " + glanceImage.getName());
-      if (glanceImage.getChecksum()==null)
-        continue;
+      if (glanceImage.getChecksum() == null) continue;
       if (glanceImage.getChecksum().equals(imageChecksum)) {
         return true;
       }
@@ -658,7 +656,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
           Logger.error(e.getMessage(), e);
         }
         counter++;
-        wait = Math.min(wait*2, maxWait);
+        wait = Math.min(wait * 2, maxWait);
       }
 
       if (status == null) {
@@ -1322,8 +1320,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return model;
   }
 
-  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors, String instanceUuid)
-      throws Exception {
+  private HeatModel translate(VnfDescriptor vnfd, ArrayList<Flavor> flavors, String instanceUuid,
+      String publicKey) throws Exception {
     // TODO This values should be per User, now they are per VIM. This should be re-desinged once
     // user management is in place.
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
@@ -1334,7 +1332,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // END COMMENT
     HeatModel model = new HeatModel();
     ArrayList<String> publicPortNames = new ArrayList<String>();
-
+    boolean hasPubKey = (publicKey != null);
+    if (hasPubKey) {
+      HeatResource keypair = new HeatResource();
+      keypair.setType("OS::Nova::KeyPair");
+      keypair.setName(vnfd.getName() + "." + instanceUuid + ".keypair");
+      keypair.putProperty("name", vnfd.getName() + "." + instanceUuid + ".keypair");
+      keypair.putProperty("save_private_key", "false");
+      keypair.putProperty("public_key", publicKey);
+      model.addResource(keypair);
+    }
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Each VDU goes into a resource group with a number of Heat Server...");
       HeatResource resourceGroup = new HeatResource();
@@ -1352,6 +1359,13 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       server.putProperty("name",
           vnfd.getName() + "." + vdu.getId() + "." + instanceUuid + ".%index%");
       server.putProperty("image", imageName);
+
+      if (hasPubKey) {
+        HashMap<String, Object> keyMap = new HashMap<String, Object>();
+        keyMap.put("get_resource", vnfd.getName() + "." + instanceUuid + ".keypair");
+        server.putProperty("key_name", keyMap);
+      }
+      
       int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
       double memoryInGB = vdu.getResourceRequirements().getMemory().getSize()
           * vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
@@ -1468,7 +1482,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
     ArrayList<Image> glanceImages = glance.listImages();
     for (Image image : glanceImages) {
-      if (image.getChecksum().equals(vmImageMd5)) {
+      if (image != null && image.getChecksum() != null
+          && (image.getChecksum().equals(vmImageMd5))) {
         imageName = image.getName();
         break;
       }
