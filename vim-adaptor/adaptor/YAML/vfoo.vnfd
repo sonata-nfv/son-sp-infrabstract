@@ -32,7 +32,7 @@ virtual_deployment_units:
         type: "management"
       - id: "eth1"
         interface: "ipv4"
-        type: "internal"
+        type: "external"
       - id: "eth2"
         interface: "ipv4"
         type: "internal"

@@ -51,12 +51,16 @@ virtual_deployment_units:
       - id: "eth0"
         interface: "ipv4"
         type: "management"
-      - id: "eth1"
+      - id: "input"
         interface: "ipv4"
         type: "internal"
-      - id: "eth2"
+      - id: "output"
         interface: "ipv4"
         type: "internal"
+      - id: "public"
+        interface: "ipv4"
+        type: "external"
+
 
 virtual_links:
   - id: "mgmt"
@@ -68,13 +72,13 @@ virtual_links:
   - id: "input"
     connectivity_type: "E-Line"
     connection_points_reference:
-      - "vdu01:eth1"
+      - "vdu01:input"
       - "input"
     dhcp: True
   - id: "output"
     connectivity_type: "E-Line"
     connection_points_reference:
-      - "vdu01:eth2"
+      - "vdu01:output"
       - "output"
     dhcp: True
 

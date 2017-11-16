@@ -233,7 +233,13 @@ public class OvsWrapper extends NetworkWrapper {
       }
     }
 
-    if (data.getNap() == null) {
+    boolean nullNapCondition = data.getNap() == null || 
+        (data.getNap()!=null && (data.getNap().getEgresses()==null||data.getNap().getIngresses()==null)) ||
+        (data.getNap()!=null && 
+          data.getNap().getEgresses()!=null && 
+          data.getNap().getIngresses()!=null && 
+          (data.getNap().getIngresses().size()==0 || data.getNap().getEgresses().size()==0));
+    if (nullNapCondition) {
       Logger.warn("NAP not specified, using default ones from default config file");
       Properties segments = new Properties();
       segments.load(new FileReader(new File(ADAPTOR_SEGMENTS_CONF)));
