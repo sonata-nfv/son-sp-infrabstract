@@ -244,8 +244,9 @@ while True:
             port = item.get("port")
             order = item.get("order")
             portlist.append(port)
-        revPortlist = portlist[::-1] #getting a reverse portlist
-
+        list_r = portlist[::-1] #getting a reverse portlist
+        revPortlist = sum(zip(list_r[1::2], list_r[::2]), ())
+        
         returnflag = setSFC(src,dst,portlist)
         print returnflag
         logger.info("Got return flag from firts set of rules: " +returnflag)
