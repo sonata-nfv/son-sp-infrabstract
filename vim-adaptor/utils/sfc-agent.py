@@ -100,6 +100,7 @@ def setInOut(src,dst):
     fo.write("ovs-ofctl --strict del-flows br-ex priority=66,dl_type=0x800,in_port="+brexport+",nw_src="+dst+",nw_dst="+src+"\n")
 
 def setSFC(src, dst, portlist):
+    returnflag = 'SUCCESS'
     # Install the redirection rules
     print "Rule First: " # take the traffic from br-int to the first virtual interface 
     logger.info("Rule First: ") 
