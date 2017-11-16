@@ -27,11 +27,11 @@
 package sonata.kernel.vimadaptor;
 
 
-import org.apache.jackrabbit.uuid.UUID;
 
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 
 import java.util.Observer;
+import java.util.UUID;
 
 public abstract class AbstractCallProcessor implements Runnable, Observer {
 
