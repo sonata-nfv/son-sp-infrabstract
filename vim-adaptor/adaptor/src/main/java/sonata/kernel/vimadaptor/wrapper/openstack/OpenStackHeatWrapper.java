@@ -1336,8 +1336,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     if (hasPubKey) {
       HeatResource keypair = new HeatResource();
       keypair.setType("OS::Nova::KeyPair");
-      keypair.setName(vnfd.getName() + "." + instanceUuid + ".keypair");
-      keypair.putProperty("name", vnfd.getName() + "." + instanceUuid + ".keypair");
+      keypair.setName(vnfd.getName() + "_" + instanceUuid + "_keypair");
+      keypair.putProperty("name", vnfd.getName() + "_" + instanceUuid + "_keypair");
       keypair.putProperty("save_private_key", "false");
       keypair.putProperty("public_key", publicKey);
       model.addResource(keypair);
@@ -1362,7 +1362,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
       if (hasPubKey) {
         HashMap<String, Object> keyMap = new HashMap<String, Object>();
-        keyMap.put("get_resource", vnfd.getName() + "." + instanceUuid + ".keypair");
+        keyMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_keypair");
         server.putProperty("key_name", keyMap);
       }
       

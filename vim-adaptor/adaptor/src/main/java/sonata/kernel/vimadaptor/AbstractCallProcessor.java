@@ -27,9 +27,11 @@
 package sonata.kernel.vimadaptor;
 
 
+
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 
 import java.util.Observer;
+import java.util.UUID;
 
 public abstract class AbstractCallProcessor implements Runnable, Observer {
 
@@ -49,7 +51,11 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
    */
   public AbstractCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     this.message = message;
-    this.sid = sid;
+    if (sid != null) {
+      this.sid = sid;
+    } else {
+      this.sid = UUID.randomUUID().toString();
+    }
     this.mux = mux;
   }
 
