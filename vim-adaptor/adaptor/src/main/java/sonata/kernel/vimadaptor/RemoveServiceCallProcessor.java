@@ -98,6 +98,10 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
   public void update(Observable observable, Object arg) {
 
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
+    if (update.getSid() == null) {
+      Logger.warn("Wrapper Update message with no SID.");
+      return;
+    }
     if (!update.getSid().equals(this.getSid())) return;
     Logger.info("Received an update:\n" + update.getBody());
     JSONTokener tokener = new JSONTokener(update.getBody());

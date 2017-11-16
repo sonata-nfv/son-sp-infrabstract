@@ -28,11 +28,15 @@ package sonata.kernel.vimadaptor;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Charsets;
 import com.jcraft.jsch.JSch;
+import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
+import com.jcraft.jsch.jce.KeyPairGenRSA;
 
 import org.bouncycastle.util.io.pem.PemObject;
 import org.bouncycastle.util.io.pem.PemWriter;
+import org.codehaus.plexus.util.StringOutputStream;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Assert;
@@ -58,6 +62,7 @@ import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.VnfcInstance;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointRecord;
+import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.ConnectionPointReference;
@@ -67,25 +72,24 @@ import sonata.kernel.vimadaptor.messaging.TestConsumer;
 import sonata.kernel.vimadaptor.messaging.TestProducer;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.security.KeyFactory;
-import java.security.KeyPair;
 import java.security.KeyPairGenerator;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.security.SecureRandom;
+import java.security.interfaces.RSAPrivateKey;
+import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+
+import javassist.bytecode.ByteArray;
 
 
 /**
@@ -363,6 +367,7 @@ public class DeployServiceTest implements MessageReceiver {
 
   }
 
+
   /**
    * This test is de-activated, if you want to use it with your NFVi-PoP, please edit the addVimBody
    * String Member to match your OpenStack configuration and substitute the @ignore annotation with
@@ -370,7 +375,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceV2() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -474,48 +479,52 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
 
-    // // Generate a keypair for ssh connection test to VMs
-    //
-    // KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-    // SecureRandom random = SecureRandom.getInstance("SHA1PRNG", "SUN");
-    // keyGen.initialize(2048, random);
-    // KeyPair pair = keyGen.generateKeyPair();
-    // PrivateKey priv = pair.getPrivate();
-    // PublicKey pub = pair.getPublic();
-    //
-    // PemObject privPem = new PemObject("RSA PRIVATE KEY", priv.getEncoded());
-    // PemObject pubPem = new PemObject("RSA PUBLIC KEY", pub.getEncoded());
-    // privPem.generate();
-    // pubPem.generate();
-    // // StringBuffer buf = new StringBuffer();
-    // StringWriter wr = new StringWriter();
-    // PemWriter pemWriter = new PemWriter(wr);
-    //
-    // pemWriter.writeObject(privPem);
-    // pemWriter.close();
-    // wr.close();
-    // String privateKeyString = wr.toString();
-    //
-    // // buf = new StringBuffer();
-    // wr = new StringWriter();
-    // pemWriter = new PemWriter(wr);
-    // pemWriter.writeObject(pubPem);
-    // pemWriter.close();
-    // wr.close();
-    // String publicKeyString = wr.toString();
-    //
-    // publicKeyString = publicKeyString.replace("-----BEGIN RSA PUBLIC KEY-----\n", "");
-    // publicKeyString = publicKeyString.replace("\n-----END RSA PUBLIC KEY-----\n", "");
-    // privateKeyString = privateKeyString.replace("-----BEGIN RSA PRIVATE KEY-----\n", "");
-    // privateKeyString = privateKeyString.replace("\n-----END RSA PRIVATE KEY-----\n", "");
-    //
-    // System.out.println("PublicKeyPem:");
-    // System.out.println(publicKeyString);
-    // System.out.println("PrivateKeyPem:");
-    // System.out.println(privateKeyString);
+    // Generate a ssh keypair for ssh connection test to VMs
+    JSch jsch = new JSch();
+    KeyPair keypair = KeyPair.genKeyPair(jsch, KeyPair.RSA);
 
-    // Prepare the system for a service deployment
+    System.out.println("RSA Keypair toString:\n" + keypair.toString());
+    System.out.println("RSA Keypair fingerprint:\n" + keypair.getFingerPrint());
 
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    keypair.writePublicKey(baos, "dario");
+    String pubKeyString = baos.toString(Charsets.UTF_8.displayName());
+
+    baos = new ByteArrayOutputStream();
+    keypair.writePrivateKey(baos);
+    String privKeyString = baos.toString(Charsets.UTF_8.displayName());
+
+    // Use PEM format for serialising keys
+    // KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
+    // generator.initialize(1024);
+    //
+    // java.security.KeyPair keyPair = generator.generateKeyPair();
+    // RSAPrivateKey priv = (RSAPrivateKey) keyPair.getPrivate();
+    // RSAPublicKey pub = (RSAPublicKey) keyPair.getPublic();
+    //
+    // PemObject pemPubKey = new PemObject("RSA PUBLIC KEY", pub.getEncoded());
+    // PemObject pemPrivKey = new PemObject("RSA PRIVATE KEY", priv.getEncoded());
+    //
+    //
+    // StringWriter strwr = new StringWriter();
+    // PemWriter wr = new PemWriter(strwr);
+    // wr.writeObject(pemPubKey);
+    // wr.flush();
+    // strwr.flush();
+    // pubKeyString = strwr.getBuffer().toString();
+    //
+    // strwr = new StringWriter();
+    // wr = new PemWriter(strwr);
+    // wr.writeObject(pemPrivKey);
+    // wr.flush();
+    // strwr.flush();
+    // privKeyString = strwr.getBuffer().toString();
+
+    System.out.println(pubKeyString);
+    System.out.println(privKeyString);
+
+
+    // Service prepare call
     ServicePreparePayload payload = new ServicePreparePayload();
 
     payload.setInstanceId(nsdPayload.getNsd().getInstanceUuid());
@@ -568,7 +577,7 @@ public class DeployServiceTest implements MessageReceiver {
       vnfPayload.setVnfd(vnfd);
       vnfPayload.setVimUuid(computeWrUuid);
       vnfPayload.setPublicKey(null);
-      //vnfPayload.setPublicKey(publicKeyString);
+      vnfPayload.setPublicKey(pubKeyString);
       vnfPayload.setServiceInstanceId(nsdPayload.getNsd().getInstanceUuid());
       body = mapper.writeValueAsString(vnfPayload);
 
@@ -602,42 +611,37 @@ public class DeployServiceTest implements MessageReceiver {
       records.add(response.getVnfr());
 
       // Test SSH connection
-      // for (VduRecord vdu : response.getVnfr().getVirtualDeploymentUnits()) {
-      // for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
-      // String host = "";
-      // for (ConnectionPointRecord cpr : vnfc.getConnectionPoints()) {
-      // if (cpr.getInterface().getNetmask() == null) {
-      // host = cpr.getInterface().getAddress();
-      // }
-      // }
-      // Assert.assertNotNull("Can't find management address of VNFC: "
-      // + response.getVnfr().getId() + "." + vdu.getId() + "." + vnfc.getId(), host);
-      // System.out.println("Trying to ssh connect into the public IP of the VNF");
-      // JSch jsch = new JSch();
-      //
-      // String user = "dario";
-      // int port = 22;
-      //
-      // jsch.addIdentity(privateKeyString);
-      // System.out.println("Private key based identity added");
-      //
-      // Session session = jsch.getSession(user, host, port);
-      // System.out.println("session created.");
-      // // disabling StrictHostKeyChecking may help to make connection but makes it insecure
-      // // see
-      // //
-      // http://stackoverflow.com/questions/30178936/jsch-sftp-security-with-session-setconfigstricthostkeychecking-no
-      // //
-      // // java.util.Properties config = new java.util.Properties();
-      // // config.put("StrictHostKeyChecking", "no");
-      // // session.setConfig(config);
-      //
-      // session.connect();
-      // System.out.println("session connected.....");
-      // session.disconnect();
-      // System.out.println("session disconnected");
-      // }
-      // }
+      for (VduRecord vdu : response.getVnfr().getVirtualDeploymentUnits()) {
+        for (VnfcInstance vnfc : vdu.getVnfcInstance()) {
+          String host = "";
+          for (ConnectionPointRecord cpr : vnfc.getConnectionPoints()) {
+            if (cpr.getType() == ConnectionPointType.MANAGEMENT) {
+              host = cpr.getInterface().getAddress();
+            }
+          }
+          Assert.assertNotNull("Can't find management address of VNFC: "
+              + response.getVnfr().getId() + "." + vdu.getId() + "." + vnfc.getId(), host);
+          System.out.println("Trying to ssh connect into the public IP of the VNF");
+
+          String user = "cirros";
+          int port = 22;
+          keypair.writePrivateKey("/tmp/privkey");
+          jsch.addIdentity("/tmp/privkey");
+
+          System.out.println("Connecting to host: " + host);
+          Session session = jsch.getSession(user, host, port);
+          System.out.println("session created.");
+
+          java.util.Properties config = new java.util.Properties();
+          config.put("StrictHostKeyChecking", "no");
+          session.setConfig(config);
+
+          session.connect();
+          System.out.println("session connected.....");
+          session.disconnect();
+          System.out.println("session disconnected");
+        }
+      }
 
     }
 
