@@ -375,7 +375,7 @@ public class DeployServiceTest implements MessageReceiver {
    *
    * @throws Exception
    */
-  @Ignore
+  @Test
   public void testDeployServiceV2() throws Exception {
     BlockingQueue<ServicePlatformMessage> muxQueue =
         new LinkedBlockingQueue<ServicePlatformMessage>();
@@ -487,8 +487,8 @@ public class DeployServiceTest implements MessageReceiver {
     System.out.println("RSA Keypair fingerprint:\n" + keypair.getFingerPrint());
 
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    keypair.writePublicKey(baos, "dario");
-    String pubKeyString = baos.toString(Charsets.UTF_8.displayName());
+    keypair.writePublicKey(baos, "");
+    String pubKeyString = baos.toString(Charsets.UTF_8.displayName()).replace("\n", "");
 
     baos = new ByteArrayOutputStream();
     keypair.writePrivateKey(baos);
@@ -533,11 +533,14 @@ public class DeployServiceTest implements MessageReceiver {
     vimDepList.setUuid(computeWrUuid);
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vbar-vnf_0.1_vdu01",
-        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+        // "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
+        "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img");
     vnfImages.add(vtcImgade);
     VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vfoo-vnf_0.1_1",
-        "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img",
-        "f8ab98ff5e73ebab884d80c9dc9c7290");
+        // "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img",
+        // "f8ab98ff5e73ebab884d80c9dc9c7290");
+        "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img",
+        "99e73c2c09cad6a681b2d372c37f2e11");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);
@@ -623,7 +626,7 @@ public class DeployServiceTest implements MessageReceiver {
               + response.getVnfr().getId() + "." + vdu.getId() + "." + vnfc.getId(), host);
           System.out.println("Trying to ssh connect into the public IP of the VNF");
 
-          String user = "cirros";
+          String user = "sonatamano";
           int port = 22;
           keypair.writePrivateKey("/tmp/privkey");
           jsch.addIdentity("/tmp/privkey");

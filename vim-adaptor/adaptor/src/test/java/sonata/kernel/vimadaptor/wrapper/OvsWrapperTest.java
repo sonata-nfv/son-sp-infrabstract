@@ -173,7 +173,7 @@ public class OvsWrapperTest {
     Assert.assertTrue("Unable to write the compute vim", out);
 
     config = new WrapperConfiguration();
-    config.setVimEndpoint("10.100.32.10");
+    config.setVimEndpoint("10.100.32.200");
     config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");

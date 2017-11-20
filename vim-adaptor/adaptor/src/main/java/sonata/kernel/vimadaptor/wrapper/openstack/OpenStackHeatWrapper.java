@@ -1341,6 +1341,28 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       keypair.putProperty("save_private_key", "false");
       keypair.putProperty("public_key", publicKey);
       model.addResource(keypair);
+
+      HashMap<String, Object> userMap = new HashMap<String, Object>();
+      userMap.put("name", "sonatamano");
+      userMap.put("gecos", "SONATA MANO admin user");
+      String[] userGroups = {"adm", "audio", "cdrom", "dialout", "dip", "floppy", "netdev",
+          "plugdev", "sudo", "video"};
+      userMap.put("groups", userGroups);
+      userMap.put("shell", "/bin/bash");
+      String[] keys = {publicKey};
+      userMap.put("ssh-authorized-keys", keys);
+      userMap.put("home", "/home/sonatamano");
+      Object[] usersList = {"default", userMap};
+
+      HashMap<String, Object> cloudConfigMap = new HashMap<String, Object>();
+      cloudConfigMap.put("users", usersList);
+
+      HeatResource cloudConfigObject = new HeatResource();
+      cloudConfigObject.setType("OS::Heat::CloudConfig");
+      cloudConfigObject.setName(vnfd.getName() + "_" + instanceUuid + "_cloudConfig");
+      cloudConfigObject.putProperty("cloud_config", cloudConfigMap);
+      model.addResource(cloudConfigObject);
+
     }
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Each VDU goes into a resource group with a number of Heat Server...");
@@ -1364,8 +1386,12 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         HashMap<String, Object> keyMap = new HashMap<String, Object>();
         keyMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_keypair");
         server.putProperty("key_name", keyMap);
+        HashMap<String, Object> userDataMap = new HashMap<String, Object>();
+        userDataMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_cloudConfig");
+        server.putProperty("user_data", userDataMap);
+        server.putProperty("user_data_format", "RAW");
       }
-      
+
       int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
       double memoryInGB = vdu.getResourceRequirements().getMemory().getSize()
           * vdu.getResourceRequirements().getMemory().getSizeUnit().getMultiplier();
