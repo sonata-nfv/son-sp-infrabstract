@@ -76,7 +76,7 @@ public class WrapperFactory {
       output = new ComputeMockWrapper(config);
     } else if (config.getVimVendor().equals(ComputeVimVendor.HEAT)) {
       output = new OpenStackHeatWrapper(config);
-    } else if (config.getVimVendor().equals(ComputeVimVendor.SPVIM)){
+    } else if (config.getVimVendor().equals(ComputeVimVendor.SPVIM)) {
       output = new ComputeSPWrapper(config);
     }
     // TODO Extends with all wrappers or refactor with a more OO type
@@ -91,7 +91,7 @@ public class WrapperFactory {
       output = new OvsWrapper(config);
     } else if (config.getVimVendor().equals(NetworkVimVendor.NETWORKMOCK)) {
       output = new NetworkMockWrapper(config);
-    } else if (config.getVimVendor().equals(NetworkVimVendor.SPVIM)){
+    } else if (config.getVimVendor().equals(NetworkVimVendor.SPVIM)) {
       output = new NetworkSPWrapper(config);
     }
     return output;

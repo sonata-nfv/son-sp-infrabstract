@@ -61,21 +61,21 @@ public class AdaptorDefaultConsumer extends DefaultConsumer {
   @Override
   public void handleDelivery(String consumerTag, Envelope envelope, AMQP.BasicProperties properties,
       byte[] body) throws IOException {
-      Logger.info("Received message on " + envelope.getRoutingKey());
-      String message = new String(body, "UTF-8");
-      // Logger.info("Received message:" + message + " on " + envelope.getRoutingKey());
-      if (properties != null && properties.getAppId() != null
-          && properties.getAppId().equals("sonata.kernel.WimAdapter")
-          && envelope.getRoutingKey().equals("infrastructure.service.deploy")) {
-        Logger.info("Ignoring WIM adaptor response after service deployment");
-      } else if (properties != null && properties.getAppId() != null
-          && !properties.getAppId().equals(AdaptorCore.APP_ID)) {
-        Logger.debug("message SID-" + properties.getCorrelationId());
-        this.msgBusConsumer.processMessage(message, properties.getContentType(),
-            envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
-      } else {
-        Logger.info("Message ignored: " + properties);
-      }
+    Logger.info("Received message on " + envelope.getRoutingKey());
+    String message = new String(body, "UTF-8");
+    // Logger.info("Received message:" + message + " on " + envelope.getRoutingKey());
+    if (properties != null && properties.getAppId() != null
+        && properties.getAppId().equals("sonata.kernel.WimAdapter")
+        && envelope.getRoutingKey().equals("infrastructure.service.deploy")) {
+      Logger.info("Ignoring WIM adaptor response after service deployment");
+    } else if (properties != null && properties.getAppId() != null
+        && !properties.getAppId().equals(AdaptorCore.APP_ID)) {
+      Logger.debug("message SID-" + properties.getCorrelationId());
+      this.msgBusConsumer.processMessage(message, properties.getContentType(),
+          envelope.getRoutingKey(), properties.getCorrelationId(), properties.getReplyTo());
+    } else {
+      Logger.info("Message ignored: " + properties);
+    }
   }
 
 }

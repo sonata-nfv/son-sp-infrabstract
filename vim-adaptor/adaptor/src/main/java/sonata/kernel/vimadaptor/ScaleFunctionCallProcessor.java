@@ -65,7 +65,7 @@ public class ScaleFunctionCallProcessor extends AbstractCallProcessor {
       WrapperBay wrapperBay = WrapperBay.getInstance();
       String vimUuid = wrapperBay.getVimRepo()
           .getComputeVimUuidByFunctionInstanceId(data.getFunctionInstanceId());
-      Logger.info("Wrapper retrieved, vimUuid = " + (vimUuid==null? "null" : vimUuid));
+      Logger.info("Wrapper retrieved, vimUuid = " + (vimUuid == null ? "null" : vimUuid));
 
       ComputeWrapper wr = wrapperBay.getComputeWrapper(vimUuid);
 

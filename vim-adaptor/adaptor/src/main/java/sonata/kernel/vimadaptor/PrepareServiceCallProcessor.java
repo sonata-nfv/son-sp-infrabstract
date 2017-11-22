@@ -94,10 +94,12 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
 
         for (VnfImage vnfImage : vim.getImages()) {
           if (!wr.isImageStored(vnfImage, message.getSid())) {
-            Logger.info(message.getSid().substring(0, 10) + " - Image not stored in VIM image repository.");
+            Logger.info(
+                message.getSid().substring(0, 10) + " - Image not stored in VIM image repository.");
             wr.uploadImage(vnfImage);
           } else {
-            Logger.info(message.getSid().substring(0, 10) + " - Image already stored in the VIM image repository");
+            Logger.info(message.getSid().substring(0, 10)
+                + " - Image already stored in the VIM image repository");
           }
         }
 
@@ -113,7 +115,8 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         }
 
       }
-      Logger.info(message.getSid().substring(0, 10) + " - Preparation complete. Sending back response.");
+      Logger.info(
+          message.getSid().substring(0, 10) + " - Preparation complete. Sending back response.");
       String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
       ServicePlatformMessage responseMessage = new ServicePlatformMessage(responseJson,
           "application/json", message.getReplyTo(), message.getSid(), null);
@@ -122,7 +125,8 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
       this.sendToMux(new ServicePlatformMessage(
-          "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage().replace("\"", "''").replace("\n", "") + "\"}",
+          "{\"request_status\":\"ERROR\",\"message\":\""
+              + e.getMessage().replace("\"", "''").replace("\n", "") + "\"}",
           "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }

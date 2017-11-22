@@ -30,12 +30,12 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class VnfImage {
 
+  @JsonProperty("image_md5")
+  private String checksum;
   @JsonProperty("image_url")
   private String url;
   @JsonProperty("image_uuid")
   private String uuid;
-  @JsonProperty("image_md5")
-  private String checksum;
 
   public VnfImage() {}
 
@@ -58,7 +58,11 @@ public class VnfImage {
     this.url = url;
     this.checksum = checksum;
   }
-  
+
+  public String getChecksum() {
+    return checksum;
+  }
+
   public String getUrl() {
     return url;
   }
@@ -67,22 +71,18 @@ public class VnfImage {
     return uuid;
   }
 
+  public void setChecksum(String checksum) {
+    this.checksum = checksum;
+  }
+
+
   public void setUrl(String url) {
     this.url = url;
   }
 
+
   public void setUuid(String uuid) {
     this.uuid = uuid;
-  }
-
-
-  public String getChecksum() {
-    return checksum;
-  }
-
-
-  public void setChecksum(String checksum) {
-    this.checksum = checksum;
   }
 
 

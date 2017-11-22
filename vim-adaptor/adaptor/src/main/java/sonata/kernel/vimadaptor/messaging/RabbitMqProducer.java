@@ -28,32 +28,17 @@ package sonata.kernel.vimadaptor.messaging;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.AdaptorCore;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeoutException;
 
 public class RabbitMqProducer extends AbstractMsgBusProducer {
 
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqProducer.class);
-  private Properties brokerConfig;
 
 
   public RabbitMqProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
@@ -62,7 +47,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
 
   @Override
   public void connectToBus() {
-    //Do nothing
+    // Do nothing
   }
 
   @Override
@@ -72,7 +57,7 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
     // TODO maps the specific Adaptor message to the proper SP topic
 
     try {
-      Channel channel = RabbitMqHelperSingleton.getInstance().getChannel();  
+      Channel channel = RabbitMqHelperSingleton.getInstance().getChannel();
       String exchangeName = RabbitMqHelperSingleton.getInstance().getExchangeName();
       BasicProperties properties = new BasicProperties().builder().appId(AdaptorCore.APP_ID)
           .contentType(message.getContentType()).replyTo(message.getReplyTo()).deliveryMode(2)
@@ -87,6 +72,6 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
     return out;
   }
 
- 
+
 
 }

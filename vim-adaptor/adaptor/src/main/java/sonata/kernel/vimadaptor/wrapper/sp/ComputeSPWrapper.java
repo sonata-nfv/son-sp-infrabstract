@@ -37,12 +37,12 @@ import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import java.io.IOException;
 
 public class ComputeSPWrapper extends ComputeWrapper {
-  
-  
-  public ComputeSPWrapper(WrapperConfiguration config){
+
+
+  public ComputeSPWrapper(WrapperConfiguration config) {
     super(config);
   }
-  
+
   /*
    * (non-Javadoc)
    * 

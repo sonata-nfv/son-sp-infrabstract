@@ -131,7 +131,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
     }
     Logger.debug("[MockWrapper] Response generated. Writing record in the Infr. Repos...");
     WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnf.getInstanceUuid(),
-      data.getServiceInstanceId(), this.getConfig().getUuid());
+        data.getServiceInstanceId(), this.getConfig().getUuid());
     Logger.debug("[MockWrapper] All done!");
 
   }
@@ -192,7 +192,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
     double stdTime = 1683.12;
     waitGaussianTime(avgTime, stdTime);
     WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(instanceId, instanceId,
-      instanceId, this.getConfig().getUuid());
+        instanceId, this.getConfig().getUuid());
     return true;
   }
 
@@ -232,7 +232,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
 
   @Override
   public String toString() {
-    return "MockWrapper-"+this.getConfig().getUuid();
+    return "MockWrapper-" + this.getConfig().getUuid();
   }
 
   /*
@@ -244,9 +244,9 @@ public class ComputeMockWrapper extends ComputeWrapper {
    */
   @Override
   public void uploadImage(VnfImage image) throws IOException {
-    
+
     double avgTime = 7538.75;
-    double stdTime = 1342.06;    
+    double stdTime = 1342.06;
     waitGaussianTime(avgTime, stdTime);
 
     return;
@@ -254,7 +254,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
 
   private void waitGaussianTime(double avgTime, double stdTime) {
     double waitTime = Math.abs((r.nextGaussian() - 0.5) * stdTime + avgTime);
-    //Logger.debug("Simulating processing delay.Waiting "+waitTime/1000.0+"s");
+    // Logger.debug("Simulating processing delay.Waiting "+waitTime/1000.0+"s");
     try {
       Thread.sleep((long) Math.floor(waitTime));
     } catch (InterruptedException e) {

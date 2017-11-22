@@ -74,7 +74,12 @@ import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
 import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.Image.Image;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
@@ -86,13 +91,13 @@ import java.util.Hashtable;
 
 public class OpenStackHeatWrapper extends ComputeWrapper {
 
-  private static final String mistralConfigFilePath = "/etc/son-mano/mistral.config";
-
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(OpenStackHeatWrapper.class);
-  private IpNetPool myPool;
 
+  private static final String mistralConfigFilePath = "/etc/son-mano/mistral.config";
   private String mistralUrl;
+
+  private IpNetPool myPool;
 
   /**
    * Standard constructor for an Compute Wrapper of an OpenStack VIM using Heat.
@@ -105,7 +110,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     Logger.debug("Wrapper specific configuration: " + configuration);
     JSONTokener tokener = new JSONTokener(configuration);
     JSONObject object = (JSONObject) tokener.nextValue();
-    String tenant = object.getString("tenant");
+    // String tenant = object.getString("tenant");
     String tenantCidr = null;
     if (object.has("tenant_private_net_id")) {
       String tenantNetId = object.getString("tenant_private_net_id");
@@ -570,31 +575,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return out;
   }
 
-  private boolean searchImageByName(String imageName, ArrayList<Image> glanceImages) {
-    Logger.debug("Image lookup based on image name...");
-    for (Image glanceImage : glanceImages) {
-      if (glanceImage.getName() == null) continue;
-      Logger.debug("Checking " + glanceImage.getName());
-      if (glanceImage.getName().equals(imageName)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
-  private boolean searchImageByChecksum(String imageChecksum, ArrayList<Image> glanceImages) {
-    Logger.debug("Image lookup based on image checksum...");
-    for (Image glanceImage : glanceImages) {
-      if (glanceImage.getName() == null) continue;
-      Logger.debug("Checking " + glanceImage.getName());
-      if (glanceImage.getChecksum() == null) continue;
-      if (glanceImage.getChecksum().equals(imageChecksum)) {
-        return true;
-      }
-    }
-    return false;
-  }
-
   /*
    * (non-Javadoc)
    * 
@@ -990,6 +970,52 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     return template;
   }
 
+  /**
+   * @param vmImageMd5 the checksum of the image to search;
+   * @throws IOException if the VIM cannot be contacted to retrieve the list of available images;
+   */
+  private String getImageNameByImageChecksum(String vmImageMd5) throws IOException {
+    String imageName = null;
+    Logger.debug("Searching Image Checksum: " + vmImageMd5);
+    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String tenant = object.getString("tenant");
+    String identityPort = null;
+    if (object.has("identity_port")) {
+      identityPort = object.getString("identity_port");
+    }
+    OpenStackGlanceClient glance = null;
+    glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+    ArrayList<Image> glanceImages = glance.listImages();
+    for (Image image : glanceImages) {
+      if (image != null && image.getChecksum() != null
+          && (image.getChecksum().equals(vmImageMd5))) {
+        imageName = image.getName();
+        break;
+      }
+    }
+    return imageName;
+  }
+
+  private String getMistralUrl() {
+
+    String mistralUrl = null;
+    try {
+      InputStreamReader in = new InputStreamReader(new FileInputStream(mistralConfigFilePath),
+          Charset.forName("UTF-8"));
+      JSONTokener tokener = new JSONTokener(in);
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+      mistralUrl = jsonObject.getString("mistral_server_address");
+    } catch (FileNotFoundException e) {
+      Logger.error("Unable to load Mistral Config file", e);
+      System.exit(1);
+    }
+
+    return mistralUrl;
+
+  }
+
 
   private String getTenant() {
     JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
@@ -998,6 +1024,31 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
   }
 
 
+
+  private boolean searchImageByChecksum(String imageChecksum, ArrayList<Image> glanceImages) {
+    Logger.debug("Image lookup based on image checksum...");
+    for (Image glanceImage : glanceImages) {
+      if (glanceImage.getName() == null) continue;
+      Logger.debug("Checking " + glanceImage.getName());
+      if (glanceImage.getChecksum() == null) continue;
+      if (glanceImage.getChecksum().equals(imageChecksum)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private boolean searchImageByName(String imageName, ArrayList<Image> glanceImages) {
+    Logger.debug("Image lookup based on image name...");
+    for (Image glanceImage : glanceImages) {
+      if (glanceImage.getName() == null) continue;
+      Logger.debug("Checking " + glanceImage.getName());
+      if (glanceImage.getName().equals(imageName)) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   private String selectFlavor(int vcpu, double memoryInGB, double storageIngGB,
       ArrayList<Flavor> vimFlavors) {
@@ -1375,6 +1426,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       if (vdu.getVmImageMd5() != null) {
         imageName = getImageNameByImageChecksum(vdu.getVmImageMd5());
       }
+      Logger.debug("image selected:" + imageName);
       HeatResource server = new HeatResource();
       server.setType("OS::Nova::Server");
       server.setName(null);
@@ -1487,52 +1539,6 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     model.prepare();
     return model;
-  }
-
-  /**
-   * @param vmImageMd5 the checksum of the image to search;
-   * @throws IOException if the VIM cannot be contacted to retrieve the list of available images;
-   */
-  private String getImageNameByImageChecksum(String vmImageMd5) throws IOException {
-    String imageName = null;
-    Logger.debug("Searching Image Checksum: " + vmImageMd5);
-    JSONTokener tokener = new JSONTokener(getConfig().getConfiguration());
-    JSONObject object = (JSONObject) tokener.nextValue();
-    String tenant = object.getString("tenant");
-    String identityPort = null;
-    if (object.has("identity_port")) {
-      identityPort = object.getString("identity_port");
-    }
-    OpenStackGlanceClient glance = null;
-    glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
-        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
-    ArrayList<Image> glanceImages = glance.listImages();
-    for (Image image : glanceImages) {
-      if (image != null && image.getChecksum() != null
-          && (image.getChecksum().equals(vmImageMd5))) {
-        imageName = image.getName();
-        break;
-      }
-    }
-    return imageName;
-  }
-
-  private String getMistralUrl() {
-
-    String mistralUrl = null;
-    try {
-      InputStreamReader in = new InputStreamReader(new FileInputStream(mistralConfigFilePath),
-          Charset.forName("UTF-8"));
-      JSONTokener tokener = new JSONTokener(in);
-      JSONObject jsonObject = (JSONObject) tokener.nextValue();
-      mistralUrl = jsonObject.getString("mistral_server_address");
-    } catch (FileNotFoundException e) {
-      Logger.error("Unable to load Mistral Config file", e);
-      System.exit(1);
-    }
-
-    return mistralUrl;
-
   }
 
 }

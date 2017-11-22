@@ -159,14 +159,14 @@ public class JavaStackCore {
     }
   }
 
-  //  private static class SingeltonJavaStackCoreHelper {
-//    private static final JavaStackCore _javaStackCore = new JavaStackCore();
-//  }
+  // private static class SingeltonJavaStackCoreHelper {
+  // private static final JavaStackCore _javaStackCore = new JavaStackCore();
+  // }
 
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(JavaStackCore.class);
-  
+
   public static JavaStackCore getJavaStackCore() {
-    return new JavaStackCore();    
+    return new JavaStackCore();
   }
 
   private String endpoint;
@@ -344,8 +344,9 @@ public class JavaStackCore {
         }
       }
 
-      if(auth.getToken().getProject()==null){
-        throw new IOException("Authentication response doesn't contain Project ID. SONATA VIM-Adaptor can't work with this Keystone configuration.");
+      if (auth.getToken().getProject() == null) {
+        throw new IOException(
+            "Authentication response doesn't contain Project ID. SONATA VIM-Adaptor can't work with this Keystone configuration.");
       }
       this.projectId = auth.getToken().getProject().getId();
       Logger.debug("[JavaStack] ProjectId set to " + projectId);
