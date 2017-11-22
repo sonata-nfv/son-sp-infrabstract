@@ -42,7 +42,8 @@ import java.util.ArrayList;
 
 public class OpenStackGlanceClient {
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackGlanceClient.class);
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(OpenStackGlanceClient.class);
 
   // private String url; // url of the OpenStack Client
   //

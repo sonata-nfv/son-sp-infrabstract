@@ -32,10 +32,14 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Image {
 
+  private String checksum;
   private String container_format;
   private String id;
   private String name;
-  private String checksum;
+
+  public String getChecksum() {
+    return checksum;
+  }
 
   public String getContainer_format() {
     return container_format;
@@ -49,6 +53,10 @@ public class Image {
     return name;
   }
 
+  public void setChecksum(String checksum) {
+    this.checksum = checksum;
+  }
+
   public void setContainer_format(String container_format) {
     this.container_format = container_format;
   }
@@ -59,13 +67,5 @@ public class Image {
 
   public void setName(String name) {
     this.name = name;
-  }
-
-  public String getChecksum() {
-    return checksum;
-  }
-
-  public void setChecksum(String checksum) {
-    this.checksum = checksum;
   }
 }

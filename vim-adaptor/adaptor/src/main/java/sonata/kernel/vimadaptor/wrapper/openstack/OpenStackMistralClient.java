@@ -25,12 +25,12 @@
 package sonata.kernel.vimadaptor.wrapper.openstack;
 
 import com.google.common.collect.ImmutableMap;
-
 import com.nokia.cb.sonata.mistral.client.MistralClient;
 import com.nokia.cb.sonata.mistral.client.exception.MistralHttpException;
 import com.nokia.cb.sonata.mistral.client.model.Workflow;
 import com.nokia.cb.sonata.mistral.client.model.WorkflowExecution;
 import com.nokia.cb.sonata.mistral.client.model.WorkflowExecutionCreateRequest;
+
 import org.apache.commons.io.IOUtils;
 import org.slf4j.LoggerFactory;
 
@@ -39,7 +39,6 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.HttpURLConnection;
-import java.util.Map;
 
 /**
  * Created by smendel on 2017.
@@ -95,8 +94,8 @@ public class OpenStackMistralClient {
 
       workflowExecution = mistralClient.workflowExecutionCreate(executionCreateRequest);
       // TODO - smendel - get scaling result, similar to whats done in
-      //todo(gpaz) poling ?
-      //todo(gpaz) maybe look at this example: OpenStackHeatWrapper.prepareService()
+      // todo(gpaz) poling ?
+      // todo(gpaz) maybe look at this example: OpenStackHeatWrapper.prepareService()
 
     } catch (RuntimeException e) {
       Logger.error(

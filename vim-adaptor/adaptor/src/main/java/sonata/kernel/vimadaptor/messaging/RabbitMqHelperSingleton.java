@@ -47,18 +47,26 @@ import java.util.concurrent.TimeoutException;
 
 public class RabbitMqHelperSingleton {
 
-  private Channel channel;
-  private Connection connection;
-  private String queueName;
-  private String exchangeName;
- 
   private static final String configFilePath = "/etc/son-mano/broker.config";
-
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqHelperSingleton.class);
-
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(RabbitMqHelperSingleton.class);
   private static RabbitMqHelperSingleton myInstance = null;
-  
-  private RabbitMqHelperSingleton(){
+  public static RabbitMqHelperSingleton getInstance() {
+    if (myInstance == null) {
+      myInstance = new RabbitMqHelperSingleton();
+    }
+    return myInstance;
+  }
+
+  private Channel channel;
+
+  private Connection connection;
+
+  private String exchangeName;
+
+  private String queueName;
+
+  private RabbitMqHelperSingleton() {
     Properties brokerConfig = parseConfigFile();
     Logger.info("Connecting to broker...");
     ConnectionFactory cf = new ConnectionFactory();
@@ -98,19 +106,21 @@ public class RabbitMqHelperSingleton {
     } catch (IOException e) {
       Logger.error(e.getMessage(), e);
     }
-    
+
   }
-  
-  public static RabbitMqHelperSingleton getInstance(){
-    if (myInstance==null){
-      myInstance= new RabbitMqHelperSingleton();
-    }
-    return myInstance;
-  }
-  
-  public Channel getChannel(){
+
+  public Channel getChannel() {
     return this.channel;
   }
+
+  public String getExchangeName() {
+    return exchangeName;
+  }
+
+  public String getQueueName() {
+    return queueName;
+  }
+
   /**
    * Utility function to parse the broker configuration file.
    *
@@ -138,12 +148,4 @@ public class RabbitMqHelperSingleton {
     return prop;
   }
 
-  public String getExchangeName() {
-    return exchangeName;
-  }
-
-  public String getQueueName() {
-    return queueName;
-  }
-  
 }

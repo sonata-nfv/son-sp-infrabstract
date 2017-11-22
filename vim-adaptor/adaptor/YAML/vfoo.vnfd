@@ -17,7 +17,7 @@ virtual_deployment_units:
   - id: "1"
     vm_image: "sonata-vFoo"
     vm_image_format: "qcow2"
-    vm_image_md5: "99e73c2c09cad6a681b2d372c37f2e11"
+    vm_image_md5: "c3e0b581d613a4806e6e5fd823d93f01"
     resource_requirements:
       cpu:
         vcpus: 1

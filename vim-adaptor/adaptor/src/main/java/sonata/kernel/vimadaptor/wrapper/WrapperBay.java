@@ -31,7 +31,6 @@ import org.slf4j.LoggerFactory;
 import sonata.kernel.vimadaptor.commons.VimNetTable;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class WrapperBay {

@@ -32,11 +32,7 @@ import com.google.common.base.Charsets;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
-import com.jcraft.jsch.jce.KeyPairGenRSA;
 
-import org.bouncycastle.util.io.pem.PemObject;
-import org.bouncycastle.util.io.pem.PemWriter;
-import org.codehaus.plexus.util.StringOutputStream;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Assert;
@@ -65,7 +61,6 @@ import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointRecord;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointType;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
-import sonata.kernel.vimadaptor.commons.vnfd.ConnectionPointReference;
 import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.messaging.TestConsumer;
@@ -77,19 +72,13 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.StringWriter;
 import java.nio.charset.Charset;
-import java.security.KeyPairGenerator;
-import java.security.interfaces.RSAPrivateKey;
-import java.security.interfaces.RSAPublicKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
-import javassist.bytecode.ByteArray;
 
 
 /**
@@ -534,13 +523,14 @@ public class DeployServiceTest implements MessageReceiver {
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vbar-vnf_0.1_vdu01",
         // "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
-        "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img");
+        //"https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img");
+        "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2");
     vnfImages.add(vtcImgade);
     VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vfoo-vnf_0.1_1",
         // "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img",
         // "f8ab98ff5e73ebab884d80c9dc9c7290");
         "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img",
-        "99e73c2c09cad6a681b2d372c37f2e11");
+        "c3e0b581d613a4806e6e5fd823d93f01");
     vnfImages.add(vfwImgade);
     vimDepList.setImages(vnfImages);
     vims.add(vimDepList);

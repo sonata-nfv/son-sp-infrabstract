@@ -32,14 +32,18 @@ import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 
 public class FunctionDeployPayload {
 
+  @JsonProperty("public_key")
+  private String publicKey;
   @JsonProperty("service_instance_id")
   private String serviceInstanceId;
   @JsonProperty("vim_uuid")
   private String vimUuid;
   @JsonProperty("vnfd")
   private VnfDescriptor vnfd;
-  @JsonProperty("public_key")
-  private String publicKey;
+
+  public String getPublicKey() {
+    return publicKey;
+  }
 
   public String getServiceInstanceId() {
     return serviceInstanceId;
@@ -53,6 +57,10 @@ public class FunctionDeployPayload {
     return vnfd;
   }
 
+  public void setPublicKey(String publicKey) {
+    this.publicKey = publicKey;
+  }
+
   public void setServiceInstanceId(String serviceInstanceId) {
     this.serviceInstanceId = serviceInstanceId;
   }
@@ -63,14 +71,6 @@ public class FunctionDeployPayload {
 
   public void setVnfd(VnfDescriptor vnfd) {
     this.vnfd = vnfd;
-  }
-
-  public String getPublicKey() {
-    return publicKey;
-  }
-
-  public void setPublicKey(String publicKey) {
-    this.publicKey = publicKey;
   }
 
 

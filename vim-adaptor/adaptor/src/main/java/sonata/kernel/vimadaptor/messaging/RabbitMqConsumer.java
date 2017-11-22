@@ -27,32 +27,19 @@
 package sonata.kernel.vimadaptor.messaging;
 
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.DefaultConsumer;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
 public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
-  private static final String configFilePath = "/etc/son-mano/broker.config";
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqConsumer.class);
   private Channel channel;
-  private Connection connection;
+  // private Connection connection;
   private String queueName;
 
   DefaultConsumer consumer;
@@ -74,7 +61,7 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       channel = RabbitMqHelperSingleton.getInstance().getChannel();
       Logger.info("Starting consumer thread");
       channel.basicConsume(queueName, true, consumer);
-      
+
     } catch (IOException e) {
       Logger.error(e.getMessage(), e);
     }
@@ -110,31 +97,5 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     return out;
   }
 
-  /**
-   * Utility function to parse the broker configuration file.
-   *
-   * @return a Java Properties object representing the json config as a Key-Value map
-   */
-  private Properties parseConfigFile() {
-    Properties prop = new Properties();
-    try {
-      InputStreamReader in =
-          new InputStreamReader(new FileInputStream(configFilePath), Charset.forName("UTF-8"));
-
-      JSONTokener tokener = new JSONTokener(in);
-
-      JSONObject jsonObject = (JSONObject) tokener.nextValue();
-
-      String brokerUrl = jsonObject.getString("broker_url");
-      String exchange = jsonObject.getString("exchange");
-      prop.put("broker_url", brokerUrl);
-      prop.put("exchange", exchange);
-    } catch (FileNotFoundException e) {
-      Logger.error("Unable to load Broker Config file", e);
-      System.exit(1);
-    }
-
-    return prop;
-  }
 
 }
