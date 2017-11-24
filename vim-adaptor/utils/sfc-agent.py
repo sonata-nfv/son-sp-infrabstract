@@ -193,16 +193,20 @@ while True:
     print ""
     print "Waiting for data ..."
     logger.info(" --- Waiting for data ---")
-    conn, address = sock.accept()
-    logger.info("connection established with "+str(address))
-    data = conn.recv(4096)
-    print >>sys.stderr, data
-    print "received from: "
-    print address
-    print ""
-    logger.info("Recieved data from:" + str(address))
+    try:
+        conn, address = sock.accept()
+        logger.info("connection established with "+str(address))
+    except:
 
-    jsonResponse=json.loads(data)
+        data = conn.recv(4096)
+        print (address)
+        logger.info("Recieved data from:" + str(address))
+        jsonResponse=json.loads(data)
+    except Exception as er:
+        logger.error("Something went wrong when recieving data")
+        logger.error( "The error: "+str(er))
+
+
     returnflag = "SUCCESS"
     try: 
         jsonMANA = jsonResponse["action"] # Check json request type 
