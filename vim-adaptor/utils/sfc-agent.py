@@ -197,7 +197,10 @@ while True:
         conn, address = sock.accept()
         logger.info("connection established with "+str(address))
     except:
-
+        logger.error("Error when establishing connection")
+        logger.error( "The error: "+str(er))
+        continue
+    try:
         data = conn.recv(4096)
         print (address)
         logger.info("Recieved data from:" + str(address))
@@ -205,7 +208,7 @@ while True:
     except Exception as er:
         logger.error("Something went wrong when recieving data")
         logger.error( "The error: "+str(er))
-
+        continue
 
     returnflag = "SUCCESS"
     try: 
