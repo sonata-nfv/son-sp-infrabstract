@@ -99,10 +99,7 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * 
    * @param image the object representing the VNF image
    */
-  public void removeImage(VnfImage image) {
-    // TODO Auto-generated method stub
-
-  }
+  public abstract void removeImage(VnfImage image);
 
   /**
    * Remove a service instance from this VIM.

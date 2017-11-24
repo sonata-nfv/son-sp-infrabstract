@@ -167,6 +167,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         .getServiceInstanceVimUuid(data.getServiceInstanceId(), this.getConfig().getUuid());
     String stackName = WrapperBay.getInstance().getVimRepo()
         .getServiceInstanceVimName(data.getServiceInstanceId(), this.getConfig().getUuid());
+    
     ArrayList<Flavor> vimFlavors = novaClient.getFlavors();
     Collections.sort(vimFlavors);
     HeatModel stackAddition;
@@ -1383,6 +1384,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // END COMMENT
     HeatModel model = new HeatModel();
     ArrayList<String> publicPortNames = new ArrayList<String>();
+    
     boolean hasPubKey = (publicKey != null);
     if (hasPubKey) {
       HeatResource keypair = new HeatResource();
@@ -1415,6 +1417,8 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       model.addResource(cloudConfigObject);
 
     }
+    
+    
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Each VDU goes into a resource group with a number of Heat Server...");
       HeatResource resourceGroup = new HeatResource();
@@ -1426,6 +1430,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       if (vdu.getVmImageMd5() != null) {
         imageName = getImageNameByImageChecksum(vdu.getVmImageMd5());
       }
+      
       Logger.debug("image selected:" + imageName);
       HeatResource server = new HeatResource();
       server.setType("OS::Nova::Server");
