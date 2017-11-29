@@ -117,7 +117,8 @@ public class OpenStackGlanceClient {
     try {
       listImages = JavaStackUtils.convertHttpResponseToString(javaStack.listImages());
       images = mapper.readValue(listImages, Images.class);
-
+      Logger.debug("Retrieved image list"+images.getImages());
+      Logger.debug("Number of retrieved images:"+images.getImages().size());
     } catch (IOException e) {
       e.printStackTrace();
     }
