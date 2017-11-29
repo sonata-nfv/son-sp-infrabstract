@@ -705,7 +705,7 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Image.getPORT());
       buildUrl.append(String.format("/%s/images", Image.getVERSION()));
-      buildUrl.append("?limit=100,visibility=public");
+      buildUrl.append("?limit=100&visibility=public");
 
       listImages = new HttpGet(buildUrl.toString());
       listImages.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
