@@ -29,15 +29,25 @@ package sonata.kernel.vimadaptor.wrapper.sp;
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
+import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
 import sonata.kernel.vimadaptor.wrapper.ResourceUtilisation;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.vimadaptor.wrapper.sp.client.SonataGkClient;
 
 import java.io.IOException;
 
+import javax.ws.rs.NotAuthorizedException;
+
+import org.apache.http.client.ClientProtocolException;
+import org.slf4j.LoggerFactory;
+
+
 public class ComputeSPWrapper extends ComputeWrapper {
 
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(ComputeSPWrapper.class);
 
   public ComputeSPWrapper(WrapperConfiguration config) {
     super(config);
@@ -141,8 +151,33 @@ public class ComputeSPWrapper extends ComputeWrapper {
    * VnfImage)
    */
   @Override
-  public void uploadImage(VnfImage image) throws IOException {
+  public void uploadImage(VnfImage image) {
     // This Wrapper ignores this call
+  }
+
+  public VimResources[] listPoPs()
+      throws NotAuthorizedException, ClientProtocolException, IOException {
+
+    Logger.info("[SpWrapper] Creating SONATA Rest Client");
+    SonataGkClient client = new SonataGkClient(this.getConfig().getVimEndpoint(),
+        this.getConfig().getAuthUserName(), this.getConfig().getAuthPass());
+
+    Logger.info("[SpWrapper] Authenticating SONATA Rest Client");
+    if (!client.authenticate()) throw new NotAuthorizedException("Client cannot login to the SP");
+
+    Logger.info("[SpWrapper] Retrieving VIMs connected to slave SONATA SP");
+    VimResources[] out = client.getVims();
+
+    return out;
+  }
+
+  /* (non-Javadoc)
+   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeImage(sonata.kernel.vimadaptor.commons.VnfImage)
+   */
+  @Override
+  public void removeImage(VnfImage image) {
+    // TODO Auto-generated method stub
+    
   }
 
 }

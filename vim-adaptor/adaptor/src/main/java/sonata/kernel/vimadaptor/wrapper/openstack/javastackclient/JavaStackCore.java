@@ -705,10 +705,14 @@ public class JavaStackCore {
       buildUrl.append(":");
       buildUrl.append(Image.getPORT());
       buildUrl.append(String.format("/%s/images", Image.getVERSION()));
+      buildUrl.append("?limit=100");
 
       listImages = new HttpGet(buildUrl.toString());
       listImages.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
-
+      
+      Logger.debug("URL request:");
+      Logger.debug(buildUrl.toString());
+      
       Logger.debug("HTTP request:");
       Logger.debug(listImages.toString());
 
