@@ -939,6 +939,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     inputNetMap.put("get_resource", "SonataService.input.net." + instanceId);
     inputSubnet.putProperty("network", inputNetMap);
     model.addResource(inputSubnet);
+    
+    // Internal input network router interface
+    HeatResource inputRouterInterface = new HeatResource();
+    inputRouterInterface.setType("OS::Neutron::RouterInterface");
+    inputRouterInterface.setName("SonataService.input.internal." + instanceId);
+    HashMap<String, Object> inputSubnetMapInt = new HashMap<String, Object>();
+    inputSubnetMapInt.put("get_resource", "SonataService.input.subnet." + instanceId);
+    inputRouterInterface.putProperty("subnet", inputSubnetMapInt);
+    inputRouterInterface.putProperty("router", tenantExtRouter);
+    model.addResource(inputRouterInterface);
 
     // Create the output net and subnet
     HeatResource outputNetwork = new HeatResource();
@@ -961,6 +971,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     outputSubnet.putProperty("network", outputNetMap);
     model.addResource(outputSubnet);
 
+    // Internal output network router interface
+    HeatResource outputRouterInterface = new HeatResource();
+    outputRouterInterface.setType("OS::Neutron::RouterInterface");
+    outputRouterInterface.setName("SonataService.output.internal." + instanceId);
+    HashMap<String, Object> outputSubnetMapInt = new HashMap<String, Object>();
+    outputSubnetMapInt.put("get_resource", "SonataService.output.subnet." + instanceId);
+    outputRouterInterface.putProperty("subnet", outputSubnetMapInt);
+    outputRouterInterface.putProperty("router", tenantExtRouter);
+    model.addResource(outputRouterInterface);
+    
     model.prepare();
 
     HeatTemplate template = new HeatTemplate();
