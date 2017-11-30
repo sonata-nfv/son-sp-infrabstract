@@ -1,6 +1,7 @@
 package sonata.kernel.vimadaptor.wrapper.sp.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -15,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sonata.kernel.vimadaptor.commons.VimResources;
+import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.SonataAuthenticationResponse;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.VimRequestStatus;
@@ -141,6 +143,32 @@ public class SonataGkClient {
 
     return list;
 
+  }
+
+  /**
+   * @return
+   */
+  public ArrayList<ServiceDescriptor> getServices() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param requestUuid
+   * @return
+   */
+  public String getInstantiationStatus(String requestUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param serviceUuid
+   * @return
+   */
+  public String instantiateService(String serviceUuid) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }

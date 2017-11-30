@@ -29,6 +29,7 @@ package sonata.kernel.vimadaptor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
@@ -71,6 +72,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -631,6 +633,17 @@ public class DeployServiceTest implements MessageReceiver {
 
           session.connect();
           System.out.println("session connected.....");
+          
+          ChannelSftp sftp = (ChannelSftp) session.openChannel("sftp");
+          InputStream stream = sftp.get("/etc/sonata_sp_address.conf");
+          try {
+              BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+              String fileContent = br.readLine();
+              Assert.assertTrue(fileContent.startsWith("SP_ADDRESS="));         
+          } finally {
+              stream.close();
+          }
+          
           session.disconnect();
           System.out.println("session disconnected");
         }
