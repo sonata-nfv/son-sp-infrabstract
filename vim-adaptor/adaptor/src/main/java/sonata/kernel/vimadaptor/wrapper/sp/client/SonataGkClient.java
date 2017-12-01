@@ -149,7 +149,7 @@ public class SonataGkClient {
   }
 
   /**
-   * @return
+   * @return a List of ServiceDescriptor object taken from the Gatekeeper
    */
   public ArrayList<ServiceDescriptor> getServices() {
     // TODO Auto-generated method stub
@@ -157,8 +157,8 @@ public class SonataGkClient {
   }
 
   /**
-   * @param requestUuid
-   * @return
+   * @param requestUuid uuid of the GK request
+   * @return a String representing the status of the request
    */
   public String getInstantiationStatus(String requestUuid) {
     // TODO Auto-generated method stub
@@ -166,8 +166,8 @@ public class SonataGkClient {
   }
 
   /**
-   * @param serviceUuid
-   * @return
+   * @param serviceUuid the uuid of the NSD to be instantiated
+   * @return a String representing the generated request UUID
    */
   public String instantiateService(String serviceUuid) {
     // TODO Auto-generated method stub
@@ -175,8 +175,8 @@ public class SonataGkClient {
   }
 
   /**
-   * @param requestUuid
-   * @return
+   * @param requestUuid the UUID of the request
+   * @return a RequestObject that contains information on the request
    */
   public RequestObject getRequest(String requestUuid) {
     // TODO Auto-generated method stub
@@ -184,8 +184,8 @@ public class SonataGkClient {
   }
 
   /**
-   * @param serviceInstanceUuid
-   * @return
+   * @param serviceInstanceUuid the UUID of the service instance
+   * @return the ServiceRecord associated with this service instance
    *
    */
   public ServiceRecord getNsr(String serviceInstanceUuid) {
@@ -194,8 +194,8 @@ public class SonataGkClient {
   }
 
   /**
-   * @param vnfrId
-   * @return
+   * @param vnfrId the ID of the VNFR to retrieve
+   * @return the VnfRecord object for the specified VNFR ID
    */
   public VnfRecord getVnfr(String vnfrId) {
     // TODO Auto-generated method stub

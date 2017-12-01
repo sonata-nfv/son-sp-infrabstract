@@ -32,9 +32,11 @@ import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.ServiceRecord;
 import sonata.kernel.vimadaptor.commons.Status;
+import sonata.kernel.vimadaptor.commons.VduRecord;
 import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
+import sonata.kernel.vimadaptor.commons.VnfcInstance;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
@@ -197,6 +199,12 @@ public class ComputeSPWrapper extends ComputeWrapper {
 
     vnfr.setVirtualDeploymentUnits(remoteVnfr.getVirtualDeploymentUnits());
     
+    for(VduRecord vdur : vnfr.getVirtualDeploymentUnits()){
+      for (VnfcInstance vnfc : vdur.getVnfcInstance()){
+        vnfc.setVimId(data.getVimUuid());
+      }
+    }
+    
     // Send the response back
     response.setVnfr(vnfr);
     String body = null;
@@ -296,7 +304,6 @@ public class ComputeSPWrapper extends ComputeWrapper {
   @Override
   public void scaleFunction(FunctionScalePayload data, String sid) {
     // TODO Auto-generated method stub
-
   }
 
   /*
