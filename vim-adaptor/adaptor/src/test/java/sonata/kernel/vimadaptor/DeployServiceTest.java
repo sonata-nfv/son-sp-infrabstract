@@ -30,6 +30,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
@@ -68,6 +69,7 @@ import sonata.kernel.vimadaptor.messaging.TestConsumer;
 import sonata.kernel.vimadaptor.messaging.TestProducer;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -525,7 +527,7 @@ public class DeployServiceTest implements MessageReceiver {
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vbar-vnf_0.1_vdu01",
         // "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
-        //"https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img");
+        // "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img");
         "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2");
     vnfImages.add(vtcImgade);
     VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vfoo-vnf_0.1_1",
@@ -634,16 +636,21 @@ public class DeployServiceTest implements MessageReceiver {
           session.connect();
           System.out.println("session connected.....");
           
-          ChannelSftp sftp = (ChannelSftp) session.openChannel("sftp");
-          InputStream stream = sftp.get("/etc/sonata_sp_address.conf");
-          try {
-              BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-              String fileContent = br.readLine();
-              Assert.assertTrue(fileContent.startsWith("SP_ADDRESS="));         
-          } finally {
-              stream.close();
-          }
-          
+          String commandToRun = "cat /etc/sonata_sp_address.conf 2>&1 \n";
+          System.out.println("Executing command: \""+commandToRun+"\"");
+          ChannelShell ssh = (ChannelShell) session.openChannel("shell");
+          byte[] bytes = commandToRun.getBytes();
+          ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
+          ssh.setInputStream(bais);
+          ssh.connect();
+          final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
+          ssh.setOutputStream(outStream);
+
+          String fileContent = new String(outStream.toByteArray());
+          System.out.println("FileContent: "+fileContent);
+
+          Assert.assertTrue(fileContent.startsWith("SP_ADDRESS="));
+
           session.disconnect();
           System.out.println("session disconnected");
         }

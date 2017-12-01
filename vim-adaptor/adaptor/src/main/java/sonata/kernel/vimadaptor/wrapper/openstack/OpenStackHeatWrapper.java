@@ -1604,7 +1604,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
         
     HashMap<String, Object> fileToWrite = new HashMap<String,Object>();
     fileToWrite.put("path", "etc/sonata_sp_address.conf");
-    fileToWrite.put("Content", "SP_ADDRESS="+sonataSpAddress);
+    fileToWrite.put("content", "SP_ADDRESS="+sonataSpAddress+"\n");
 
     ArrayList<HashMap<String, Object>> filesToWrite = new ArrayList<HashMap<String, Object>>();
     filesToWrite.add(fileToWrite);
