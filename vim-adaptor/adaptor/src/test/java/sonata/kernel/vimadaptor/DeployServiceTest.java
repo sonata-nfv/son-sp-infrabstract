@@ -29,6 +29,7 @@ package sonata.kernel.vimadaptor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.ChannelShell;
 import com.jcraft.jsch.JSch;
@@ -635,19 +636,36 @@ public class DeployServiceTest implements MessageReceiver {
 
           session.connect();
           System.out.println("session connected.....");
-          
-          String commandToRun = "cat /etc/sonata_sp_address.conf 2>&1 \n";
-          System.out.println("Executing command: \""+commandToRun+"\"");
-          ChannelShell ssh = (ChannelShell) session.openChannel("shell");
-          byte[] bytes = commandToRun.getBytes();
-          ByteArrayInputStream bais = new ByteArrayInputStream(bytes);
-          ssh.setInputStream(bais);
-          ssh.connect();
-          final ByteArrayOutputStream outStream = new ByteArrayOutputStream();
-          ssh.setOutputStream(outStream);
 
-          String fileContent = new String(outStream.toByteArray());
-          System.out.println("FileContent: "+fileContent);
+          String commandToRun = "cat /etc/sonata_sp_address.conf 2>&1 \n";
+          ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
+
+          InputStream in = channelExec.getInputStream();
+
+          channelExec.setCommand(commandToRun);
+          channelExec.connect();
+
+          BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+          String line;
+          int index = 0;
+          String fileContent = "";
+          while ((line = reader.readLine()) != null) {
+            fileContent+=line;
+            System.out.println(++index + " : " + line);
+          }
+
+          int exitStatus = channelExec.getExitStatus();
+          channelExec.disconnect();
+          session.disconnect();
+          if (exitStatus < 0) {
+            System.out.println("Done, but exit status not set!");
+          } else if (exitStatus > 0) {
+            System.out.println("Done, but with error!");
+          } else {
+            System.out.println("Done!");
+          }
+
+          System.out.println("FileContent: " + fileContent);
 
           Assert.assertTrue(fileContent.startsWith("SP_ADDRESS="));
 
