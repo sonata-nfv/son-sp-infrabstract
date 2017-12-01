@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -23,72 +23,61 @@
  * @author Dario Valocchi (Ph.D.), UCL
  * 
  */
-
-package sonata.kernel.vimadaptor.commons;
+package sonata.kernel.vimadaptor.wrapper.sp.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import java.util.ArrayList;
+public class RequestObject {
 
-public class ServiceRecord {
-
-  @JsonProperty("descriptor_reference")
-  private String descriptorReference;
-  @JsonProperty("descriptor_version")
-  private String descriptorVersion;
   @JsonProperty("id")
   private String id;
-  private Status status;
-  @JsonProperty("network_functions")
-  ArrayList<NetworkFunctionInstanceReference> networkFunctions;
-
-
-
-  public String getDescriptorReference() {
-    return descriptorReference;
-  }
-
-
-  public String getDescriptorVersion() {
-    return descriptorVersion;
-  }
+  @JsonProperty("service_uuid")
+  private String uuid;
+  @JsonProperty("request_type")
+  private String requestType;
+  @JsonProperty("status")
+  private String status;
+  @JsonProperty("service_instance_uuid")
+  private String serviceInstanceUuid;
 
   public String getId() {
     return id;
   }
 
-  public Status getStatus() {
+  public String getUuid() {
+    return uuid;
+  }
+
+  public String getRequestType() {
+    return requestType;
+  }
+
+  public String getStatus() {
     return status;
   }
 
-
-  public void setDescriptorReference(String descriptorReference) {
-    this.descriptorReference = descriptorReference;
+  public String getServiceInstanceUuid() {
+    return serviceInstanceUuid;
   }
-
-
-  public void setDescriptorVersion(String descriptorVersion) {
-    this.descriptorVersion = descriptorVersion;
-  }
-
 
   public void setId(String id) {
     this.id = id;
   }
 
+  public void setUuid(String uuid) {
+    this.uuid = uuid;
+  }
 
-  public void setStatus(Status status) {
+  public void setRequestType(String requestType) {
+    this.requestType = requestType;
+  }
+
+  public void setStatus(String status) {
     this.status = status;
   }
 
-
-  public ArrayList<NetworkFunctionInstanceReference> getNetworkFunctions() {
-    return networkFunctions;
-  }
-
-
-  public void setNetworkFunctions(ArrayList<NetworkFunctionInstanceReference> networkFunctions) {
-    this.networkFunctions = networkFunctions;
+  public void setServiceInstanceUuid(String serviceInstanceUuid) {
+    this.serviceInstanceUuid = serviceInstanceUuid;
   }
 
 

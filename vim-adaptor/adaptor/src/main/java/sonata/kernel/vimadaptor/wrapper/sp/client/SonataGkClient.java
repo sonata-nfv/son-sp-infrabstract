@@ -15,9 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import sonata.kernel.vimadaptor.commons.ServiceRecord;
 import sonata.kernel.vimadaptor.commons.VimResources;
+import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.RequestObject;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.SonataAuthenticationResponse;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.VimRequestStatus;
 
@@ -167,6 +170,34 @@ public class SonataGkClient {
    * @return
    */
   public String instantiateService(String serviceUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param requestUuid
+   * @return
+   */
+  public RequestObject getRequest(String requestUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param serviceInstanceUuid
+   * @return
+   *
+   */
+  public ServiceRecord getNsr(String serviceInstanceUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param vnfrId
+   * @return
+   */
+  public VnfRecord getVnfr(String vnfrId) {
     // TODO Auto-generated method stub
     return null;
   }
