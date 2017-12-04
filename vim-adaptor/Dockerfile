@@ -48,6 +48,8 @@ ENV repo_pass sonata
 
 ENV mistral_server mistral
 
+ENV SONATA_SP_ADDRESS localhost
+
 RUN mvn -e -q compile assembly:single;
 #RUN mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true clean compile assembly:single;
 
