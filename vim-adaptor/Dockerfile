@@ -45,6 +45,7 @@ ENV repo_host postgres
 ENV repo_port 5432
 ENV repo_user sonatatest
 ENV repo_pass sonata
+ENV SONATA_SP_ADDRESS 127.0.0.1
 
 ENV mistral_server mistral
 

@@ -29,6 +29,7 @@ package sonata.kernel.vimadaptor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
+import com.jcraft.jsch.ChannelExec;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.KeyPair;
 import com.jcraft.jsch.Session;
@@ -71,6 +72,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
@@ -523,7 +525,7 @@ public class DeployServiceTest implements MessageReceiver {
     ArrayList<VnfImage> vnfImages = new ArrayList<VnfImage>();
     VnfImage vtcImgade = new VnfImage("eu.sonata-nfv_vbar-vnf_0.1_vdu01",
         // "http://download.cirros-cloud.net/0.3.5/cirros-0.3.5-x86_64-disk.img");
-        //"https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img");
+        // "https://cloud-images.ubuntu.com/xenial/current/xenial-server-cloudimg-amd64-disk1.img");
         "https://cloud.centos.org/centos/7/images/CentOS-7-x86_64-GenericCloud.qcow2");
     vnfImages.add(vtcImgade);
     VnfImage vfwImgade = new VnfImage("eu.sonata-nfv_vfoo-vnf_0.1_1",
@@ -631,6 +633,39 @@ public class DeployServiceTest implements MessageReceiver {
 
           session.connect();
           System.out.println("session connected.....");
+
+          String commandToRun = "cat /etc/sonata_sp_address.conf 2>&1 \n";
+          ChannelExec channelExec = (ChannelExec) session.openChannel("exec");
+
+          InputStream in = channelExec.getInputStream();
+
+          channelExec.setCommand(commandToRun);
+          channelExec.connect();
+
+          BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+          String line;
+          int index = 0;
+          String fileContent = "";
+          while ((line = reader.readLine()) != null) {
+            fileContent+=line;
+            System.out.println(++index + " : " + line);
+          }
+
+          int exitStatus = channelExec.getExitStatus();
+          channelExec.disconnect();
+          session.disconnect();
+          if (exitStatus < 0) {
+            System.out.println("Done, but exit status not set!");
+          } else if (exitStatus > 0) {
+            System.out.println("Done, but with error!");
+          } else {
+            System.out.println("Done!");
+          }
+
+          System.out.println("FileContent: " + fileContent);
+
+          Assert.assertTrue(fileContent.startsWith("SP_ADDRESS="));
+
           session.disconnect();
           System.out.println("session disconnected");
         }

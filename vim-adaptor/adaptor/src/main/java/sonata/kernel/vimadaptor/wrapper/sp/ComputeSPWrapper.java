@@ -27,18 +27,36 @@
 package sonata.kernel.vimadaptor.wrapper.sp;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
+import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
 import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
+import sonata.kernel.vimadaptor.commons.ServiceRecord;
+import sonata.kernel.vimadaptor.commons.Status;
+import sonata.kernel.vimadaptor.commons.VduRecord;
 import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfImage;
+import sonata.kernel.vimadaptor.commons.VnfRecord;
+import sonata.kernel.vimadaptor.commons.VnfcInstance;
+import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
+import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
 import sonata.kernel.vimadaptor.wrapper.ResourceUtilisation;
+import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
+import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
 import sonata.kernel.vimadaptor.wrapper.sp.client.SonataGkClient;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.RequestObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import javax.ws.rs.NotAuthorizedException;
+
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.apache.http.client.ClientProtocolException;
 import org.slf4j.LoggerFactory;
@@ -46,8 +64,7 @@ import org.slf4j.LoggerFactory;
 
 public class ComputeSPWrapper extends ComputeWrapper {
 
-  private static final org.slf4j.Logger Logger =
-      LoggerFactory.getLogger(ComputeSPWrapper.class);
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(ComputeSPWrapper.class);
 
   public ComputeSPWrapper(WrapperConfiguration config) {
     super(config);
@@ -62,10 +79,157 @@ public class ComputeSPWrapper extends ComputeWrapper {
    */
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
-    // TODO Implement this function by:
-    // - Create a mock NSD with just the provided VNFD OR reference the original NSD ID.
-    // - sending a REST call to the underlying SP Gatekeeper
+    Long start = System.currentTimeMillis();
+
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+
+    // TODO Implement this function by:    
+    // - Fetch available NS from the lower level SP
+    Logger.info("[SpWrapper] Creating SONATA Rest Client");
+    SonataGkClient gkClient = new SonataGkClient(this.getConfig().getVimEndpoint(),
+        this.getConfig().getAuthUserName(), this.getConfig().getAuthPass());
+
+    Logger.info("[SpWrapper] Authenticating SONATA Rest Client");
+    if (!gkClient.authenticate()) throw new NotAuthorizedException("Client cannot login to the SP");
+
+    ArrayList<ServiceDescriptor> availableNsds = gkClient.getServices();
+    String serviceUuid = null;
+    VnfDescriptor vnfd = data.getVnfd();
+    for (ServiceDescriptor nsd : availableNsds) {
+      if (nsd.getVendor().equals(vnfd.getVendor()) && nsd.getName().equals(vnfd.getName())
+          && nsd.getVersion().equals(vnfd.getVersion())) {
+        serviceUuid = nsd.getUuid();
+      }
+    }
+    if (serviceUuid == null) {
+      Logger.error("Error! Cannot find correct NSD matching the VNF identifier trio.");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Error! Cannot find correct NSD matching the VNF identifier trio.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+    // - sending a REST call to the underlying SP Gatekeeper for service deployment
+    String requestUuid = null;
+    Logger.debug("Sending NSD instantiation request to GK...");
+    try {
+      requestUuid = gkClient.instantiateService(serviceUuid);
+    } catch (Exception e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+
     // - than poll the GK until the status is "READY" or "ERROR"
+
+    int counter = 0;
+    int wait = 1000;
+    int maxCounter = 50;
+    int maxWait = 15000;
+    String status = null;
+    while ((status == null || !status.equals("READY") || !status.equals("ERROR"))
+        && counter < maxCounter) {
+      status = gkClient.getInstantiationStatus(requestUuid);
+      Logger.info("Status of request" + requestUuid + ": " + status);
+      if (status != null && (status.equals("READY") || status.equals("ERROR"))) {
+        break;
+      }
+      try {
+        Thread.sleep(wait);
+      } catch (InterruptedException e) {
+        Logger.error(e.getMessage(), e);
+      }
+      counter++;
+      wait = Math.min(wait * 2, maxWait);
+
+    }
+
+    if (status == null) {
+      Logger.error("unable to contact the GK to check the service instantiation status");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Functiono deployment process failed. Can't get instantiation status.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+    if (status.equals("ERROR")) {
+      Logger.error("Service instantiation failed on the other SP side.");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Function deployment process failed on the VIM side.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+
+
+    // Get NSR to retrieve VNFR_ID
+
+    RequestObject instantiationRequest = gkClient.getRequest(requestUuid);
+
+    ServiceRecord nsr = gkClient.getNsr(instantiationRequest.getServiceInstanceUuid());
+
+    // Get VNFR
+    // There will be just one VNFR referenced by this NSR
+    String vnfrId = nsr.getNetworkFunctions().get(0).getVnfrId();
+    VnfRecord remoteVnfr = gkClient.getVnfr(vnfrId);
+
+
+
+    // Map VNFR field to stripped VNFR.
+    FunctionDeployResponse response = new FunctionDeployResponse();
+    response.setRequestStatus("COMPLETED");
+    response.setInstanceVimUuid("");
+    response.setInstanceName("");
+    response.setVimUuid(this.getConfig().getUuid());
+    response.setMessage("");
+
+
+    VnfRecord vnfr = new VnfRecord();
+    vnfr.setDescriptorVersion("vnfr-schema-01");
+    vnfr.setId(vnfd.getInstanceUuid());
+    vnfr.setDescriptorReference(vnfd.getUuid());
+    vnfr.setStatus(Status.offline);
+
+    vnfr.setVirtualDeploymentUnits(remoteVnfr.getVirtualDeploymentUnits());
+    
+    for(VduRecord vdur : vnfr.getVirtualDeploymentUnits()){
+      for (VnfcInstance vnfc : vdur.getVnfcInstance()){
+        vnfc.setVimId(data.getVimUuid());
+      }
+    }
+    
+    // Send the response back
+    response.setVnfr(vnfr);
+    String body = null;
+    try {
+      body = mapper.writeValueAsString(response);
+    } catch (JsonProcessingException e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+    Logger.info("Response created");
+    // Logger.info("body");
+
+    WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnfd.getInstanceUuid(),
+        data.getServiceInstanceId(), this.getConfig().getUuid());
+    WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "SUCCESS", body);
+    this.markAsChanged();
+    this.notifyObservers(update);
+    long stop = System.currentTimeMillis();
+
+    Logger.info("[SonataSPWrapper]FunctionDeploy-time: " + (stop - start) + " ms");
+
 
   }
 
@@ -140,7 +304,6 @@ public class ComputeSPWrapper extends ComputeWrapper {
   @Override
   public void scaleFunction(FunctionScalePayload data, String sid) {
     // TODO Auto-generated method stub
-
   }
 
   /*
@@ -171,13 +334,17 @@ public class ComputeSPWrapper extends ComputeWrapper {
     return out;
   }
 
-  /* (non-Javadoc)
-   * @see sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeImage(sonata.kernel.vimadaptor.commons.VnfImage)
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeImage(sonata.kernel.vimadaptor.commons.
+   * VnfImage)
    */
   @Override
   public void removeImage(VnfImage image) {
     // TODO Auto-generated method stub
-    
+
   }
 
 }

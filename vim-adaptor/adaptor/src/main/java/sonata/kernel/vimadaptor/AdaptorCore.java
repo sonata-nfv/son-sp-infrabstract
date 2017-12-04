@@ -41,7 +41,12 @@ import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.VimRepo;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -147,6 +152,11 @@ public class AdaptorCore {
     northConsumer = new RabbitMqConsumer(dispatcherQueue);
     northProducer = new RabbitMqProducer(muxQueue);
 
+    if(System.getenv("SONATA_SP_ADDRESS")==null){
+      Logger.error("CRITIC ERROR! \"SONATA_SP_ADDRESS\" ENV VARIABLE NOT SET");
+      System.exit(1);
+    }
+    
     status = "READY";
 
   }

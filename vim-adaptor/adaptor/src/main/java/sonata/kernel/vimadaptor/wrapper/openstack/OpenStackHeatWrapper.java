@@ -939,6 +939,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     inputNetMap.put("get_resource", "SonataService.input.net." + instanceId);
     inputSubnet.putProperty("network", inputNetMap);
     model.addResource(inputSubnet);
+    
+    // Internal input network router interface
+    HeatResource inputRouterInterface = new HeatResource();
+    inputRouterInterface.setType("OS::Neutron::RouterInterface");
+    inputRouterInterface.setName("SonataService.input.internal." + instanceId);
+    HashMap<String, Object> inputSubnetMapInt = new HashMap<String, Object>();
+    inputSubnetMapInt.put("get_resource", "SonataService.input.subnet." + instanceId);
+    inputRouterInterface.putProperty("subnet", inputSubnetMapInt);
+    inputRouterInterface.putProperty("router", tenantExtRouter);
+    model.addResource(inputRouterInterface);
 
     // Create the output net and subnet
     HeatResource outputNetwork = new HeatResource();
@@ -961,6 +971,16 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     outputSubnet.putProperty("network", outputNetMap);
     model.addResource(outputSubnet);
 
+    // Internal output network router interface
+    HeatResource outputRouterInterface = new HeatResource();
+    outputRouterInterface.setType("OS::Neutron::RouterInterface");
+    outputRouterInterface.setName("SonataService.output.internal." + instanceId);
+    HashMap<String, Object> outputSubnetMapInt = new HashMap<String, Object>();
+    outputSubnetMapInt.put("get_resource", "SonataService.output.subnet." + instanceId);
+    outputRouterInterface.putProperty("subnet", outputSubnetMapInt);
+    outputRouterInterface.putProperty("router", tenantExtRouter);
+    model.addResource(outputRouterInterface);
+    
     model.prepare();
 
     HeatTemplate template = new HeatTemplate();
@@ -1384,7 +1404,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // END COMMENT
     HeatModel model = new HeatModel();
     ArrayList<String> publicPortNames = new ArrayList<String>();
-    
+
+    addSpAddressCloudConfigObject(vnfd, instanceUuid, model);
+
     boolean hasPubKey = (publicKey != null);
     if (hasPubKey) {
       HeatResource keypair = new HeatResource();
@@ -1407,17 +1429,39 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       userMap.put("home", "/home/sonatamano");
       Object[] usersList = {"default", userMap};
 
-      HashMap<String, Object> cloudConfigMap = new HashMap<String, Object>();
-      cloudConfigMap.put("users", usersList);
+      HashMap<String, Object> keyCloudConfigMap = new HashMap<String, Object>();
+      keyCloudConfigMap.put("users", usersList);
 
-      HeatResource cloudConfigObject = new HeatResource();
-      cloudConfigObject.setType("OS::Heat::CloudConfig");
-      cloudConfigObject.setName(vnfd.getName() + "_" + instanceUuid + "_cloudConfig");
-      cloudConfigObject.putProperty("cloud_config", cloudConfigMap);
-      model.addResource(cloudConfigObject);
-
-    }
+      HeatResource keycloudConfigObject = new HeatResource();
+      keycloudConfigObject.setType("OS::Heat::CloudConfig");
+      keycloudConfigObject.setName(vnfd.getName() + "_" + instanceUuid + "_keyCloudConfig");
+      keycloudConfigObject.putProperty("cloud_config", keyCloudConfigMap);
+      model.addResource(keycloudConfigObject);
     
+      HashMap<String, Object> keyInitMap = new HashMap<String, Object>();
+      keyInitMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_keyCloudConfig");
+      
+      HashMap<String,Object> partMap1 = new HashMap<String, Object>();
+      partMap1.put("config", keyInitMap);
+
+      
+      HashMap<String, Object> spAddressInitMap = new HashMap<String, Object>();
+      spAddressInitMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
+
+      HashMap<String,Object> partMap2 = new HashMap<String, Object>();
+      partMap2.put("config", spAddressInitMap);
+
+      ArrayList<HashMap<String,Object>> configList = new ArrayList<HashMap<String, Object>>();
+      
+      configList.add(partMap1);
+      configList.add(partMap2);      
+      
+      HeatResource serverInitObject = new HeatResource();
+      serverInitObject.setType("OS::Heat::MultipartMime");
+      serverInitObject.setName(vnfd.getName() + "_" + instanceUuid + "_serverInit");
+      serverInitObject.putProperty("parts", configList);
+      model.addResource(serverInitObject);
+    }    
     
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Each VDU goes into a resource group with a number of Heat Server...");
@@ -1440,11 +1484,19 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       server.putProperty("image", imageName);
 
       if (hasPubKey) {
+        // Put the MultiPartMime
         HashMap<String, Object> keyMap = new HashMap<String, Object>();
         keyMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_keypair");
         server.putProperty("key_name", keyMap);
+        
         HashMap<String, Object> userDataMap = new HashMap<String, Object>();
-        userDataMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_cloudConfig");
+        userDataMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_serverInit");
+        server.putProperty("user_data", userDataMap);
+        server.putProperty("user_data_format", "RAW");
+      } else{
+        // Put just the spAddressCloudConfig
+        HashMap<String, Object> userDataMap = new HashMap<String, Object>();
+        userDataMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
         server.putProperty("user_data", userDataMap);
         server.putProperty("user_data_format", "RAW");
       }
@@ -1544,6 +1596,27 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     model.prepare();
     return model;
+  }
+
+  private void addSpAddressCloudConfigObject(VnfDescriptor vnfd, String instanceUuid,
+      HeatModel model) {
+    String sonataSpAddress = System.getenv("SONATA_SP_ADDRESS");
+        
+    HashMap<String, Object> fileToWrite = new HashMap<String,Object>();
+    fileToWrite.put("path", "etc/sonata_sp_address.conf");
+    fileToWrite.put("content", "SP_ADDRESS="+sonataSpAddress+"\n");
+
+    ArrayList<HashMap<String, Object>> filesToWrite = new ArrayList<HashMap<String, Object>>();
+    filesToWrite.add(fileToWrite);
+    
+    HashMap<String, Object> spAddressCloudConfigMap = new HashMap<String, Object>();
+    spAddressCloudConfigMap.put("write_files", filesToWrite);
+    
+    HeatResource spAddressCloudConfigObject = new HeatResource();
+    spAddressCloudConfigObject.setType("OS::Heat::CloudConfig");
+    spAddressCloudConfigObject.setName(vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
+    spAddressCloudConfigObject.putProperty("cloud_config", spAddressCloudConfigMap);
+    model.addResource(spAddressCloudConfigObject);
   }
 
 }

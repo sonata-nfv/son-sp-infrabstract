@@ -1,6 +1,7 @@
 package sonata.kernel.vimadaptor.wrapper.sp.client;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -14,8 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import sonata.kernel.vimadaptor.commons.ServiceRecord;
 import sonata.kernel.vimadaptor.commons.VimResources;
+import sonata.kernel.vimadaptor.commons.VnfRecord;
+import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.RequestObject;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.SonataAuthenticationResponse;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.VimRequestStatus;
 
@@ -141,6 +146,60 @@ public class SonataGkClient {
 
     return list;
 
+  }
+
+  /**
+   * @return a List of ServiceDescriptor object taken from the Gatekeeper
+   */
+  public ArrayList<ServiceDescriptor> getServices() {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param requestUuid uuid of the GK request
+   * @return a String representing the status of the request
+   */
+  public String getInstantiationStatus(String requestUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param serviceUuid the uuid of the NSD to be instantiated
+   * @return a String representing the generated request UUID
+   */
+  public String instantiateService(String serviceUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param requestUuid the UUID of the request
+   * @return a RequestObject that contains information on the request
+   */
+  public RequestObject getRequest(String requestUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param serviceInstanceUuid the UUID of the service instance
+   * @return the ServiceRecord associated with this service instance
+   *
+   */
+  public ServiceRecord getNsr(String serviceInstanceUuid) {
+    // TODO Auto-generated method stub
+    return null;
+  }
+
+  /**
+   * @param vnfrId the ID of the VNFR to retrieve
+   * @return the VnfRecord object for the specified VNFR ID
+   */
+  public VnfRecord getVnfr(String vnfrId) {
+    // TODO Auto-generated method stub
+    return null;
   }
   
 }

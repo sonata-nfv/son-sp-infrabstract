@@ -86,11 +86,6 @@ public class OvsWrapper extends NetworkWrapper {
 
     long start = System.currentTimeMillis();
 
-    // TODO the NSD specifies more than one graph, and the selected one is given in the flavor
-    // section.
-    // This is not implemented in the first version.
-
-
     String serviceInstanceId = data.getServiceInstanceId();
     ServiceDescriptor nsd = data.getNsd();
     ArrayList<VnfRecord> vnfrs = data.getVnfrs();
@@ -162,7 +157,7 @@ public class OvsWrapper extends NetworkWrapper {
             Logger.info(link.getConnectionPointsReference().toString());
           }
           throw new Exception(
-              "Illegal Format: unable to find the vnfd.VL connected to the VNFD.CP=" + cpRef);
+              "Illegal Format: unable to find the vnfd.VL connected to the VNFD.CP=" + vnfId+":"+cpRef);
         }
 
         if (inputLink.getConnectionPointsReference().size() != 2) {
