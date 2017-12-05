@@ -152,6 +152,9 @@ public class AdaptorCore {
     northConsumer = new RabbitMqConsumer(dispatcherQueue);
     northProducer = new RabbitMqProducer(muxQueue);
 
+    SecurityManager m = new SecurityManager();
+    m.checkPropertyAccess("SONATA_SP_ADDRESS");
+    
     if(System.getenv("SONATA_SP_ADDRESS")==null){
       Logger.error("CRITIC ERROR! \"SONATA_SP_ADDRESS\" ENV VARIABLE NOT SET");
       System.exit(1);
