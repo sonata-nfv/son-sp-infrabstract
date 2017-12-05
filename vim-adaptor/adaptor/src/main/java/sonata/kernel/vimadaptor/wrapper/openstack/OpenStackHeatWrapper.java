@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
+import sonata.kernel.vimadaptor.AdaptorCore;
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
 import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
@@ -1600,7 +1601,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
   private void addSpAddressCloudConfigObject(VnfDescriptor vnfd, String instanceUuid,
       HeatModel model) {
-    String sonataSpAddress = System.getenv("SONATA_SP_ADDRESS");
+    
+    
+    String sonataSpAddress = (String)AdaptorCore.getInstance().getSystemParameter("sonata_sp_address");
         
     HashMap<String, Object> fileToWrite = new HashMap<String,Object>();
     fileToWrite.put("path", "etc/sonata_sp_address.conf");

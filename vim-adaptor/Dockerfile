@@ -22,6 +22,7 @@ ADD adaptor /adaptor
 ADD broker.config /etc/son-mano/broker.config
 ADD postgres.config /etc/son-mano/postgres.config
 ADD mistral.config /etc/son-mano/mistral.config
+ADD sonata.config /etc/son-mano/sonata.config
 
 ADD son-sp-infra-* /usr/local/bin/
 ADD son-sp-infra /etc/init.d/

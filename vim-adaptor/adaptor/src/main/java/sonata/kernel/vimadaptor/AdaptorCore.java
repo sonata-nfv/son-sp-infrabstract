@@ -60,7 +60,23 @@ public class AdaptorCore {
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AdaptorCore.class);
   private static final String version = "0.0.1";
   private static final int writeLockCoolDown = 100000;
+  private static final String SONATA_CONFIG_FILEPATH = "/etc/son-mano/sonata.config";
+  private static AdaptorCore myInstance = null;
+  private Properties sonataProperties;
 
+  
+  public static AdaptorCore getInstance(){
+   if (myInstance == null){
+     myInstance = new AdaptorCore(0.1);
+   } 
+   return myInstance;
+  }
+  
+  
+  public Object getSystemParameter(String key){
+    return sonataProperties.getProperty(key);
+  }
+  
   /**
    * Main method. param args the adaptor take no args.
    */
@@ -76,17 +92,16 @@ public class AdaptorCore {
 
     System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient",
         "warn");
-
+    
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
-        if(core.getState().equals("RUNNNING"))
-          core.stop();
+        if(AdaptorCore.getInstance().getState().equals("RUNNNING"))
+          AdaptorCore.getInstance().stop();
       }
     });
-    core = new AdaptorCore(0.1);
-    core.start();
-
+    AdaptorCore.getInstance().start();
+    
   }
 
   private AdaptorDispatcher dispatcher;
@@ -124,6 +139,7 @@ public class AdaptorCore {
     WrapperBay.getInstance().setRepo(repo);
     status = "READY";
     this.rate = rate;
+    this.sonataProperties = parseConfigFile();
   }
 
   /**
@@ -131,7 +147,10 @@ public class AdaptorCore {
    * 
    * @param rate of the heart-beat in beat/s
    */
-  public AdaptorCore(double rate) {
+  private AdaptorCore(double rate) {
+    
+    this.sonataProperties = parseConfigFile();
+    
     this.rate = rate;
     // instantiate the Adaptor:
     // - Mux and queue
@@ -152,14 +171,6 @@ public class AdaptorCore {
 
     northConsumer = new RabbitMqConsumer(dispatcherQueue);
     northProducer = new RabbitMqProducer(muxQueue);
-
-    SecurityManager m = new SecurityManager();
-    m.checkPropertyAccess("SONATA_SP_ADDRESS");
-    
-    if(System.getenv("SONATA_SP_ADDRESS")==null){
-      Logger.error("CRITIC ERROR! \"SONATA_SP_ADDRESS\" ENV VARIABLE NOT SET");
-      System.exit(1);
-    }
     
     status = "RUNNING";
 
@@ -302,4 +313,26 @@ public class AdaptorCore {
       }
     }
   }
+  
+  private static Properties parseConfigFile() {
+    Logger.debug("Parsing sonata.config conf file");
+    Properties prop = new Properties();
+    try {
+      InputStreamReader in =
+          new InputStreamReader(new FileInputStream(SONATA_CONFIG_FILEPATH), Charset.forName("UTF-8"));
+
+      JSONTokener tokener = new JSONTokener(in);
+
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+
+      String brokerUrl = jsonObject.getString("sonata_sp_address");
+      prop.put("sonata_sp_address", brokerUrl);
+    } catch (FileNotFoundException e) {
+      Logger.error("Unable to load Broker Config file", e);
+      System.exit(1);
+    }
+    Logger.debug("sonata.config conf file parsed");
+    return prop;
+  }
+  
 }
