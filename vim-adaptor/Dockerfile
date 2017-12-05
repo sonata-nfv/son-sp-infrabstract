@@ -1,4 +1,4 @@
-FROM maven:3.3.9-jdk-7
+FROM maven:3.5.2-jdk-8
 MAINTAINER D.Valocchi <d.valocchi@ucl.ac.uk>
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
@@ -22,6 +22,7 @@ ADD adaptor /adaptor
 ADD broker.config /etc/son-mano/broker.config
 ADD postgres.config /etc/son-mano/postgres.config
 ADD mistral.config /etc/son-mano/mistral.config
+ADD sonata.config /etc/son-mano/sonata.config
 
 ADD son-sp-infra-* /usr/local/bin/
 ADD son-sp-infra /etc/init.d/
@@ -48,8 +49,6 @@ ENV repo_pass sonata
 ENV SONATA_SP_ADDRESS 127.0.0.1
 
 ENV mistral_server mistral
-
-ENV SONATA_SP_ADDRESS localhost
 
 RUN mvn -e -q compile assembly:single;
 #RUN mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true clean compile assembly:single;
