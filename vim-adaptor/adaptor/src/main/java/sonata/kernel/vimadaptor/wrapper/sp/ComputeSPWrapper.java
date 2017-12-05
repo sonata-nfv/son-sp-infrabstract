@@ -45,7 +45,7 @@ import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
 import sonata.kernel.vimadaptor.wrapper.sp.client.SonataGkClient;
-import sonata.kernel.vimadaptor.wrapper.sp.client.model.RequestObject;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkRequestStatus;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -87,7 +87,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
 
-    // TODO Implement this function by:    
+    // TODO Implement this function by:
     // - Fetch available NS from the lower level SP
     Logger.info("[SpWrapper] Creating SONATA Rest Client");
     SonataGkClient gkClient = new SonataGkClient(this.getConfig().getVimEndpoint(),
@@ -96,7 +96,18 @@ public class ComputeSPWrapper extends ComputeWrapper {
     Logger.info("[SpWrapper] Authenticating SONATA Rest Client");
     if (!gkClient.authenticate()) throw new NotAuthorizedException("Client cannot login to the SP");
 
-    ArrayList<ServiceDescriptor> availableNsds = gkClient.getServices();
+    ArrayList<ServiceDescriptor> availableNsds;
+    try {
+      availableNsds = gkClient.getServices();
+    } catch (IOException e1) {
+      Logger.error("unable to contact the GK to check the list available services");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Functiono deployment process failed. Can't get available services.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+
     String serviceUuid = null;
     VnfDescriptor vnfd = data.getVnfd();
     for (ServiceDescriptor nsd : availableNsds) {
@@ -136,7 +147,13 @@ public class ComputeSPWrapper extends ComputeWrapper {
     String status = null;
     while ((status == null || !status.equals("READY") || !status.equals("ERROR"))
         && counter < maxCounter) {
-      status = gkClient.getInstantiationStatus(requestUuid);
+      try {
+        status = gkClient.getInstantiationStatus(requestUuid);
+      } catch (IOException e1) {
+        Logger.error(
+            "Error while retrieving the Service instantiation request status. Trying again in "
+                + (wait / 1000) + " seconds");
+      }
       Logger.info("Status of request" + requestUuid + ": " + status);
       if (status != null && (status.equals("READY") || status.equals("ERROR"))) {
         break;
@@ -152,7 +169,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     }
 
     if (status == null) {
-      Logger.error("unable to contact the GK to check the service instantiation status");
+      Logger.error("Unable to contact the GK to check the service instantiation status");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Functiono deployment process failed. Can't get instantiation status.");
       this.markAsChanged();
@@ -162,7 +179,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     if (status.equals("ERROR")) {
       Logger.error("Service instantiation failed on the other SP side.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
-          "Function deployment process failed on the VIM side.");
+          "Function deployment process failed on the lower SP side.");
       this.markAsChanged();
       this.notifyObservers(update);
       return;
@@ -171,14 +188,44 @@ public class ComputeSPWrapper extends ComputeWrapper {
 
     // Get NSR to retrieve VNFR_ID
 
-    RequestObject instantiationRequest = gkClient.getRequest(requestUuid);
+    GkRequestStatus instantiationRequest;
+    try {
+      instantiationRequest = gkClient.getRequest(requestUuid);
+    } catch (IOException e) {
+      Logger.error("Service instantiation failed. Can't retrieve instantiation request status.");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Function deployment process failed. Can't retrieve instantiation request status.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
 
-    ServiceRecord nsr = gkClient.getNsr(instantiationRequest.getServiceInstanceUuid());
+    ServiceRecord nsr;
+    try {
+      nsr = gkClient.getNsr(instantiationRequest.getServiceInstanceUuid());
+    } catch (IOException e1) {
+      Logger.error("Service instantiation failed. Can't retrieve NSR of instantiated service.");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Function deployment process failed. Can't retrieve NSR of instantiated service.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
 
     // Get VNFR
     // There will be just one VNFR referenced by this NSR
     String vnfrId = nsr.getNetworkFunctions().get(0).getVnfrId();
-    VnfRecord remoteVnfr = gkClient.getVnfr(vnfrId);
+    VnfRecord remoteVnfr;
+    try {
+      remoteVnfr = gkClient.getVnfr(vnfrId);
+    } catch (IOException e1) {
+      Logger.error("Service instantiation failed. Can't retrieve VNFR of instantiated function.");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
+          "Function deployment process failed. Can't retrieve VNFR of instantiated function.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
 
 
 
@@ -198,13 +245,13 @@ public class ComputeSPWrapper extends ComputeWrapper {
     vnfr.setStatus(Status.offline);
 
     vnfr.setVirtualDeploymentUnits(remoteVnfr.getVirtualDeploymentUnits());
-    
-    for(VduRecord vdur : vnfr.getVirtualDeploymentUnits()){
-      for (VnfcInstance vnfc : vdur.getVnfcInstance()){
+
+    for (VduRecord vdur : vnfr.getVirtualDeploymentUnits()) {
+      for (VnfcInstance vnfc : vdur.getVnfcInstance()) {
         vnfc.setVimId(data.getVimUuid());
       }
     }
-    
+
     // Send the response back
     response.setVnfr(vnfr);
     String body = null;
