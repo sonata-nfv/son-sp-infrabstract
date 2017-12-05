@@ -80,7 +80,8 @@ public class AdaptorCore {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
-        core.stop();
+        if(core.getState().equals("RUNNNING"))
+          core.stop();
       }
     });
     core = new AdaptorCore(0.1);
@@ -160,7 +161,7 @@ public class AdaptorCore {
       System.exit(1);
     }
     
-    status = "READY";
+    status = "RUNNING";
 
   }
 

@@ -1,4 +1,4 @@
-FROM maven:3.3.9-jdk-7
+FROM maven:3.5.2-jdk-8
 MAINTAINER D.Valocchi <d.valocchi@ucl.ac.uk>
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
