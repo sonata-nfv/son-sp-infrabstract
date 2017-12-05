@@ -15,3 +15,4 @@ sed -i "s/SONATA_SP_ADDRESS/$SONATA_SP_ADDRESS/" /etc/son-mano/sonata.config
 cat /etc/son-mano/postgres.config
 cat /etc/son-mano/mistral.config
 cat /etc/son-mano/broker.config
+cat /etc/son-mano/sonata.config
