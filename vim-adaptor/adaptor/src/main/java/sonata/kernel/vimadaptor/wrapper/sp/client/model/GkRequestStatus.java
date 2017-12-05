@@ -27,59 +27,101 @@ package sonata.kernel.vimadaptor.wrapper.sp.client.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class RequestObject {
+import sonata.kernel.vimadaptor.commons.NapObject;
+
+import java.util.ArrayList;
+
+public class GkRequestStatus {
+
 
   @JsonProperty("id")
   private String id;
+  @JsonProperty("created_at")
+  private String createdAt;
+  @JsonProperty("updated_at")
+  private String updatedAt;
   @JsonProperty("service_uuid")
-  private String uuid;
-  @JsonProperty("request_type")
-  private String requestType;
+  private String serviceUuid;
   @JsonProperty("status")
   private String status;
+  @JsonProperty("request_type")
+  private String requestType;
   @JsonProperty("service_instance_uuid")
   private String serviceInstanceUuid;
+  @JsonProperty("ingress")
+  private ArrayList<NapObject> ingresses;
+  @JsonProperty("egress")
+  private ArrayList<NapObject> egresses;
 
   public String getId() {
     return id;
   }
 
-  public String getUuid() {
-    return uuid;
+  public String getCreatedAt() {
+    return createdAt;
   }
 
-  public String getRequestType() {
-    return requestType;
+  public String getUpdatedAt() {
+    return updatedAt;
+  }
+
+  public String getServiceUuid() {
+    return serviceUuid;
   }
 
   public String getStatus() {
     return status;
   }
 
+  public String getRequestType() {
+    return requestType;
+  }
+
   public String getServiceInstanceUuid() {
     return serviceInstanceUuid;
+  }
+
+  public ArrayList<NapObject> getIngresses() {
+    return ingresses;
+  }
+
+  public ArrayList<NapObject> getEgresses() {
+    return egresses;
   }
 
   public void setId(String id) {
     this.id = id;
   }
 
-  public void setUuid(String uuid) {
-    this.uuid = uuid;
+  public void setCreatedAt(String createdAt) {
+    this.createdAt = createdAt;
   }
 
-  public void setRequestType(String requestType) {
-    this.requestType = requestType;
+  public void setUpdatedAt(String updatedAt) {
+    this.updatedAt = updatedAt;
+  }
+
+  public void setServiceUuid(String serviceUuid) {
+    this.serviceUuid = serviceUuid;
   }
 
   public void setStatus(String status) {
     this.status = status;
   }
 
+  public void setRequestType(String requestType) {
+    this.requestType = requestType;
+  }
+
   public void setServiceInstanceUuid(String serviceInstanceUuid) {
     this.serviceInstanceUuid = serviceInstanceUuid;
   }
 
+  public void setIngresses(ArrayList<NapObject> ingresses) {
+    this.ingresses = ingresses;
+  }
 
-
+  public void setEgresses(ArrayList<NapObject> egresses) {
+    this.egresses = egresses;
+  }
 }

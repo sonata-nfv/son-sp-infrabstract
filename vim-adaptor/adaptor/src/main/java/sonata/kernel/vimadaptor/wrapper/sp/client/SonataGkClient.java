@@ -20,7 +20,8 @@ import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
-import sonata.kernel.vimadaptor.wrapper.sp.client.model.RequestObject;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkRequestStatus;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkServiceListEntry;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.SonataAuthenticationResponse;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.VimRequestStatus;
 
@@ -40,6 +41,11 @@ public class SonataGkClient {
     this.password = password;
   }
 
+  /**
+   * @return Return after a successful authentication.
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
+   */
   public boolean authenticate() {
 
     HttpClient httpClient = HttpClientBuilder.create().build();
@@ -87,6 +93,11 @@ public class SonataGkClient {
     }
   }
 
+  /**
+   * @return a List of VimResource object taken from the Gatekeeper
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
+   */
   public VimResources[] getVims() throws ClientProtocolException, IOException {
     HttpClient httpClient = HttpClientBuilder.create().build();
     HttpGet get;
@@ -150,56 +161,220 @@ public class SonataGkClient {
 
   /**
    * @return a List of ServiceDescriptor object taken from the Gatekeeper
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
    */
-  public ArrayList<ServiceDescriptor> getServices() {
-    // TODO Auto-generated method stub
-    return null;
+  public ArrayList<ServiceDescriptor> getServices() throws ClientProtocolException, IOException {
+
+    Logger.debug("[SONATA-GK-CLient] Retrieving active services: ");
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpGet get;
+    HttpResponse response = null;
+
+    StringBuilder buildUrl = new StringBuilder();
+    buildUrl.append("http://");
+    buildUrl.append(this.host);
+    buildUrl.append("/api/v2/services?status=active");
+
+    get = new HttpGet(buildUrl.toString());
+
+    get.addHeader("Authorization:Bearer", this.token);
+    response = httpClient.execute(get);
+
+    Logger.debug("[SONATA-GK-CLient] /vim endpoint response (Request Object):");
+    Logger.debug(response.toString());
+
+    ObjectMapper mapper = new ObjectMapper();
+
+    String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug(stringResponse);
+
+    GkServiceListEntry[] activeServices =
+        mapper.readValue(stringResponse, GkServiceListEntry[].class);
+
+    ArrayList<ServiceDescriptor> output = new ArrayList<ServiceDescriptor>();
+    for (GkServiceListEntry entry : activeServices) {
+      output.add(entry.getNsd());
+    }
+    return output;
   }
 
   /**
    * @param requestUuid uuid of the GK request
    * @return a String representing the status of the request
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
    */
-  public String getInstantiationStatus(String requestUuid) {
-    // TODO Auto-generated method stub
-    return null;
+  public String getInstantiationStatus(String requestUuid) throws ClientProtocolException, IOException {
+    Logger.debug("[SONATA-GK-CLient] Getting request information object");
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpGet get;
+    HttpResponse response = null;
+
+    StringBuilder buildUrl = new StringBuilder();
+    buildUrl.append("http://");
+    buildUrl.append(this.host);
+    buildUrl.append("/api/v2/requests");
+    buildUrl.append("/"+requestUuid);
+
+    get = new HttpGet(buildUrl.toString());
+    
+    response = httpClient.execute(get);
+    
+    String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug(stringResponse);
+
+    ObjectMapper mapper = new ObjectMapper();
+    
+    GkRequestStatus requestRequestObject =
+        mapper.readValue(stringResponse, GkRequestStatus.class);
+
+    
+    return requestRequestObject.getId();
   }
 
   /**
    * @param serviceUuid the uuid of the NSD to be instantiated
    * @return a String representing the generated request UUID
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
    */
-  public String instantiateService(String serviceUuid) {
-    // TODO Auto-generated method stub
-    return null;
+  public String instantiateService(String serviceUuid) throws ClientProtocolException, IOException {
+
+    Logger.debug("[SONATA-GK-CLient] Creating a new instantiation request");
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpPost post;
+    HttpResponse response = null;
+
+    StringBuilder buildUrl = new StringBuilder();
+    buildUrl.append("http://");
+    buildUrl.append(this.host);
+    buildUrl.append("/api/v2/requests");
+
+    String body =
+        String.format("{\"service_uuid\": \"%s\", \"ingresses\":[], \"egresses\":[]}", serviceUuid);
+
+    post = new HttpPost(buildUrl.toString());
+    post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+
+    response = httpClient.execute(post);
+    
+    String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug(stringResponse);
+
+    ObjectMapper mapper = new ObjectMapper();
+    
+    GkRequestStatus requestObject =
+        mapper.readValue(stringResponse, GkRequestStatus.class);
+
+    
+    return requestObject.getId();
   }
 
   /**
    * @param requestUuid the UUID of the request
    * @return a RequestObject that contains information on the request
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
    */
-  public RequestObject getRequest(String requestUuid) {
-    // TODO Auto-generated method stub
-    return null;
+  public GkRequestStatus getRequest(String requestUuid) throws ClientProtocolException, IOException {
+    Logger.debug("[SONATA-GK-CLient] Getting request information object...");
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpGet get;
+    HttpResponse response = null;
+
+    StringBuilder buildUrl = new StringBuilder();
+    buildUrl.append("http://");
+    buildUrl.append(this.host);
+    buildUrl.append("/api/v2/requests");
+    buildUrl.append("/"+requestUuid);
+
+    get = new HttpGet(buildUrl.toString());
+    
+    response = httpClient.execute(get);
+    
+    String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug(stringResponse);
+
+    ObjectMapper mapper = new ObjectMapper();
+    
+    GkRequestStatus requestObject =
+        mapper.readValue(stringResponse, GkRequestStatus.class);
+    
+    return requestObject;
   }
 
   /**
    * @param serviceInstanceUuid the UUID of the service instance
    * @return the ServiceRecord associated with this service instance
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error 
    *
    */
-  public ServiceRecord getNsr(String serviceInstanceUuid) {
-    // TODO Auto-generated method stub
-    return null;
+  public ServiceRecord getNsr(String serviceInstanceUuid) throws ClientProtocolException, IOException {
+    Logger.debug("[SONATA-GK-CLient] Getting request information object...");
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpGet get;
+    HttpResponse response = null;
+
+    StringBuilder buildUrl = new StringBuilder();
+    buildUrl.append("http://");
+    buildUrl.append(this.host);
+    buildUrl.append("/api/v2/records/services");
+    buildUrl.append("/"+serviceInstanceUuid);
+
+    get = new HttpGet(buildUrl.toString());
+    
+    response = httpClient.execute(get);
+    
+    String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug(stringResponse);
+
+    ObjectMapper mapper = new ObjectMapper();
+    
+    ServiceRecord serviceRecord=
+        mapper.readValue(stringResponse, ServiceRecord.class);
+    
+    return serviceRecord;
   }
 
   /**
    * @param vnfrId the ID of the VNFR to retrieve
    * @return the VnfRecord object for the specified VNFR ID
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
    */
-  public VnfRecord getVnfr(String vnfrId) {
-    // TODO Auto-generated method stub
-    return null;
+  public VnfRecord getVnfr(String vnfrId) throws ClientProtocolException, IOException {
+    Logger.debug("[SONATA-GK-CLient] Getting request information object...");
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpGet get;
+    HttpResponse response = null;
+
+    StringBuilder buildUrl = new StringBuilder();
+    buildUrl.append("http://");
+    buildUrl.append(this.host);
+    buildUrl.append("/api/v2/records/functions");
+    buildUrl.append("/"+vnfrId);
+
+    get = new HttpGet(buildUrl.toString());
+    
+    response = httpClient.execute(get);
+    
+    String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug(stringResponse);
+
+    ObjectMapper mapper = new ObjectMapper();
+    
+    VnfRecord functionRecord=
+        mapper.readValue(stringResponse, VnfRecord.class);
+    
+    return functionRecord;
   }
-  
+
 }
