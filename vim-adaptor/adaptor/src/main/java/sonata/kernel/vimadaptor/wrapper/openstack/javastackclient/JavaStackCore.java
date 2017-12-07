@@ -291,8 +291,11 @@ public class JavaStackCore {
       }
 
       mapper = new ObjectMapper();
+      String httpResponseString = JavaStackUtils.convertHttpResponseToString(response);
+      Logger.debug("[JavaStack] Authentication response body:");
+      Logger.debug(httpResponseString);
       AuthenticationDataV3 auth = mapper.readValue(
-          JavaStackUtils.convertHttpResponseToString(response), AuthenticationDataV3.class);
+          httpResponseString, AuthenticationDataV3.class);
 
       ArrayList<CatalogItem> catalogItems = auth.getToken().getCatalog();
       for (CatalogItem catalogItem : catalogItems) {
