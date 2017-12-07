@@ -230,7 +230,7 @@ public class JavaStackCore {
 
       String httpResponseString = JavaStackUtils.convertHttpResponseToString(response);
       Logger.debug("[JavaStack] Authentication response body:");
-      Logged.debug(httpResponseString);
+      Logger.debug(httpResponseString);
       AuthenticationData auth = mapper.readValue(
           httpResponseString, AuthenticationData.class);
 
