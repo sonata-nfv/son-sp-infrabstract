@@ -228,8 +228,11 @@ public class JavaStackCore {
 
       mapper = new ObjectMapper();
 
+      String httpResponseString = JavaStackUtils.convertHttpResponseToString(response);
+      Logger.debug("[JavaStack] Authentication response body:");
+      Logger.debug(httpResponseString);
       AuthenticationData auth = mapper.readValue(
-          JavaStackUtils.convertHttpResponseToString(response), AuthenticationData.class);
+          httpResponseString, AuthenticationData.class);
 
       this.token_id = auth.getAccess().getToken().getId();
       this.projectId = auth.getAccess().getToken().getTenant().getId();
