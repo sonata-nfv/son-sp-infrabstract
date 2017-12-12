@@ -42,30 +42,37 @@ import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.wrapper.SonataGkMockedClient;
 
 public class SPWrapperTest {
-	
-	  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(SPWrapperTest.class);
-	  
-	  @Before
-	  public void setUp(){
-		    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
-		    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
-		    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
-		    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
-		  }
-	  
-	  
-	  @Test
-	  public void listPoPs()
-		      throws NotAuthorizedException, ClientProtocolException, IOException {
 
-		    Logger.info("[SpWrapperTest] Creating SONATA Rest Client");
-		    SonataGkMockedClient client = new SonataGkMockedClient();
+	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(SPWrapperTest.class);
 
-		    Logger.info("[SpWrapperTest] Retrieving VIMs connected to slave SONATA SP");
-		    VimResources[] out = client.getVims();
+	@Before
+	public void setUp() {
+		System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+		System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+		System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+		System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+	}
 
-		    Logger.info("[SpWrapperTest] VIMs list size: "+out.length);
-		    Assert.assertTrue(out.length == 5);
-		  }
-	  
+	@Test
+	public void listPoPs() throws NotAuthorizedException, ClientProtocolException, IOException {
+
+		String[] vim_cities = {"Athens", "Aveiro", "London", "Paderborn", "Tel Aviv"};
+		
+		Logger.info("[SpWrapperTest] Creating SONATA Rest Client");
+		SonataGkMockedClient client = new SonataGkMockedClient();
+
+		Logger.info("[SpWrapperTest] Retrieving VIMs connected to slave SONATA SP");
+		VimResources[] out = client.getVims();
+
+		Logger.info("[SpWrapperTest] VIMs list size: " + out.length);
+		
+		//mocked vim list must contains 5 elements
+		Assert.assertTrue(out.length == 5);
+		
+		//mocked vim list contains the vim_cities
+		for (int i=0;i<out.length;i++){
+			Assert.assertTrue(Arrays.asList(vim_cities).contains(out[i].getVimCity()));
+		}
+	}
+
 }
