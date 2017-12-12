@@ -231,8 +231,7 @@ public class JavaStackCore {
       String httpResponseString = JavaStackUtils.convertHttpResponseToString(response);
       Logger.debug("[JavaStack] Authentication response body:");
       Logger.debug(httpResponseString);
-      AuthenticationData auth = mapper.readValue(
-          httpResponseString, AuthenticationData.class);
+      AuthenticationData auth = mapper.readValue(httpResponseString, AuthenticationData.class);
 
       this.token_id = auth.getAccess().getToken().getId();
       this.projectId = auth.getAccess().getToken().getTenant().getId();
@@ -266,13 +265,23 @@ public class JavaStackCore {
 
       post = new HttpPost(buildUrl.toString());
       String body = String.format(
-          "{\n" + "    \"auth\": {\n" + "        \"identity\": {\n" + "            \"methods\": [\n"
-              + "                \"password\"\n" + "            ],\n"
-              + "            \"password\": {\n" + "                \"user\": {\n"
-              + "                    \"name\": \"%s\",\n" + "                    \"domain\": {\n"
-              + "                        \"name\": \"%s\"\n" + "                    },\n"
-              + "                    \"password\": \"%s\"\n" + "                }\n"
-              + "            }\n" + "        }\n" + "    }\n" + "}",
+        "{\n" + "    \"auth\": {\n" 
+              + "        \"identity\": {\n" 
+              + "            \"methods\": [\n"
+              + "                \"password\"\n" 
+              + "            ],\n"
+              + "            \"password\": {\n" 
+              + "                \"user\": {\n"
+              + "                    \"name\": \"%s\",\n" 
+              + "                    \"domain\": {\n"
+              + "                        \"name\": \"%s\"\n" 
+              + "                    },\n"
+              + "                    \"password\": \"%s\"\n" 
+              + "                }\n"
+              + "            }\n" 
+              + "        }\n" 
+              + "    }\n" 
+              + "}",
           this.username, "default", this.password);
 
       post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
@@ -294,8 +303,7 @@ public class JavaStackCore {
       String httpResponseString = JavaStackUtils.convertHttpResponseToString(response);
       Logger.debug("[JavaStack] Authentication response body:");
       Logger.debug(httpResponseString);
-      AuthenticationDataV3 auth = mapper.readValue(
-          httpResponseString, AuthenticationDataV3.class);
+      AuthenticationDataV3 auth = mapper.readValue(httpResponseString, AuthenticationDataV3.class);
 
       ArrayList<CatalogItem> catalogItems = auth.getToken().getCatalog();
       for (CatalogItem catalogItem : catalogItems) {
@@ -715,10 +723,10 @@ public class JavaStackCore {
 
       listImages = new HttpGet(buildUrl.toString());
       listImages.addHeader(Constants.AUTHTOKEN_HEADER.toString(), this.token_id);
-      
+
       Logger.debug("URL request:");
       Logger.debug(buildUrl.toString());
-      
+
       Logger.debug("HTTP request:");
       Logger.debug(listImages.toString());
 
