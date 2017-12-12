@@ -301,8 +301,39 @@ public class ComputeSPWrapper extends ComputeWrapper {
    */
   @Override
   public ResourceUtilisation getResourceUtilisation() {
-    // TODO Auto-generated method stub
-    return null;
+    ResourceUtilisation out = new ResourceUtilisation();
+    VimResources[] resList = null;
+    try {
+       resList = this.listPoPs();
+    } catch (NotAuthorizedException e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate("", "ERROR", "Can't Authenticate with the underlying SONATA Platform");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return null;
+    } catch (IOException e) {
+      Logger.error(e.getMessage());
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate("", "ERROR", "IO Exception while getting resource utilisation from the underlying SONATA Platform");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return null;
+    }
+    
+    out.setTotCores(0);
+    out.setTotMemory(0);
+    out.setUsedCores(0);
+    out.setUsedMemory(0);
+    
+    for(VimResources res : resList){
+      out.setTotCores(out.getTotCores()+res.getCoreTotal());
+      out.setUsedCores(out.getUsedCores()+res.getCoreUsed());
+      out.setTotMemory(out.getTotMemory()+res.getMemoryTotal());
+      out.setUsedMemory(out.getUsedMemory()+res.getMemoryUsed());
+    }
+    
+    return out;
   }
 
   /*
@@ -365,7 +396,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     // This Wrapper ignores this call
   }
 
-  public VimResources[] listPoPs()
+  private VimResources[] listPoPs()
       throws NotAuthorizedException, ClientProtocolException, IOException {
 
     Logger.info("[SpWrapper] Creating SONATA Rest Client");

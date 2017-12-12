@@ -31,13 +31,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class ResourceUtilisation {
 
   @JsonProperty("CPU_total")
-  public int totCores;
+  private int totCores;
   @JsonProperty("memory_total")
-  public int totMemory;
+  private int totMemory;
   @JsonProperty("CPU_used")
-  public int usedCores;
+  private int usedCores;
   @JsonProperty("memory_used")
-  public int usedMemory;
+  private int usedMemory;
 
   public int getTotCores() {
     return totCores;
