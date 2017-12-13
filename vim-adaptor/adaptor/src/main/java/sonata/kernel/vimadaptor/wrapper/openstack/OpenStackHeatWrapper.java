@@ -1481,7 +1481,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       server.setType("OS::Nova::Server");
       server.setName(null);
       server.putProperty("name",
-          vnfd.getName() + "." + vdu.getId() + "." + instanceUuid + ".%index%");
+          vnfd.getName() + "." + vdu.getId() + "." + instanceUuid + ".instance%index%");
       server.putProperty("image", imageName);
 
       if (hasPubKey) {
