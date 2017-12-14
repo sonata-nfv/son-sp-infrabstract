@@ -101,6 +101,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
       availableNsds = gkClient.getServices();
     } catch (IOException e1) {
       Logger.error("unable to contact the GK to check the list available services");
+      Logger.error(e1.getMessage(), e1);
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Functiono deployment process failed. Can't get available services.");
       this.markAsChanged();
@@ -130,7 +131,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       requestUuid = gkClient.instantiateService(serviceUuid);
     } catch (Exception e) {
-      Logger.error(e.getMessage());
+      Logger.error(e.getMessage(), e);
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
       this.markAsChanged();
@@ -150,6 +151,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
       try {
         status = gkClient.getInstantiationStatus(requestUuid);
       } catch (IOException e1) {
+        Logger.error(e1.getMessage(), e1);
         Logger.error(
             "Error while retrieving the Service instantiation request status. Trying again in "
                 + (wait / 1000) + " seconds");
@@ -192,6 +194,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       instantiationRequest = gkClient.getRequest(requestUuid);
     } catch (IOException e) {
+      Logger.error(e.getMessage(), e);
       Logger.error("Service instantiation failed. Can't retrieve instantiation request status.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Function deployment process failed. Can't retrieve instantiation request status.");
@@ -204,6 +207,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       nsr = gkClient.getNsr(instantiationRequest.getServiceInstanceUuid());
     } catch (IOException e1) {
+      Logger.error(e1.getMessage(),e1);
       Logger.error("Service instantiation failed. Can't retrieve NSR of instantiated service.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Function deployment process failed. Can't retrieve NSR of instantiated service.");
@@ -219,6 +223,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       remoteVnfr = gkClient.getVnfr(vnfrId);
     } catch (IOException e1) {
+      Logger.error(e1.getMessage(),e1);
       Logger.error("Service instantiation failed. Can't retrieve VNFR of instantiated function.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Function deployment process failed. Can't retrieve VNFR of instantiated function.");
@@ -258,7 +263,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       body = mapper.writeValueAsString(response);
     } catch (JsonProcessingException e) {
-      Logger.error(e.getMessage());
+      Logger.error(e.getMessage(),e);
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
       this.markAsChanged();
@@ -306,14 +311,14 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
        resList = this.listPoPs();
     } catch (NotAuthorizedException e) {
-      Logger.error(e.getMessage());
+      Logger.error(e.getMessage(), e);
       WrapperStatusUpdate update =
           new WrapperStatusUpdate("", "ERROR", "Can't Authenticate with the underlying SONATA Platform");
       this.markAsChanged();
       this.notifyObservers(update);
       return null;
     } catch (IOException e) {
-      Logger.error(e.getMessage());
+      Logger.error(e.getMessage(),e );
       WrapperStatusUpdate update =
           new WrapperStatusUpdate("", "ERROR", "IO Exception while getting resource utilisation from the underlying SONATA Platform");
       this.markAsChanged();
