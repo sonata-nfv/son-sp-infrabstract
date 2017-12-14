@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import sonata.kernel.vimadaptor.commons.ServiceRecord;
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
@@ -203,7 +204,7 @@ public class SonataGkClient {
     Logger.debug("[SONATA-GK-CLient] /services endpoint response (Response Object):");
     Logger.debug(response.toString());
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
@@ -246,7 +247,7 @@ public class SonataGkClient {
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
     GkRequestStatus requestRequestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
 
@@ -286,7 +287,7 @@ public class SonataGkClient {
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
     GkRequestStatus requestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
 
@@ -322,7 +323,7 @@ public class SonataGkClient {
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
     GkRequestStatus requestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
 
@@ -358,7 +359,7 @@ public class SonataGkClient {
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
     ServiceRecord serviceRecord = mapper.readValue(stringResponse, ServiceRecord.class);
 
@@ -392,7 +393,7 @@ public class SonataGkClient {
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
     VnfRecord functionRecord = mapper.readValue(stringResponse, VnfRecord.class);
 
