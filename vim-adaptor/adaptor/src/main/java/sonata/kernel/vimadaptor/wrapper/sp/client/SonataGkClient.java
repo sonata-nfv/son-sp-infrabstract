@@ -248,7 +248,7 @@ public class SonataGkClient {
     GkRequestStatus requestRequestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
 
 
-    return requestRequestObject.getId();
+    return requestRequestObject.getStatus();
   }
 
   /**
