@@ -110,7 +110,7 @@ public class SonataGkClient {
 
     get = new HttpGet(buildUrl.toString());
 
-    get.addHeader("Authorization:Bearer", this.token);
+    get.addHeader("Authorization", "Bearer "+this.token);
     response = httpClient.execute(get);
 
     Logger.debug("[SONATA-GK-CLient] /vim endpoint response (Request Object):");
@@ -144,7 +144,7 @@ public class SonataGkClient {
 
       get = new HttpGet(buildUrl.toString());
 
-      get.addHeader("Authorization:Bearer", this.token);
+      get.addHeader("Authorization", "Bearer "+this.token);
       response = httpClient.execute(get);
 
       Logger.debug("[SONATA-GK-CLient] /vim endpoint response (VIM list):");
@@ -178,11 +178,13 @@ public class SonataGkClient {
     buildUrl.append("/api/v2/services?status=active");
 
     get = new HttpGet(buildUrl.toString());
-
-    get.addHeader("Authorization:Bearer", this.token);
+    get.addHeader("Authorization", "Bearer "+this.token);
+    Logger.debug("[SONATA-GK-CLient] /services endpoint request (Request Object):");
+    Logger.debug(get.toString());
+    
     response = httpClient.execute(get);
 
-    Logger.debug("[SONATA-GK-CLient] /vim endpoint response (Request Object):");
+    Logger.debug("[SONATA-GK-CLient] /services endpoint response (Response Object):");
     Logger.debug(response.toString());
 
     ObjectMapper mapper = new ObjectMapper();
@@ -220,7 +222,8 @@ public class SonataGkClient {
     buildUrl.append("/"+requestUuid);
 
     get = new HttpGet(buildUrl.toString());
-    
+    get.addHeader("Authorization", "Bearer "+this.token);
+
     response = httpClient.execute(get);
     
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
@@ -258,6 +261,8 @@ public class SonataGkClient {
         String.format("{\"service_uuid\": \"%s\", \"ingresses\":[], \"egresses\":[]}", serviceUuid);
 
     post = new HttpPost(buildUrl.toString());
+    post.addHeader("Authorization", "Bearer "+this.token);
+
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
     response = httpClient.execute(post);
@@ -294,7 +299,8 @@ public class SonataGkClient {
     buildUrl.append("/"+requestUuid);
 
     get = new HttpGet(buildUrl.toString());
-    
+    get.addHeader("Authorization", "Bearer "+this.token);
+
     response = httpClient.execute(get);
     
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
@@ -329,7 +335,8 @@ public class SonataGkClient {
     buildUrl.append("/"+serviceInstanceUuid);
 
     get = new HttpGet(buildUrl.toString());
-    
+    get.addHeader("Authorization", "Bearer "+this.token);
+
     response = httpClient.execute(get);
     
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
@@ -363,7 +370,8 @@ public class SonataGkClient {
     buildUrl.append("/"+vnfrId);
 
     get = new HttpGet(buildUrl.toString());
-    
+    get.addHeader("Authorization", "Bearer "+this.token);
+
     response = httpClient.execute(get);
     
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
