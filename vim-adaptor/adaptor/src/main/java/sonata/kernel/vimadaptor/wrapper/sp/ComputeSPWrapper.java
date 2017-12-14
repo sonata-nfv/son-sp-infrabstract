@@ -111,7 +111,9 @@ public class ComputeSPWrapper extends ComputeWrapper {
 
     String serviceUuid = null;
     VnfDescriptor vnfd = data.getVnfd();
+    Logger.debug("VNF: "+vnfd.getVendor()+"::"+vnfd.getName()+"::"+vnfd.getVersion());
     for (ServiceDescriptor nsd : availableNsds) {
+      Logger.debug("Checking NSD: "+nsd.getVendor()+"::"+nsd.getName()+"::"+nsd.getVersion());
       if (nsd.getVendor().equals(vnfd.getVendor()) && nsd.getName().equals(vnfd.getName())
           && nsd.getVersion().equals(vnfd.getVersion())) {
         serviceUuid = nsd.getUuid();
