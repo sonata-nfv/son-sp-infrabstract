@@ -111,11 +111,16 @@ public class ComputeSPWrapper extends ComputeWrapper {
 
     String serviceUuid = null;
     VnfDescriptor vnfd = data.getVnfd();
-    Logger.debug("VNF: "+vnfd.getVendor()+"::"+vnfd.getName()+"::"+vnfd.getVersion());
+    Logger.debug("VNF: " + vnfd.getVendor() + "::" + vnfd.getName() + "::" + vnfd.getVersion());
     for (ServiceDescriptor nsd : availableNsds) {
-      Logger.debug("Checking NSD: "+nsd.getVendor()+"::"+nsd.getName()+"::"+nsd.getVersion());
-      if (nsd.getVendor().equals(vnfd.getVendor()) && nsd.getName().equals(vnfd.getName())
-          && nsd.getVersion().equals(vnfd.getVersion())) {
+      Logger.debug("Checking NSD:");
+      Logger.debug(nsd.getVendor() + "::" + nsd.getName() + "::" + nsd.getVersion());
+      boolean matchingVendor = nsd.getVendor().equals(vnfd.getVendor());
+      boolean matchingName = nsd.getName().equals(vnfd.getName());
+      boolean matchingVersion = nsd.getVersion().equals(vnfd.getVersion());
+      Logger.debug("Matches: " + matchingVendor + "::" + matchingName + "::" + matchingVersion);
+      boolean matchingCondition = matchingVendor && matchingName && matchingVersion;
+      if (matchingCondition) {
         serviceUuid = nsd.getUuid();
       }
     }
@@ -209,7 +214,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       nsr = gkClient.getNsr(instantiationRequest.getServiceInstanceUuid());
     } catch (IOException e1) {
-      Logger.error(e1.getMessage(),e1);
+      Logger.error(e1.getMessage(), e1);
       Logger.error("Service instantiation failed. Can't retrieve NSR of instantiated service.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Function deployment process failed. Can't retrieve NSR of instantiated service.");
@@ -225,7 +230,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       remoteVnfr = gkClient.getVnfr(vnfrId);
     } catch (IOException e1) {
-      Logger.error(e1.getMessage(),e1);
+      Logger.error(e1.getMessage(), e1);
       Logger.error("Service instantiation failed. Can't retrieve VNFR of instantiated function.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Function deployment process failed. Can't retrieve VNFR of instantiated function.");
@@ -265,7 +270,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       body = mapper.writeValueAsString(response);
     } catch (JsonProcessingException e) {
-      Logger.error(e.getMessage(),e);
+      Logger.error(e.getMessage(), e);
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
       this.markAsChanged();
@@ -311,35 +316,35 @@ public class ComputeSPWrapper extends ComputeWrapper {
     ResourceUtilisation out = new ResourceUtilisation();
     VimResources[] resList = null;
     try {
-       resList = this.listPoPs();
+      resList = this.listPoPs();
     } catch (NotAuthorizedException e) {
       Logger.error(e.getMessage(), e);
-      WrapperStatusUpdate update =
-          new WrapperStatusUpdate("", "ERROR", "Can't Authenticate with the underlying SONATA Platform");
+      WrapperStatusUpdate update = new WrapperStatusUpdate("", "ERROR",
+          "Can't Authenticate with the underlying SONATA Platform");
       this.markAsChanged();
       this.notifyObservers(update);
       return null;
     } catch (IOException e) {
-      Logger.error(e.getMessage(),e );
-      WrapperStatusUpdate update =
-          new WrapperStatusUpdate("", "ERROR", "IO Exception while getting resource utilisation from the underlying SONATA Platform");
+      Logger.error(e.getMessage(), e);
+      WrapperStatusUpdate update = new WrapperStatusUpdate("", "ERROR",
+          "IO Exception while getting resource utilisation from the underlying SONATA Platform");
       this.markAsChanged();
       this.notifyObservers(update);
       return null;
     }
-    
+
     out.setTotCores(0);
     out.setTotMemory(0);
     out.setUsedCores(0);
     out.setUsedMemory(0);
-    
-    for(VimResources res : resList){
-      out.setTotCores(out.getTotCores()+res.getCoreTotal());
-      out.setUsedCores(out.getUsedCores()+res.getCoreUsed());
-      out.setTotMemory(out.getTotMemory()+res.getMemoryTotal());
-      out.setUsedMemory(out.getUsedMemory()+res.getMemoryUsed());
+
+    for (VimResources res : resList) {
+      out.setTotCores(out.getTotCores() + res.getCoreTotal());
+      out.setUsedCores(out.getUsedCores() + res.getCoreUsed());
+      out.setTotMemory(out.getTotMemory() + res.getMemoryTotal());
+      out.setUsedMemory(out.getUsedMemory() + res.getMemoryUsed());
     }
-    
+
     return out;
   }
 
