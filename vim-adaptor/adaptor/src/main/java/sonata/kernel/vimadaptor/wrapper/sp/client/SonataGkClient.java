@@ -181,7 +181,7 @@ public class SonataGkClient {
    * @throws IOException for http client error or JSON parsing error
    * @throws ClientProtocolException for http client error
    */
-  public ArrayList<ServiceDescriptor> getServices() throws ClientProtocolException, IOException {
+  public GkServiceListEntry[] getServices() throws ClientProtocolException, IOException {
 
     Logger.debug("[SONATA-GK-CLient] Retrieving active services: ");
 
@@ -212,11 +212,7 @@ public class SonataGkClient {
     GkServiceListEntry[] activeServices =
         mapper.readValue(stringResponse, GkServiceListEntry[].class);
 
-    ArrayList<ServiceDescriptor> output = new ArrayList<ServiceDescriptor>();
-    for (GkServiceListEntry entry : activeServices) {
-      output.add(entry.getNsd());
-    }
-    return output;
+    return activeServices;
   }
 
   /**
