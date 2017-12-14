@@ -46,6 +46,7 @@ import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
 import sonata.kernel.vimadaptor.wrapper.sp.client.SonataGkClient;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkRequestStatus;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkServiceListEntry;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -96,7 +97,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     Logger.info("[SpWrapper] Authenticating SONATA Rest Client");
     if (!gkClient.authenticate()) throw new NotAuthorizedException("Client cannot login to the SP");
 
-    ArrayList<ServiceDescriptor> availableNsds;
+    GkServiceListEntry[] availableNsds;
     try {
       availableNsds = gkClient.getServices();
     } catch (IOException e1) {
@@ -112,7 +113,8 @@ public class ComputeSPWrapper extends ComputeWrapper {
     String serviceUuid = null;
     VnfDescriptor vnfd = data.getVnfd();
     Logger.debug("VNF: " + vnfd.getVendor() + "::" + vnfd.getName() + "::" + vnfd.getVersion());
-    for (ServiceDescriptor nsd : availableNsds) {
+    for (GkServiceListEntry serviceEntry : availableNsds) {
+      ServiceDescriptor nsd = serviceEntry.getNsd();
       Logger.debug("Checking NSD:");
       Logger.debug(nsd.getVendor() + "::" + nsd.getName() + "::" + nsd.getVersion());
       boolean matchingVendor = nsd.getVendor().equals(vnfd.getVendor());
@@ -121,7 +123,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
       Logger.debug("Matches: " + matchingVendor + "::" + matchingName + "::" + matchingVersion);
       boolean matchingCondition = matchingVendor && matchingName && matchingVersion;
       if (matchingCondition) {
-        serviceUuid = nsd.getUuid();
+        serviceUuid = serviceEntry.getUuid();
       }
     }
     if (serviceUuid == null) {
