@@ -44,26 +44,48 @@ public class SonataManifestMapper {
     if (myInstance == null) myInstance = new SonataManifestMapper();
     return myInstance.getMapper();
   }
+  
+  public static ObjectMapper getSonataJsonMapper() {
+    if (myInstance == null) myInstance = new SonataManifestMapper();
+    return myInstance.getJsonMapper();
+  }
 
-  private ObjectMapper mapper;
+  private ObjectMapper mapperYaml;
+  private ObjectMapper mapperJson;
 
   private SonataManifestMapper() {
-    this.mapper = new ObjectMapper(new YAMLFactory());
+    this.mapperYaml = new ObjectMapper(new YAMLFactory());
     SimpleModule module = new SimpleModule();
     module.addDeserializer(Unit.class, new UnitDeserializer());
     // module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
     // module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
-    mapper.registerModule(module);
-    mapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    mapperYaml.registerModule(module);
+    mapperYaml.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    mapperYaml.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    mapperYaml.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapperYaml.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapperYaml.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapperYaml.setSerializationInclusion(Include.NON_NULL);
+    
+    this.mapperJson = new ObjectMapper();
+    module = new SimpleModule();
+    module.addDeserializer(Unit.class, new UnitDeserializer());
+    // module.addDeserializer(VmFormat.class, new VmFormatDeserializer());
+    // module.addDeserializer(ConnectionPointType.class, new ConnectionPointTypeDeserializer());
+    mapperJson.registerModule(module);
+    mapperJson.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+    mapperJson.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
+    mapperJson.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapperJson.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapperJson.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapperJson.setSerializationInclusion(Include.NON_NULL);
   }
 
   private ObjectMapper getMapper() {
-    return this.mapper;
+    return this.mapperYaml;
+  }
+  private ObjectMapper getJsonMapper() {
+    return this.mapperJson;
   }
 
 }
