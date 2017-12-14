@@ -1,16 +1,32 @@
 package sonata.kernel.vimadaptor.wrapper.sp.client;
 
 import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.CertificateException;
+import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+
+import javax.net.ssl.HostnameVerifier;
+import javax.net.ssl.SSLContext;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.config.Registry;
+import org.apache.http.config.RegistryBuilder;
+import org.apache.http.conn.socket.ConnectionSocketFactory;
+import org.apache.http.conn.socket.PlainConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.ssl.SSLContextBuilder;
+import org.apache.http.ssl.TrustStrategy;
 import org.slf4j.LoggerFactory;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -110,7 +126,7 @@ public class SonataGkClient {
 
     get = new HttpGet(buildUrl.toString());
 
-    get.addHeader("Authorization", "Bearer "+this.token);
+    get.addHeader("Authorization", "Bearer " + this.token);
     response = httpClient.execute(get);
 
     Logger.debug("[SONATA-GK-CLient] /vim endpoint response (Request Object):");
@@ -144,7 +160,7 @@ public class SonataGkClient {
 
       get = new HttpGet(buildUrl.toString());
 
-      get.addHeader("Authorization", "Bearer "+this.token);
+      get.addHeader("Authorization", "Bearer " + this.token);
       response = httpClient.execute(get);
 
       Logger.debug("[SONATA-GK-CLient] /vim endpoint response (VIM list):");
@@ -178,10 +194,10 @@ public class SonataGkClient {
     buildUrl.append("/api/v2/services?status=active");
 
     get = new HttpGet(buildUrl.toString());
-    get.addHeader("Authorization", "Bearer "+this.token);
+    get.addHeader("Authorization", "Bearer " + this.token);
     Logger.debug("[SONATA-GK-CLient] /services endpoint request (Request Object):");
     Logger.debug(get.toString());
-    
+
     response = httpClient.execute(get);
 
     Logger.debug("[SONATA-GK-CLient] /services endpoint response (Response Object):");
@@ -208,7 +224,8 @@ public class SonataGkClient {
    * @throws IOException for http client error or JSON parsing error
    * @throws ClientProtocolException for http client error
    */
-  public String getInstantiationStatus(String requestUuid) throws ClientProtocolException, IOException {
+  public String getInstantiationStatus(String requestUuid)
+      throws ClientProtocolException, IOException {
     Logger.debug("[SONATA-GK-CLient] Getting request information object");
 
     HttpClient httpClient = HttpClientBuilder.create().build();
@@ -219,22 +236,21 @@ public class SonataGkClient {
     buildUrl.append("http://");
     buildUrl.append(this.host);
     buildUrl.append("/api/v2/requests");
-    buildUrl.append("/"+requestUuid);
+    buildUrl.append("/" + requestUuid);
 
     get = new HttpGet(buildUrl.toString());
-    get.addHeader("Authorization", "Bearer "+this.token);
+    get.addHeader("Authorization", "Bearer " + this.token);
 
     response = httpClient.execute(get);
-    
+
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = new ObjectMapper();
-    
-    GkRequestStatus requestRequestObject =
-        mapper.readValue(stringResponse, GkRequestStatus.class);
 
-    
+    GkRequestStatus requestRequestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
+
+
     return requestRequestObject.getId();
   }
 
@@ -261,21 +277,20 @@ public class SonataGkClient {
         String.format("{\"service_uuid\": \"%s\", \"ingresses\":[], \"egresses\":[]}", serviceUuid);
 
     post = new HttpPost(buildUrl.toString());
-    post.addHeader("Authorization", "Bearer "+this.token);
+    post.addHeader("Authorization", "Bearer " + this.token);
 
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
     response = httpClient.execute(post);
-    
+
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = new ObjectMapper();
-    
-    GkRequestStatus requestObject =
-        mapper.readValue(stringResponse, GkRequestStatus.class);
 
-    
+    GkRequestStatus requestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
+
+
     return requestObject.getId();
   }
 
@@ -285,7 +300,8 @@ public class SonataGkClient {
    * @throws IOException for http client error or JSON parsing error
    * @throws ClientProtocolException for http client error
    */
-  public GkRequestStatus getRequest(String requestUuid) throws ClientProtocolException, IOException {
+  public GkRequestStatus getRequest(String requestUuid)
+      throws ClientProtocolException, IOException {
     Logger.debug("[SONATA-GK-CLient] Getting request information object...");
 
     HttpClient httpClient = HttpClientBuilder.create().build();
@@ -296,21 +312,20 @@ public class SonataGkClient {
     buildUrl.append("http://");
     buildUrl.append(this.host);
     buildUrl.append("/api/v2/requests");
-    buildUrl.append("/"+requestUuid);
+    buildUrl.append("/" + requestUuid);
 
     get = new HttpGet(buildUrl.toString());
-    get.addHeader("Authorization", "Bearer "+this.token);
+    get.addHeader("Authorization", "Bearer " + this.token);
 
     response = httpClient.execute(get);
-    
+
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = new ObjectMapper();
-    
-    GkRequestStatus requestObject =
-        mapper.readValue(stringResponse, GkRequestStatus.class);
-    
+
+    GkRequestStatus requestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
+
     return requestObject;
   }
 
@@ -318,10 +333,11 @@ public class SonataGkClient {
    * @param serviceInstanceUuid the UUID of the service instance
    * @return the ServiceRecord associated with this service instance
    * @throws IOException for http client error or JSON parsing error
-   * @throws ClientProtocolException for http client error 
+   * @throws ClientProtocolException for http client error
    *
    */
-  public ServiceRecord getNsr(String serviceInstanceUuid) throws ClientProtocolException, IOException {
+  public ServiceRecord getNsr(String serviceInstanceUuid)
+      throws ClientProtocolException, IOException {
     Logger.debug("[SONATA-GK-CLient] Getting request information object...");
 
     HttpClient httpClient = HttpClientBuilder.create().build();
@@ -332,21 +348,20 @@ public class SonataGkClient {
     buildUrl.append("http://");
     buildUrl.append(this.host);
     buildUrl.append("/api/v2/records/services");
-    buildUrl.append("/"+serviceInstanceUuid);
+    buildUrl.append("/" + serviceInstanceUuid);
 
     get = new HttpGet(buildUrl.toString());
-    get.addHeader("Authorization", "Bearer "+this.token);
+    get.addHeader("Authorization", "Bearer " + this.token);
 
     response = httpClient.execute(get);
-    
+
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = new ObjectMapper();
-    
-    ServiceRecord serviceRecord=
-        mapper.readValue(stringResponse, ServiceRecord.class);
-    
+
+    ServiceRecord serviceRecord = mapper.readValue(stringResponse, ServiceRecord.class);
+
     return serviceRecord;
   }
 
@@ -367,22 +382,76 @@ public class SonataGkClient {
     buildUrl.append("http://");
     buildUrl.append(this.host);
     buildUrl.append("/api/v2/records/functions");
-    buildUrl.append("/"+vnfrId);
+    buildUrl.append("/" + vnfrId);
 
     get = new HttpGet(buildUrl.toString());
-    get.addHeader("Authorization", "Bearer "+this.token);
+    get.addHeader("Authorization", "Bearer " + this.token);
 
     response = httpClient.execute(get);
-    
+
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = new ObjectMapper();
-    
-    VnfRecord functionRecord=
-        mapper.readValue(stringResponse, VnfRecord.class);
-    
+
+    VnfRecord functionRecord = mapper.readValue(stringResponse, VnfRecord.class);
+
     return functionRecord;
+  }
+
+
+  @SuppressWarnings("deprecation")
+  private HttpClient createHttpClient_AcceptsUntrustedCerts() {
+    HttpClientBuilder b = HttpClientBuilder.create();
+
+    // setup a Trust Strategy that allows all certificates.
+    //
+    SSLContext sslContext;
+    HttpClient client = null;
+    try {
+      sslContext = new SSLContextBuilder().loadTrustMaterial(null, new TrustStrategy() {
+        public boolean isTrusted(X509Certificate[] arg0, String arg1) throws CertificateException {
+          return true;
+        }
+      }).build();
+      b.setSslcontext(sslContext);
+
+      // don't check Hostnames, either.
+      // -- use SSLConnectionSocketFactory.getDefaultHostnameVerifier(), if you don't want to weaken
+      HostnameVerifier hostnameVerifier = SSLConnectionSocketFactory.ALLOW_ALL_HOSTNAME_VERIFIER;
+
+      // here's the special part:
+      // -- need to create an SSL Socket Factory, to use our weakened "trust strategy";
+      // -- and create a Registry, to register it.
+      //
+      SSLConnectionSocketFactory sslSocketFactory =
+          new SSLConnectionSocketFactory(sslContext, hostnameVerifier);
+      Registry<ConnectionSocketFactory> socketFactoryRegistry =
+          RegistryBuilder.<ConnectionSocketFactory>create()
+              .register("http", PlainConnectionSocketFactory.getSocketFactory())
+              .register("https", sslSocketFactory).build();
+
+      // now, we create connection-manager using our Registry.
+      // -- allows multi-threaded use
+      PoolingHttpClientConnectionManager connMgr =
+          new PoolingHttpClientConnectionManager(socketFactoryRegistry);
+      b.setConnectionManager(connMgr);
+
+      // finally, build the HttpClient;
+      // -- done!
+      client = b.build();
+      
+    } catch (KeyManagementException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (NoSuchAlgorithmException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } catch (KeyStoreException e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    }
+    return client;
   }
 
 }
