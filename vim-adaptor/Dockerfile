@@ -47,6 +47,8 @@ ENV repo_port 5432
 ENV repo_user sonatatest
 ENV repo_pass sonata
 ENV SONATA_SP_ADDRESS 127.0.0.1
+ENV SONATA_2ND_SP_ADDRESS 127.0.0.1
+ENV MOCKED_2ND_PLATFORM true
 
 ENV mistral_server mistral
 
