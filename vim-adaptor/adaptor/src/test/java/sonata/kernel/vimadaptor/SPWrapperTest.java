@@ -68,7 +68,7 @@ public class SPWrapperTest {
 	// Santi
 	// private static final String SONATA_CONFIG_FILEPATH =
 	// "/etc/son-mano/sonata.config";
-	private static final String SONATA_CONFIG_FILEPATH = "C:/development/SONATA/etc/son-mano/sonata.config";
+	private static final String SONATA_CONFIG_FILEPATH = "/etc/son-mano/sonata.config";
 	private static final String SONATA_2ND_SP_ADDRESS = "sonata_2nd_sp_address";
 	private static final String MOCKED_2ND_PLATFORM = "mocked_2nd_platform";
 	private static final String VENDOR = "eu.sonata-nfv";
