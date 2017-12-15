@@ -309,9 +309,8 @@ public class SonataGkClient {
     buildUrl.append(32001);
     buildUrl.append("/api/v2/requests");
 
-    String body = String.format(
-        "{\"service_uuid\": \"%s\", \"request_type\":\"TERMINATE\"}",
-        serviceUuid);
+    String body =
+        String.format("{\"service_instance_uuid\": \"%s\", \"request_type\":\"TERMINATE\"}", serviceUuid);
 
     post = new HttpPost(buildUrl.toString());
     post.addHeader("Authorization", "Bearer " + this.token);
@@ -319,7 +318,8 @@ public class SonataGkClient {
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
     Logger.debug("[SONATA-GK-CLient] /requests POST request:");
     Logger.debug(post.toString());
-
+    Logger.debug(body);
+    
     response = httpClient.execute(post);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
