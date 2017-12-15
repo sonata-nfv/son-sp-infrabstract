@@ -104,14 +104,16 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     }
     if (!update.getSid().equals(this.getSid())) return;
     Logger.info("Received an update:\n" + update.getBody());
-    JSONTokener tokener = new JSONTokener(update.getBody());
-    JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String updateStatus = update.getStatus();
-    String wrapperId = jsonObject.getString("wrapper_uuid");
-    String status = jsonObject.getString("status");
 
-    if (wrapperQueue.remove(wrapperId)) {
-      if (updateStatus.equals("SUCCESS")) {
+    String updateStatus = update.getStatus();
+
+    if (updateStatus.equals("SUCCESS")) {
+      
+      JSONTokener tokener = new JSONTokener(update.getBody());
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+      String wrapperId = jsonObject.getString("wrapper_uuid");
+      String status = jsonObject.getString("status");
+      if (wrapperQueue.remove(wrapperId)) {
         Logger.debug("wrapperSuccesfully dequeued.");
       } else {
         Logger.error("Error removing the service. " + status);
