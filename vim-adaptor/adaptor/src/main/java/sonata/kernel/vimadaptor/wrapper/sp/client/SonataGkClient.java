@@ -73,7 +73,7 @@ public class SonataGkClient {
       String json = JavaStackUtils.convertHttpResponseToString(response);
 
       Logger.debug("Auth response: " + json);
-      ObjectMapper mapper = new ObjectMapper();
+      ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
       SonataAuthenticationResponse auth =
           mapper.readValue(json, SonataAuthenticationResponse.class);
@@ -117,7 +117,7 @@ public class SonataGkClient {
     Logger.debug("[SONATA-GK-CLient] /vims endpoint response (Request Object):");
     Logger.debug(response.toString());
 
-    ObjectMapper mapper = new ObjectMapper();
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
     Logger.debug(stringResponse);
