@@ -221,7 +221,7 @@ public class SonataGkClient {
    * @throws IOException for http client error or JSON parsing error
    * @throws ClientProtocolException for http client error
    */
-  public String getInstantiationStatus(String requestUuid)
+  public String getRequestStatus(String requestUuid)
       throws ClientProtocolException, IOException {
     Logger.debug("[SONATA-GK-CLient] Getting request information object");
 
@@ -237,10 +237,12 @@ public class SonataGkClient {
 
     get = new HttpGet(buildUrl.toString());
     get.addHeader("Authorization", "Bearer " + this.token);
-
+    Logger.debug("[SONATA-GK-CLient] /requests request:");
+    Logger.debug(get.toString());
     response = httpClient.execute(get);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug("[SONATA-GK-CLient] /requests response:");
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
@@ -277,10 +279,56 @@ public class SonataGkClient {
     post.addHeader("Authorization", "Bearer " + this.token);
 
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
-
+    Logger.debug("[SONATA-GK-CLient] /requests POST request:");
+    Logger.debug(post.toString());
+    
     response = httpClient.execute(post);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug("[SONATA-GK-CLient] /requests POST response:");
+    Logger.debug(stringResponse);
+
+    ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+
+    GkRequestStatus requestObject = mapper.readValue(stringResponse, GkRequestStatus.class);
+
+
+    return requestObject.getId();
+  }
+  
+  /**
+   * @param serviceUuid the uuid of the NSD to be instantiated
+   * @return a String representing the generated request UUID
+   * @throws IOException for http client error or JSON parsing error
+   * @throws ClientProtocolException for http client error
+   */
+  public String removeServiceInstance(String serviceUuid) throws ClientProtocolException, IOException {
+
+    Logger.debug("[SONATA-GK-CLient] Creating a new instantiation request");
+
+    HttpClient httpClient = HttpClientBuilder.create().build();
+    HttpPost post;
+    HttpResponse response = null;
+
+    StringBuilder buildUrl = new StringBuilder();
+    buildUrl.append("http://");
+    buildUrl.append(this.host);
+    buildUrl.append("/api/v2/requests");
+
+    String body =
+        String.format("{\"service_uuid\": \"%s\", \"ingresses\":[], \"egresses\":[], \"request_type\":\"TERMINATE\"}", serviceUuid);
+
+    post = new HttpPost(buildUrl.toString());
+    post.addHeader("Authorization", "Bearer " + this.token);
+
+    post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
+    Logger.debug("[SONATA-GK-CLient] /requests POST request:");
+    Logger.debug(post.toString());
+    
+    response = httpClient.execute(post);
+
+    String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug("[SONATA-GK-CLient] /requests POST response:");
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
@@ -314,9 +362,12 @@ public class SonataGkClient {
     get = new HttpGet(buildUrl.toString());
     get.addHeader("Authorization", "Bearer " + this.token);
 
+    Logger.debug("[SONATA-GK-CLient] /requests request:");
+    Logger.debug(get.toString());
     response = httpClient.execute(get);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug("[SONATA-GK-CLient] /requests response:");
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
@@ -349,10 +400,12 @@ public class SonataGkClient {
 
     get = new HttpGet(buildUrl.toString());
     get.addHeader("Authorization", "Bearer " + this.token);
-
+    Logger.debug("[SONATA-GK-CLient] /record/services/id request:");
+    Logger.debug(get.toString());
     response = httpClient.execute(get);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug("[SONATA-GK-CLient] /record/services/id response:");
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
@@ -383,10 +436,13 @@ public class SonataGkClient {
 
     get = new HttpGet(buildUrl.toString());
     get.addHeader("Authorization", "Bearer " + this.token);
-
+    Logger.debug("[SONATA-GK-CLient] /records/functions/ request:");
+    Logger.debug(get.toString());
+    
     response = httpClient.execute(get);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
+    Logger.debug("[SONATA-GK-CLient] /records/functions/ response:");
     Logger.debug(stringResponse);
 
     ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
@@ -397,8 +453,7 @@ public class SonataGkClient {
   }
 
 
-  @SuppressWarnings("deprecation")
-  private HttpClient createHttpClient_AcceptsUntrustedCerts() {
+  private HttpClient createHttpClientAcceptsUntrustedCerts() {
     HttpClientBuilder b = HttpClientBuilder.create();
 
     // setup a Trust Strategy that allows all certificates.
@@ -411,7 +466,7 @@ public class SonataGkClient {
           return true;
         }
       }).build();
-      b.setSslcontext(sslContext);
+      b.setSSLContext(sslContext);
 
       // don't check Hostnames, either.
       // -- use SSLConnectionSocketFactory.getDefaultHostnameVerifier(), if you don't want to weaken
@@ -437,7 +492,7 @@ public class SonataGkClient {
       // finally, build the HttpClient;
       // -- done!
       client = b.build();
-      
+
     } catch (KeyManagementException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
