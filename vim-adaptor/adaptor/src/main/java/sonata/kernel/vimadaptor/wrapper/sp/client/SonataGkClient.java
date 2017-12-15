@@ -310,7 +310,7 @@ public class SonataGkClient {
     buildUrl.append("/api/v2/requests");
 
     String body = String.format(
-        "{\"service_uuid\": \"%s\", \"ingresses\":[], \"egresses\":[], \"request_type\":\"TERMINATE\"}",
+        "{\"service_uuid\": \"%s\", \"request_type\":\"TERMINATE\"}",
         serviceUuid);
 
     post = new HttpPost(buildUrl.toString());
