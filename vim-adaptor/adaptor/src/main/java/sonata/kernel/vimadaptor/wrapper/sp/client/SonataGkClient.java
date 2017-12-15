@@ -130,7 +130,7 @@ public class SonataGkClient {
     get.addHeader("Authorization", "Bearer " + this.token);
     response = httpClient.execute(get);
 
-    Logger.debug("[SONATA-GK-CLient] /vim endpoint response (Request Object):");
+    Logger.debug("[SONATA-GK-CLient] /vims endpoint response (Request Object):");
     Logger.debug(response.toString());
 
     ObjectMapper mapper = new ObjectMapper();
@@ -156,6 +156,8 @@ public class SonataGkClient {
       buildUrl = new StringBuilder();
       buildUrl.append("http://");
       buildUrl.append(this.host);
+      buildUrl.append(":");
+      buildUrl.append(32001);
       buildUrl.append("/api/v2/vims");
       buildUrl.append("/" + requestUuid);
 
@@ -164,7 +166,7 @@ public class SonataGkClient {
       get.addHeader("Authorization", "Bearer " + this.token);
       response = httpClient.execute(get);
 
-      Logger.debug("[SONATA-GK-CLient] /vim endpoint response (VIM list):");
+      Logger.debug("[SONATA-GK-CLient] /vims endpoint response (VIM list):");
       Logger.debug(response.toString());
       stringResponse = JavaStackUtils.convertHttpResponseToString(response);
       Logger.debug(stringResponse);
