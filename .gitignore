@@ -33,3 +33,4 @@ vim-adaptor/reports/
 
 vim-adaptor/*.patch
 
+/bin/

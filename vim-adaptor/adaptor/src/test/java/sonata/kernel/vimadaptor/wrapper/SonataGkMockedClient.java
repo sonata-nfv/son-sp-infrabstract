@@ -20,8 +20,8 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Xosé Ramón Sousa, OPT
- * @author Santiago Rodríguez, OPT
+ * @author Xose Ramon Sousa, OPT
+ * @author Santiago Rodriguez, OPT
  * 
  */
 
@@ -29,18 +29,25 @@ package sonata.kernel.vimadaptor.wrapper;
 
 import java.io.FileReader;
 import java.io.IOException;
-import org.json.simple.JSONObject;
+import java.util.ArrayList;
+import java.util.Arrays;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import org.slf4j.LoggerFactory;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import sonata.kernel.vimadaptor.commons.ServiceRecord;
 import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimResources;
-import sonata.kernel.vimadaptor.wrapper.sp.client.model.VimRequestStatus;
+import sonata.kernel.vimadaptor.commons.VnfRecord;
+import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkRequestStatus;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkServiceListEntry;
 
 public class SonataGkMockedClient {
-
-	private ObjectMapper mapper;
+	
+	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(SonataGkMockedClient.class);
 
 	/**
 	 * @return a List of VimResource object taken from file
@@ -51,39 +58,207 @@ public class SonataGkMockedClient {
 
 		JSONParser parser = new JSONParser();
 		Object object;
-		try {
-			object = parser.parse(new FileReader("./JSON/request-response.json"));
-		} catch (ParseException e1) {
-			throw new IOException(
-					"Error parsing request response.");
-		}
-
-		// convert Object to JSONObject
-		//JSONObject jsonObject = (JSONObject) object;
-
-		this.mapper = SonataManifestMapper.getSonataMapper();
-
-		VimRequestStatus requestStatus = mapper.readValue(object.toString(), VimRequestStatus.class);
-
-		String requestUuid = "";
-		try {
-			requestUuid = requestStatus.getItems().getRequestUuid();
-		} catch (NullPointerException e) {
-			throw new IOException(
-					"The Mocked GK sent back an request status with empty values or values are not parsed correctly.");
-		}
 
 		try {
 			object = parser.parse(new FileReader("./JSON/vims-list.json"));
 		} catch (ParseException e) {
-			throw new IOException(
-					"Error parsing vim list.");
+			throw new IOException("Error parsing vim list.");
 		}
-		//jsonObject = (JSONObject) object;
+		
+		Logger.info("object: "+object.toString());
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 		VimResources[] list = mapper.readValue(object.toString(), VimResources[].class);
 
-		
 		return list;
 
+	}
+
+	/**
+	 * @return an ArrayList of ServiceDescriptor object taken from file
+	 * @throws IOException
+	 *             for JSON parsing error
+	 */
+	public GkServiceListEntry[] getServices() throws IOException {
+
+		JSONParser parser = new JSONParser();
+		Object object;
+
+		Logger.info("Reading Service list file");
+		
+		try {
+			object = parser.parse(new FileReader("./JSON/services-list.json"));
+		} catch (ParseException e) {
+			throw new IOException("Error parsing service list.");
+		}
+		
+		Logger.info(object.toString());
+
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+
+	    GkServiceListEntry[] list =
+	        mapper.readValue(object.toString(), GkServiceListEntry[].class);
+
+		return list;
+	}
+	
+	/**
+	 * @return an ArrayList of VnfDescriptor object taken from file
+	 * @throws IOException
+	 *             for JSON parsing error
+	 */
+	public ArrayList<VnfDescriptor> getFunctions() throws IOException {
+
+		JSONParser parser = new JSONParser();
+		Object object;
+
+		try {
+			object = parser.parse(new FileReader("./JSON/functions-list.json"));
+		} catch (ParseException e) {
+			throw new IOException("Error parsing service list.");
+		}
+
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		VnfDescriptor[] list = mapper.readValue(object.toString(), VnfDescriptor[].class);
+		ArrayList<VnfDescriptor> descList = new ArrayList<VnfDescriptor>(Arrays.asList(list));
+
+		return descList;
+	}
+
+	/**
+	 * @param serviceUuid
+	 *            the uuid of the NSD to be instantiated
+	 * @return a String representing the generated request UUID
+	 * @throws IOException
+	 *             for http client error or JSON parsing error
+	 */
+	public String instantiateService(String serviceUuid) throws IOException {
+
+		JSONParser parser = new JSONParser();
+		Object object;
+		try {
+			object = parser.parse(new FileReader("./JSON/request-response.json"));
+		} catch (ParseException e1) {
+			throw new IOException("Error parsing request response.");
+		}
+
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		GkRequestStatus requestObject = mapper.readValue(object.toString(), GkRequestStatus.class);
+
+		return requestObject.getId();
+	}
+	
+	/**
+	 * @param serviceUuid
+	 *            the uuid of the NSR to be terminated
+	 * @return a String representing the generated request UUID
+	 * @throws IOException
+	 *             for http client error or JSON parsing error
+	 */
+	public String removeServiceInstance(String serviceUuid) throws IOException {
+
+		JSONParser parser = new JSONParser();
+		Object object;
+		try {
+			object = parser.parse(new FileReader("./JSON/request-response.json"));
+		} catch (ParseException e1) {
+			throw new IOException("Error parsing request response.");
+		}
+
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		GkRequestStatus requestObject = mapper.readValue(object.toString(), GkRequestStatus.class);
+
+		return requestObject.getId();
+	}	
+
+	/**
+	 * @param requestUuid
+	 *            uuid of the GK request
+	 * @return a String representing the status of the request
+	 * @throws IOException
+	 *             for http client error or JSON parsing error
+	 */
+	public String getRequestStatus(String requestUuid) throws IOException {
+		JSONParser parser = new JSONParser();
+		Object object;
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		GkRequestStatus requestRequestObject = new GkRequestStatus();
+		
+		try {
+			object = parser.parse(new FileReader("./JSON/request.json"));
+			requestRequestObject = mapper.readValue(object.toString(), GkRequestStatus.class);
+		} catch (Exception e1) {
+			Logger.error("Error parsing request response."+e1);
+		}
+
+		Logger.info("---------- "+requestRequestObject.getStatus());
+		return requestRequestObject.getStatus();
+	}
+
+	/**
+	 * @param requestUuid
+	 *            the UUID of the request
+	 * @return a RequestObject that contains information on the request
+	 * @throws IOException
+	 *             for http client error or JSON parsing error
+	 */
+	public GkRequestStatus getRequest(String requestUuid) throws IOException {
+		JSONParser parser = new JSONParser();
+		Object object;
+		try {
+			object = parser.parse(new FileReader("./JSON/request-response.json"));
+		} catch (ParseException e1) {
+			throw new IOException("Error parsing request response.");
+		}
+
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		GkRequestStatus requestObject = mapper.readValue(object.toString(), GkRequestStatus.class);
+
+		return requestObject;
+	}
+
+	/**
+	 * @param serviceInstanceUuid
+	 *            the UUID of the service instance
+	 * @return the ServiceRecord associated with this service instance
+	 * @throws IOException
+	 *             for http client error or JSON parsing error
+	 *
+	 */
+	public ServiceRecord getNsr(String serviceInstanceUuid) throws IOException {
+		JSONParser parser = new JSONParser();
+		Object object;
+		try {
+			object = parser.parse(new FileReader("./JSON/service-record.json"));
+		} catch (ParseException e1) {
+			throw new IOException("Error parsing request response.");
+		}
+
+		Logger.info(object.toString());
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		ServiceRecord nsr = mapper.readValue(object.toString(), ServiceRecord.class);
+
+		return nsr;
+	}
+
+	/**
+	 * @param vnfrId
+	 *            the ID of the VNFR to retrieve
+	 * @return the VnfRecord object for the specified VNFR ID
+	 * @throws IOException
+	 *             for http client error or JSON parsing error
+	 */
+	public VnfRecord getVnfr(String vnfrId) throws IOException {
+		JSONParser parser = new JSONParser();
+		Object object;
+		try {
+			object = parser.parse(new FileReader("./JSON/function-record.json"));
+		} catch (ParseException e1) {
+			throw new IOException("Error parsing request response.");
+		}
+
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		VnfRecord vnfr = mapper.readValue(object.toString(), VnfRecord.class);
+		
+		return vnfr;
 	}
 }
