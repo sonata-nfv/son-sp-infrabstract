@@ -41,14 +41,15 @@ import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.ComputeWrapper;
 import sonata.kernel.vimadaptor.wrapper.ResourceUtilisation;
+import sonata.kernel.vimadaptor.wrapper.VimRepo;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
 import sonata.kernel.vimadaptor.wrapper.sp.client.SonataGkClient;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkRequestStatus;
+import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkServiceListEntry;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 import javax.ws.rs.NotAuthorizedException;
 
@@ -87,7 +88,6 @@ public class ComputeSPWrapper extends ComputeWrapper {
     mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
     mapper.setSerializationInclusion(Include.NON_NULL);
 
-    // TODO Implement this function by:
     // - Fetch available NS from the lower level SP
     Logger.info("[SpWrapper] Creating SONATA Rest Client");
     SonataGkClient gkClient = new SonataGkClient(this.getConfig().getVimEndpoint(),
@@ -96,7 +96,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     Logger.info("[SpWrapper] Authenticating SONATA Rest Client");
     if (!gkClient.authenticate()) throw new NotAuthorizedException("Client cannot login to the SP");
 
-    ArrayList<ServiceDescriptor> availableNsds;
+    GkServiceListEntry[] availableNsds;
     try {
       availableNsds = gkClient.getServices();
     } catch (IOException e1) {
@@ -111,12 +111,19 @@ public class ComputeSPWrapper extends ComputeWrapper {
 
     String serviceUuid = null;
     VnfDescriptor vnfd = data.getVnfd();
-    Logger.debug("VNF: "+vnfd.getVendor()+"::"+vnfd.getName()+"::"+vnfd.getVersion());
-    for (ServiceDescriptor nsd : availableNsds) {
-      Logger.debug("Checking NSD: "+nsd.getVendor()+"::"+nsd.getName()+"::"+nsd.getVersion());
-      if (nsd.getVendor().equals(vnfd.getVendor()) && nsd.getName().equals(vnfd.getName())
-          && nsd.getVersion().equals(vnfd.getVersion())) {
-        serviceUuid = nsd.getUuid();
+    Logger.debug("VNF: " + vnfd.getVendor() + "::" + vnfd.getName() + "::" + vnfd.getVersion());
+    for (GkServiceListEntry serviceEntry : availableNsds) {
+      ServiceDescriptor nsd = serviceEntry.getNsd();
+      Logger.debug("Checking NSD:");
+      Logger.debug(nsd.getVendor() + "::" + nsd.getName() + "::" + nsd.getVersion());
+      boolean matchingVendor = nsd.getVendor().equals(vnfd.getVendor());
+      boolean matchingName = nsd.getName().equals(vnfd.getName());
+      boolean matchingVersion = nsd.getVersion().equals(vnfd.getVersion());
+      Logger.debug("Matches: " + matchingVendor + "::" + matchingName + "::" + matchingVersion);
+      boolean matchingCondition = matchingVendor && matchingName && matchingVersion;
+      if (matchingCondition) {
+        serviceUuid = serviceEntry.getUuid();
+        break;
       }
     }
     if (serviceUuid == null) {
@@ -151,14 +158,14 @@ public class ComputeSPWrapper extends ComputeWrapper {
     while ((status == null || !status.equals("READY") || !status.equals("ERROR"))
         && counter < maxCounter) {
       try {
-        status = gkClient.getInstantiationStatus(requestUuid);
+        status = gkClient.getRequestStatus(requestUuid);
       } catch (IOException e1) {
         Logger.error(e1.getMessage(), e1);
         Logger.error(
             "Error while retrieving the Service instantiation request status. Trying again in "
                 + (wait / 1000) + " seconds");
       }
-      Logger.info("Status of request" + requestUuid + ": " + status);
+      Logger.info("Status of request " + requestUuid + ": " + status);
       if (status != null && (status.equals("READY") || status.equals("ERROR"))) {
         break;
       }
@@ -209,7 +216,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       nsr = gkClient.getNsr(instantiationRequest.getServiceInstanceUuid());
     } catch (IOException e1) {
-      Logger.error(e1.getMessage(),e1);
+      Logger.error(e1.getMessage(), e1);
       Logger.error("Service instantiation failed. Can't retrieve NSR of instantiated service.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Function deployment process failed. Can't retrieve NSR of instantiated service.");
@@ -225,7 +232,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       remoteVnfr = gkClient.getVnfr(vnfrId);
     } catch (IOException e1) {
-      Logger.error(e1.getMessage(),e1);
+      Logger.error(e1.getMessage(), e1);
       Logger.error("Service instantiation failed. Can't retrieve VNFR of instantiated function.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR",
           "Function deployment process failed. Can't retrieve VNFR of instantiated function.");
@@ -265,7 +272,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
     try {
       body = mapper.writeValueAsString(response);
     } catch (JsonProcessingException e) {
-      Logger.error(e.getMessage(),e);
+      Logger.error(e.getMessage(), e);
       WrapperStatusUpdate update =
           new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
       this.markAsChanged();
@@ -274,6 +281,9 @@ public class ComputeSPWrapper extends ComputeWrapper {
     }
     Logger.info("Response created");
     // Logger.info("body");
+
+    WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(data.getServiceInstanceId(),
+        instantiationRequest.getServiceInstanceUuid(), "", this.getConfig().getUuid());
 
     WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnfd.getInstanceUuid(),
         data.getServiceInstanceId(), this.getConfig().getUuid());
@@ -311,35 +321,35 @@ public class ComputeSPWrapper extends ComputeWrapper {
     ResourceUtilisation out = new ResourceUtilisation();
     VimResources[] resList = null;
     try {
-       resList = this.listPoPs();
+      resList = this.listPoPs();
     } catch (NotAuthorizedException e) {
       Logger.error(e.getMessage(), e);
-      WrapperStatusUpdate update =
-          new WrapperStatusUpdate("", "ERROR", "Can't Authenticate with the underlying SONATA Platform");
+      WrapperStatusUpdate update = new WrapperStatusUpdate("", "ERROR",
+          "Can't Authenticate with the underlying SONATA Platform");
       this.markAsChanged();
       this.notifyObservers(update);
       return null;
     } catch (IOException e) {
-      Logger.error(e.getMessage(),e );
-      WrapperStatusUpdate update =
-          new WrapperStatusUpdate("", "ERROR", "IO Exception while getting resource utilisation from the underlying SONATA Platform");
+      Logger.error(e.getMessage(), e);
+      WrapperStatusUpdate update = new WrapperStatusUpdate("", "ERROR",
+          "IO Exception while getting resource utilisation from the underlying SONATA Platform");
       this.markAsChanged();
       this.notifyObservers(update);
       return null;
     }
-    
+
     out.setTotCores(0);
     out.setTotMemory(0);
     out.setUsedCores(0);
     out.setUsedMemory(0);
-    
-    for(VimResources res : resList){
-      out.setTotCores(out.getTotCores()+res.getCoreTotal());
-      out.setUsedCores(out.getUsedCores()+res.getCoreUsed());
-      out.setTotMemory(out.getTotMemory()+res.getMemoryTotal());
-      out.setUsedMemory(out.getUsedMemory()+res.getMemoryUsed());
+
+    for (VimResources res : resList) {
+      out.setTotCores(out.getTotCores() + res.getCoreTotal());
+      out.setUsedCores(out.getUsedCores() + res.getCoreUsed());
+      out.setTotMemory(out.getTotMemory() + res.getMemoryTotal());
+      out.setUsedMemory(out.getUsedMemory() + res.getMemoryUsed());
     }
-    
+
     return out;
   }
 
@@ -363,7 +373,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
    */
   @Override
   public boolean prepareService(String instanceId) throws Exception {
-    // This Wrapper ignores this call
+
     return true;
   }
 
@@ -375,8 +385,102 @@ public class ComputeSPWrapper extends ComputeWrapper {
    */
   @Override
   public boolean removeService(String instanceUuid, String callSid) {
-    // TODO Auto-generated method stub
-    return false;
+
+    VimRepo repo = WrapperBay.getInstance().getVimRepo();
+    Logger.info("[SpWrapper] Trying to remove NS instance: " + instanceUuid);
+    String slaveServiceInstanceUuid = repo.getServiceInstanceVimUuid(instanceUuid);
+    Logger.info("[SpWrapper] NS instance mapped to lower SONATA service instance: "
+        + slaveServiceInstanceUuid);
+
+    if (slaveServiceInstanceUuid == null) {
+      Logger.info("[SpWrapper] Nothing to remove in underlying SONATA platform");
+      WrapperBay.getInstance().getVimRepo().removeServiceInstanceEntry(instanceUuid,
+          this.getConfig().getUuid());
+      this.setChanged();
+      String body =
+          "{\"status\":\"COMPLETED\",\"wrapper_uuid\":\"" + this.getConfig().getUuid() + "\"}";
+      WrapperStatusUpdate update = new WrapperStatusUpdate(callSid, "SUCCESS", body);
+      this.notifyObservers(update);
+
+      return true;
+    }
+
+    Logger.info("[SpWrapper] Creating SONATA Rest Client");
+    SonataGkClient gkClient = new SonataGkClient(this.getConfig().getVimEndpoint(),
+        this.getConfig().getAuthUserName(), this.getConfig().getAuthPass());
+
+    Logger.info("[SpWrapper] Authenticating SONATA Rest Client");
+    if (!gkClient.authenticate()) throw new NotAuthorizedException("Client cannot login to the SP");
+
+    String requestUuid = null;
+    try {
+      requestUuid = gkClient.removeServiceInstance(slaveServiceInstanceUuid);
+    } catch (Exception e) {
+      Logger.error(e.getMessage(), e);
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(callSid, "ERROR", "Exception during Service termination");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return false;
+    }
+
+    // - than poll the GK until the status is "READY" or "ERROR"
+
+    int counter = 0;
+    int wait = 1000;
+    int maxCounter = 50;
+    int maxWait = 15000;
+    String status = null;
+    while ((status == null || !status.equals("READY") || !status.equals("ERROR"))
+        && counter < maxCounter) {
+      try {
+        status = gkClient.getRequestStatus(requestUuid);
+      } catch (IOException e1) {
+        Logger.error(e1.getMessage(), e1);
+        Logger
+            .error("Error while retrieving the Service termination request status. Trying again in "
+                + (wait / 1000) + " seconds");
+      }
+      Logger.info("Status of request " + requestUuid + ": " + status);
+      if (status != null && (status.equals("READY") || status.equals("ERROR"))) {
+        break;
+      }
+      try {
+        Thread.sleep(wait);
+      } catch (InterruptedException e) {
+        Logger.error(e.getMessage(), e);
+      }
+      counter++;
+      wait = Math.min(wait * 2, maxWait);
+
+    }
+
+    if (status == null) {
+      Logger.error("Unable to contact the GK to check the service termination status");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(callSid, "ERROR",
+          "Functiono deployment process failed. Can't get instantiation status.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return false;
+    } else if (status.equals("ERROR")) {
+      Logger.error("Service termination failed on the other SP side.");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(callSid, "ERROR",
+          "Function deployment process failed on the lower SP side.");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return false;
+    } else {
+      // Notify Northbound that the delete in this PoP is done.
+      WrapperBay.getInstance().getVimRepo().removeServiceInstanceEntry(instanceUuid,
+          this.getConfig().getUuid());
+      this.setChanged();
+      String body =
+          "{\"status\":\"COMPLETED\",\"wrapper_uuid\":\"" + this.getConfig().getUuid() + "\"}";
+      WrapperStatusUpdate update = new WrapperStatusUpdate(callSid, "SUCCESS", body);
+      this.notifyObservers(update);
+
+      return true;
+    }
   }
 
   /*

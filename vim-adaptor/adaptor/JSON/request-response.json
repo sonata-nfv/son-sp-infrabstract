@@ -1,8 +1,11 @@
 {
-	"status": 201,
-	"count": 1,
-	"items": {
-		"request_uuid": "e3de42b8-3d62-42c8-a5b6-a92089ed4a61"
-	},
-	"message": "OK"
+	"id": "d34fb0a8-774b-4f62-a74b-800a90f03e39",
+	"created_at": "2017-12-15T09:38:23.554Z",
+	"updated_at": "2017-12-15T09:38:23.554Z",
+	"service_uuid": "ccb2d32a-4c21-42e4-8133-9fa76c34f94b",
+	"status": "NEW",
+	"request_type": "CREATE",
+	"service_instance_uuid": null,
+	"ingress": null,
+	"egress": null
 }
