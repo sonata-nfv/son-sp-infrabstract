@@ -463,9 +463,9 @@ public class ComputeSPWrapper extends ComputeWrapper {
       this.notifyObservers(update);
       return false;
     } else if (status.equals("ERROR")) {
-      Logger.error("Service termination failed on the other SP side.");
+      Logger.error("failed on the other SP side.");
       WrapperStatusUpdate update = new WrapperStatusUpdate(callSid, "ERROR",
-          "Function deployment process failed on the lower SP side.");
+          "Service termination process failed on the lower SP side.");
       this.markAsChanged();
       this.notifyObservers(update);
       return false;
