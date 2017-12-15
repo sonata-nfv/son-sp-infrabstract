@@ -6,7 +6,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
-import java.util.ArrayList;
 
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.SSLContext;
@@ -35,7 +34,6 @@ import sonata.kernel.vimadaptor.commons.ServiceRecord;
 import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimResources;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
-import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkRequestStatus;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkServiceListEntry;
@@ -123,6 +121,8 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/vims");
 
     get = new HttpGet(buildUrl.toString());
@@ -192,6 +192,8 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/services?status=active");
 
     get = new HttpGet(buildUrl.toString());
@@ -221,8 +223,7 @@ public class SonataGkClient {
    * @throws IOException for http client error or JSON parsing error
    * @throws ClientProtocolException for http client error
    */
-  public String getRequestStatus(String requestUuid)
-      throws ClientProtocolException, IOException {
+  public String getRequestStatus(String requestUuid) throws ClientProtocolException, IOException {
     Logger.debug("[SONATA-GK-CLient] Getting request information object");
 
     HttpClient httpClient = HttpClientBuilder.create().build();
@@ -232,6 +233,8 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/requests");
     buildUrl.append("/" + requestUuid);
 
@@ -270,6 +273,8 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/requests");
 
     String body =
@@ -281,7 +286,7 @@ public class SonataGkClient {
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
     Logger.debug("[SONATA-GK-CLient] /requests POST request:");
     Logger.debug(post.toString());
-    
+
     response = httpClient.execute(post);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
@@ -295,14 +300,15 @@ public class SonataGkClient {
 
     return requestObject.getId();
   }
-  
+
   /**
    * @param serviceUuid the uuid of the NSD to be instantiated
    * @return a String representing the generated request UUID
    * @throws IOException for http client error or JSON parsing error
    * @throws ClientProtocolException for http client error
    */
-  public String removeServiceInstance(String serviceUuid) throws ClientProtocolException, IOException {
+  public String removeServiceInstance(String serviceUuid)
+      throws ClientProtocolException, IOException {
 
     Logger.debug("[SONATA-GK-CLient] Creating a new instantiation request");
 
@@ -313,10 +319,13 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/requests");
 
-    String body =
-        String.format("{\"service_uuid\": \"%s\", \"ingresses\":[], \"egresses\":[], \"request_type\":\"TERMINATE\"}", serviceUuid);
+    String body = String.format(
+        "{\"service_uuid\": \"%s\", \"ingresses\":[], \"egresses\":[], \"request_type\":\"TERMINATE\"}",
+        serviceUuid);
 
     post = new HttpPost(buildUrl.toString());
     post.addHeader("Authorization", "Bearer " + this.token);
@@ -324,7 +333,7 @@ public class SonataGkClient {
     post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
     Logger.debug("[SONATA-GK-CLient] /requests POST request:");
     Logger.debug(post.toString());
-    
+
     response = httpClient.execute(post);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
@@ -356,6 +365,8 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/requests");
     buildUrl.append("/" + requestUuid);
 
@@ -395,6 +406,8 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/records/services");
     buildUrl.append("/" + serviceInstanceUuid);
 
@@ -431,6 +444,8 @@ public class SonataGkClient {
     StringBuilder buildUrl = new StringBuilder();
     buildUrl.append("http://");
     buildUrl.append(this.host);
+    buildUrl.append(":");
+    buildUrl.append(32001);
     buildUrl.append("/api/v2/records/functions");
     buildUrl.append("/" + vnfrId);
 
@@ -438,7 +453,7 @@ public class SonataGkClient {
     get.addHeader("Authorization", "Bearer " + this.token);
     Logger.debug("[SONATA-GK-CLient] /records/functions/ request:");
     Logger.debug(get.toString());
-    
+
     response = httpClient.execute(get);
 
     String stringResponse = JavaStackUtils.convertHttpResponseToString(response);
