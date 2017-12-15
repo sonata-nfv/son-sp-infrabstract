@@ -146,6 +146,29 @@ public class SonataGkMockedClient {
 
 		return requestObject.getId();
 	}
+	
+	/**
+	 * @param serviceUuid
+	 *            the uuid of the NSR to be terminated
+	 * @return a String representing the generated request UUID
+	 * @throws IOException
+	 *             for http client error or JSON parsing error
+	 */
+	public String removeServiceInstance(String serviceUuid) throws IOException {
+
+		JSONParser parser = new JSONParser();
+		Object object;
+		try {
+			object = parser.parse(new FileReader("./JSON/request-response.json"));
+		} catch (ParseException e1) {
+			throw new IOException("Error parsing request response.");
+		}
+
+		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
+		GkRequestStatus requestObject = mapper.readValue(object.toString(), GkRequestStatus.class);
+
+		return requestObject.getId();
+	}	
 
 	/**
 	 * @param requestUuid

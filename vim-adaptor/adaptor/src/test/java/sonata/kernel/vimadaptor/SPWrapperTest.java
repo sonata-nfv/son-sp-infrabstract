@@ -35,6 +35,7 @@ import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.Properties;
 import javax.ws.rs.NotAuthorizedException;
+
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Assert;
@@ -70,12 +71,13 @@ public class SPWrapperTest {
 	private static final String SONATA_CONFIG_FILEPATH = "C:/development/SONATA/etc/son-mano/sonata.config";
 	private static final String SONATA_2ND_SP_ADDRESS = "sonata_2nd_sp_address";
 	private static final String MOCKED_2ND_PLATFORM = "mocked_2nd_platform";
-	private static final String VENDOR ="eu.sonata-nfv";
-	private static final String NAME ="vtu-vnf";
-	private static final String VERSION ="0.5";
-	
+	private static final String VENDOR = "eu.sonata-nfv";
+	private static final String NAME = "vtu-vnf";
+	private static final String VERSION = "0.5";
 
 	private WrapperConfiguration config;
+	
+	private String instanceUuid;
 
 	@Before
 	public void setUp() {
@@ -92,7 +94,7 @@ public class SPWrapperTest {
 		config.setAuthPass("sonata");
 		config.setUuid("1234-1234-1234-1234");
 		config.setVimEndpoint(this.sonataProperties.getProperty(SONATA_2ND_SP_ADDRESS));
-		config.setWrapperType(WrapperType.COMPUTE);		
+		config.setWrapperType(WrapperType.COMPUTE);
 	}
 
 	@Test
@@ -111,8 +113,7 @@ public class SPWrapperTest {
 		if (lowerSPIsMocked) {
 			client = new SonataGkMockedClient();
 		} else {
-			client = new SonataGkClient(config.getVimEndpoint(), config.getAuthUserName(),
-					config.getAuthPass());
+			client = new SonataGkClient(config.getVimEndpoint(), config.getAuthUserName(), config.getAuthPass());
 		}
 
 		Logger.info("[SpWrapperTest] Retrieving VIMs connected to slave SONATA SP");
@@ -173,12 +174,11 @@ public class SPWrapperTest {
 		Logger.info("[SpWrapperTest] Creating SONATA Rest Client");
 		Object gkClient;
 		boolean lowerSPIsMocked = Boolean.parseBoolean(this.sonataProperties.getProperty(MOCKED_2ND_PLATFORM));
-		
+
 		if (lowerSPIsMocked) {
 			gkClient = new SonataGkMockedClient();
 		} else {
-			gkClient = new SonataGkClient(config.getVimEndpoint(), config.getAuthUserName(),
-					config.getAuthPass());
+			gkClient = new SonataGkClient(config.getVimEndpoint(), config.getAuthUserName(), config.getAuthPass());
 
 			Logger.info("[SpWrapperTest] Authenticating SONATA Rest Client");
 			if (!((SonataGkClient) gkClient).authenticate())
@@ -195,33 +195,33 @@ public class SPWrapperTest {
 		} catch (IOException e1) {
 			Logger.error("unable to contact the GK to check the available services list");
 			return;
-		}		
-		
+		}
+
 		Assert.assertTrue(availableNsds.length > 0);
 
 		String serviceUuid = null;
 		VnfDescriptor vnfd = new VnfDescriptor();
-		
+
 		vnfd.setVendor(VENDOR);
 		vnfd.setName(NAME);
 		vnfd.setVersion(VERSION);
-				
-	    Logger.debug("VNF: " + vnfd.getVendor() + "::" + vnfd.getName() + "::" + vnfd.getVersion());
-	    for (GkServiceListEntry serviceEntry : availableNsds) {
-	      ServiceDescriptor nsd = serviceEntry.getNsd();
-	      Logger.debug("Checking NSD:");
-	      Logger.debug(nsd.getVendor() + "::" + nsd.getName() + "::" + nsd.getVersion());
-	      boolean matchingVendor = nsd.getVendor().equals(vnfd.getVendor());
-	      boolean matchingName = nsd.getName().equals(vnfd.getName());
-	      boolean matchingVersion = nsd.getVersion().equals(vnfd.getVersion());
-	      Logger.debug("Matches: " + matchingVendor + "::" + matchingName + "::" + matchingVersion);
-	      boolean matchingCondition = matchingVendor && matchingName && matchingVersion;
-	      if (matchingCondition) {
-	        serviceUuid = serviceEntry.getUuid();
-	        break;
-	      }
-	    }
-	    
+
+		Logger.debug("VNF: " + vnfd.getVendor() + "::" + vnfd.getName() + "::" + vnfd.getVersion());
+		for (GkServiceListEntry serviceEntry : availableNsds) {
+			ServiceDescriptor nsd = serviceEntry.getNsd();
+			Logger.debug("Checking NSD:");
+			Logger.debug(nsd.getVendor() + "::" + nsd.getName() + "::" + nsd.getVersion());
+			boolean matchingVendor = nsd.getVendor().equals(vnfd.getVendor());
+			boolean matchingName = nsd.getName().equals(vnfd.getName());
+			boolean matchingVersion = nsd.getVersion().equals(vnfd.getVersion());
+			Logger.debug("Matches: " + matchingVendor + "::" + matchingName + "::" + matchingVersion);
+			boolean matchingCondition = matchingVendor && matchingName && matchingVersion;
+			if (matchingCondition) {
+				serviceUuid = serviceEntry.getUuid();
+				break;
+			}
+		}
+
 		if (serviceUuid == null) {
 			Logger.error("Error! Cannot find correct NSD matching the VNF identifier trio.");
 			return;
@@ -306,6 +306,8 @@ public class SPWrapperTest {
 		}
 
 		Assert.assertNotNull(instantiationRequest);
+		
+		instanceUuid = instantiationRequest.getServiceInstanceUuid();
 
 		ServiceRecord nsr = null;
 		try {
@@ -365,6 +367,77 @@ public class SPWrapperTest {
 
 		Logger.info("Response created");
 
+	}
+
+	@Test
+	public void removeService() {
+
+		Logger.info("[SpWrapper] Creating SONATA Rest Client");
+		
+		Object gkClient;
+		boolean lowerSPIsMocked = Boolean.parseBoolean(this.sonataProperties.getProperty(MOCKED_2ND_PLATFORM));
+		
+		if (lowerSPIsMocked) {
+			gkClient = new SonataGkMockedClient();
+		} else {
+			gkClient = new SonataGkClient(config.getVimEndpoint(), config.getAuthUserName(), config.getAuthPass());
+
+			Logger.info("[SpWrapperTest] Authenticating SONATA Rest Client");
+			if (!((SonataGkClient) gkClient).authenticate())
+				throw new NotAuthorizedException("Client cannot login to the SP");
+		}
+
+		String requestUuid = null;
+		try {
+			if (lowerSPIsMocked) {
+				requestUuid = ((SonataGkMockedClient) gkClient).removeServiceInstance(instanceUuid);
+			} else {
+				requestUuid = ((SonataGkClient) gkClient).removeServiceInstance(instanceUuid);
+			}			
+		} catch (Exception e) {
+			Logger.error(e.getMessage(), e);
+		}
+		
+		Assert.assertNotNull(requestUuid);
+
+		// - than poll the GK until the status is "READY" or "ERROR"
+
+		int counter = 0;
+		int wait = 1000;
+		int maxCounter = 50;
+		int maxWait = 15000;
+		String status = null;
+		while ((status == null || !status.equals("READY") || !status.equals("ERROR")) && counter < maxCounter) {
+			try {				
+				if (lowerSPIsMocked) {
+					status = ((SonataGkMockedClient) gkClient).getRequestStatus(requestUuid);
+				} else {
+					status = ((SonataGkClient) gkClient).getRequestStatus(requestUuid);
+				}
+			} catch (IOException e1) {
+				Logger.error(e1.getMessage(), e1);
+				Logger.error("Error while retrieving the Service termination request status. Trying again in "
+						+ (wait / 1000) + " seconds");
+			}
+			Logger.info("Status of request " + requestUuid + ": " + status);
+			if (status != null && (status.equals("READY") || status.equals("ERROR"))) {
+				break;
+			}
+			try {
+				Thread.sleep(wait);
+			} catch (InterruptedException e) {
+				Logger.error(e.getMessage(), e);
+			}
+			counter++;
+			wait = Math.min(wait * 2, maxWait);
+
+		}
+		
+		Assert.assertNotNull(status);
+		Assert.assertTrue(!status.equals("ERROR"));
+		Assert.assertTrue(status.equals("READY"));
+
+		Logger.info("Response created");
 	}
 
 	private static Properties parseConfigFile() {
