@@ -351,7 +351,7 @@ public class OvsWrapper extends NetworkWrapper {
     clientSocket.close();
 
     Logger.info("SFC Agent response:\n" + response);
-    if (!response.equals("SUCCESS")) {
+    if (!(response.equals("SUCCESS")||response.startsWith("No instance-ID"))) {
       Logger.error("Unexpected response.");
       Logger.error("received string length: " + response.length());
       Logger.error("received string: " + response);
