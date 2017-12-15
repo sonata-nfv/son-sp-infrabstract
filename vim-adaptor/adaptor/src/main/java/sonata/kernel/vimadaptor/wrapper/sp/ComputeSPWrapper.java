@@ -123,6 +123,7 @@ public class ComputeSPWrapper extends ComputeWrapper {
       boolean matchingCondition = matchingVendor && matchingName && matchingVersion;
       if (matchingCondition) {
         serviceUuid = serviceEntry.getUuid();
+        break;
       }
     }
     if (serviceUuid == null) {
