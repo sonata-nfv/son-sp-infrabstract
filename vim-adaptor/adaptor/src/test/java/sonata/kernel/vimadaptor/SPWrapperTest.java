@@ -104,6 +104,7 @@ public class SPWrapperTest {
 
 		String[] vim_cities = { "Athens", "Aveiro", "London", "Paderborn", "Tel Aviv" };
 		boolean lowerSPIsMocked = Boolean.parseBoolean(this.sonataProperties.getProperty(MOCKED_2ND_PLATFORM));
+		Logger.info("lowerSPIsMocked: "+lowerSPIsMocked);
 
 		Logger.info("[SpWrapperTest] Reading config files");
 		Assert.assertNotNull(this.sonataProperties.getProperty(SONATA_2ND_SP_ADDRESS));
@@ -455,6 +456,7 @@ public class SPWrapperTest {
 			prop.put(SONATA_2ND_SP_ADDRESS, gk2Host);
 			String isMocked = jsonObject.getString(MOCKED_2ND_PLATFORM);
 			prop.put(MOCKED_2ND_PLATFORM, isMocked);
+			Logger.info("is 2nd platform mocked? - "+isMocked);
 
 		} catch (FileNotFoundException e) {
 			Logger.error("Unable to load Sonata Config file", e);
