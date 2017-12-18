@@ -5,7 +5,7 @@
 	"service_uuid": "ccb2d32a-4c21-42e4-8133-9fa76c34f94b",
 	"status": "NEW",
 	"request_type": "CREATE",
-	"service_instance_uuid": null,
+	"service_instance_uuid": "18bffc8b-2440-4c77-b92a-712de30a224a",
 	"ingress": null,
 	"egress": null
 }

@@ -91,7 +91,7 @@ public class SPWrapperTest {
 		config = new WrapperConfiguration();
 
 		config.setAuthUserName("sonata");
-		config.setAuthPass("sonata");
+		config.setAuthPass("1234");
 		config.setUuid("1234-1234-1234-1234");
 		config.setVimEndpoint(this.sonataProperties.getProperty(SONATA_2ND_SP_ADDRESS));
 		config.setWrapperType(WrapperType.COMPUTE);
@@ -223,13 +223,8 @@ public class SPWrapperTest {
 			}
 		}
 
-		if (serviceUuid == null) {
-			Logger.error("Error! Cannot find correct NSD matching the VNF identifier trio.");
-			return;
-		}
-
 		Assert.assertNotNull(serviceUuid);
-
+		
 		// - sending a REST call to the underlying SP Gatekeeper for service
 		// deployment
 		String requestUuid = null;
@@ -309,6 +304,7 @@ public class SPWrapperTest {
 		Assert.assertNotNull(instantiationRequest);
 		
 		instanceUuid = instantiationRequest.getServiceInstanceUuid();
+		Assert.assertNotNull(instanceUuid);
 
 		ServiceRecord nsr = null;
 		try {
@@ -317,9 +313,9 @@ public class SPWrapperTest {
 			} else {
 				nsr = ((SonataGkClient) gkClient).getNsr(instantiationRequest.getServiceInstanceUuid());
 			}
-		} catch (IOException e1) {
-			Logger.error("Service instantiation failed. Can't retrieve NSR of instantiated service.");
-			return;
+		} catch (IOException e1) {			
+			Logger.error("Service instantiation failed. Can't retrieve NSR of instantiated service with service instance uuid: "+instantiationRequest.getServiceInstanceUuid());
+			Assert.assertNotNull(nsr);
 		}
 
 		Assert.assertNotNull(nsr);
@@ -335,8 +331,8 @@ public class SPWrapperTest {
 				remoteVnfr = ((SonataGkClient) gkClient).getVnfr(vnfrId);
 			}
 		} catch (IOException e1) {
-			Logger.error("Service instantiation failed. Can't retrieve VNFR of instantiated function.");
-			return;
+			Logger.error("Service instantiation failed. Can't retrieve VNFR of instantiated function with uuid: "+vnfrId);
+			Assert.assertNotNull(remoteVnfr);
 		}
 
 		Assert.assertNotNull(remoteVnfr);
@@ -373,6 +369,8 @@ public class SPWrapperTest {
 	@Test
 	public void removeService() {
 
+		Logger.info("<<<<<<<<<<<<<<<<<<<<<<  removeService Test  >>>>>>>>>>>>>>>>>>>>>>>>");
+		
 		Logger.info("[SpWrapper] Creating SONATA Rest Client");
 		
 		Object gkClient;
