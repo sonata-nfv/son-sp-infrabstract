@@ -40,8 +40,10 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
+import org.junit.runners.MethodSorters;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
 import sonata.kernel.vimadaptor.commons.ServiceRecord;
@@ -60,14 +62,12 @@ import sonata.kernel.vimadaptor.wrapper.sp.client.SonataGkClient;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkRequestStatus;
 import sonata.kernel.vimadaptor.wrapper.sp.client.model.GkServiceListEntry;
 
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class SPWrapperTest {
 
 	private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(SPWrapperTest.class);
 
 	private Properties sonataProperties;
-	// Santi
-	// private static final String SONATA_CONFIG_FILEPATH =
-	// "/etc/son-mano/sonata.config";
 	private static final String SONATA_CONFIG_FILEPATH = "/etc/son-mano/sonata.config";
 	private static final String SONATA_2ND_SP_ADDRESS = "sonata_2nd_sp_address";
 	private static final String MOCKED_2ND_PLATFORM = "mocked_2nd_platform";
@@ -98,11 +98,11 @@ public class SPWrapperTest {
 	}
 
 	@Test
-	public void getResourceUtilisation() {
+	public void test1_GetResourceUtilisation() {
 
 		Logger.info("<<<<<<<<<<<<<<<<<<<<<<  getResourceUtilisation Test  >>>>>>>>>>>>>>>>>>>>>>>>");
 
-		String[] vim_cities = { "Athens", "Aveiro", "London", "Paderborn", "Tel Aviv" };
+		String[] vim_cities = { "Athens", "Aveiro-Beach", "Aveiro", "London", "Paderborn", "Tel Aviv" };
 		boolean lowerSPIsMocked = Boolean.parseBoolean(this.sonataProperties.getProperty(MOCKED_2ND_PLATFORM));
 		Logger.info("lowerSPIsMocked: "+lowerSPIsMocked);
 
@@ -165,10 +165,11 @@ public class SPWrapperTest {
 		Assert.assertTrue(ru.getTotMemory() > 0);
 		Assert.assertTrue(ru.getUsedMemory() > 0);
 
+		Logger.info("Response created");
 	}
 
 	@Test
-	public void deployFunction() {
+	public void test2_DeployFunction() {
 
 		Logger.info("<<<<<<<<<<<<<<<<<<<<<<  deployFunction Test  >>>>>>>>>>>>>>>>>>>>>>>>");
 
@@ -367,7 +368,7 @@ public class SPWrapperTest {
 	}
 
 	@Test
-	public void removeService() {
+	public void test3_RemoveService() {
 
 		Logger.info("<<<<<<<<<<<<<<<<<<<<<<  removeService Test  >>>>>>>>>>>>>>>>>>>>>>>>");
 		
