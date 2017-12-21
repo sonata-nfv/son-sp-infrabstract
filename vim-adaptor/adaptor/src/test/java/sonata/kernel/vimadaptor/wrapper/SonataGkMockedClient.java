@@ -164,6 +164,10 @@ public class SonataGkMockedClient {
 			throw new IOException("Error parsing request response.");
 		}
 
+		String body =
+		        String.format("{\"service_instance_uuid\": \"%s\", \"request_type\":\"TERMINATE\"}", serviceUuid);
+		Logger.debug(body);
+		
 		ObjectMapper mapper = SonataManifestMapper.getSonataJsonMapper();
 		GkRequestStatus requestObject = mapper.readValue(object.toString(), GkRequestStatus.class);
 
