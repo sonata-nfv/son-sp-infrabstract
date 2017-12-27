@@ -314,11 +314,13 @@ public class JavaStackCore {
           if (endpointItem.getIface().equals("public")) {
             String[] path_port = endpointItem.getUrl().split(":");;
             String[] path = path_port[2].split("/");
-            String version, port;
+            String version = "";
+	    String port;
 
             switch (type) {
               case "identity":
                 port = path[0];
+		if (path.length > 1)
                 version = path[1];
                 Identity.setPORT(port);
                 Identity.setVERSION(version);
@@ -326,6 +328,7 @@ public class JavaStackCore {
 
               case "orchestration":
                 port = path[0];
+		if (path.length > 1)
                 version = path[1];
                 Orchestration.setPORT(port);
                 Orchestration.setVERSION(version);
@@ -340,6 +343,7 @@ public class JavaStackCore {
 
               case "compute":
                 port = path[0];
+		if (path.length > 1)
                 version = path[1];
                 Compute.setPORT(port);
                 Compute.setVERSION(version);
