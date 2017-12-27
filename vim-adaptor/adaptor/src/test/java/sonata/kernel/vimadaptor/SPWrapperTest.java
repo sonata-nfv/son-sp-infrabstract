@@ -44,7 +44,6 @@ import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
 import org.junit.runners.MethodSorters;
-
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
 import sonata.kernel.vimadaptor.commons.ServiceRecord;
 import sonata.kernel.vimadaptor.commons.Status;
@@ -77,7 +76,7 @@ public class SPWrapperTest {
 
 	private WrapperConfiguration config;
 	
-	private String instanceUuid;
+	static String instanceUuid;
 
 	@Before
 	public void setUp() {
