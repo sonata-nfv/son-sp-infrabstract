@@ -184,7 +184,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     String message =
         "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
-            + "\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
@@ -284,7 +284,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     String message =
         "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
-            + "\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
@@ -410,7 +410,7 @@ public class DeployServiceTest implements MessageReceiver {
         + "\"tenant_private_cidr\":\"10.128.0.0/9\","
         + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
-        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
         + "\"pass\":\"s0n@t@.d@ri0\"}";
     System.out.println("[OnePoPTest] Adding PoP .200");
@@ -446,7 +446,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", " + "\"name\":\"Athens1-net\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
@@ -922,7 +922,7 @@ public class DeployServiceTest implements MessageReceiver {
     String addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
         + "\"tenant_ext_router\":\"26f732b2-74bd-4f8c-a60e-dae4fb6a7c14\", "
         + "\"tenant_ext_net\":\"53d43a3e-8c86-48e6-b1cb-f1f2c48833de\"," + "\"tenant\":\"admin\""
-        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "}," + "\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"vim_address\":\"10.100.32.200\", \"username\":\"sonata.dario\","
         + "\"name\":\"Athens1\"," + "\"pass\":\"s0n@t@.d@ri0\"}";
 
@@ -950,7 +950,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", " + "\"name\":\"Athens1-net\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid1 + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
@@ -980,7 +980,7 @@ public class DeployServiceTest implements MessageReceiver {
     addVimBody = "{\"vim_type\":\"Heat\", " + "\"configuration\":{"
         + "\"tenant_ext_router\":\"4e362dfd-ba10-4957-9b8b-51e31b5ec4e9\", "
         + "\"tenant_ext_net\":\"12bf4db8-0131-4322-bd22-0b1ad8333748\","
-        + "\"tenant\":\"sonata.dario\"" + "}," + "\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"tenant\":\"sonata.dario\"" + "}," + "\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"vim_address\":\"10.100.32.10\",\"username\":\"sonata.dario\","
         + "\"name\":\"Athens2\"," + "\"pass\":\"s0n@t@.d@ri0\"}";
 
@@ -1006,7 +1006,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     addNetVimBody = "{\"vim_type\":\"ovs\", " + "\"name\":\"Athens2-net\","
-        + "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid2 + "\"}}";
     topic = "infrastructure.management.network.add";
     addNetVimMessage = new ServicePlatformMessage(addNetVimBody, "application/json", topic,

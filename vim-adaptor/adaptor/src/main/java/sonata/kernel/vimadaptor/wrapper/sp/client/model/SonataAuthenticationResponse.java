@@ -36,6 +36,4 @@ public class SonataAuthenticationResponse {
     this.token = token;
   }
 
-
-
 }

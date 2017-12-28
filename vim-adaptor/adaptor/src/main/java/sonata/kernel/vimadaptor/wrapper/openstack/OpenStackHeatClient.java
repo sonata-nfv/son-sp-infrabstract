@@ -77,10 +77,11 @@ public class OpenStackHeatClient {
    * @param url of the OpenStack endpoint
    * @param userName to log into the OpenStack service
    * @param password to log into the OpenStack service
+   * @param domain to log into the OpenStack service
    * @param tenantName to log into the OpenStack service
    * @throws IOException if the client cannoct connect to the VIM
    */
-  public OpenStackHeatClient(String url, String userName, String password, String tenantName,
+  public OpenStackHeatClient(String url, String userName, String password, String domain, String tenantName,
       String identityPort) throws IOException {
     // this.url = url;
     // this.userName = userName;
@@ -88,12 +89,13 @@ public class OpenStackHeatClient {
     // this.tenantName = tenantName;
 
     Logger.debug(
-        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
+        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|Domain:" + domain + "|");
 
     javaStack = JavaStackCore.getJavaStackCore();
     javaStack.setEndpoint(url);
     javaStack.setUsername(userName);
     javaStack.setPassword(password);
+    javaStack.setDomain(domain);
     javaStack.setProjectName(tenantName);
     javaStack.setProjectId(null);
     javaStack.setAuthenticated(false);

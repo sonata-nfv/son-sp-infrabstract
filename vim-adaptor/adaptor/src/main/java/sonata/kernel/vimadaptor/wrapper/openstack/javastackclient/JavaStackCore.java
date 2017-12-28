@@ -188,6 +188,8 @@ public class JavaStackCore {
   private String token_id;
 
   private String username;
+  
+  private String domain;
 
   private JavaStackCore() {}
 
@@ -282,7 +284,7 @@ public class JavaStackCore {
               + "        }\n" 
               + "    }\n" 
               + "}",
-          this.username, "default", this.password);
+          this.username, this.domain, this.password);
 
       post.setEntity(new StringEntity(body, ContentType.APPLICATION_JSON));
 
@@ -621,6 +623,10 @@ public class JavaStackCore {
     return this.username;
   }
 
+  public String getDomain() {
+    return this.domain;
+  }
+
   /**
    * NOVA method to list compute flavors
    *
@@ -858,6 +864,10 @@ public class JavaStackCore {
 
   public void setUsername(String username) {
     this.username = username;
+  }
+
+  public void setDomain(String domain) {
+    this.domain = domain;
   }
 
   /**

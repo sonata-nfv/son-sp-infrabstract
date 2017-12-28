@@ -132,7 +132,7 @@ public class VimRepo {
         stmt = connection.createStatement();
         sql = "CREATE TABLE vim " + "(UUID TEXT PRIMARY KEY NOT NULL," + "NAME TEXT,"
             + " TYPE TEXT NOT NULL," + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL,"
-            + " USERNAME TEXT NOT NULL," + " CONFIGURATION TEXT NOT NULL," + " CITY TEXT,"
+            + " USERNAME TEXT NOT NULL," + " DOMAIN TEXT NOT NULL," + " CONFIGURATION TEXT NOT NULL," + " CITY TEXT,"
             + "COUNTRY TEXT," + " PASS TEXT," + " AUTHKEY TEXT" + ");";
         stmt.executeUpdate(sql);
         sql = "CREATE TABLE service_instances " + "(" + "INSTANCE_UUID TEXT NOT NULL,"
@@ -397,6 +397,7 @@ public class VimRepo {
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
+        String domain = rs.getString("DOMAIN");
         String key = rs.getString("AUTHKEY");
         String configuration = rs.getString("CONFIGURATION");
         String city = rs.getString("CITY");
@@ -410,6 +411,7 @@ public class VimRepo {
         config.setConfiguration(configuration);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
+        config.setDomain(domain);
         config.setAuthKey(key);
         config.setCity(city);
         config.setCountry(country);
@@ -987,6 +989,7 @@ public class VimRepo {
         String urlString = rs.getString("ENDPOINT");
         String user = rs.getString("USERNAME");
         String pass = rs.getString("PASS");
+        String domain = rs.getString("DOMAIN");       
         String configuration = rs.getString("CONFIGURATION");
         String city = rs.getString("CITY");
         String country = rs.getString("COUNTRY");
@@ -1002,6 +1005,7 @@ public class VimRepo {
         config.setVimEndpoint(urlString);
         config.setAuthUserName(user);
         config.setAuthPass(pass);
+        config.setDomain(domain);
         config.setAuthKey(key);
         config.setName(name);
 
@@ -1279,8 +1283,8 @@ public class VimRepo {
 
 
       String sql = "UPDATE VIM set "
-          + "(NAME, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
-          + "VALUES (?,?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
+          + "(NAME, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY, DOMAIN) "
+          + "VALUES (?,?,?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
 
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, wrapper.getConfig().getWrapperType().toString());
@@ -1293,7 +1297,8 @@ public class VimRepo {
       stmt.setString(8, wrapper.getConfig().getCountry());
       stmt.setString(9, wrapper.getConfig().getAuthPass());
       stmt.setString(10, wrapper.getConfig().getAuthKey());
-      stmt.setString(11, uuid);
+      stmt.setString(11, wrapper.getConfig().getDomain());
+      stmt.setString(12, uuid);
 
 
       stmt.executeUpdate(sql);
@@ -1520,8 +1525,8 @@ public class VimRepo {
       connection.setAutoCommit(false);
 
       String sql = "INSERT INTO VIM "
-          + "(UUID, NAME, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY) "
-          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
+          + "(UUID, NAME, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY, DOMAIN) "
+          + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, uuid);
       stmt.setString(2, wrapper.getConfig().getName());
@@ -1534,6 +1539,7 @@ public class VimRepo {
       stmt.setString(9, wrapper.getConfig().getCountry());
       stmt.setString(10, wrapper.getConfig().getAuthPass());
       stmt.setString(11, wrapper.getConfig().getAuthKey());
+      stmt.setString(12, wrapper.getConfig().getDomain());
 
       stmt.executeUpdate();
       connection.commit();

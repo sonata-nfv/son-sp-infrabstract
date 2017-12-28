@@ -86,6 +86,7 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid("12345");
     config.setWrapperType(WrapperType.COMPUTE);
     String configs =
@@ -113,6 +114,7 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid("1");
     config.setWrapperType(WrapperType.COMPUTE);
     String configs =
@@ -258,6 +260,7 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid(computeUuid);
     config.setWrapperType(WrapperType.COMPUTE);
     String configs =
@@ -274,6 +277,7 @@ public class VimRepoTest {
     config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid(networkingUuid);
     config.setWrapperType(WrapperType.NETWORK);
     config.setConfiguration("{\"compute_uuid\":\"" + computeUuid + "\"}");

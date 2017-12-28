@@ -120,7 +120,7 @@ public class AdaptorTest implements MessageReceiver {
     String message =
         "{\"vim_type\":\"Mock\",\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
             + "\"name\":\"Athens.100.Demo\","
-            + "\"pass\":\"s0n@t@.dem\",\"city\":\"Athens\",\"country\":\"Greece\","
+            + "\"pass\":\"s0n@t@.dem\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -154,7 +154,7 @@ public class AdaptorTest implements MessageReceiver {
     message =
         "{\"vim_type\":\"Mock\",\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
             + "\"name\":\"Athens.100.Dario\","
-            + "\"pass\":\"s0n@t@.dario\",\"city\":\"Athens\",\"country\":\"Greece\","
+            + "\"pass\":\"s0n@t@.dario\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
 
 
@@ -255,7 +255,7 @@ public class AdaptorTest implements MessageReceiver {
   public void testCreateMOCKWrapper() throws InterruptedException, IOException {
     String message =
         "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
-            + "\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -318,7 +318,7 @@ public class AdaptorTest implements MessageReceiver {
     String message =
         "{\"vim_type\":\"SPVim\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
             + "\"name\":\"SP-Athens-1\","
-            + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -352,7 +352,7 @@ public class AdaptorTest implements MessageReceiver {
     output = null;
 
     String addNetVimBody = "{\"vim_type\":\"SPVim\", " + "\"name\":\"SP-Athens1-net\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
@@ -443,7 +443,7 @@ public class AdaptorTest implements MessageReceiver {
     for (int i = 0; i < 3; i++) {
       String message = "{\"vim_type\":\"mock\",\"vim_address\":\"http://vim" + i
           + ":9999\",\"username\":\"Eve\"," + "\"name\":\"Mock" + i + "\","
-          + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+          + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
           + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
       ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
           topic, UUID.randomUUID().toString(), topic);

@@ -75,6 +75,7 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
 
         bodyElement.setVimUuid(vimUuid);
         bodyElement.setVimCity(wr.getConfig().getCity());
+        bodyElement.setVimDomain(wr.getConfig().getDomain());
         bodyElement.setVimName(wr.getConfig().getName());
         bodyElement.setVimEndpoint(wr.getConfig().getVimEndpoint());
         bodyElement.setCoreTotal(resource.getTotCores());
@@ -87,6 +88,7 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
 
         bodyElement.setVimUuid(vimUuid);
         bodyElement.setVimCity(wr.getConfig().getCity());
+        bodyElement.setVimDomain(wr.getConfig().getDomain());
         bodyElement.setVimName(wr.getConfig().getName());
         bodyElement.setVimEndpoint(wr.getConfig().getVimEndpoint());
         bodyElement.setCoreTotal(-1);
@@ -94,7 +96,6 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
         bodyElement.setMemoryTotal(-1);
         bodyElement.setMemoryUsed(-1);
         resList.add(bodyElement);
-
       }
     }
 
@@ -104,7 +105,6 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
     try {
       Logger.info("Sending back response...");
       body = mapper.writeValueAsString(resList);
-
 
       ServicePlatformMessage response = new ServicePlatformMessage(body, "application/x-yaml",
           this.getMessage().getReplyTo(), this.getSid(), null);

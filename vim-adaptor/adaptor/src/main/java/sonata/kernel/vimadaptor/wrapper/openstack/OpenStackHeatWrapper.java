@@ -151,9 +151,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
       novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -440,9 +440,9 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
       novaClient = new OpenStackNovaClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -515,7 +515,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackNovaClient client;
     try {
       client = new OpenStackNovaClient(getConfig().getVimEndpoint(), getConfig().getAuthUserName(),
-          getConfig().getAuthPass(), tenant, identityPort);
+          getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
       output = client.getResourceUtilizasion();
       Logger.info("OpenStack wrapper - Resource utilisation retrieved.");
     } catch (IOException e) {
@@ -557,7 +557,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     OpenStackGlanceClient glance = null;
     try {
       glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -601,7 +601,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     // To prepare a service instance management and data networks/subnets
     // must be created. The Management Network must also be attached to the external router.
     OpenStackHeatClient client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
 
     HeatTemplate template = createInitStackTemplate(instanceId);
 
@@ -702,7 +702,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     try {
       client = new OpenStackHeatClient(getConfig().getVimEndpoint().toString(),
-          getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+          getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
     } catch (IOException e) {
       Logger.error("OpenStackHeat wrapper - Unable to connect to the VIM");
       this.setChanged();
@@ -781,7 +781,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
     OpenStackGlanceClient glance =
         new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
-            getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+            getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
 
     Logger.debug("Creating new image: " + image.getUuid());
     String imageUuid = glance.createImage(image.getUuid());
@@ -1008,7 +1008,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     }
     OpenStackGlanceClient glance = null;
     glance = new OpenStackGlanceClient(getConfig().getVimEndpoint().toString(),
-        getConfig().getAuthUserName(), getConfig().getAuthPass(), tenant, identityPort);
+        getConfig().getAuthUserName(), getConfig().getAuthPass(), getConfig().getDomain(), tenant, identityPort);
     ArrayList<Image> glanceImages = glance.listImages();
     for (Image image : glanceImages) {
       if (image != null && image.getChecksum() != null

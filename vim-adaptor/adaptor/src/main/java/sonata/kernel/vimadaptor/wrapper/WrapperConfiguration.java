@@ -36,11 +36,11 @@ public class WrapperConfiguration {
   private String country;
   private String name;
   private String uuid;
+  private String domain;
   private String vimEndpoint;
   private VimVendor vimVendor;
   private WrapperType wrapperType;
-
-
+  
   public String getAuthKey() {
     return authKey;
   }
@@ -55,6 +55,10 @@ public class WrapperConfiguration {
 
   public String getCity() {
     return city;
+  }
+
+  public String getDomain() {
+    return domain;
   }
 
   public String getConfiguration() {
@@ -101,7 +105,9 @@ public class WrapperConfiguration {
     this.city = city;
   }
 
-
+  public void setDomain(String domain) {
+    this.domain = domain;
+  }
 
   public void setConfiguration(String configuration) {
     this.configuration = configuration;
@@ -141,6 +147,7 @@ public class WrapperConfiguration {
     out += "User: " + authUserName + "\n";
     out += "pass: " + authPass + "\n";
     out += "name: " + name + "\n";
+    out += "domain: " + domain + "\n";
     out += "config:\n";
     out += configuration;
     return out;
