@@ -352,7 +352,7 @@ public class AdaptorTest implements MessageReceiver {
     output = null;
 
     String addNetVimBody = "{\"vim_type\":\"SPVim\", " + "\"name\":\"SP-Athens1-net\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,

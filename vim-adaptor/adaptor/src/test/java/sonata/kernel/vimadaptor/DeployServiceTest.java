@@ -446,7 +446,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", " + "\"name\":\"Athens1-net\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
@@ -950,7 +950,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     String addNetVimBody = "{\"vim_type\":\"ovs\", " + "\"name\":\"Athens1-net\","
-        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid1 + "\"}}";
     topic = "infrastructure.management.network.add";
     ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
@@ -1006,7 +1006,7 @@ public class DeployServiceTest implements MessageReceiver {
 
     output = null;
     addNetVimBody = "{\"vim_type\":\"ovs\", " + "\"name\":\"Athens2-net\","
-        + "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\","
+        + "\"vim_address\":\"10.100.32.10\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
         + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid2 + "\"}}";
     topic = "infrastructure.management.network.add";
     addNetVimMessage = new ServicePlatformMessage(addNetVimBody, "application/json", topic,
