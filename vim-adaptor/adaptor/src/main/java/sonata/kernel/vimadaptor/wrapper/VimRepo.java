@@ -1284,7 +1284,7 @@ public class VimRepo {
 
       String sql = "UPDATE VIM set "
           + "(NAME, TYPE, VENDOR, ENDPOINT, USERNAME, CONFIGURATION, CITY, COUNTRY, PASS, AUTHKEY, DOMAIN) "
-          + "VALUES (?,?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
+          + "VALUES (?,?,?,?,?,?,?,?,?,?,?,?) WHERE UUID=?;";
 
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, wrapper.getConfig().getWrapperType().toString());
