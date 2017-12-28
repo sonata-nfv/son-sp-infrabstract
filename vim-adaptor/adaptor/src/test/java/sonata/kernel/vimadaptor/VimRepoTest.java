@@ -114,7 +114,7 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
-    config.setDefault("default");
+    config.setDomain("default");
     config.setUuid("1");
     config.setWrapperType(WrapperType.COMPUTE);
     String configs =
