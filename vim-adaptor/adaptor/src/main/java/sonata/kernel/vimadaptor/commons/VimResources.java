@@ -40,6 +40,8 @@ public class VimResources {
   private int memoryUsed;
   @JsonProperty("vim_city")
   private String vimCity;
+  @JsonProperty("vim_domain")
+  private String vimDomain;
   @JsonProperty("vim_endpoint")
   private String vimEndpoint;
   @JsonProperty("vim_name")
@@ -65,6 +67,10 @@ public class VimResources {
 
   public String getVimCity() {
     return vimCity;
+  }
+
+  public String getVimDomain() {
+    return vimDomain;
   }
 
   public String getVimEndpoint() {
@@ -97,6 +103,10 @@ public class VimResources {
 
   public void setVimCity(String vimCity) {
     this.vimCity = vimCity;
+  }
+
+  public void setVimDomain(String vimDomain) {
+    this.vimDomain = vimDomain;
   }
 
   public void setVimEndpoint(String vimEndpoint) {

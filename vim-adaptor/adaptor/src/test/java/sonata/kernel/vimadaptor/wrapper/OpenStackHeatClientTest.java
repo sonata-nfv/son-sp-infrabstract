@@ -53,7 +53,7 @@ public class OpenStackHeatClientTest {
 
     // todo - this needs to be moved to configuration file
     this.heatClient = new OpenStackHeatClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@",
-        "op_sonata", null);
+        "op_sonata", "default",  null);
   }
 
 

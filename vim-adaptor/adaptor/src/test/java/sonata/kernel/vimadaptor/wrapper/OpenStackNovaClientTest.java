@@ -50,7 +50,7 @@ public class OpenStackNovaClientTest {
 
     // todo - this needs to be moved to configuration file
     this.novaClient =
-        new OpenStackNovaClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@", "op_sonata",null);
+        new OpenStackNovaClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@", "default", "op_sonata",null);
 
   }
 

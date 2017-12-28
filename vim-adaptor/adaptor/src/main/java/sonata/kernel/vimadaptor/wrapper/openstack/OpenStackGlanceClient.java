@@ -51,13 +51,15 @@ public class OpenStackGlanceClient {
   //
   // private String password; // OpenStack Client password
   //
+  // private String domain; // OpenStack Client domain
+  //
   // private String tenantName; // OpenStack tenant name
 
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
 
   private ObjectMapper mapper;
 
-  public OpenStackGlanceClient(String url, String userName, String password, String tenantName,
+  public OpenStackGlanceClient(String url, String userName, String password, String domain, String tenantName,
       String identityPort) throws IOException {
     // this.url = url;
     // this.userName = userName;
@@ -67,12 +69,13 @@ public class OpenStackGlanceClient {
     this.mapper = SonataManifestMapper.getSonataMapper();
 
     Logger.debug(
-        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
+        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|Domain:" + domain + "|" );
 
     javaStack = JavaStackCore.getJavaStackCore();
     javaStack.setEndpoint(url);
     javaStack.setUsername(userName);
     javaStack.setPassword(password);
+    javaStack.setDomain(domain);
     javaStack.setProjectName(tenantName);
     javaStack.setProjectId(null);
     javaStack.setAuthenticated(false);
