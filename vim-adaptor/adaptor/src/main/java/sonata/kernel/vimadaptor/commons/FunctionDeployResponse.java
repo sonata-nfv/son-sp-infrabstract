@@ -27,6 +27,7 @@
 package sonata.kernel.vimadaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 
 
 public class FunctionDeployResponse {
@@ -38,7 +39,17 @@ public class FunctionDeployResponse {
   private String requestStatus;
   private String vimUuid;
 
+  @JsonProperty("ip_mapping")
+  private ArrayList<IpMapping> ipMappingList;
   private VnfRecord vnfr;
+
+  public FunctionDeployResponse() {
+    this.ipMappingList = new ArrayList<IpMapping>();
+  }
+
+  public void addIp(IpMapping unit) {
+    this.ipMappingList.add(unit);
+  }
 
 
   public String getInstanceName() {
@@ -59,6 +70,10 @@ public class FunctionDeployResponse {
 
   public String getVimUuid() {
     return vimUuid;
+  }
+
+  public ArrayList<IpMapping> getipMappingList() {
+    return ipMappingList;
   }
 
   public VnfRecord getVnfr() {
@@ -84,6 +99,10 @@ public class FunctionDeployResponse {
 
   public void setVimUuid(String vimUuid) {
     this.vimUuid = vimUuid;
+  }
+
+  public void setIpMappingList(ArrayList<IpMapping> ipMappingList) {
+    this.ipMappingList = ipMappingList;
   }
 
   public void setVnfr(VnfRecord vnfr) {

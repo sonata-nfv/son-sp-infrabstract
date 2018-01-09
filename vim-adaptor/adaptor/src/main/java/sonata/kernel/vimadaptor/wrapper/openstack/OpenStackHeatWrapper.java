@@ -47,6 +47,7 @@ import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VduRecord;
+import sonata.kernel.vimadaptor.commons.IpMapping;
 import sonata.kernel.vimadaptor.commons.VimNetTable;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
@@ -365,6 +366,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
                 if (port.getFloatinIp() != null) {
                   ip.setAddress(port.getFloatinIp());
                   ip.setHardwareAddress(port.getMacAddress());
+                  IpMapping ipMap = new IpMapping();
+                  ipMap.setFloatingIp(port.getFloatinIp());
+                  ipMap.setInternalIp(port.getIpAddress());
+                  response.addIp(ipMap);
                   // Logger.info("Port:" + port.getPortName() + "- Addr: " +
                   // port.getFloatinIp());
                 } else {
