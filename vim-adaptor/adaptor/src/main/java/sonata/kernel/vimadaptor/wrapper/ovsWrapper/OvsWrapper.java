@@ -263,7 +263,7 @@ public class OvsWrapper extends NetworkWrapper {
         InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
         int sfcAgentPort = 55555;
         Socket clientSocket = new Socket(IPAddress, sfcAgentPort);
-        clientSocket.setSoTimeout(10000);
+        clientSocket.setSoTimeout(100000);
         byte[] sendData = new byte[1024];
         sendData = payload.getBytes(Charset.forName("UTF-8"));
         PrintStream out = new PrintStream(clientSocket.getOutputStream());
@@ -323,7 +323,7 @@ public class OvsWrapper extends NetworkWrapper {
 
     InetAddress IPAddress = InetAddress.getByName(this.getConfig().getVimEndpoint());
     Socket clientSocket = new Socket(IPAddress, sfcAgentPort);
-    clientSocket.setSoTimeout(10000);
+    clientSocket.setSoTimeout(100000);
     byte[] sendData = new byte[1024];
     sendData = payload.getBytes(Charset.forName("UTF-8"));
     PrintStream out = new PrintStream(clientSocket.getOutputStream());
