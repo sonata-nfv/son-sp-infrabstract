@@ -50,6 +50,8 @@ public class VirtualDeploymentUnit {
   private VmFormat vmImageFormat;
   @JsonProperty("vm_image_md5")
   private String vmImageMd5;
+  @JsonProperty("user_data")
+  private String userData;
 
 
   public ArrayList<ConnectionPoint> getConnectionPoints() {
@@ -88,6 +90,10 @@ public class VirtualDeploymentUnit {
     return vmImageMd5;
   }
 
+  public String getUserData() {
+    return userData;
+  }
+
   public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
     this.connectionPoints = connectionPoints;
   }
@@ -122,6 +128,10 @@ public class VirtualDeploymentUnit {
 
   public void setVmImageMd5(String vmImageMd5) {
     this.vmImageMd5 = vmImageMd5;
+  }
+
+  public void setUserData(String userData) {
+    this.userData = userData;
   }
 
 
