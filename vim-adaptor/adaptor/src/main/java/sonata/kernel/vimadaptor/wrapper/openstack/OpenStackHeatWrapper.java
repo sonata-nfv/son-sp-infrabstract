@@ -1454,15 +1454,15 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       configList.add(partMap1);            
     }    
 
-    addSpAddressCloudConfigObject(vnfd, instanceUuid, model);
+    // addSpAddressCloudConfigObject(vnfd, instanceUuid, model);
 
-    HashMap<String, Object> spAddressInitMap = new HashMap<String, Object>();
-    spAddressInitMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
+    // HashMap<String, Object> spAddressInitMap = new HashMap<String, Object>();
+    // spAddressInitMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
 
-    HashMap<String,Object> partMap2 = new HashMap<String, Object>();
-    partMap2.put("config", spAddressInitMap);
+    // HashMap<String,Object> partMap2 = new HashMap<String, Object>();
+    // partMap2.put("config", spAddressInitMap);
     
-    configList.add(partMap2);
+    // configList.add(partMap2);
     
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Each VDU goes into a resource group with a number of Heat Server...");
@@ -1492,19 +1492,26 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
 
       if (vduHasUserData) {
         Logger.debug("Adding cloud-init resource");
-        HeatResource userDataObject = new HeatResource();
-        userDataObject.setType("OS::Heat::SoftwareConfig");
-        userDataObject.setName(vdu.getId() + "_" + instanceUuid + "_cloudInitConfig");
-        userDataObject.putProperty("group", "ungrouped");
-        userDataObject.putProperty("config", vdu.getUserData());
-        model.addResource(userDataObject);
+        server.putProperty("config_drive", true);
+        if (configList.isEmpty()){
+          server.putProperty("user_data", userData);
+          server.putProperty("user_data_format", "RAW");
 
-        HashMap<String, Object> cloudInitMap = new HashMap<String, Object>();
-        cloudInitMap.put("get_resource", vdu.getId() + "_" + instanceUuid + "_cloudInitConfig");
+        } else {
+          HeatResource userDataObject = new HeatResource();
+          userDataObject.setType("OS::Heat::SoftwareConfig");
+          userDataObject.setName(vdu.getId() + "_" + instanceUuid + "_cloudInitConfig");
+          userDataObject.putProperty("group", "ungrouped");
+          userDataObject.putProperty("config", vdu.getUserData());
+          model.addResource(userDataObject);
 
-        HashMap<String,Object> partMap3 = new HashMap<String, Object>();
-        partMap3.put("config", cloudInitMap);
-        newConfigList.add(partMap3);
+          HashMap<String, Object> cloudInitMap = new HashMap<String, Object>();
+          cloudInitMap.put("get_resource", vdu.getId() + "_" + instanceUuid + "_cloudInitConfig");
+
+          HashMap<String,Object> partMap3 = new HashMap<String, Object>();
+          partMap3.put("config", cloudInitMap);
+          newConfigList.add(partMap3);
+        }
       }
 
       for (HashMap config : configList){
