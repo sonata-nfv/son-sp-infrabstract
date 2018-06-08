@@ -35,48 +35,20 @@ import java.util.ArrayList;
 public class VduMonitoringRules {
 
 
-  private String name;
-  private String description;
   private String condition;
+  private String description;
   private double duration;
   @JsonProperty("duration_unit")
   private TimeUnit durationUnit;
+  private String name;
   private ArrayList<Notification> notification;
 
-  public void setName(String name) {
-    this.name = name;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public void setCondition(String condition) {
-    this.condition = condition;
-  }
-
-  public void setDuration(double duration) {
-    this.duration = duration;
-  }
-
-  public void setDurationUnit(TimeUnit durationUnit) {
-    this.durationUnit = durationUnit;
-  }
-
-  public void setNotification(ArrayList<Notification> notification) {
-    this.notification = notification;
-  }
-
-  public String getName() {
-    return name;
+  public String getCondition() {
+    return condition;
   }
 
   public String getDescription() {
     return description;
-  }
-
-  public String getCondition() {
-    return condition;
   }
 
   public double getDuration() {
@@ -87,8 +59,36 @@ public class VduMonitoringRules {
     return durationUnit;
   }
 
+  public String getName() {
+    return name;
+  }
+
   public ArrayList<Notification> getNotification() {
     return notification;
+  }
+
+  public void setCondition(String condition) {
+    this.condition = condition;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setDuration(double duration) {
+    this.duration = duration;
+  }
+
+  public void setDurationUnit(TimeUnit durationUnit) {
+    this.durationUnit = durationUnit;
+  }
+
+  public void setName(String name) {
+    this.name = name;
+  }
+
+  public void setNotification(ArrayList<Notification> notification) {
+    this.notification = notification;
   }
 
 

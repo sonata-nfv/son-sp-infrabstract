@@ -42,14 +42,14 @@ public class ServicePreparePayload {
   }
 
 
-  public void setInstanceId(String instanceId) {
-    this.instanceId = instanceId;
+  public ArrayList<VimPreDeploymentList> getVimList() {
+    return vimList;
   }
 
 
 
-  public ArrayList<VimPreDeploymentList> getVimList() {
-    return vimList;
+  public void setInstanceId(String instanceId) {
+    this.instanceId = instanceId;
   }
 
 
@@ -57,7 +57,6 @@ public class ServicePreparePayload {
   public void setVimList(ArrayList<VimPreDeploymentList> vimList) {
     this.vimList = vimList;
   }
-
 
 
 }

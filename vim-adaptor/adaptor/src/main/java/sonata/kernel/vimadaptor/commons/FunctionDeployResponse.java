@@ -27,18 +27,29 @@
 package sonata.kernel.vimadaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
 
 
 public class FunctionDeployResponse {
 
   private String instanceName;
   private String instanceVimUuid;
-  private String vimUuid;
+  private String message;
   @JsonProperty("request_status")
   private String requestStatus;
+  private String vimUuid;
+
+  @JsonProperty("ip_mapping")
+  private ArrayList<IpMapping> ipMappingList;
   private VnfRecord vnfr;
 
-  private String message;
+  public FunctionDeployResponse() {
+    this.ipMappingList = new ArrayList<IpMapping>();
+  }
+
+  public void addIp(IpMapping unit) {
+    this.ipMappingList.add(unit);
+  }
 
 
   public String getInstanceName() {
@@ -49,8 +60,20 @@ public class FunctionDeployResponse {
     return instanceVimUuid;
   }
 
+  public String getMessage() {
+    return message;
+  }
+
   public String getRequestStatus() {
     return requestStatus;
+  }
+
+  public String getVimUuid() {
+    return vimUuid;
+  }
+
+  public ArrayList<IpMapping> getipMappingList() {
+    return ipMappingList;
   }
 
   public VnfRecord getVnfr() {
@@ -61,37 +84,29 @@ public class FunctionDeployResponse {
     this.instanceName = instanceName;
   }
 
+
   public void setInstanceVimUuid(String instanceVimUuid) {
     this.instanceVimUuid = instanceVimUuid;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
   }
 
   public void setRequestStatus(String requestStatus) {
     this.requestStatus = requestStatus;
   }
 
-
-  public void setVnfrs(VnfRecord vnfr) {
-    this.vnfr = vnfr;
-  }
-
-  public String getVimUuid() {
-    return vimUuid;
-  }
-
   public void setVimUuid(String vimUuid) {
     this.vimUuid = vimUuid;
   }
 
-  public String getMessage() {
-    return message;
+  public void setIpMappingList(ArrayList<IpMapping> ipMappingList) {
+    this.ipMappingList = ipMappingList;
   }
 
   public void setVnfr(VnfRecord vnfr) {
     this.vnfr = vnfr;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
   }
 
 

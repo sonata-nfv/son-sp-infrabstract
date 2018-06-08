@@ -15,6 +15,10 @@
 			<name>Maven Central Repository</name>
 			<url>http://repo1.maven.org/maven2</url>
 		</repository>
+		<repository>
+			<id>project-repo</id>
+			<url>file://${project.basedir}/src/main/resources/project-repo</url>
+		</repository>
 	</repositories>
 
 	<pluginRepositories>
@@ -49,6 +53,14 @@
 		<httpcomponents.httpclient.version>4.5.2</httpcomponents.httpclient.version>
 		<httpcomponents.httpcore.version>4.4.5</httpcomponents.httpcore.version>
 		<org.yaml.version>1.17</org.yaml.version>
+		<nokia.mistral-client.version>1.0-SNAPSHOT</nokia.mistral-client.version>
+		<google.guava.version>19.0</google.guava.version>
+		<pacesys.openstack4j.version>2.20</pacesys.openstack4j.version>
+		<org.slf4j.version>1.7.25</org.slf4j.version>
+		<jboss.resteasy.version>3.0.16.Final</jboss.resteasy.version>
+		<commons.lang3.version>3.1</commons.lang3.version>
+		<springframework.spring.version>3.2.14.RELEASE</springframework.spring.version>
+		<jetbrains.annotations.version>13.0</jetbrains.annotations.version>
 
 		<!-- The versions of ALL the plugins used by this project. -->
 		<maven.surefire.report.version>2.19.1</maven.surefire.report.version>
@@ -162,6 +174,16 @@
 			<artifactId>mockito-all</artifactId> <version>${mockito.all.version}</version> 
 			</dependency> -->
 		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.51</version>
+		</dependency>	
+		<dependency>
+			<groupId>com.jcraft</groupId>
+			<artifactId>jsch</artifactId>
+			<version>0.1.54</version>
+		</dependency>
+		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
 			<version>${postgresql.version}</version>
@@ -230,6 +252,51 @@
 			<artifactId>logback-classic</artifactId>
 			<version>${logback.classic.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.nokia.cb.sonata.mistral-client</groupId>
+			<artifactId>mistral-client</artifactId>
+			<version>${nokia.mistral-client.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>${google.guava.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.pacesys</groupId>
+			<artifactId>openstack4j-core</artifactId>
+			<version>${pacesys.openstack4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.pacesys.openstack4j.connectors</groupId>
+			<artifactId>openstack4j-httpclient</artifactId>
+			<version>${pacesys.openstack4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>log4j-over-slf4j</artifactId>
+			<version>${org.slf4j.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.resteasy</groupId>
+			<artifactId>resteasy-client</artifactId>
+			<version>${jboss.resteasy.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${commons.lang3.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-core</artifactId>
+			<version>${springframework.spring.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>${jetbrains.annotations.version}</version>
+		</dependency>
 		<!-- Plugin dependencies to automatically download and install the plugins 
 			needed. -->
 		<dependency>
@@ -285,6 +352,11 @@
 			<artifactId>cobertura-maven-plugin</artifactId>
 			<version>${cobertura.maven.verion}</version>
 			<type>maven-plugin</type>
+		</dependency>
+		<dependency>
+   			<groupId>com.googlecode.json-simple</groupId>
+   			<artifactId>json-simple</artifactId>
+   			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 

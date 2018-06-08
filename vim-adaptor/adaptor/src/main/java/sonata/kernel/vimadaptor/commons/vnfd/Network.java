@@ -33,31 +33,18 @@ import sonata.kernel.vimadaptor.commons.vnfd.Unit.BandwidthUnit;
 public class Network {
 
 
+  @JsonProperty("data_processing_acceleration_library")
+  private String dataProcessingAccelerationLibrary;
   @JsonProperty("network_interface_bandwidth")
   private double networkInterfaceBandwidth;
   @JsonProperty("network_interface_bandwidth_unit")
   private BandwidthUnit networkInterfaceBandwidthUnit;
   @JsonProperty("network_interface_card_capabilities")
   private NicCapabilities networkInterfaceCardCapabilities;
-  @JsonProperty("data_processing_acceleration_library")
-  private String dataProcessingAccelerationLibrary;
 
 
-  public void setNetworkInterfaceBandwidth(double networkInterfaceBandwidth) {
-    this.networkInterfaceBandwidth = networkInterfaceBandwidth;
-  }
-
-  public void setNetworkInterfaceBandwidthUnit(BandwidthUnit networkInterfaceBandwidthUnit) {
-    this.networkInterfaceBandwidthUnit = networkInterfaceBandwidthUnit;
-  }
-
-  public void setNetworkInterfaceCardCapabilities(
-      NicCapabilities networkInterfaceCardCapabilities) {
-    this.networkInterfaceCardCapabilities = networkInterfaceCardCapabilities;
-  }
-
-  public void setDataProcessingAccelerationLibrary(String dataProcessingAccelerationLibrary) {
-    this.dataProcessingAccelerationLibrary = dataProcessingAccelerationLibrary;
+  public String getDataProcessingAccelerationLibrary() {
+    return dataProcessingAccelerationLibrary;
   }
 
   public double getNetworkInterfaceBandwidth() {
@@ -72,7 +59,20 @@ public class Network {
     return networkInterfaceCardCapabilities;
   }
 
-  public String getDataProcessingAccelerationLibrary() {
-    return dataProcessingAccelerationLibrary;
+  public void setDataProcessingAccelerationLibrary(String dataProcessingAccelerationLibrary) {
+    this.dataProcessingAccelerationLibrary = dataProcessingAccelerationLibrary;
+  }
+
+  public void setNetworkInterfaceBandwidth(double networkInterfaceBandwidth) {
+    this.networkInterfaceBandwidth = networkInterfaceBandwidth;
+  }
+
+  public void setNetworkInterfaceBandwidthUnit(BandwidthUnit networkInterfaceBandwidthUnit) {
+    this.networkInterfaceBandwidthUnit = networkInterfaceBandwidthUnit;
+  }
+
+  public void setNetworkInterfaceCardCapabilities(
+      NicCapabilities networkInterfaceCardCapabilities) {
+    this.networkInterfaceCardCapabilities = networkInterfaceCardCapabilities;
   }
 }

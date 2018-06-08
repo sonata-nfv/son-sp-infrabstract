@@ -43,8 +43,8 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
 
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(RemoveServiceCallProcessor.class);
-  private ArrayList<String> wrapperQueue;
   private boolean errorsHappened;
+  private ArrayList<String> wrapperQueue;
 
   /**
    * Generate a CallProcessor to process an API call to create a new VIM wrapper
@@ -69,7 +69,7 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
         WrapperBay.getInstance().getVimRepo().getComputeVimUuidFromInstance(instanceUuid);
     if (vimUuidList == null || vimUuidList.length == 0) {
       this.sendResponse(
-          "{\"request_status\":\"ERROR\",\"message\":\"can't find instance UUID or associated VIMs\"}");
+          "{\"request_status\":\"WARNING\",\"message\":\"can't find instance UUID or associated VIMs in Infrastructure repository\"}");
       return false;
     }
     this.wrapperQueue = new ArrayList<String>(Arrays.asList(vimUuidList));
@@ -81,9 +81,11 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
         Logger.warn("Error retrieving the wrapper");
 
         this.sendToMux(new ServicePlatformMessage(
-            "{\"request_status\":\"ERROR\",\"message\":\"VIM not found\"}", "application/json",
-            message.getReplyTo(), message.getSid(), null));
+            "{\"request_status\":\"WARNING\",\"message\":\"can't build a wrapper for VIM UUID "
+                + vimUuid + "\"}",
+            "application/json", message.getReplyTo(), message.getSid(), null));
         // return false;
+        continue;
       }
       wr.addObserver(this);
       wr.removeService(instanceUuid, this.getSid());
@@ -92,27 +94,26 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
     return out;
   }
 
-  private void sendResponse(String message) {
-    ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
-        this.getMessage().getReplyTo(), this.getMessage().getSid(), null);
-    this.sendToMux(spMessage);
-  }
-
   @Override
   public void update(Observable observable, Object arg) {
 
     WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
-    if(!update.getSid().equals(this.getSid()))
+    if (update.getSid() == null) {
+      Logger.warn("Wrapper Update message with no SID.");
       return;
+    }
+    if (!update.getSid().equals(this.getSid())) return;
     Logger.info("Received an update:\n" + update.getBody());
-    JSONTokener tokener = new JSONTokener(update.getBody());
-    JSONObject jsonObject = (JSONObject) tokener.nextValue();
-    String updateStatus = update.getStatus();
-    String wrapperId = jsonObject.getString("wrapper_uuid");
-    String status = jsonObject.getString("status");
 
-    if (wrapperQueue.remove(wrapperId)) {
-      if (updateStatus.equals("SUCCESS")) {
+    String updateStatus = update.getStatus();
+
+    if (updateStatus.equals("SUCCESS")) {
+      
+      JSONTokener tokener = new JSONTokener(update.getBody());
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+      String wrapperId = jsonObject.getString("wrapper_uuid");
+      String status = jsonObject.getString("status");
+      if (wrapperQueue.remove(wrapperId)) {
         Logger.debug("wrapperSuccesfully dequeued.");
       } else {
         Logger.error("Error removing the service. " + status);
@@ -127,6 +128,14 @@ public class RemoveServiceCallProcessor extends AbstractCallProcessor {
         sendResponse("{\"request_status\":\"ERROR\",\"message\":\"\"}");
       }
       return;
+    }
+  }
+
+  private void sendResponse(String message) {
+    if (this.getMessage().getReplyTo() != null) {
+      ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
+          this.getMessage().getReplyTo(), this.getMessage().getSid(), null);
+      this.sendToMux(spMessage);
     }
   }
 }

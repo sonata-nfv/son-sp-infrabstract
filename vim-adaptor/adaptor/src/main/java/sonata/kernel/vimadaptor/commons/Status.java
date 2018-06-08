@@ -28,8 +28,8 @@ package sonata.kernel.vimadaptor.commons;
 
 public enum Status {
 
-  failed("failed"), normal_operation("normal operation"), degraded_operation(
-      "degraded operation"), offline("offline");
+  degraded_operation("degraded operation"), failed("failed"), normal_operation(
+      "normal operation"), offline("offline");
 
   private final String name;
 

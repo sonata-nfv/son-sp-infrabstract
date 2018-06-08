@@ -29,10 +29,10 @@ package sonata.kernel.vimadaptor.messaging;
 public class ServicePlatformMessage {
 
   String body;
-  String topic;
+  String contentType;
   String replyTo;
   String sid;
-  String contentType;
+  String topic;
 
   /**
    * Create the Service Platform Message.
@@ -51,19 +51,37 @@ public class ServicePlatformMessage {
     this.contentType = contentType;
   }
 
-  public String getReplyTo() {
-    return replyTo;
-  }
-
-  public void setReplyTo(String reply) {
-    this.replyTo = reply;
-  }
-
   /**
    * @return a String representing the message wrapped in this object.
    */
   public String getBody() {
     return body;
+  }
+
+  public String getContentType() {
+    return contentType;
+  }
+
+  public String getReplyTo() {
+    return replyTo;
+  }
+
+  /**
+   * @return a String representing the session ID of this message.
+   */
+  public String getSid() {
+    return this.sid;
+  }
+
+  /**
+   * @return a String representing the topic of this message.
+   */
+  public String getTopic() {
+    return topic;
+  }
+
+  public void setReplyTo(String reply) {
+    this.replyTo = reply;
   }
 
   /**
@@ -75,28 +93,10 @@ public class ServicePlatformMessage {
     this.topic = topic;
   }
 
-  /**
-   * @return a String representing the topic of this message.
-   */
-  public String getTopic() {
-    return topic;
-  }
-
-  /**
-   * @return a String representing the session ID of this message.
-   */
-  public String getSid() {
-    return this.sid;
-  }
 
   @Override
   public String toString() {
     return "sid: " + sid + " - message: " + body + " - topic: " + topic;
-  }
-
-
-  public String getContentType() {
-    return contentType;
   }
 
 }

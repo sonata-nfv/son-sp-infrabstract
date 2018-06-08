@@ -32,6 +32,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.AdaptorCore;
@@ -56,6 +57,19 @@ public class AdaptorTest implements MessageReceiver {
   private Object mon = new Object();
   private TestConsumer consumer;
   private String lastHeartbeat;
+
+  @Before
+  public void setUp() {
+    System.setProperty("org.apache.commons.logging.Log",
+        "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient",
+        "warn");
+  }
 
   /**
    * Register, send 4 heartbeat, deregister.
@@ -105,7 +119,8 @@ public class AdaptorTest implements MessageReceiver {
   public void testCreateTwoWrappers() throws InterruptedException, IOException {
     String message =
         "{\"vim_type\":\"Mock\",\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dem\","
-            +"\"name\":\"Athens.100.Demo\"," + "\"pass\":\"s0n@t@.dem\",\"city\":\"Athens\",\"country\":\"Greece\","
+            + "\"name\":\"Athens.100.Demo\","
+            + "\"pass\":\"s0n@t@.dem\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -138,13 +153,14 @@ public class AdaptorTest implements MessageReceiver {
     output = null;
     message =
         "{\"vim_type\":\"Mock\",\"vim_address\":\"10.100.32.200\",\"username\":\"sonata.dario\","
-            +"\"name\":\"Athens.100.Dario\"," + "\"pass\":\"s0n@t@.dario\",\"city\":\"Athens\",\"country\":\"Greece\","
+            + "\"name\":\"Athens.100.Dario\","
+            + "\"pass\":\"s0n@t@.dario\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
-    
-    
-    addVimMessage = new ServicePlatformMessage(message, "application/json",
-      topic, UUID.randomUUID().toString(), topic);
-    
+
+
+    addVimMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
+
     consumer.injectMessage(addVimMessage);
     Thread.sleep(2000);
     while (output == null) {
@@ -158,9 +174,9 @@ public class AdaptorTest implements MessageReceiver {
     String uuid2 = jsonObject.getString("uuid");
     status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
+
     // List installed VIMS
-    output=null;
+    output = null;
     topic = "infrastructure.management.compute.list";
     ServicePlatformMessage listVimMessage =
         new ServicePlatformMessage(null, null, topic, UUID.randomUUID().toString(), topic);
@@ -184,13 +200,11 @@ public class AdaptorTest implements MessageReceiver {
       vimArrayList.add(resource.getVimUuid());
     }
 
-    Assert.assertTrue("VIMs List doesn't contain vim " + uuid1,
-      vimArrayList.contains(uuid1));
-    Assert.assertTrue("VIMs List doesn't contain vim " + uuid2,
-      vimArrayList.contains(uuid2));
-    
-    
-    
+    Assert.assertTrue("VIMs List doesn't contain vim " + uuid1, vimArrayList.contains(uuid1));
+    Assert.assertTrue("VIMs List doesn't contain vim " + uuid2, vimArrayList.contains(uuid2));
+
+
+
     // Clear the environment
     output = null;
     message = "{\"uuid\":\"" + uuid1 + "\"}";
@@ -209,12 +223,12 @@ public class AdaptorTest implements MessageReceiver {
     jsonObject = (JSONObject) tokener.nextValue();
     status = jsonObject.getString("request_status");
     Assert.assertTrue(status.equals("COMPLETED"));
-    
+
     output = null;
     message = "{\"uuid\":\"" + uuid2 + "\"}";
     topic = "infrastructure.management.compute.remove";
-    removeVimMessage = new ServicePlatformMessage(message,
-        "application/json", topic, UUID.randomUUID().toString(), topic);
+    removeVimMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
     consumer.injectMessage(removeVimMessage);
 
     while (output == null) {
@@ -230,7 +244,8 @@ public class AdaptorTest implements MessageReceiver {
 
     core.stop();
   }
-  
+
+
   /**
    * Create a Mock wrapper
    * 
@@ -240,7 +255,7 @@ public class AdaptorTest implements MessageReceiver {
   public void testCreateMOCKWrapper() throws InterruptedException, IOException {
     String message =
         "{\"vim_type\":\"mock\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
-            +"\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+            + "\"name\":\"Mock1\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
             + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
     String topic = "infrastructure.management.compute.add";
     BlockingQueue<ServicePlatformMessage> muxQueue =
@@ -293,6 +308,113 @@ public class AdaptorTest implements MessageReceiver {
 
 
   /**
+   * Create a Mock wrapper
+   * 
+   * @throws IOException
+   */
+  @Test
+  public void testCreateSPWrappers() throws InterruptedException, IOException {
+    // Add the compute SP wrapper
+    String message =
+        "{\"vim_type\":\"SPVim\",\"vim_address\":\"http://localhost:9999\",\"username\":\"Eve\","
+            + "\"name\":\"SP-Athens-1\","
+            + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
+            + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
+    String topic = "infrastructure.management.compute.add";
+    BlockingQueue<ServicePlatformMessage> muxQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+    BlockingQueue<ServicePlatformMessage> dispatcherQueue =
+        new LinkedBlockingQueue<ServicePlatformMessage>();
+
+    TestProducer producer = new TestProducer(muxQueue, this);
+    ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
+        topic, UUID.randomUUID().toString(), topic);
+    consumer = new TestConsumer(dispatcherQueue);
+    AdaptorCore core = new AdaptorCore(muxQueue, dispatcherQueue, consumer, producer, 0.05);
+
+    core.start();
+
+    consumer.injectMessage(addVimMessage);
+    Thread.sleep(2000);
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+    JSONTokener tokener = new JSONTokener(output);
+    JSONObject jsonObject = (JSONObject) tokener.nextValue();
+    String computeWrUuid = jsonObject.getString("uuid");
+    String status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+    System.out.println("Compute SP Wrapper added, with uuid: " + computeWrUuid);
+
+    // Add the network SP Wrapper
+    output = null;
+
+    String addNetVimBody = "{\"vim_type\":\"SPVim\", " + "\"name\":\"SP-Athens1-net\","
+        + "\"vim_address\":\"10.100.32.200\",\"username\":\"operator\",\"city\":\"Athens\",\"country\":\"Greece\",\"domain\":\"default\","
+        + "\"pass\":\"apass\",\"configuration\":{\"compute_uuid\":\"" + computeWrUuid + "\"}}";
+    topic = "infrastructure.management.network.add";
+    ServicePlatformMessage addNetVimMessage = new ServicePlatformMessage(addNetVimBody,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(addNetVimMessage);
+    Thread.sleep(2000);
+    while (output == null)
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = null;
+    status = jsonObject.getString("request_status");
+    String netWrUuid = jsonObject.getString("uuid");
+    Assert.assertTrue("Failed to add the ovs wrapper. Status " + status,
+        status.equals("COMPLETED"));
+    System.out.println("Network SP Wrapper added, with uuid: " + netWrUuid);
+
+    // Remove both wrappers
+    output = null;
+    message = "{\"uuid\":\"" + computeWrUuid + "\"}";
+    topic = "infrastructure.management.compute.remove";
+    ServicePlatformMessage removeVimMessage = new ServicePlatformMessage(message,
+        "application/json", topic, UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    output = null;
+    message = "{\"uuid\":\"" + netWrUuid + "\"}";
+    topic = "infrastructure.management.network.remove";
+    removeVimMessage = new ServicePlatformMessage(message, "application/json", topic,
+        UUID.randomUUID().toString(), topic);
+    consumer.injectMessage(removeVimMessage);
+
+    while (output == null) {
+      synchronized (mon) {
+        mon.wait(1000);
+      }
+    }
+
+    tokener = new JSONTokener(output);
+    jsonObject = (JSONObject) tokener.nextValue();
+    status = jsonObject.getString("request_status");
+    Assert.assertTrue(status.equals("COMPLETED"));
+
+    core.stop();
+  }
+
+
+  /**
    * Test list vim API call
    * 
    * @throws IOException
@@ -320,8 +442,8 @@ public class AdaptorTest implements MessageReceiver {
 
     for (int i = 0; i < 3; i++) {
       String message = "{\"vim_type\":\"mock\",\"vim_address\":\"http://vim" + i
-          + ":9999\",\"username\":\"Eve\","
-          +"\"name\":\"Mock"+i+"\"," + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\","
+          + ":9999\",\"username\":\"Eve\"," + "\"name\":\"Mock" + i + "\","
+          + "\"pass\":\"Operator\",\"city\":\"London\",\"country\":\"\",\"domain\":\"default\","
           + "\"configuration\":{\"tenant\":\"operator\",\"tenant_ext_net\":\"ext-subnet\",\"tenant_ext_router\":\"ext-router\"}}";
       ServicePlatformMessage addVimMessage = new ServicePlatformMessage(message, "application/json",
           topic, UUID.randomUUID().toString(), topic);

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
@@ -26,6 +26,15 @@
 
 package sonata.kernel.WimAdaptor.messaging;
 
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.DefaultConsumer;
+
+import org.json.JSONObject;
+import org.json.JSONTokener;
+import org.slf4j.LoggerFactory;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -38,24 +47,15 @@ import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeoutException;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
-import org.slf4j.LoggerFactory;
-
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.DefaultConsumer;
-
 public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusConsumer, Runnable {
 
-  private final static String configFilePath = "/etc/son-mano/broker.config";
-  private final static org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqConsumer.class);
+  private static final String configFilePath = "/etc/son-mano/broker.config";
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqConsumer.class);
+  private Channel channel;
+  private Connection connection;
+  private String queueName;
 
   DefaultConsumer consumer;
-  private Connection connection;
-  private Channel channel;
-  private String queueName;
 
   public RabbitMqConsumer(BlockingQueue<ServicePlatformMessage> dispatcherQueue) {
     super(dispatcherQueue);
@@ -63,45 +63,21 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
 
   @Override
   public void connectToBus() {
-    Properties brokerConfig = parseConfigFile();
-    Logger.info("[northbound] RabbitMqConsumer - connecting to broker...");
-    ConnectionFactory cf = new ConnectionFactory();
-    if (!brokerConfig.containsKey("broker_url") || !brokerConfig.containsKey("exchange")) {
-      System.err.println("Missing broker url configuration.");
-      System.exit(1);
-    }
+    channel = RabbitMqHelperSingleton.getInstance().getChannel();
+    consumer = new AdaptorDefaultConsumer(channel, this);
+    queueName = RabbitMqHelperSingleton.getInstance().getQueueName();
+  }
+
+  @Override
+  public void run() {
     try {
-
-      Logger.info("RabbitMqConsumer - connecting to: " + brokerConfig.getProperty("broker_url"));
-      cf.setUri(brokerConfig.getProperty("broker_url"));
-      connection = cf.newConnection();
-      channel = connection.createChannel();
-      String exchangeName = brokerConfig.getProperty("exchange");
-      channel.exchangeDeclare(exchangeName, "topic");
-      queueName = exchangeName + "." + "WimAdaptor";
-      channel.queueDeclare(queueName, true, false, false, null);
-      Logger.info("[northbound] RabbitMqConsumer - binding queue to topics...");
-      channel.queueBind(queueName, exchangeName, "platform.management.plugin.register");
-      Logger.info("[northbound] RabbitMqConsumer - bound to topic "
-          + "\"platform.platform.management.plugin.register\"");
-      channel.queueBind(queueName, exchangeName, "platform.management.plugin.deregister");
-      Logger.info("[northbound] RabbitMqConsumer - bound to topic "
-          + "\"platform.platform.management.plugin.deregister\"");
-      channel.queueBind(queueName, exchangeName, "infrastructure.wan.#");
-      Logger.info("[northbound] RabbitMqConsumer - bound to topic \"infrastructure.wan.#\"");
-      consumer = new AdaptorDefaultConsumer(channel, this);
+      channel = RabbitMqHelperSingleton.getInstance().getChannel();
+      Logger.info("Starting consumer thread");
+      channel.basicConsume(queueName, true, consumer);
+      
     } catch (IOException e) {
-      e.printStackTrace();
-    } catch (TimeoutException e) {
-      e.printStackTrace();
-    } catch (KeyManagementException e1) {
-      e1.printStackTrace();
-    } catch (NoSuchAlgorithmException e1) {
-      e1.printStackTrace();
-    } catch (URISyntaxException e1) {
-      e1.printStackTrace();
+      Logger.error(e.getMessage(), e);
     }
-
   }
 
   @Override
@@ -112,7 +88,7 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
       thread = new Thread(this);
       thread.start();
     } catch (Exception e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
       out = false;
     }
     return out;
@@ -123,26 +99,15 @@ public class RabbitMqConsumer extends AbstractMsgBusConsumer implements MsgBusCo
     boolean out = true;
     try {
       channel.close();
-      connection.close();
     } catch (IOException e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
       out = false;
     } catch (TimeoutException e) {
-      e.printStackTrace();
+      Logger.error(e.getMessage(), e);
       out = false;
     }
 
     return out;
-  }
-
-  @Override
-  public void run() {
-    try {
-      Logger.info("RabbitMqConsumer - Starting consumer thread");
-      channel.basicConsume(queueName, true, consumer);
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
   }
 
   /**

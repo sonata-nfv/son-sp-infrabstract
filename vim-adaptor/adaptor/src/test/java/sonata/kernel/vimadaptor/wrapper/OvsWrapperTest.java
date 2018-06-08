@@ -68,7 +68,7 @@ public class OvsWrapperTest {
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/long-chain-demo.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/long-chain-demo.nsd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -79,7 +79,7 @@ public class OvsWrapperTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/1-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/1-vnf.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -88,7 +88,7 @@ public class OvsWrapperTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/2-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/2-vnf.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -97,7 +97,7 @@ public class OvsWrapperTest {
     VnfDescriptor vnfd3;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/3-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/3-vnf.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -106,7 +106,7 @@ public class OvsWrapperTest {
     VnfDescriptor vnfd4;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/4-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/4-vnf.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -115,7 +115,7 @@ public class OvsWrapperTest {
     VnfDescriptor vnfd5;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/5-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/5-vnf.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -135,11 +135,12 @@ public class OvsWrapperTest {
       VnfRecord record;
       bodyBuilder = new StringBuilder();
       in = new BufferedReader(
-          new InputStreamReader(new FileInputStream(new File("./YAML/" + i + "-vnf-vnfr.yml")),
+          new InputStreamReader(new FileInputStream(new File("./YAML/" + i + "-vnf.vnfr")),
               Charset.forName("UTF-8")));
       line = null;
       while ((line = in.readLine()) != null)
         bodyBuilder.append(line + "\n\r");
+      //System.out.println(bodyBuilder.toString());
       record = mapper.readValue(bodyBuilder.toString(), VnfRecord.class);
       records.add(record);
     }
@@ -172,7 +173,7 @@ public class OvsWrapperTest {
     Assert.assertTrue("Unable to write the compute vim", out);
 
     config = new WrapperConfiguration();
-    config.setVimEndpoint("10.100.32.10");
+    config.setVimEndpoint("10.100.32.200");
     config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");

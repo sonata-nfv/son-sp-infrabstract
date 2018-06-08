@@ -27,7 +27,7 @@
 package sonata.kernel.vimadaptor.commons.nsd;
 
 public enum InterfaceType {
-  IPV4("ipv4"), IPV6("ipv6"), ethernet("ethernet");
+  ethernet("ethernet"), IPV4("ipv4"), IPV6("ipv6");
   private final String name;
 
   InterfaceType(String name) {

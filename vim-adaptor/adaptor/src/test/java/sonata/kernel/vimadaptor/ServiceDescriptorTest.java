@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
@@ -53,53 +54,15 @@ public class ServiceDescriptorTest {
 
   ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
 
+  @Before
+  public void setUp(){
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
 
-  /**
-   * Test the whole DeployService payload V1 parsing it from file and doing some basic check on the
-   * parsed data.
-   * 
-   * @throws IOException
-   */
-  @Test
-  public void testParseV1Payload() throws IOException {
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
 
-    ServiceDescriptor sd;
-    StringBuilder bodyBuilder = new StringBuilder();
-    BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/sonata-demo-old.yml")), Charset.forName("UTF-8")));
-    String line;
-    while ((line = in.readLine()) != null)
-      bodyBuilder.append(line + "\n\r");
-    sd = mapper.readValue(bodyBuilder.toString(), ServiceDescriptor.class);
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
 
-    VnfDescriptor vnfd1;
-    bodyBuilder = new StringBuilder();
-    in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
-    line = null;
-    while ((line = in.readLine()) != null)
-      bodyBuilder.append(line + "\n\r");
-    vnfd1 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
-
-    VnfDescriptor vnfd2;
-    bodyBuilder = new StringBuilder();
-    in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf-vnfd-old.yml")), Charset.forName("UTF-8")));
-    line = null;
-    while ((line = in.readLine()) != null)
-      bodyBuilder.append(line + "\n\r");
-    vnfd2 = mapper.readValue(bodyBuilder.toString(), VnfDescriptor.class);
-
-    ServiceDeployPayload data = new ServiceDeployPayload();
-    data.setServiceDescriptor(sd);
-    data.addVnfDescriptor(vnfd1);
-    data.addVnfDescriptor(vnfd2);
-
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
-    // System.out.println(mapper.writeValueAsString(data));
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
   }
 
   /**
@@ -114,7 +77,7 @@ public class ServiceDescriptorTest {
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/sonata-demo.nsd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -123,7 +86,7 @@ public class ServiceDescriptorTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -132,7 +95,7 @@ public class ServiceDescriptorTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -162,7 +125,7 @@ public class ServiceDescriptorTest {
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/sonata-demo.nsd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -183,7 +146,7 @@ public class ServiceDescriptorTest {
     sd = null;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/sonata-demo1.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/sonata-demo1.nsd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -210,12 +173,12 @@ public class ServiceDescriptorTest {
    * @throws IOException
    */
   @Test
-  public void testParseFirewallVNFDescriptor() throws IOException {
+  public void testParseVFooVNFDescriptor() throws IOException {
 
     VnfDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -241,12 +204,12 @@ public class ServiceDescriptorTest {
    * @throws IOException
    */
   @Test
-  public void testParseVtcVNFDescriptor() throws IOException {
+  public void testParseVBarVNFDescriptor() throws IOException {
 
     VnfDescriptor vd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");

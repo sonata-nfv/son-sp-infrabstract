@@ -41,10 +41,6 @@ import sonata.kernel.vimadaptor.commons.Status;
 import sonata.kernel.vimadaptor.commons.VduRecord;
 import sonata.kernel.vimadaptor.commons.VnfRecord;
 import sonata.kernel.vimadaptor.commons.VnfcInstance;
-import sonata.kernel.vimadaptor.commons.heat.HeatPort;
-import sonata.kernel.vimadaptor.commons.heat.HeatServer;
-import sonata.kernel.vimadaptor.commons.heat.HeatTemplate;
-import sonata.kernel.vimadaptor.commons.heat.StackComposition;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPoint;
 import sonata.kernel.vimadaptor.commons.nsd.ConnectionPointRecord;
 import sonata.kernel.vimadaptor.commons.nsd.InterfaceRecord;
@@ -53,19 +49,23 @@ import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.NetworkWrapper;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 import sonata.kernel.vimadaptor.wrapper.WrapperStatusUpdate;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatPort;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatServer;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
 
 public class DeployServiceFsm implements Runnable {
 
-  private String sid;
-  private ServiceDeployPayload data;
-  private OpenStackHeatWrapper wrapper;
-  private OpenStackHeatClient client;
-  private HeatTemplate stack;
-  private static final int maxCounter = 10;
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(DeployServiceFsm.class);
+  private static final int maxCounter = 10;
+  private OpenStackHeatClient client;
+  private ServiceDeployPayload data;
+  private String sid;
+  private HeatTemplate stack;
+  private OpenStackHeatWrapper wrapper;
 
 
   /**
@@ -266,8 +266,8 @@ public class DeployServiceFsm implements Runnable {
         referenceVdur.addVnfcInstance(vnfc);
       }
 
-      NetworkWrapper netVim = (NetworkWrapper) WrapperBay.getInstance()
-          .getNetworkVimFromComputeVimUuid(this.data.getVimUuid());
+      NetworkWrapper netVim =
+          WrapperBay.getInstance().getNetworkVimFromComputeVimUuid(this.data.getVimUuid());
 
       response.setVimUuid(data.getVimUuid());
       response.setInstanceName(stackName);

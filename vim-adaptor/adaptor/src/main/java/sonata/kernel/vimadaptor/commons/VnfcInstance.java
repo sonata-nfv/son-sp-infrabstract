@@ -36,23 +36,23 @@ import java.util.ArrayList;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VnfcInstance {
 
-  private String id;
+  @JsonProperty("connection_points")
+  private ArrayList<ConnectionPointRecord> connectionPoints;
 
-  @JsonProperty("vim_id")
-  private String vimId;
+  private String id;
 
   @JsonProperty("vc_id")
   private String vcId;
 
-  @JsonProperty("connection_points")
-  private ArrayList<ConnectionPointRecord> connectionPoints;
+  @JsonProperty("vim_id")
+  private String vimId;
+
+  public ArrayList<ConnectionPointRecord> getConnectionPoints() {
+    return connectionPoints;
+  }
 
   public String getId() {
     return id;
-  }
-
-  public String getVimId() {
-    return vimId;
   }
 
   public String getVcId() {
@@ -60,24 +60,24 @@ public class VnfcInstance {
   }
 
 
-  public void setId(String id) {
-    this.id = id;
+  public String getVimId() {
+    return vimId;
   }
 
-  public void setVimId(String vimId) {
-    this.vimId = vimId;
+  public void setConnectionPoints(ArrayList<ConnectionPointRecord> connectionPoints) {
+    this.connectionPoints = connectionPoints;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setVcId(String vcId) {
     this.vcId = vcId;
   }
 
-  public ArrayList<ConnectionPointRecord> getConnectionPoints() {
-    return connectionPoints;
-  }
-
-  public void setConnectionPoints(ArrayList<ConnectionPointRecord> connectionPoints) {
-    this.connectionPoints = connectionPoints;
+  public void setVimId(String vimId) {
+    this.vimId = vimId;
   }
 
 

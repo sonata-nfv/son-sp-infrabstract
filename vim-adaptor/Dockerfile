@@ -1,4 +1,4 @@
-FROM maven:3.3.9-jdk-7
+FROM maven:3.5.2-jdk-8
 MAINTAINER D.Valocchi <d.valocchi@ucl.ac.uk>
 
 RUN apt-get update && apt-get upgrade -y && apt-get install -y \
@@ -21,6 +21,9 @@ RUN apt-get update && apt-get upgrade -y && apt-get install -y \
 ADD adaptor /adaptor
 ADD broker.config /etc/son-mano/broker.config
 ADD postgres.config /etc/son-mano/postgres.config
+ADD mistral.config /etc/son-mano/mistral.config
+ADD sonata.config /etc/son-mano/sonata.config
+
 ADD son-sp-infra-* /usr/local/bin/
 ADD son-sp-infra /etc/init.d/
 ADD ./setenv.sh /
@@ -43,8 +46,13 @@ ENV repo_host postgres
 ENV repo_port 5432
 ENV repo_user sonatatest
 ENV repo_pass sonata
+ENV SONATA_SP_ADDRESS 127.0.0.1
+ENV SONATA_2ND_SP_ADDRESS 127.0.0.1
+ENV MOCKED_2ND_PLATFORM true
 
-RUN mvn -e -q  compile assembly:single;
+ENV mistral_server mistral
+
+RUN mvn -e -q compile assembly:single;
 #RUN mvn -Dmaven.wagon.http.ssl.insecure=true -Dmaven.wagon.http.ssl.allowall=true -Dmaven.wagon.http.ssl.ignore.validity.dates=true clean compile assembly:single;
 
 CMD ["/docker-entrypoint.sh","/test.sh"]

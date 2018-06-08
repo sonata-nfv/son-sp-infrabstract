@@ -34,15 +34,28 @@ import java.util.concurrent.BlockingQueue;
 
 public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable {
 
-  private BlockingQueue<ServicePlatformMessage> muxQueue;
-  private boolean stop = false;
-
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(AbstractMsgBusProducer.class);
+  private BlockingQueue<ServicePlatformMessage> muxQueue;
+
+  private boolean stop = false;
 
   public AbstractMsgBusProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
     this.muxQueue = muxQueue;
   }
+
+  @Override
+  public void run() {
+    do {
+      try {
+        ServicePlatformMessage message = muxQueue.take();
+        this.sendMessage(message);
+      } catch (InterruptedException e) {
+        Logger.error(e.getMessage(), e);
+      }
+    } while (!stop);
+  }
+
 
   /**
    * Send a message in the MsgBus.
@@ -51,7 +64,6 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
    */
   @Override
   public abstract boolean sendMessage(ServicePlatformMessage message);
-
 
   /**
    * Start consuming SP messages from the mux queue.
@@ -84,17 +96,6 @@ public abstract class AbstractMsgBusProducer implements MsgBusProducer, Runnable
     }
     this.stop = true;
     return out;
-  }
-
-  @Override
-  public void run() {
-    do {
-      try {
-        this.sendMessage(muxQueue.take());
-      } catch (InterruptedException e) {
-        Logger.error(e.getMessage(), e);
-      }
-    } while (!stop);
   }
 
 }

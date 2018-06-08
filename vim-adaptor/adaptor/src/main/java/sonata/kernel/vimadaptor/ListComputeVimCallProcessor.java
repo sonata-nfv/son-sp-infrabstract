@@ -26,11 +26,8 @@
 
 package sonata.kernel.vimadaptor;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
@@ -51,11 +48,6 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
 
   public ListComputeVimCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
-  }
-
-  @Override
-  public void update(Observable obs, Object arg) {
-    // This call does not need to be updated by any observable (wrapper).
   }
 
   @Override
@@ -83,6 +75,7 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
 
         bodyElement.setVimUuid(vimUuid);
         bodyElement.setVimCity(wr.getConfig().getCity());
+        bodyElement.setVimDomain(wr.getConfig().getDomain());
         bodyElement.setVimName(wr.getConfig().getName());
         bodyElement.setVimEndpoint(wr.getConfig().getVimEndpoint());
         bodyElement.setCoreTotal(resource.getTotCores());
@@ -95,6 +88,7 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
 
         bodyElement.setVimUuid(vimUuid);
         bodyElement.setVimCity(wr.getConfig().getCity());
+        bodyElement.setVimDomain(wr.getConfig().getDomain());
         bodyElement.setVimName(wr.getConfig().getName());
         bodyElement.setVimEndpoint(wr.getConfig().getVimEndpoint());
         bodyElement.setCoreTotal(-1);
@@ -102,17 +96,15 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
         bodyElement.setMemoryTotal(-1);
         bodyElement.setMemoryUsed(-1);
         resList.add(bodyElement);
-
       }
     }
 
     ObjectMapper mapper = SonataManifestMapper.getSonataMapper();
-    
+
     String body;
     try {
       Logger.info("Sending back response...");
       body = mapper.writeValueAsString(resList);
-
 
       ServicePlatformMessage response = new ServicePlatformMessage(body, "application/x-yaml",
           this.getMessage().getReplyTo(), this.getSid(), null);
@@ -127,6 +119,11 @@ public class ListComputeVimCallProcessor extends AbstractCallProcessor {
       this.getMux().enqueue(response);
       return false;
     }
+  }
+
+  @Override
+  public void update(Observable obs, Object arg) {
+    // This call does not need to be updated by any observable (wrapper).
   }
 
 }

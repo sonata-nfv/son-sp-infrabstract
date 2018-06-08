@@ -38,12 +38,12 @@ public class ImageData {
     return id;
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
   public String getStatus() {
     return status;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setStatus(String status) {

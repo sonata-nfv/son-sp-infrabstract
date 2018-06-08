@@ -30,45 +30,45 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class ResourceUtilisation {
 
-  @JsonProperty("CPU_used")
-  public int usedCores;
   @JsonProperty("CPU_total")
-  public int totCores;
-  @JsonProperty("memory_used")
-  public int usedMemory;
+  private int totCores;
   @JsonProperty("memory_total")
-  public int totMemory;
-
-  public int getUsedCores() {
-    return usedCores;
-  }
+  private int totMemory;
+  @JsonProperty("CPU_used")
+  private int usedCores;
+  @JsonProperty("memory_used")
+  private int usedMemory;
 
   public int getTotCores() {
     return totCores;
-  }
-
-  public int getUsedMemory() {
-    return usedMemory;
   }
 
   public int getTotMemory() {
     return totMemory;
   }
 
-  public void setUsedCores(int usedCores) {
-    this.usedCores = usedCores;
+  public int getUsedCores() {
+    return usedCores;
+  }
+
+  public int getUsedMemory() {
+    return usedMemory;
   }
 
   public void setTotCores(int totCores) {
     this.totCores = totCores;
   }
 
-  public void setUsedMemory(int usedMemory) {
-    this.usedMemory = usedMemory;
-  }
-
   public void setTotMemory(int totMemory) {
     this.totMemory = totMemory;
+  }
+
+  public void setUsedCores(int usedCores) {
+    this.usedCores = usedCores;
+  }
+
+  public void setUsedMemory(int usedMemory) {
+    this.usedMemory = usedMemory;
   }
 
   @Override

@@ -33,37 +33,37 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Tenant {
-  private String id;
   private String description;
   private String enabled;
+  private String id;
   private String name;
-
-  public String getId() {
-    return this.id;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
 
   public String getDescription() {
     return description;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
   }
 
   public String getEnabled() {
     return enabled;
   }
 
-  public void setEnabled(String enabled) {
-    this.enabled = enabled;
+  public String getId() {
+    return this.id;
   }
 
   public String getName() {
     return name;
+  }
+
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setEnabled(String enabled) {
+    this.enabled = enabled;
+  }
+
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setName(String name) {

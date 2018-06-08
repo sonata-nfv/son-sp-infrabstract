@@ -30,23 +30,23 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Violation {
 
-  private int interval;
   @JsonProperty("breaches_count")
   private int breachesCount;
-
-  public int getInterval() {
-    return interval;
-  }
+  private int interval;
 
   public int getBreachesCount() {
     return breachesCount;
   }
 
-  public void setInterval(int interval) {
-    this.interval = interval;
+  public int getInterval() {
+    return interval;
   }
 
   public void setBreachesCount(int breachesCount) {
     this.breachesCount = breachesCount;
+  }
+
+  public void setInterval(int interval) {
+    this.interval = interval;
   }
 }

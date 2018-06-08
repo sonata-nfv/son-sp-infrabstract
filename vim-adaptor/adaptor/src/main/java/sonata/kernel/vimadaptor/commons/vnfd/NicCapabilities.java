@@ -30,9 +30,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NicCapabilities {
 
+  private boolean mirroring;
   @JsonProperty("SR-IOV")
   private boolean srIov;
-  private boolean mirroring;
 
   public boolean isMirroring() {
     return mirroring;
@@ -42,12 +42,12 @@ public class NicCapabilities {
     return srIov;
   }
 
-  public void setSrIov(boolean srIov) {
-    this.srIov = srIov;
-  }
-
   public void setMirroring(boolean mirroring) {
     this.mirroring = mirroring;
+  }
+
+  public void setSrIov(boolean srIov) {
+    this.srIov = srIov;
   }
 
 }

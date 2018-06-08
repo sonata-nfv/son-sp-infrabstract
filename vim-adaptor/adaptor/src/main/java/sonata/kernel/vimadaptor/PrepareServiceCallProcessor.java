@@ -41,7 +41,7 @@ import java.util.Observable;
 
 public class PrepareServiceCallProcessor extends AbstractCallProcessor {
   private static final org.slf4j.Logger Logger =
-      LoggerFactory.getLogger(DeployServiceCallProcessor.class);
+      LoggerFactory.getLogger(PrepareServiceCallProcessor.class);
 
   /**
    * @param message
@@ -55,17 +55,6 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
   /*
    * (non-Javadoc)
    * 
-   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-   */
-  @Override
-  public void update(Observable arg0, Object arg1) {
-    // TODO Auto-generated method stub
-
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
    * @see sonata.kernel.vimadaptor.AbstractCallProcessor#process(sonata.kernel.vimadaptor.messaging.
    * ServicePlatformMessage)
    */
@@ -73,7 +62,7 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
   public boolean process(ServicePlatformMessage message) {
 
     boolean out = true;
-    Logger.info("Call received...");
+    Logger.info("Call received - sid: " + message.getSid());
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
     Logger.info("Parsing payload...");
     ServicePreparePayload payload = null;
@@ -101,13 +90,16 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
               message.getReplyTo(), message.getSid(), null));
           return false;
         }
-        Logger.info("Wrapper retrieved");
+        Logger.info(message.getSid().substring(0, 10) + " - Wrapper retrieved");
 
         for (VnfImage vnfImage : vim.getImages()) {
           if (!wr.isImageStored(vnfImage, message.getSid())) {
+            Logger.info(
+                message.getSid().substring(0, 10) + " - Image not stored in VIM image repository.");
             wr.uploadImage(vnfImage);
           } else {
-            Logger.info("Image already stored in the VIM image repository");
+            Logger.info(message.getSid().substring(0, 10)
+                + " - Image already stored in the VIM image repository");
           }
         }
 
@@ -123,6 +115,8 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
         }
 
       }
+      Logger.info(
+          message.getSid().substring(0, 10) + " - Preparation complete. Sending back response.");
       String responseJson = "{\"request_status\":\"COMPLETED\",\"message\":\"\"}";
       ServicePlatformMessage responseMessage = new ServicePlatformMessage(responseJson,
           "application/json", message.getReplyTo(), message.getSid(), null);
@@ -131,11 +125,23 @@ public class PrepareServiceCallProcessor extends AbstractCallProcessor {
     } catch (Exception e) {
       Logger.error("Error deploying the system: " + e.getMessage(), e);
       this.sendToMux(new ServicePlatformMessage(
-          "{\"request_status\":\"ERROR\",\"message\":\"" + e.getMessage() + "\"}",
+          "{\"request_status\":\"ERROR\",\"message\":\""
+              + e.getMessage().replace("\"", "''").replace("\n", "") + "\"}",
           "application/json", message.getReplyTo(), message.getSid(), null));
       out = false;
     }
     return out;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+   */
+  @Override
+  public void update(Observable arg0, Object arg1) {
+    // TODO Auto-generated method stub
+
   }
 
 }

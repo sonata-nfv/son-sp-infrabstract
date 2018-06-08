@@ -28,66 +28,26 @@ package sonata.kernel.vimadaptor.messaging;
 
 import com.rabbitmq.client.AMQP.BasicProperties;
 import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
 
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.AdaptorCore;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.security.KeyManagementException;
-import java.security.NoSuchAlgorithmException;
-import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.TimeoutException;
 
 public class RabbitMqProducer extends AbstractMsgBusProducer {
+
+
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqProducer.class);
+
 
   public RabbitMqProducer(BlockingQueue<ServicePlatformMessage> muxQueue) {
     super(muxQueue);
   }
 
-  private static final String configFilePath = "/etc/son-mano/broker.config";
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(RabbitMqProducer.class);
-
-  private Connection connection;
-  private Properties brokerConfig;
-
   @Override
   public void connectToBus() {
-    brokerConfig = parseConfigFile();
-
-    ConnectionFactory cf = new ConnectionFactory();
-    if (!brokerConfig.containsKey("broker_url") || !brokerConfig.containsKey("exchange")) {
-      Logger.error("Missing broker url configuration.");
-      System.exit(1);
-    }
-
-    try {
-      cf.setUri(brokerConfig.getProperty("broker_url"));
-    } catch (KeyManagementException e) {
-      Logger.error(e.getMessage(), e);
-    } catch (NoSuchAlgorithmException e) {
-      Logger.error(e.getMessage(), e);
-    } catch (URISyntaxException e) {
-      Logger.error(e.getMessage(), e);
-    }
-
-    try {
-      connection = cf.newConnection();
-    } catch (IOException e) {
-      Logger.error(e.getMessage(), e);
-    } catch (TimeoutException e) {
-      Logger.error(e.getMessage(), e);
-    }
+    // Do nothing
   }
 
   @Override
@@ -97,11 +57,10 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
     // TODO maps the specific Adaptor message to the proper SP topic
 
     try {
-      Channel channel = connection.createChannel();
-      String exchangeName = brokerConfig.getProperty("exchange");
-      channel.exchangeDeclare(exchangeName, "topic");
+      Channel channel = RabbitMqHelperSingleton.getInstance().getChannel();
+      String exchangeName = RabbitMqHelperSingleton.getInstance().getExchangeName();
       BasicProperties properties = new BasicProperties().builder().appId(AdaptorCore.APP_ID)
-          .contentType(message.getContentType()).replyTo(message.getReplyTo())
+          .contentType(message.getContentType()).replyTo(message.getReplyTo()).deliveryMode(2)
           .correlationId(message.getSid()).build();
       channel.basicPublish(exchangeName, message.getTopic(), properties,
           message.getBody().getBytes("UTF-8"));
@@ -113,31 +72,6 @@ public class RabbitMqProducer extends AbstractMsgBusProducer {
     return out;
   }
 
-  /**
-   * Utility function to parse the broker configuration file.
-   *
-   * @return a Java Properties object representing the json config as a Key-Value map
-   */
-  private Properties parseConfigFile() {
-    Properties prop = new Properties();
-    try {
-      InputStreamReader in =
-          new InputStreamReader(new FileInputStream(configFilePath), Charset.forName("UTF-8"));
 
-      JSONTokener tokener = new JSONTokener(in);
-
-      JSONObject jsonObject = (JSONObject) tokener.nextValue();
-
-      String brokerUrl = jsonObject.getString("broker_url");
-      String exchange = jsonObject.getString("exchange");
-      prop.put("broker_url", brokerUrl);
-      prop.put("exchange", exchange);
-    } catch (FileNotFoundException e) {
-      Logger.error("Unable to load Broker Config file", e);
-      System.exit(1);
-    }
-
-    return prop;
-  }
 
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+/*
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -68,13 +68,17 @@ public class WimAdaptorDispatcher implements Runnable {
           this.core.handleRegistrationResponse(message);
         } else if (isDeregistrationResponse(message)) {
           this.core.handleDeregistrationResponse(message);
-        } else {
+        } else if (!isWanMessage(message)){
+          continue;
+        }else {
           if (message.getTopic().endsWith("wan.add")) {
             myThreadPool.execute(new AddWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.remove")) {
             myThreadPool.execute(new RemoveWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.configure")) {
             myThreadPool.execute(new ConfigureWimCallProcessor(message, message.getSid(), mux));
+          }else if (message.getTopic().endsWith("wan.deconfigure")) {
+            myThreadPool.execute(new DeconfigureWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.list")) {
             myThreadPool.execute(new ListWimCallProcessor(message, message.getSid(), mux));
           } else if (message.getTopic().endsWith("wan.attach")){
@@ -85,6 +89,10 @@ public class WimAdaptorDispatcher implements Runnable {
         e.printStackTrace();
       }
     } while (!stop);
+  }
+
+  private boolean isWanMessage(ServicePlatformMessage message) {
+    return message.getTopic().contains(".wan.");
   }
 
   // private void handleManagementMessage(ServicePlatformMessage message) {

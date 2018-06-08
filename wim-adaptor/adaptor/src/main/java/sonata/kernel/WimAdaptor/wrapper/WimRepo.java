@@ -132,8 +132,9 @@ public class WimRepo {
             + " VENDOR TEXT NOT NULL," + " ENDPOINT TEXT NOT NULL," + " USERNAME TEXT NOT NULL,"
             + " PASS TEXT," + " AUTHKEY TEXT);";
         stmt.executeUpdate(sql);
-        sql = "CREATE TABLE attached_vim " + "(VIM_UUID TEXT PRIMARY KEY NOT NULL,"
-            + " WIM_UUID TEXT NOT NULL REFERENCES wim(UUID));";
+        sql = "CREATE TABLE attached_vim " + "(VIM_UUID TEXT PRIMARY KEY NOT NULL, "
+            + "VIM_ADDRESS TEXT NOT NULL, "
+            + "WIM_UUID TEXT NOT NULL REFERENCES wim(UUID));";
         stmt.executeUpdate(sql);
 
       }
@@ -589,7 +590,7 @@ public class WimRepo {
     return prop;
   }
 
-  public boolean attachVim(String wimUuid, String vimUuid) {
+  public boolean attachVim(String wimUuid, String vimUuid, String vimAddress) {
     boolean out = true;
 
     Connection connection = null;
@@ -603,11 +604,12 @@ public class WimRepo {
               prop.getProperty("user"), prop.getProperty("pass"));
       connection.setAutoCommit(false);
 
-      String sql = "INSERT INTO attached_vim (VIM_UUID, WIM_UUID) "
-          + "VALUES (?, ?);";
+      String sql = "INSERT INTO attached_vim (VIM_UUID, VIM_ADDRESS, WIM_UUID) "
+          + "VALUES (?, ?, ?);";
       stmt = connection.prepareStatement(sql);
       stmt.setString(1, vimUuid);
-      stmt.setString(2, wimUuid);
+      stmt.setString(2, vimAddress);
+      stmt.setString(3, wimUuid);
       stmt.executeUpdate();
       connection.commit();
       stmt.close();
@@ -688,4 +690,56 @@ public class WimRepo {
 
   }
 
+  public String readVimAddressFromVimUuid(String vimUuid) {
+    String output = null;
+    Connection connection = null;
+    PreparedStatement stmt = null;
+    ResultSet rs = null;
+    try {
+      Class.forName("org.postgresql.Driver");
+      connection =
+          DriverManager.getConnection(
+              "jdbc:postgresql://" + prop.getProperty("repo_host") + ":"
+                  + prop.getProperty("repo_port") + "/" + "wimregistry",
+              prop.getProperty("user"), prop.getProperty("pass"));
+      connection.setAutoCommit(false);
+
+      stmt = connection.prepareStatement(
+          "SELECT vim_address FROM attached_vim WHERE vim_uuid = ?;");
+      stmt.setString(1, vimUuid);
+      rs = stmt.executeQuery();
+
+      while (rs.next()) {
+        output = rs.getString("vim_address");
+         
+
+      }
+      
+    } catch (SQLException e) {
+      Logger.error(e.getMessage(), e);
+      output = null;
+    } catch (ClassNotFoundException e) {
+      Logger.error(e.getMessage(), e);
+      output = null;
+    } finally {
+      try {
+        if (stmt != null) {
+          stmt.close();
+        }
+        if (rs != null) {
+          rs.close();
+        }
+        if (connection != null) {
+          connection.close();
+        }
+      } catch (SQLException e) {
+        Logger.error(e.getMessage(), e);
+        output = null;
+
+      }
+    }
+    Logger.info("Operation done successfully");
+    return output;
+
+  }
 }

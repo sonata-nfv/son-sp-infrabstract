@@ -32,22 +32,10 @@ import sonata.kernel.vimadaptor.commons.vnfd.Unit.MemoryUnit;
 
 public class Storage {
 
+  private boolean persistence;
   private double size;
   @JsonProperty("size_unit")
   private MemoryUnit sizeUnit;
-  private boolean persistence;
-
-  public void setSize(double size) {
-    this.size = size;
-  }
-
-  public void setSizeUnit(MemoryUnit sizeUnit) {
-    this.sizeUnit = sizeUnit;
-  }
-
-  public void setPersistence(boolean persistence) {
-    this.persistence = persistence;
-  }
 
   public double getSize() {
     return size;
@@ -59,6 +47,18 @@ public class Storage {
 
   public boolean isPersistence() {
     return persistence;
+  }
+
+  public void setPersistence(boolean persistence) {
+    this.persistence = persistence;
+  }
+
+  public void setSize(double size) {
+    this.size = size;
+  }
+
+  public void setSizeUnit(MemoryUnit sizeUnit) {
+    this.sizeUnit = sizeUnit;
   }
 
 

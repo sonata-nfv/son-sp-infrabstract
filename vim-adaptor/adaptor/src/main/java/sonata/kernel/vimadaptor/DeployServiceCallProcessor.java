@@ -59,6 +59,47 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
 
   @Override
   public boolean process(ServicePlatformMessage message) {
+
+    Logger.warn("Received a DeployService call. This call is deprecated. Send back error");
+
+    this.sendToMux(new ServicePlatformMessage(
+        "{\"request_status\":\"ERROR\",\"message\":\"This function is deprecated\"}",
+        "application/json", message.getReplyTo(), message.getSid(), null));
+    return true;
+  }
+
+  @Override
+  public void update(Observable arg0, Object arg1) {
+    WrapperStatusUpdate update = (WrapperStatusUpdate) arg1;
+    if (update.getSid().equals(this.getSid())) {
+      Logger.info("Received an update from the wrapper...");
+      if (update.getStatus().equals("SUCCESS")) {
+        Logger.info("Deploy " + this.getSid() + " succeed");
+
+        // Sending a hook to trigger the WIM adaptor
+        Logger.info("Sending partial response to WIM adaptor...");
+        ServicePlatformMessage response =
+            new ServicePlatformMessage(update.getBody(), "application/x-yaml",
+                "infrastructure.wan.configure", this.getSid(), this.getMessage().getReplyTo());
+        this.sendToMux(response);
+      } else if (update.getStatus().equals("ERROR")) {
+        Logger.warn("Deploy " + this.getSid() + " error");
+        Logger.warn("Pushing back error...");
+        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
+            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
+        this.sendToMux(response);
+      } else {
+        Logger.info("Deploy " + this.getSid() + " - " + update.getStatus());
+        Logger.info("Message " + update.getBody());
+      }
+
+      // TODO handle other update from the compute wrapper;
+    }
+  }
+
+  @SuppressWarnings("unused")
+  @Deprecated
+  private void deprecatedUse(ServicePlatformMessage message) {
     boolean out = true;
     Logger.info("Call received...");
     // parse the payload to get Wrapper UUID and NSD/VNFD from the request body
@@ -98,36 +139,6 @@ public class DeployServiceCallProcessor extends AbstractCallProcessor {
           "{\"request_status\":\"fail\",\"message\":\"Deployment Error\"}", "application/json",
           message.getReplyTo(), message.getSid(), null));
       out = false;
-    }
-    return out;
-  }
-
-  @Override
-  public void update(Observable arg0, Object arg1) {
-    WrapperStatusUpdate update = (WrapperStatusUpdate) arg1;
-    if (update.getSid().equals(this.getSid())) {
-      Logger.info("Received an update from the wrapper...");
-      if (update.getStatus().equals("SUCCESS")) {
-        Logger.info("Deploy " + this.getSid() + " succeed");
-
-        // Sending a hook to trigger the WIM adaptor
-        Logger.info("Sending partial response to WIM adaptor...");
-        ServicePlatformMessage response =
-            new ServicePlatformMessage(update.getBody(), "application/x-yaml",
-                "infrastructure.wan.configure", this.getSid(), this.getMessage().getReplyTo());
-        this.sendToMux(response);
-      } else if (update.getStatus().equals("ERROR")) {
-        Logger.warn("Deploy " + this.getSid() + " error");
-        Logger.warn("Pushing back error...");
-        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
-            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
-        this.sendToMux(response);
-      } else {
-        Logger.info("Deploy " + this.getSid() + " - " + update.getStatus());
-        Logger.info("Message " + update.getBody());
-      }
-
-      // TODO handle other update from the compute wrapper;
     }
   }
 

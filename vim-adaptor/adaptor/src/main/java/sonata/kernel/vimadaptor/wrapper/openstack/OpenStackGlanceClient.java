@@ -26,14 +26,11 @@
 
 package sonata.kernel.vimadaptor.wrapper.openstack;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 
 import org.slf4j.LoggerFactory;
 
+import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.models.Image.Image;
@@ -45,67 +42,45 @@ import java.util.ArrayList;
 
 public class OpenStackGlanceClient {
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(OpenStackNovaClient.class);
+  private static final org.slf4j.Logger Logger =
+      LoggerFactory.getLogger(OpenStackGlanceClient.class);
 
-  private String url; // url of the OpenStack Client
-
-  private String userName; // OpenStack Client user
-
-  private String password; // OpenStack Client password
-
-  private String tenantName; // OpenStack tenant name
+  // private String url; // url of the OpenStack Client
+  //
+  // private String userName; // OpenStack Client user
+  //
+  // private String password; // OpenStack Client password
+  //
+  // private String domain; // OpenStack Client domain
+  //
+  // private String tenantName; // OpenStack tenant name
 
   private JavaStackCore javaStack; // instance for calling OpenStack APIs
 
   private ObjectMapper mapper;
 
-  public OpenStackGlanceClient(String url, String userName, String password, String tenantName) throws IOException {
-    this.url = url;
-    this.userName = userName;
-    this.password = password;
-    this.tenantName = tenantName;
+  public OpenStackGlanceClient(String url, String userName, String password, String domain, String tenantName,
+      String identityPort) throws IOException {
+    // this.url = url;
+    // this.userName = userName;
+    // this.password = password;
+    // this.tenantName = tenantName;
 
-    this.mapper = new ObjectMapper(new YAMLFactory());
-    mapper.enable(DeserializationFeature.READ_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
-    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
-    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-    mapper.setSerializationInclusion(Include.NON_NULL);
+    this.mapper = SonataManifestMapper.getSonataMapper();
 
     Logger.debug(
-        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|");
+        "URL: " + url + "|User:" + userName + "|Project:" + tenantName + "|Pass:" + password + "|Domain:" + domain + "|" );
 
     javaStack = JavaStackCore.getJavaStackCore();
-    javaStack.setEndpoint(this.url);
-    javaStack.setUsername(this.userName);
-    javaStack.setPassword(this.password);
-    javaStack.setProjectName(this.tenantName);
+    javaStack.setEndpoint(url);
+    javaStack.setUsername(userName);
+    javaStack.setPassword(password);
+    javaStack.setDomain(domain);
+    javaStack.setProjectName(tenantName);
     javaStack.setProjectId(null);
     javaStack.setAuthenticated(false);
     // Authenticate
-    javaStack.authenticateClientV3();
-  }
-
-
-  /**
-   * List glance Images.
-   *
-   * @return - A list of image objects containing name, id, and other useful parameters
-   */
-  public ArrayList<Image> listImages() {
-
-    Logger.debug("Listing available Images");
-    Images images = null;
-
-    String listImages = null;
-    try {
-      listImages = JavaStackUtils.convertHttpResponseToString(javaStack.listImages());
-      images = mapper.readValue(listImages, Images.class);
-
-    } catch (IOException e) {
-      e.printStackTrace();
-    }
-    return images.getImages();
+    javaStack.authenticateClientV3(identityPort);
   }
 
 
@@ -128,6 +103,29 @@ public class OpenStackGlanceClient {
     Logger.debug("[Glance-client] Image container creade with UUID: " + imageContainerData.getId());
 
     return imageContainerData.getId();
+  }
+
+
+  /**
+   * List glance Images.
+   *
+   * @return - A list of image objects containing name, id, and other useful parameters
+   */
+  public ArrayList<Image> listImages() {
+
+    Logger.debug("Listing available Images");
+    Images images = null;
+
+    String listImages = null;
+    try {
+      listImages = JavaStackUtils.convertHttpResponseToString(javaStack.listImages());
+      images = mapper.readValue(listImages, Images.class);
+      Logger.debug("Retrieved image list"+images.getImages());
+      Logger.debug("Number of retrieved images:"+images.getImages().size());
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+    return images.getImages();
   }
 
   /**

@@ -37,17 +37,17 @@ import java.util.ArrayList;
 public class VduRecord {
 
   private String id;
-  @JsonProperty("vm_image")
-  private String vmImage;
-
-  @JsonProperty("vdu_reference")
-  private String vduReference;
-
   @JsonProperty("number_of_instances")
   private int numberOfInstances;
 
   @JsonProperty("resource_requirements")
   private ResourceRequirements resourceRequirements;
+
+  @JsonProperty("vdu_reference")
+  private String vduReference;
+
+  @JsonProperty("vm_image")
+  private String vmImage;
 
   @JsonProperty("vnfc_instance")
   private ArrayList<VnfcInstance> vnfcInstance;
@@ -61,22 +61,10 @@ public class VduRecord {
     vnfcInstance.add(instance);
   }
 
-  public void setId(String id) {
-    this.id = id;
-  }
-
-
   public String getId() {
     return id;
   }
 
-  public String getVmImage() {
-    return vmImage;
-  }
-
-  public String getVduReference() {
-    return vduReference;
-  }
 
   public int getNumberOfInstances() {
     return numberOfInstances;
@@ -86,16 +74,20 @@ public class VduRecord {
     return resourceRequirements;
   }
 
+  public String getVduReference() {
+    return vduReference;
+  }
+
+  public String getVmImage() {
+    return vmImage;
+  }
+
   public ArrayList<VnfcInstance> getVnfcInstance() {
     return vnfcInstance;
   }
 
-  public void setVmImage(String vmImage) {
-    this.vmImage = vmImage;
-  }
-
-  public void setVduReference(String vduReference) {
-    this.vduReference = vduReference;
+  public void setId(String id) {
+    this.id = id;
   }
 
   public void setNumberOfInstances(int numberOfInstances) {
@@ -104,6 +96,14 @@ public class VduRecord {
 
   public void setResourceRequirements(ResourceRequirements resourceRequirements) {
     this.resourceRequirements = resourceRequirements;
+  }
+
+  public void setVduReference(String vduReference) {
+    this.vduReference = vduReference;
+  }
+
+  public void setVmImage(String vmImage) {
+    this.vmImage = vmImage;
   }
 
   public void setVnfcInstance(ArrayList<VnfcInstance> vnfcInstance) {

@@ -32,13 +32,17 @@ public class InterfaceRecord {
 
   @JsonProperty("address")
   private String address;
-  @JsonProperty("netmask")
-  private String netmask;
   @JsonProperty("hardware_address")
   private String hardwareAddress;
+  @JsonProperty("netmask")
+  private String netmask;
 
   public String getAddress() {
     return address;
+  }
+
+  public String getHardwareAddress() {
+    return hardwareAddress;
   }
 
   public String getNetmask() {
@@ -49,16 +53,12 @@ public class InterfaceRecord {
     this.address = address;
   }
 
-  public void setNetmask(String netmask) {
-    this.netmask = netmask;
-  }
-
-  public String getHardwareAddress() {
-    return hardwareAddress;
-  }
-
   public void setHardwareAddress(String hardwareAddress) {
     this.hardwareAddress = hardwareAddress;
+  }
+
+  public void setNetmask(String netmask) {
+    this.netmask = netmask;
   }
 
 }

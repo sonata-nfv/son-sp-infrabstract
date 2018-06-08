@@ -32,6 +32,18 @@ import java.util.ArrayList;
 
 public class OvsPayload {
 
+  @JsonProperty("action")
+  String action;
+
+  @JsonProperty("in_segment")
+  String inputSegment;
+  @JsonProperty("instance_id")
+  String instanceId;
+  @JsonProperty("port_list")
+  ArrayList<OrderedMacAddress> odlList;
+  @JsonProperty("out_segment")
+  String outputSegment;
+
   /**
    * @param string
    * @param string2
@@ -49,16 +61,5 @@ public class OvsPayload {
     this.instanceId = instanceId;
     this.action = action;
   }
-
-  @JsonProperty("action")
-  String action;
-  @JsonProperty("port_list")
-  ArrayList<OrderedMacAddress> odlList;
-  @JsonProperty("in_segment")
-  String inputSegment;
-  @JsonProperty("out_segment")
-  String outputSegment;
-  @JsonProperty("instance_id")
-  String instanceId;
 
 }

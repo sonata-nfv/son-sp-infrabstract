@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+/*
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -57,13 +57,13 @@ public class ListWimCallProcessor extends AbstractCallProcessor {
 
   @Override
   public boolean process(ServicePlatformMessage message) {
-
+    Logger.info("Received a call on List WIM");
     // TODO
     // ArrayList<String> vimList = WrapperBay.getInstance().getComputeWrapperList();
     ArrayList<WimRecord> wimList = new ArrayList<WimRecord>();
     ArrayList<String> wimsUuid = WrapperBay.getInstance().getWimList();
 
-    System.out.println(wimsUuid);
+    Logger.debug(wimsUuid.toString());
 
     for(String wim : wimsUuid){
       WrapperRecord wr = WrapperBay.getInstance().getWimRecordFromWimUuid(wim);

@@ -30,21 +30,13 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Events {
 
-  private VnfEvent start;
-  private VnfEvent stop;
   private VnfEvent restart;
   @JsonProperty("scale-in")
   private VnfEvent scaleIn;
   @JsonProperty("scale-out")
   private VnfEvent scaleOut;
-
-  public VnfEvent getStart() {
-    return start;
-  }
-
-  public VnfEvent getStop() {
-    return stop;
-  }
+  private VnfEvent start;
+  private VnfEvent stop;
 
   public VnfEvent getRestart() {
     return restart;
@@ -58,12 +50,12 @@ public class Events {
     return scaleOut;
   }
 
-  public void setStart(VnfEvent start) {
-    this.start = start;
+  public VnfEvent getStart() {
+    return start;
   }
 
-  public void setStop(VnfEvent stop) {
-    this.stop = stop;
+  public VnfEvent getStop() {
+    return stop;
   }
 
   public void setRestart(VnfEvent restart) {
@@ -76,6 +68,14 @@ public class Events {
 
   public void setScaleOut(VnfEvent scaleOut) {
     this.scaleOut = scaleOut;
+  }
+
+  public void setStart(VnfEvent start) {
+    this.start = start;
+  }
+
+  public void setStop(VnfEvent stop) {
+    this.stop = stop;
   }
 
 }

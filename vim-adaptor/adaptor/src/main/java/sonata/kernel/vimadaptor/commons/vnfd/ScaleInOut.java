@@ -28,23 +28,23 @@ package sonata.kernel.vimadaptor.commons.vnfd;
 
 public class ScaleInOut {
 
-  private int minimum;
   private int maximum;
-
-  public int getMinimum() {
-    return minimum;
-  }
+  private int minimum;
 
   public int getMaximum() {
     return maximum;
   }
 
-  public void setMinimum(int minimum) {
-    this.minimum = minimum;
+  public int getMinimum() {
+    return minimum;
   }
 
   public void setMaximum(int maximum) {
     this.maximum = maximum;
+  }
+
+  public void setMinimum(int minimum) {
+    this.minimum = minimum;
   }
 
 }

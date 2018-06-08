@@ -52,8 +52,8 @@ public class OpenStackHeatClientTest {
   public void initClient() throws IOException {
 
     // todo - this needs to be moved to configuration file
-    this.heatClient =
-        new OpenStackHeatClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@", "op_sonata");
+    this.heatClient = new OpenStackHeatClient("openstack.sonata-nfv.eu", "op_sonata", "op_s0n@t@",
+        "op_sonata", "default",  null);
   }
 
 

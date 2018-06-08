@@ -77,6 +77,7 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     String authUser = jsonObject.getString("username");
     String authPass = jsonObject.getString("pass");
     String city = jsonObject.getString("city");
+    String domain = jsonObject.getString("domain");
     String name = jsonObject.getString("name");
     String country = jsonObject.getString("country");
     String configuration = jsonObject.getJSONObject("configuration").toString();
@@ -100,10 +101,11 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
     config.setAuthUserName(authUser);
     config.setAuthPass(authPass);
     config.setCity(city);
+    config.setDomain(domain);
     config.setCountry(country);
     config.setConfiguration(configuration);
     config.setName(name);
-
+    
     Logger.debug("Parsed Wrapper Configuration: ");
     System.out.println(config.toString());
 
@@ -135,14 +137,14 @@ public class AddVimCallProcessor extends AbstractCallProcessor {
   // this.sendToMux(spMessage);
   // }
 
+  @Override
+  public void update(Observable observable, Object arg) {
+    // This call does not need to be updated by any observable (wrapper).
+  }
+
   private void sendResponse(String message) {
     ServicePlatformMessage spMessage = new ServicePlatformMessage(message, "application/json",
         this.getMessage().getTopic(), this.getMessage().getSid(), null);
     this.sendToMux(spMessage);
-  }
-
-  @Override
-  public void update(Observable observable, Object arg) {
-    // This call does not need to be updated by any observable (wrapper).
   }
 }

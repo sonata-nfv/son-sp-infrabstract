@@ -32,6 +32,8 @@ import sonata.kernel.vimadaptor.wrapper.mock.ComputeMockWrapper;
 import sonata.kernel.vimadaptor.wrapper.mock.NetworkMockWrapper;
 import sonata.kernel.vimadaptor.wrapper.openstack.OpenStackHeatWrapper;
 import sonata.kernel.vimadaptor.wrapper.ovsWrapper.OvsWrapper;
+import sonata.kernel.vimadaptor.wrapper.sp.ComputeSPWrapper;
+import sonata.kernel.vimadaptor.wrapper.sp.NetworkSPWrapper;
 
 public class WrapperFactory {
 
@@ -74,6 +76,8 @@ public class WrapperFactory {
       output = new ComputeMockWrapper(config);
     } else if (config.getVimVendor().equals(ComputeVimVendor.HEAT)) {
       output = new OpenStackHeatWrapper(config);
+    } else if (config.getVimVendor().equals(ComputeVimVendor.SPVIM)) {
+      output = new ComputeSPWrapper(config);
     }
     // TODO Extends with all wrappers or refactor with a more OO type
     // generation
@@ -87,6 +91,8 @@ public class WrapperFactory {
       output = new OvsWrapper(config);
     } else if (config.getVimVendor().equals(NetworkVimVendor.NETWORKMOCK)) {
       output = new NetworkMockWrapper(config);
+    } else if (config.getVimVendor().equals(NetworkVimVendor.SPVIM)) {
+      output = new NetworkSPWrapper(config);
     }
     return output;
   }

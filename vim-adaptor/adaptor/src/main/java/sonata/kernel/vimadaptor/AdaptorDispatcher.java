@@ -38,13 +38,13 @@ import java.util.concurrent.Executors;
 
 public class AdaptorDispatcher implements Runnable {
 
+  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AdaptorDispatcher.class);
+  private AdaptorCore core;
+  private AdaptorMux mux;
   private BlockingQueue<ServicePlatformMessage> myQueue;
   private Executor myThreadPool;
-  private boolean stop = false;
-  private AdaptorMux mux;
-  private AdaptorCore core;
 
-  private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AdaptorDispatcher.class);
+  private boolean stop = false;
 
   /**
    * Create an AdaptorDispatcher attached to the queue. CallProcessor will be bind to the provided
@@ -89,37 +89,20 @@ public class AdaptorDispatcher implements Runnable {
   }
 
 
-  private void handleMonitoringMessage(ServicePlatformMessage message) {
-    if (message.getTopic().contains("compute")) {
-      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
-    } else if (message.getTopic().contains("storage")) {
-      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
-    } else if (message.getTopic().contains("network")) {
-      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
-    }
+  public void start() {
+    Thread thread = new Thread(this);
+    thread.start();
   }
 
-  private void handleServiceMsg(ServicePlatformMessage message) {
-    if (message.getTopic().endsWith("deploy")) {
-      myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
-    } else if (message.getTopic().endsWith("remove")) {
-      Logger.info("Received a \"service.remove\" API call on topic: " + message.getTopic());
-      myThreadPool.execute(new RemoveServiceCallProcessor(message, message.getSid(), mux));
-    } else if (message.getTopic().endsWith("prepare")) {
-      Logger.info("Received a \"service.prepare\" API call on topic: " + message.getTopic());
-      myThreadPool.execute(new PrepareServiceCallProcessor(message, message.getSid(), mux));
-    } else if (message.getTopic().endsWith("chain.deconfigure")) {
-      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
-      myThreadPool.execute(new DeconfigureNetworkCallProcessor(message, message.getSid(), mux));
-    } else if (message.getTopic().endsWith("chain.configure")) {
-      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
-      myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
-    }
+  public void stop() {
+    this.stop = true;
   }
 
   private void handleFunctionMessage(ServicePlatformMessage message) {
     if (message.getTopic().endsWith("deploy")) {
       myThreadPool.execute(new DeployFunctionCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("scale")) {
+      myThreadPool.execute(new ScaleFunctionCallProcessor(message, message.getSid(), mux));
     }
   }
 
@@ -153,25 +136,32 @@ public class AdaptorDispatcher implements Runnable {
 
   }
 
-  private boolean isManagementMsg(ServicePlatformMessage message) {
-    return message.getTopic().contains("infrastructure.management");
+  private void handleMonitoringMessage(ServicePlatformMessage message) {
+    if (message.getTopic().contains("compute")) {
+      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
+    } else if (message.getTopic().contains("storage")) {
+      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
+    } else if (message.getTopic().contains("network")) {
+      Logger.info("Received a \"monitoring\" API call on topic: " + message.getTopic());
+    }
   }
 
-  private boolean isServiceMsg(ServicePlatformMessage message) {
-    return message.getTopic().contains("infrastructure.service");
-  }
-
-  private boolean isMonitoringMessage(ServicePlatformMessage message) {
-    return message.getTopic().contains("infrastructure.monitoring");
-  }
-
-  private boolean isFunctionMessage(ServicePlatformMessage message) {
-    return message.getTopic().contains("infrastructure.function");
-  }
-
-  private boolean isRegistrationResponse(ServicePlatformMessage message) {
-    return message.getTopic().equals("platform.management.plugin.register")
-        && message.getSid().equals(core.getRegistrationSid());
+  private void handleServiceMsg(ServicePlatformMessage message) {
+    if (message.getTopic().endsWith("deploy")) {
+      myThreadPool.execute(new DeployServiceCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("remove")) {
+      Logger.info("Received a \"service.remove\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new RemoveServiceCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("prepare")) {
+      Logger.info("Received a \"service.prepare\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new PrepareServiceCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("chain.deconfigure")) {
+      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new DeconfigureNetworkCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("chain.configure")) {
+      Logger.info("Received a \"Network\" API call on topic: " + message.getTopic());
+      myThreadPool.execute(new ConfigureNetworkCallProcessor(message, message.getSid(), mux));
+    }
   }
 
   private boolean isDeregistrationResponse(ServicePlatformMessage message) {
@@ -179,12 +169,24 @@ public class AdaptorDispatcher implements Runnable {
         && message.getSid().equals(core.getRegistrationSid());
   }
 
-  public void start() {
-    Thread thread = new Thread(this);
-    thread.start();
+  private boolean isFunctionMessage(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.function");
   }
 
-  public void stop() {
-    this.stop = true;
+  private boolean isManagementMsg(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.management");
+  }
+
+  private boolean isMonitoringMessage(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.monitoring");
+  }
+
+  private boolean isRegistrationResponse(ServicePlatformMessage message) {
+    return message.getTopic().equals("platform.management.plugin.register")
+        && message.getSid().equals(core.getRegistrationSid());
+  }
+
+  private boolean isServiceMsg(ServicePlatformMessage message) {
+    return message.getTopic().contains("infrastructure.service");
   }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+ * Copyright (c) 2015 SONATA-NFV, UCL.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -31,8 +31,6 @@ import java.util.Hashtable;
 public class VimNetTable {
 
 
-  private Hashtable<String, IpNetPool> vimTable;
-
   private static VimNetTable myInstance = null;
 
   /**
@@ -51,21 +49,23 @@ public class VimNetTable {
     myInstance = null;
   }
 
+  private Hashtable<String, IpNetPool> vimTable;
+
   private VimNetTable() {
     this.vimTable = new Hashtable<String, IpNetPool>();
   }
 
-  public void registerVim(String vimUuid) {
-    if (this.vimTable.containsKey(vimUuid)) return;
-    IpNetPool pool = new IpNetPool("172.0.0.0/8");
-    this.vimTable.put(vimUuid, pool);
+  public void deregisterVim(String vimUuid) {
+    this.vimTable.remove(vimUuid);
   }
 
   public IpNetPool getNetPool(String vimUuid) {
     return vimTable.get(vimUuid);
   }
 
-  public void deregisterVim(String vimUuid) {
-    this.vimTable.remove(vimUuid);
+  public void registerVim(String vimUuid, String cidr) {
+    if (this.vimTable.containsKey(vimUuid)) return;
+    IpNetPool pool = new IpNetPool(cidr);
+    this.vimTable.put(vimUuid, pool);
   }
 }

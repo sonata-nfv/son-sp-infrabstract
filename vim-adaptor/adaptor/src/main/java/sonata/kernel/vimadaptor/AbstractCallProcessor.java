@@ -27,11 +27,37 @@
 package sonata.kernel.vimadaptor;
 
 
+
 import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 
 import java.util.Observer;
+import java.util.UUID;
 
 public abstract class AbstractCallProcessor implements Runnable, Observer {
+
+  private ServicePlatformMessage message;
+
+  private AdaptorMux mux;
+
+  private String sid;
+
+  /**
+   * Abstract class for an API call processor. The processor runs on a thread an processes a
+   * ServicePlatformMessage.
+   * 
+   * @param message The ServicePlatformMessage to process
+   * @param sid the Session Identifier for this API call
+   * @param mux the AdaptorMux where response messages are to be sent.
+   */
+  public AbstractCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
+    this.message = message;
+    if (sid != null) {
+      this.sid = sid;
+    } else {
+      this.sid = UUID.randomUUID().toString();
+    }
+    this.mux = mux;
+  }
 
   /**
    * Getter for the Message handled by the processor.
@@ -40,6 +66,15 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
    */
   public ServicePlatformMessage getMessage() {
     return message;
+  }
+
+  /**
+   * Getter for multiplexer used by this processor to publish messages.
+   * 
+   * @return an AdaptorMux object.
+   */
+  public AdaptorMux getMux() {
+    return mux;
   }
 
   /**
@@ -52,35 +87,12 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
   }
 
   /**
-   * Getter for multiplexer used by this processor to publish messages.
-   * 
-   * @return an AdaptorMux object.
-   */
-  public AdaptorMux getMux() {
-    return mux;
-  }
-
-  private ServicePlatformMessage message;
-  private String sid;
-  private AdaptorMux mux;
-
-  /**
-   * Abstract class for an API call processor. The processor runs on a thread an processes a
-   * ServicePlatformMessage.
+   * This method implements the actuall processing of the API call.
    * 
    * @param message The ServicePlatformMessage to process
-   * @param sid the Session Identifier for this API call
-   * @param mux the AdaptorMux where response messages are to be sent.
+   * 
    */
-  public AbstractCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
-    this.message = message;
-    this.sid = sid;
-    this.mux = mux;
-  }
-
-  protected void sendToMux(ServicePlatformMessage message) {
-    mux.enqueue(message);
-  }
+  public abstract boolean process(ServicePlatformMessage message);
 
   @Override
   public void run() {
@@ -89,12 +101,8 @@ public abstract class AbstractCallProcessor implements Runnable, Observer {
 
   }
 
-  /**
-   * This method implements the actuall processing of the API call.
-   * 
-   * @param message The ServicePlatformMessage to process
-   * 
-   */
-  public abstract boolean process(ServicePlatformMessage message);
+  protected void sendToMux(ServicePlatformMessage message) {
+    mux.enqueue(message);
+  }
 
 }

@@ -1,5 +1,5 @@
-/**
- * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, NCSR Demokritos ALL RIGHTS RESERVED.
+/*
+ * Copyright (c) 2015 SONATA-NFV, UCL, NOKIA, THALES, NCSR Demokritos ALL RIGHTS RESERVED.
  * 
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except
  * in compliance with the License. You may obtain a copy of the License at
@@ -101,8 +101,8 @@ public class WrapperBay {
     return repository.listWims();
   }
 
-  public String attachVim(String wimUuid, String vimUuid) {
-    boolean result = repository.attachVim(wimUuid, vimUuid);
+  public String attachVim(String wimUuid, String vimUuid, String vimAddress) {
+    boolean result = repository.attachVim(wimUuid, vimUuid, vimAddress);
     if(result)
       return "{\"request_status\":\"COMPLETED\"}";
     else
@@ -113,4 +113,8 @@ public class WrapperBay {
     return repository.readAttachedVim(wimUuid);
   }
 
+  public String getVimAddressFromVimUuid(String vimUuid){
+    return repository.readVimAddressFromVimUuid(vimUuid);
+  }
+  
 }

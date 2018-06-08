@@ -34,63 +34,15 @@ public class ServiceDeployResponse {
 
   private String instanceName;
   private String instanceVimUuid;
-  private String vimUuid;
+  private String message;
+  private ServiceRecord nsr;
   @JsonProperty("request_status")
   private String requestStatus;
-  private ServiceRecord nsr;
+  private String vimUuid;
   private ArrayList<VnfRecord> vnfrs;
-  private String message;
 
   public ServiceDeployResponse() {
     this.vnfrs = new ArrayList<VnfRecord>();
-  }
-
-  public String getInstanceName() {
-    return instanceName;
-  }
-
-  public String getInstanceVimUuid() {
-    return instanceVimUuid;
-  }
-
-  public String getRequestStatus() {
-    return requestStatus;
-  }
-
-  public ServiceRecord getNsr() {
-    return nsr;
-  }
-
-  public ArrayList<VnfRecord> getVnfrs() {
-    return vnfrs;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setInstanceName(String instanceName) {
-    this.instanceName = instanceName;
-  }
-
-  public void setInstanceVimUuid(String instanceVimUuid) {
-    this.instanceVimUuid = instanceVimUuid;
-  }
-
-  public void setRequestStatus(String requestStatus) {
-    this.requestStatus = requestStatus;
-  }
-
-  public void setNsr(ServiceRecord nsr) {
-    this.nsr = nsr;
-  }
-
-  public void setVnfrs(ArrayList<VnfRecord> vnfrs) {
-    this.vnfrs = vnfrs;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
   }
 
   /**
@@ -102,12 +54,60 @@ public class ServiceDeployResponse {
     this.vnfrs.add(vnfr);
   }
 
+  public String getInstanceName() {
+    return instanceName;
+  }
+
+  public String getInstanceVimUuid() {
+    return instanceVimUuid;
+  }
+
+  public String getMessage() {
+    return message;
+  }
+
+  public ServiceRecord getNsr() {
+    return nsr;
+  }
+
+  public String getRequestStatus() {
+    return requestStatus;
+  }
+
   public String getVimUuid() {
     return vimUuid;
   }
 
+  public ArrayList<VnfRecord> getVnfrs() {
+    return vnfrs;
+  }
+
+  public void setInstanceName(String instanceName) {
+    this.instanceName = instanceName;
+  }
+
+  public void setInstanceVimUuid(String instanceVimUuid) {
+    this.instanceVimUuid = instanceVimUuid;
+  }
+
+  public void setMessage(String message) {
+    this.message = message;
+  }
+
+  public void setNsr(ServiceRecord nsr) {
+    this.nsr = nsr;
+  }
+
+  public void setRequestStatus(String requestStatus) {
+    this.requestStatus = requestStatus;
+  }
+
   public void setVimUuid(String vimUuid) {
     this.vimUuid = vimUuid;
+  }
+
+  public void setVnfrs(ArrayList<VnfRecord> vnfrs) {
+    this.vnfrs = vnfrs;
   }
 
 

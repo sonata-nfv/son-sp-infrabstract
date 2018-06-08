@@ -34,58 +34,26 @@ import java.util.ArrayList;
 
 public class VirtualDeploymentUnit {
 
+  @JsonProperty("connection_points")
+  private ArrayList<ConnectionPoint> connectionPoints;
   private String description;
   private String id;
+  @JsonProperty("monitoring_parameters")
+  private ArrayList<VduMonitoringParameter> monitoringParameters;
+  @JsonProperty("resource_requirements")
+  private ResourceRequirements resourceRequirements;
+  @JsonProperty("scale_in_out")
+  private ScaleInOut scaleInOut;
   @JsonProperty("vm_image")
   private String vmImage;
   @JsonProperty("vm_image_format")
   private VmFormat vmImageFormat;
   @JsonProperty("vm_image_md5")
   private String vmImageMd5;
-  @JsonProperty("resource_requirements")
-  private ResourceRequirements resourceRequirements;
-  @JsonProperty("connection_points")
-  private ArrayList<ConnectionPoint> connectionPoints;
-  @JsonProperty("monitoring_parameters")
-  private ArrayList<VduMonitoringParameter> monitoringParameters;
-  @JsonProperty("scale_in_out")
-  private ScaleInOut scaleInOut;
 
 
-  public void setDescription(String description) {
-    this.description = description;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public void setVmImage(String vmImage) {
-    this.vmImage = vmImage;
-  }
-
-  public void setVmImageFormat(VmFormat vmImageFormat) {
-    this.vmImageFormat = vmImageFormat;
-  }
-
-  public void setVmImageMd5(String vmImageMd5) {
-    this.vmImageMd5 = vmImageMd5;
-  }
-
-  public void setResourceRequirements(ResourceRequirements resourceRequirements) {
-    this.resourceRequirements = resourceRequirements;
-  }
-
-  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
-    this.connectionPoints = connectionPoints;
-  }
-
-  public void setMonitoringParameters(ArrayList<VduMonitoringParameter> monitoringParameters) {
-    this.monitoringParameters = monitoringParameters;
-  }
-
-  public void setScaleInOut(ScaleInOut scaleInOut) {
-    this.scaleInOut = scaleInOut;
+  public ArrayList<ConnectionPoint> getConnectionPoints() {
+    return connectionPoints;
   }
 
   public String getDescription() {
@@ -94,6 +62,18 @@ public class VirtualDeploymentUnit {
 
   public String getId() {
     return id;
+  }
+
+  public ArrayList<VduMonitoringParameter> getMonitoringParameters() {
+    return monitoringParameters;
+  }
+
+  public ResourceRequirements getResourceRequirements() {
+    return resourceRequirements;
+  }
+
+  public ScaleInOut getScaleInOut() {
+    return scaleInOut;
   }
 
   public String getVmImage() {
@@ -108,20 +88,40 @@ public class VirtualDeploymentUnit {
     return vmImageMd5;
   }
 
-  public ResourceRequirements getResourceRequirements() {
-    return resourceRequirements;
+  public void setConnectionPoints(ArrayList<ConnectionPoint> connectionPoints) {
+    this.connectionPoints = connectionPoints;
   }
 
-  public ArrayList<ConnectionPoint> getConnectionPoints() {
-    return connectionPoints;
+  public void setDescription(String description) {
+    this.description = description;
   }
 
-  public ArrayList<VduMonitoringParameter> getMonitoringParameters() {
-    return monitoringParameters;
+  public void setId(String id) {
+    this.id = id;
   }
 
-  public ScaleInOut getScaleInOut() {
-    return scaleInOut;
+  public void setMonitoringParameters(ArrayList<VduMonitoringParameter> monitoringParameters) {
+    this.monitoringParameters = monitoringParameters;
+  }
+
+  public void setResourceRequirements(ResourceRequirements resourceRequirements) {
+    this.resourceRequirements = resourceRequirements;
+  }
+
+  public void setScaleInOut(ScaleInOut scaleInOut) {
+    this.scaleInOut = scaleInOut;
+  }
+
+  public void setVmImage(String vmImage) {
+    this.vmImage = vmImage;
+  }
+
+  public void setVmImageFormat(VmFormat vmImageFormat) {
+    this.vmImageFormat = vmImageFormat;
+  }
+
+  public void setVmImageMd5(String vmImageMd5) {
+    this.vmImageMd5 = vmImageMd5;
   }
 
 

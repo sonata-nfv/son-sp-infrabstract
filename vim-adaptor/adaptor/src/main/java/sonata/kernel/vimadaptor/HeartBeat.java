@@ -34,12 +34,12 @@ import java.util.UUID;
 
 public class HeartBeat implements Runnable {
 
-  private AdaptorMux mux;
-  private AdaptorCore core;
-  private double rate; // measured in beat/s
-  private boolean stop;
-
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(HeartBeat.class);
+  private AdaptorCore core;
+  private AdaptorMux mux;
+  private double rate; // measured in beat/s
+
+  private boolean stop;
 
   /**
    * Create the Heart-beat runnable.

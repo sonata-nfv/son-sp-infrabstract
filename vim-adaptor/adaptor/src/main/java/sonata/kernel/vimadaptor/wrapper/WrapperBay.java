@@ -31,22 +31,12 @@ import org.slf4j.LoggerFactory;
 import sonata.kernel.vimadaptor.commons.VimNetTable;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class WrapperBay {
 
-  private static WrapperBay myInstance = null;
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(WrapperBay.class);
-
-  private VimRepo repository = null;
-
-  private Hashtable<String, ComputeWrapper> computeWrapperCache;
-  private Hashtable<String, NetworkWrapper> networkWrapperCache;
-
-  private WrapperBay() {
-    computeWrapperCache = new Hashtable<String, ComputeWrapper>();
-    networkWrapperCache = new Hashtable<String, NetworkWrapper>();
-  }
+  private static WrapperBay myInstance = null;
 
   /**
    * Singleton method to get the instance of the wrapperbay.
@@ -60,36 +50,22 @@ public class WrapperBay {
     return myInstance;
   }
 
+  private ConcurrentHashMap<String, ComputeWrapper> computeWrapperCache;
+  private ConcurrentHashMap<String, NetworkWrapper> networkWrapperCache;
 
-  /**
-   * Set the Database reader/writer to use as a repository for VIMs.
-   * 
-   * @param repo the Database reader/writer to store the wrappers
-   */
-  public void setRepo(VimRepo repo) {
-    this.repository = repo;
+  private VimRepo repository = null;
+
+  private WrapperBay() {
+    computeWrapperCache = new ConcurrentHashMap<String, ComputeWrapper>();
+    networkWrapperCache = new ConcurrentHashMap<String, NetworkWrapper>();
   }
 
 
   /**
-   * Register a new compute wrapper.
-   * 
-   * @param config The configuration object representing the Wrapper to register
-   * @return a JSON representing the output of the API call
+   * Utility methods to clear registry tables.
    */
-  public String registerComputeWrapper(WrapperConfiguration config) {
-    Wrapper newWrapper = WrapperFactory.createWrapper(config);
-    String output = "";
-    if (newWrapper == null) {
-      output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
-    } else if (newWrapper.getType().equals(WrapperType.COMPUTE)) {
-      //WrapperRecord record = new WrapperRecord(newWrapper, config, null);
-      this.repository.writeVimEntry(config.getUuid(),newWrapper);
-      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
-    }
+  public void clear() {}
 
-    return output;
-  }
 
   /**
    * Order the list of available compute wrapper to find the best basing on an OptimizationStrategy.
@@ -103,34 +79,6 @@ public class WrapperBay {
   }
 
   /**
-   * Utility methods to clear registry tables.
-   */
-  public void clear() {}
-
-  /**
-   * Remove a registered compute wrapper from the IA.
-   * 
-   * @param uuid the uuid of the wrapper to remove
-   * @return a JSON representing the output of the API call
-   */
-  public String removeComputeWrapper(String uuid) {
-    VimNetTable.getInstance().deregisterVim(uuid);
-    repository.removeVimEntry(uuid);
-    return "{\"request_status\":\"COMPLETED\"}";
-  }
-
-
-  /**
-   * Return the list of the registered compute VIMs.
-   * 
-   * @return an arraylist of String representing the UUIDs of the registered VIMs
-   */
-  public ArrayList<String> getComputeWrapperList() {
-    return repository.getComputeVims();
-
-  }
-
-  /**
    * Return the wrapper of the compute VIM identified by the given UUID.
    * 
    * @param vimUuid the UUID of the compute VIM
@@ -139,8 +87,7 @@ public class WrapperBay {
    *         registered VIM
    */
   public ComputeWrapper getComputeWrapper(String vimUuid) {
-    if (computeWrapperCache.containsKey(vimUuid))
-      return (ComputeWrapper) computeWrapperCache.get(vimUuid);
+    if (computeWrapperCache.containsKey(vimUuid)) return computeWrapperCache.get(vimUuid);
     ComputeWrapper vimEntry = (ComputeWrapper) this.repository.readVimEntry(vimUuid);
     if (vimEntry == null) {
       return null;
@@ -150,56 +97,14 @@ public class WrapperBay {
     }
   }
 
-
-
   /**
-   * Registre a new Network VIM to the wrapper bay.
+   * Return the list of the registered compute VIMs.
    * 
-   * @param config
-   * @param computeVimRef
-   * @return a JSON formatte string with the result of the registration.
+   * @return an arraylist of String representing the UUIDs of the registered VIMs
    */
-  public String registerNetworkWrapper(WrapperConfiguration config, String computeVimRef) {
-    Wrapper newWrapper = WrapperFactory.createWrapper(config);
-    String output = "";
-    if (newWrapper == null) {
-      output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
-    } else {
-      this.repository.writeVimEntry(config.getUuid(), newWrapper);
-      this.repository.writeNetworkVimLink(computeVimRef, config.getUuid());
-      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
-    }
-    return output;
-  }
+  public ArrayList<String> getComputeWrapperList() {
+    return repository.getComputeVims();
 
-
-  /**
-   * Return the VimRepo
-   * 
-   * @return the VimRepo object.
-   */
-  public VimRepo getVimRepo() {
-    return repository;
-  }
-
-  /**
-   * @param uuid
-   * @return
-   */
-  public String removeNetworkWrapper(String uuid) {
-    this.repository.removeNetworkVimLink(uuid);
-    this.repository.removeVimEntry(uuid);
-    return "{\"request_status\":\"COMPLETED\"}";
-  }
-
-  /**
-   * Return a generic Vim Wrapper for the given Vim UUID
-   * 
-   * @param uuid
-   * @return
-   */
-  public Wrapper getWrapper(String uuid) {
-    return this.repository.readVimEntry(uuid);
   }
 
   /**
@@ -223,11 +128,105 @@ public class WrapperBay {
     }
   }
 
+
   /**
    * @return
    */
   public ArrayList<String> getNetworkWrapperList() {
     return repository.getNetworkVims();
+  }
+
+  /**
+   * Return the VimRepo
+   * 
+   * @return the VimRepo object.
+   */
+  public VimRepo getVimRepo() {
+    return repository;
+  }
+
+
+
+  /**
+   * Return a generic Vim Wrapper for the given Vim UUID
+   * 
+   * @param uuid
+   * @return
+   */
+  public Wrapper getWrapper(String uuid) {
+    return this.repository.readVimEntry(uuid);
+  }
+
+
+  /**
+   * Register a new compute wrapper.
+   * 
+   * @param config The configuration object representing the Wrapper to register
+   * @return a JSON representing the output of the API call
+   */
+  public String registerComputeWrapper(WrapperConfiguration config) {
+    Wrapper newWrapper = WrapperFactory.createWrapper(config);
+    String output = "";
+    if (newWrapper == null) {
+      output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
+    } else if (newWrapper.getType().equals(WrapperType.COMPUTE)) {
+      // WrapperRecord record = new WrapperRecord(newWrapper, config, null);
+      this.repository.writeVimEntry(config.getUuid(), newWrapper);
+      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
+    }
+
+    return output;
+  }
+
+  /**
+   * Registre a new Network VIM to the wrapper bay.
+   * 
+   * @param config
+   * @param computeVimRef
+   * @return a JSON formatte string with the result of the registration.
+   */
+  public String registerNetworkWrapper(WrapperConfiguration config, String computeVimRef) {
+    Wrapper newWrapper = WrapperFactory.createWrapper(config);
+    String output = "";
+    if (newWrapper == null) {
+      output = "{\"request_status\":\"ERROR\",\"message\":\"Cannot Attach To Vim\"}";
+    } else {
+      this.repository.writeVimEntry(config.getUuid(), newWrapper);
+      this.repository.writeNetworkVimLink(computeVimRef, config.getUuid());
+      output = "{\"request_status\":\"COMPLETED\",\"uuid\":\"" + config.getUuid() + "\"}";
+    }
+    return output;
+  }
+
+  /**
+   * Remove a registered compute wrapper from the IA.
+   * 
+   * @param uuid the uuid of the wrapper to remove
+   * @return a JSON representing the output of the API call
+   */
+  public String removeComputeWrapper(String uuid) {
+    VimNetTable.getInstance().deregisterVim(uuid);
+    repository.removeVimEntry(uuid);
+    return "{\"request_status\":\"COMPLETED\"}";
+  }
+
+  /**
+   * @param uuid
+   * @return
+   */
+  public String removeNetworkWrapper(String uuid) {
+    this.repository.removeNetworkVimLink(uuid);
+    this.repository.removeVimEntry(uuid);
+    return "{\"request_status\":\"COMPLETED\"}";
+  }
+
+  /**
+   * Set the Database reader/writer to use as a repository for VIMs.
+   * 
+   * @param repo the Database reader/writer to store the wrappers
+   */
+  public void setRepo(VimRepo repo) {
+    this.repository = repo;
   }
 
 

@@ -30,26 +30,26 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class Event {
 
-  @JsonProperty("vnf_id")
-  private String vnfId;
   @JsonProperty("vnf_event")
   private String vnfEvent;
+  @JsonProperty("vnf_id")
+  private String vnfId;
 
-
-  public String getVnfId() {
-    return vnfId;
-  }
 
   public String getVnfEvent() {
     return vnfEvent;
   }
 
-  public void setVnfId(String vnfId) {
-    this.vnfId = vnfId;
+  public String getVnfId() {
+    return vnfId;
   }
 
   public void setVnfEvent(String vnfEvent) {
     this.vnfEvent = vnfEvent;
+  }
+
+  public void setVnfId(String vnfId) {
+    this.vnfId = vnfId;
   }
 
 }

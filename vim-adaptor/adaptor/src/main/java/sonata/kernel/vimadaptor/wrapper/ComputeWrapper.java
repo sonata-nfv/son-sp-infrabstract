@@ -27,6 +27,7 @@
 package sonata.kernel.vimadaptor.wrapper;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
+import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.VnfImage;
 
@@ -35,10 +36,10 @@ import java.io.IOException;
 public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper {
 
 
-  public ComputeWrapper(){
+  public ComputeWrapper() {
     this.setType(WrapperType.COMPUTE);
   }
-  
+
   /**
    * general constructor for wrappers of type compute.
    */
@@ -47,6 +48,41 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
     this.setType(WrapperType.COMPUTE);
     this.setConfig(config);
   }
+
+  /**
+   * Deploy a the VNF described in the payload in this compute VIM.
+   * 
+   * @param data the payload of a Function.Deploy call
+   * @param sid the session ID for this Adaptor call.
+   */
+  public abstract void deployFunction(FunctionDeployPayload data, String sid);
+
+  /**
+   * Deploy a service instance on this VIM.
+   * 
+   * @param data the payload containing the service descriptors and the metadata for this service
+   *        deployment
+   * @param callSid the call processor to notify on completion
+   * 
+   * @return true if the remove process has started correctly, false otherwise
+   */
+  @Deprecated
+  public abstract boolean deployService(ServiceDeployPayload data, String callSid) throws Exception;
+
+  /**
+   * Get the resource utilisation status of this compute VIM.
+   * 
+   * @return the ResourceUtilisation object representing the status of this VIM
+   */
+  public abstract ResourceUtilisation getResourceUtilisation();
+
+
+  /**
+   * Check if given image is stored in this compute VIM image repository.
+   * 
+   * @param image the object representing the VNF image
+   */
+  public abstract boolean isImageStored(VnfImage image, String callSid);
 
   /**
    * Prepare a service instance in this VIM for the given instance ID.
@@ -59,15 +95,11 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
   public abstract boolean prepareService(String instanceId) throws Exception;
 
   /**
-   * Remove a service instance from this VIM.
+   * Remove the given image from this compute VIM image repository.
    * 
-   * @param data the payload containing the service descriptors and the metadata for this service
-   *        deployment
-   * @param callSid the call processor to notify on completion
-   * 
-   * @return true if the remove process has started correctly, false otherwise
+   * @param image the object representing the VNF image
    */
-  public abstract boolean deployService(ServiceDeployPayload data, String callSid) throws Exception;
+  public abstract void removeImage(VnfImage image);
 
   /**
    * Remove a service instance from this VIM.
@@ -78,21 +110,14 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    */
   public abstract boolean removeService(String instanceUuid, String callSid);
 
-
   /**
-   * Get the resource utilisation status of this compute VIM.
+   * Scale the VNF described in the payload in this compute VIM
    * 
-   * @return the ResourceUtilisation object representing the status of this VIM
+   * @param data the payload of a Function.Scale call
+   * @param sid the session ID for this Adaptor call
    */
-  public abstract ResourceUtilisation getResourceUtilisation();
 
-  /**
-   * Deploy a the VNF described in the payload in this compute VIM.
-   * 
-   * @param data the payload of a Function.Deploy call
-   * @param sid the session ID for this Adaptor call.
-   */
-  public abstract void deployFunction(FunctionDeployPayload data, String sid);
+  public abstract void scaleFunction(FunctionScalePayload data, String sid);
 
   /**
    * Upload the given image to this compute VIM image repository.
@@ -100,21 +125,4 @@ public abstract class ComputeWrapper extends AbstractWrapper implements Wrapper 
    * @param imageUrl the URL from which the image can be downloded.
    */
   public abstract void uploadImage(VnfImage image) throws IOException;
-
-  /**
-   * Check if given image is stored in this compute VIM image repository.
-   * 
-   * @param image the object representing the VNF image
-   */
-  public abstract boolean isImageStored(VnfImage image, String callSid);
-
-  /**
-   * Remove the given image from this compute VIM image repository.
-   * 
-   * @param image the object representing the VNF image
-   */
-  public void removeImage(VnfImage image) {
-    // TODO Auto-generated method stub
-
-  }
 }

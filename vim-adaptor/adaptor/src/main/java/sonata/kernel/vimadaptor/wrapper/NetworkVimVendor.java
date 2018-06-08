@@ -27,7 +27,16 @@
 package sonata.kernel.vimadaptor.wrapper;
 
 public enum NetworkVimVendor implements VimVendor {
-  OVS("ovs"), NETWORKMOCK("networkMock");
+  NETWORKMOCK("networkMock"), OVS("ovs"), SPVIM("SPVim");
+
+  public static NetworkVimVendor getByName(String name) {
+    for (NetworkVimVendor vendor : values()) {
+      if (vendor.getName().toUpperCase().equals(name.toUpperCase())) {
+        return vendor;
+      }
+    }
+    throw new IllegalArgumentException(name + " is not a valid NetworkVimVendor");
+  }
 
   private final String name;
 
@@ -42,14 +51,5 @@ public enum NetworkVimVendor implements VimVendor {
 
   private String getName() {
     return this.toString();
-  }
-
-  public static NetworkVimVendor getByName(String name) {
-    for (NetworkVimVendor vendor : values()) {
-      if (vendor.getName().toUpperCase().equals(name.toUpperCase())) {
-        return vendor;
-      }
-    }
-    throw new IllegalArgumentException(name + " is not a valid NetworkVimVendor");
   }
 }

@@ -28,38 +28,42 @@ package sonata.kernel.vimadaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.ArrayList;
+
 public class ServiceRecord {
 
-  @JsonProperty("descriptor_version")
-  private String descriptorVersion;
-  private Status status;
-  @JsonProperty("id")
-  private String id;
   @JsonProperty("descriptor_reference")
   private String descriptorReference;
+  @JsonProperty("descriptor_version")
+  private String descriptorVersion;
+  @JsonProperty("id")
+  private String id;
+  private Status status;
+  @JsonProperty("network_functions")
+  ArrayList<NetworkFunctionInstanceReference> networkFunctions;
 
 
 
-  public Status getStatus() {
-    return status;
+  public String getDescriptorReference() {
+    return descriptorReference;
   }
 
 
-  public void setStatus(Status status) {
-    this.status = status;
+  public String getDescriptorVersion() {
+    return descriptorVersion;
   }
 
   public String getId() {
     return id;
   }
 
-  public void setId(String id) {
-    this.id = id;
+  public Status getStatus() {
+    return status;
   }
 
 
-  public String getDescriptorVersion() {
-    return descriptorVersion;
+  public void setDescriptorReference(String descriptorReference) {
+    this.descriptorReference = descriptorReference;
   }
 
 
@@ -68,13 +72,23 @@ public class ServiceRecord {
   }
 
 
-  public String getDescriptorReference() {
-    return descriptorReference;
+  public void setId(String id) {
+    this.id = id;
   }
 
 
-  public void setDescriptorReference(String descriptorReference) {
-    this.descriptorReference = descriptorReference;
+  public void setStatus(Status status) {
+    this.status = status;
+  }
+
+
+  public ArrayList<NetworkFunctionInstanceReference> getNetworkFunctions() {
+    return networkFunctions;
+  }
+
+
+  public void setNetworkFunctions(ArrayList<NetworkFunctionInstanceReference> networkFunctions) {
+    this.networkFunctions = networkFunctions;
   }
 
 

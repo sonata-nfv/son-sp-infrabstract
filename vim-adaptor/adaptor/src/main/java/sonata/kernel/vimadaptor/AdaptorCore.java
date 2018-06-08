@@ -41,7 +41,12 @@ import sonata.kernel.vimadaptor.messaging.ServicePlatformMessage;
 import sonata.kernel.vimadaptor.wrapper.VimRepo;
 import sonata.kernel.vimadaptor.wrapper.WrapperBay;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.Charset;
+import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -50,22 +55,69 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class AdaptorCore {
 
   public static final String APP_ID = "sonata.kernel.InfrAdaptor";
-  private MsgBusConsumer northConsumer;
-  private MsgBusProducer northProducer;
-  private AdaptorDispatcher dispatcher;
-  private AdaptorMux mux;
-  private String status;
-  private HeartBeat heartbeat;
-  private double rate;
-  private Object writeLock = new Object();
-  private String uuid;
-  private String registrationSid;
-
-  private static final String version = "0.0.1";
+  private static AdaptorCore core;
   private static final String description = "Service Platform Infrastructure Adaptor";
   private static final org.slf4j.Logger Logger = LoggerFactory.getLogger(AdaptorCore.class);
+  private static final String version = "0.0.1";
   private static final int writeLockCoolDown = 100000;
+  private static final String SONATA_CONFIG_FILEPATH = "/etc/son-mano/sonata.config";
+  private static AdaptorCore myInstance = null;
+  private Properties sonataProperties;
 
+  
+  public static AdaptorCore getInstance(){
+   if (myInstance == null){
+     myInstance = new AdaptorCore(0.1);
+   } 
+   return myInstance;
+  }
+  
+  
+  public Object getSystemParameter(String key){
+    return sonataProperties.getProperty(key);
+  }
+  
+  /**
+   * Main method. param args the adaptor take no args.
+   */
+  public static void main(String[] args) throws IOException {
+    // System.setProperty("log4j.logger.httpclient.wire.header", "WARN");
+    // System.setProperty("log4j.logger.httpclient.wire.content", "WARN");
+    System.setProperty("org.apache.commons.logging.Log",
+        "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient",
+        "warn");
+    
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        if(AdaptorCore.getInstance().getState().equals("RUNNNING"))
+          AdaptorCore.getInstance().stop();
+      }
+    });
+    AdaptorCore.getInstance().start();
+    
+  }
+
+  private AdaptorDispatcher dispatcher;
+  private HeartBeat heartbeat;
+  private AdaptorMux mux;
+  private MsgBusConsumer northConsumer;
+
+  private MsgBusProducer northProducer;
+  private double rate;
+  private String registrationSid;
+  private String status;
+
+
+  private String uuid;
+
+  private Object writeLock = new Object();
 
   /**
    * utility constructor for Tests. Allows attaching mock MsgBus to the adaptor plug-in Manager.
@@ -87,6 +139,7 @@ public class AdaptorCore {
     WrapperBay.getInstance().setRepo(repo);
     status = "READY";
     this.rate = rate;
+    this.sonataProperties = parseConfigFile();
   }
 
   /**
@@ -94,7 +147,10 @@ public class AdaptorCore {
    * 
    * @param rate of the heart-beat in beat/s
    */
-  public AdaptorCore(double rate) {
+  private AdaptorCore(double rate) {
+    
+    this.sonataProperties = parseConfigFile();
+    
     this.rate = rate;
     // instantiate the Adaptor:
     // - Mux and queue
@@ -115,95 +171,29 @@ public class AdaptorCore {
 
     northConsumer = new RabbitMqConsumer(dispatcherQueue);
     northProducer = new RabbitMqProducer(muxQueue);
-
-    status = "READY";
-
-  }
-
-  /**
-   * Start the adaptor engines. Starts reading messages from the MsgBus
-   * 
-   * @throws IOException when something goes wrong in the MsgBus plug-in
-   */
-  public void start() throws IOException {
-    // Start the message plug-in
-    northProducer.connectToBus();
-    northConsumer.connectToBus();
-    northProducer.startProducing();
-    northConsumer.startConsuming();
-
-    dispatcher.start();
-
-    register();
+    
     status = "RUNNING";
-    // - Start pumping blood
-    this.heartbeat = new HeartBeat(mux, rate, this);
-    new Thread(this.heartbeat).start();
-  }
 
-  private void register() {
-    String body = "{\"name\":\"" + AdaptorCore.APP_ID + "\",\"version\":\"" + AdaptorCore.version
-        + "\",\"description\":\"" + AdaptorCore.description + "\"}";
-    String topic = "platform.management.plugin.register";
-    ServicePlatformMessage message = new ServicePlatformMessage(body, "application/json", topic,
-        java.util.UUID.randomUUID().toString(), topic);
-    synchronized (writeLock) {
-      try {
-        this.registrationSid = message.getSid();
-        mux.enqueue(message);
-        writeLock.wait(writeLockCoolDown);
-      } catch (InterruptedException e) {
-        Logger.error(e.getMessage(), e);
-      }
-    }
-  }
-
-  private void deregister() {
-    String body = "{\"uuid\":\"" + this.uuid + "\"}";
-    String topic = "platform.management.plugin.deregister";
-    ServicePlatformMessage message = new ServicePlatformMessage(body, "application/json", topic,
-        java.util.UUID.randomUUID().toString(), topic);
-    synchronized (writeLock) {
-      try {
-        this.registrationSid = message.getSid();
-        mux.enqueue(message);
-        writeLock.wait(writeLockCoolDown);
-      } catch (InterruptedException e) {
-        Logger.error(e.getMessage(), e);
-      }
-    }
-    this.status = "STOPPED";
   }
 
   /**
-   * Stop the engines: Message production and consumption, heart-beat.
+   * return the session ID of the registration message used to register this plugin to the
+   * plugin-manager.
+   * 
+   * @return the session ID
    */
-  public void stop() {
-    this.deregister();
-    this.heartbeat.stop();
-    northProducer.stopProducing();
-    northConsumer.stopConsuming();
-    dispatcher.stop();
+  public String getRegistrationSid() {
+    return registrationSid;
   }
-
-
-
-  private static AdaptorCore core;
 
   /**
-   * Main method. param args the adaptor take no args.
+   * @return The status of this plug-in.
    */
-  public static void main(String[] args) throws IOException {
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        core.stop();
-      }
-    });
-    core = new AdaptorCore(0.1);
-    core.start();
-
+  public String getState() {
+    return this.status;
   }
+
+
 
   /**
    * @return this plug-in UUID.
@@ -212,12 +202,25 @@ public class AdaptorCore {
     return this.uuid;
   }
 
-
   /**
-   * @return The status of this plug-in.
+   * Handle the DeregistrationResponse message from the MANO Plugin Manager.
+   * 
+   * @param message the response message
    */
-  public String getState() {
-    return this.status;
+  public void handleDeregistrationResponse(ServicePlatformMessage message) {
+    Logger.info("Received the deregistration response from the pluginmanager");
+    JSONTokener tokener = new JSONTokener(message.getBody());
+    JSONObject object = (JSONObject) tokener.nextValue();
+    String status = object.getString("status");
+    if (status.equals("OK")) {
+      synchronized (writeLock) {
+        writeLock.notifyAll();
+      }
+    } else {
+      Logger.error("Failed to deregister to the plugin manager");
+      this.status = "FAILED";
+    }
+
   }
 
   /**
@@ -244,34 +247,92 @@ public class AdaptorCore {
 
   }
 
+
   /**
-   * Handle the DeregistrationResponse message from the MANO Plugin Manager.
+   * Start the adaptor engines. Starts reading messages from the MsgBus
    * 
-   * @param message the response message
+   * @throws IOException when something goes wrong in the MsgBus plug-in
    */
-  public void handleDeregistrationResponse(ServicePlatformMessage message) {
-    Logger.info("Received the deregistration response from the pluginmanager");
-    JSONTokener tokener = new JSONTokener(message.getBody());
-    JSONObject object = (JSONObject) tokener.nextValue();
-    String status = object.getString("status");
-    if (status.equals("OK")) {
-      synchronized (writeLock) {
-        writeLock.notifyAll();
+  public void start() throws IOException {
+    // Start the message plug-in
+    northProducer.connectToBus();
+    northConsumer.connectToBus();
+    northProducer.startProducing();
+    northConsumer.startConsuming();
+
+    dispatcher.start();
+
+    register();
+    status = "RUNNING";
+    // - Start pumping blood
+    this.heartbeat = new HeartBeat(mux, rate, this);
+    new Thread(this.heartbeat).start();
+  }
+
+  /**
+   * Stop the engines: Message production and consumption, heart-beat.
+   */
+  public void stop() {
+    this.deregister();
+    this.heartbeat.stop();
+    northProducer.stopProducing();
+    northConsumer.stopConsuming();
+    dispatcher.stop();
+  }
+
+  private void deregister() {
+    String body = "{\"uuid\":\"" + this.uuid + "\"}";
+    String topic = "platform.management.plugin.deregister";
+    ServicePlatformMessage message = new ServicePlatformMessage(body, "application/json", topic,
+        java.util.UUID.randomUUID().toString(), topic);
+    synchronized (writeLock) {
+      try {
+        this.registrationSid = message.getSid();
+        mux.enqueue(message);
+        writeLock.wait(writeLockCoolDown);
+      } catch (InterruptedException e) {
+        Logger.error(e.getMessage(), e);
       }
-    } else {
-      Logger.error("Failed to deregister to the plugin manager");
-      this.status = "FAILED";
     }
-
+    this.status = "STOPPED";
   }
 
-  /**
-   * return the session ID of the registration message used to register this plugin to the
-   * plugin-manager.
-   * 
-   * @return the session ID
-   */
-  public String getRegistrationSid() {
-    return registrationSid;
+  private void register() {
+    String body = "{\"name\":\"" + AdaptorCore.APP_ID + "\",\"version\":\"" + AdaptorCore.version
+        + "\",\"description\":\"" + AdaptorCore.description + "\"}";
+    String topic = "platform.management.plugin.register";
+    ServicePlatformMessage message = new ServicePlatformMessage(body, "application/json", topic,
+        java.util.UUID.randomUUID().toString(), topic);
+    synchronized (writeLock) {
+      try {
+        this.registrationSid = message.getSid();
+        mux.enqueue(message);
+        writeLock.wait(writeLockCoolDown);
+      } catch (InterruptedException e) {
+        Logger.error(e.getMessage(), e);
+      }
+    }
   }
+  
+  private static Properties parseConfigFile() {
+    Logger.debug("Parsing sonata.config conf file");
+    Properties prop = new Properties();
+    try {
+      InputStreamReader in =
+          new InputStreamReader(new FileInputStream(SONATA_CONFIG_FILEPATH), Charset.forName("UTF-8"));
+
+      JSONTokener tokener = new JSONTokener(in);
+
+      JSONObject jsonObject = (JSONObject) tokener.nextValue();
+
+      String brokerUrl = jsonObject.getString("sonata_sp_address");
+      prop.put("sonata_sp_address", brokerUrl);
+    } catch (FileNotFoundException e) {
+      Logger.error("Unable to load Broker Config file", e);
+      System.exit(1);
+    }
+    Logger.debug("sonata.config conf file parsed");
+    return prop;
+  }
+  
 }

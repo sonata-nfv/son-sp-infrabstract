@@ -28,6 +28,7 @@ package sonata.kernel.vimadaptor;
 
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.wrapper.ComputeVimVendor;
@@ -51,6 +52,18 @@ public class VimRepoTest {
 
   private VimRepo repoInstance;
 
+  
+  @Before
+  public void setUp(){
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+  }
+  
   /**
    * Register, send 4 heartbeat, deregister.
    * 
@@ -73,6 +86,7 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid("12345");
     config.setWrapperType(WrapperType.COMPUTE);
     String configs =
@@ -100,6 +114,7 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid("1");
     config.setWrapperType(WrapperType.COMPUTE);
     String configs =
@@ -245,6 +260,7 @@ public class VimRepoTest {
     config.setVimVendor(ComputeVimVendor.MOCK);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid(computeUuid);
     config.setWrapperType(WrapperType.COMPUTE);
     String configs =
@@ -261,6 +277,7 @@ public class VimRepoTest {
     config.setVimVendor(NetworkVimVendor.OVS);
     config.setAuthUserName("operator");
     config.setAuthPass("apass");
+    config.setDomain("default");
     config.setUuid(networkingUuid);
     config.setWrapperType(WrapperType.NETWORK);
     config.setConfiguration("{\"compute_uuid\":\"" + computeUuid + "\"}");

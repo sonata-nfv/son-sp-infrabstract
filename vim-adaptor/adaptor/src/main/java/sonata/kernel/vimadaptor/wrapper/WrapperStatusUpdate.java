@@ -28,9 +28,9 @@ package sonata.kernel.vimadaptor.wrapper;
 
 public class WrapperStatusUpdate {
 
+  private String body;
   private String sid;
   private String status;
-  private String body;
 
   /**
    * Standard constructor for a WrapperStatusUpdate object. To be used in the Observer pattern
@@ -46,16 +46,16 @@ public class WrapperStatusUpdate {
     this.body = body;
   }
 
+  public String getBody() {
+    return body;
+  }
+
   public String getSid() {
     return sid;
   }
 
   public String getStatus() {
     return status;
-  }
-
-  public String getBody() {
-    return body;
   }
 
 }

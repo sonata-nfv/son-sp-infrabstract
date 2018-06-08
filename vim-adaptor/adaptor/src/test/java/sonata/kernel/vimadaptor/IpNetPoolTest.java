@@ -51,8 +51,17 @@ public class IpNetPoolTest {
    */
   @Before
   public void setUp() {
-    VimNetTable.getInstance().registerVim("1111-1111");
+    VimNetTable.getInstance().registerVim("1111-1111", null);
     pool = VimNetTable.getInstance().getNetPool("1111-1111");
+    System.setProperty("org.apache.commons.logging.Log",
+        "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient",
+        "warn");
   }
 
 

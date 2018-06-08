@@ -33,18 +33,19 @@ package sonata.kernel.vimadaptor;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.SonataManifestMapper;
 import sonata.kernel.vimadaptor.commons.VimNetTable;
-import sonata.kernel.vimadaptor.commons.heat.HeatResource;
-import sonata.kernel.vimadaptor.commons.heat.HeatTemplate;
 import sonata.kernel.vimadaptor.commons.nsd.ServiceDescriptor;
 import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 import sonata.kernel.vimadaptor.wrapper.WrapperConfiguration;
 import sonata.kernel.vimadaptor.wrapper.openstack.Flavor;
 import sonata.kernel.vimadaptor.wrapper.openstack.OpenStackHeatWrapper;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatResource;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -61,6 +62,16 @@ import java.util.HashMap;
  */
 public class HeatTemplateTest {
 
+  @Before 
+  public void setUp(){
+    System.setProperty("org.apache.commons.logging.Log", "org.apache.commons.logging.impl.SimpleLog");
+
+    System.setProperty("org.apache.commons.logging.simplelog.showdatetime", "false");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.httpclient.wire.header", "warn");
+
+    System.setProperty("org.apache.commons.logging.simplelog.log.org.apache.commons.httpclient", "warn");
+  }
 
   @Test
   public void testHeatTranslate() throws IOException {
@@ -68,7 +79,7 @@ public class HeatTemplateTest {
     ServiceDescriptor sd;
     StringBuilder bodyBuilder = new StringBuilder();
     BufferedReader in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/sonata-demo.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/sonata-demo.nsd")), Charset.forName("UTF-8")));
     String line;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -85,7 +96,7 @@ public class HeatTemplateTest {
     VnfDescriptor vnfd1;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/vtc-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vbar.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");
@@ -94,7 +105,7 @@ public class HeatTemplateTest {
     VnfDescriptor vnfd2;
     bodyBuilder = new StringBuilder();
     in = new BufferedReader(new InputStreamReader(
-        new FileInputStream(new File("./YAML/fw-vnf-vnfd.yml")), Charset.forName("UTF-8")));
+        new FileInputStream(new File("./YAML/vfoo.vnfd")), Charset.forName("UTF-8")));
     line = null;
     while ((line = in.readLine()) != null)
       bodyBuilder.append(line + "\n\r");

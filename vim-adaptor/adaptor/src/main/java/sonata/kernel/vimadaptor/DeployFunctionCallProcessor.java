@@ -41,9 +41,9 @@ import java.util.Observable;
 
 public class DeployFunctionCallProcessor extends AbstractCallProcessor {
 
-  private FunctionDeployPayload data;
   private static final org.slf4j.Logger Logger =
       LoggerFactory.getLogger(DeployFunctionCallProcessor.class);
+  private FunctionDeployPayload data;
 
   /**
    * Basic constructor for the call processor.
@@ -54,41 +54,6 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
    */
   public DeployFunctionCallProcessor(ServicePlatformMessage message, String sid, AdaptorMux mux) {
     super(message, sid, mux);
-  }
-
-  /*
-   * (non-Javadoc)
-   * 
-   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
-   */
-  @Override
-  public void update(Observable o, Object arg) {
-    WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
-    if (update.getSid().equals(this.getSid())) {
-      Logger.info("Received an update from the wrapper...");
-      if (update.getStatus().equals("SUCCESS")) {
-        Logger.info("Deploy " + this.getSid() + " succeed");
-
-        // Sending the response to the FLM
-        Logger.info("Sending partial response to FLM...");
-        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
-            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
-        this.sendToMux(response);
-      } else if (update.getStatus().equals("ERROR")) {
-        Logger.warn("Deploy " + this.getSid() + " error");
-        Logger.warn("Pushing back error...");
-        ServicePlatformMessage response = new ServicePlatformMessage(
-            "{\"request_status\":\"ERROR\",\"message\":\"" + update.getBody() + "\"}",
-            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
-        this.sendToMux(response);
-      } else {
-        Logger.info("Deploy " + this.getSid() + " - " + update.getStatus());
-        Logger.info("Message " + update.getBody());
-      }
-
-      // TODO handle other update from the compute wrapper;
-
-    }
   }
 
   /*
@@ -130,7 +95,8 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
       } else {
         // use wrapper interface to send the NSD/VNFD, along with meta-data
         // to the wrapper, triggering the service instantiation.
-        Logger.info("Calling wrapper: " + wr);
+        Logger.info(
+            "Calling wrapper: " + wr.getConfig().getName() + "- UUID: " + wr.getConfig().getUuid());
         wr.addObserver(this);
         wr.deployFunction(data, this.getSid());
       }
@@ -142,6 +108,41 @@ public class DeployFunctionCallProcessor extends AbstractCallProcessor {
       out = false;
     }
     return out;
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see java.util.Observer#update(java.util.Observable, java.lang.Object)
+   */
+  @Override
+  public void update(Observable o, Object arg) {
+    WrapperStatusUpdate update = (WrapperStatusUpdate) arg;
+    if (update.getSid().equals(this.getSid())) {
+      Logger.info("Received an update from the wrapper...");
+      if (update.getStatus().equals("SUCCESS")) {
+        Logger.info("Deploy " + this.getSid() + " succeed");
+
+        // Sending the response to the FLM
+        Logger.info("Sending partial response to FLM...");
+        ServicePlatformMessage response = new ServicePlatformMessage(update.getBody(),
+            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
+        this.sendToMux(response);
+      } else if (update.getStatus().equals("ERROR")) {
+        Logger.warn("Deploy " + this.getSid() + " error");
+        Logger.warn("Pushing back error...");
+        ServicePlatformMessage response = new ServicePlatformMessage(
+            "{\"request_status\":\"ERROR\",\"message\":\"" + update.getBody() + "\"}",
+            "application/x-yaml", this.getMessage().getReplyTo(), this.getSid(), null);
+        this.sendToMux(response);
+      } else {
+        Logger.info("Deploy " + this.getSid() + " - " + update.getStatus());
+        Logger.info("Message " + update.getBody());
+      }
+
+      // TODO handle other update from the compute wrapper;
+
+    }
   }
 
 }

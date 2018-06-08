@@ -35,9 +35,16 @@ public class OrderedMacAddress implements Comparable<OrderedMacAddress> {
   private String mac;
   @JsonProperty("order")
   private int position;
-
   @JsonIgnore
   private String referenceCp;
+
+  @JsonProperty("vc_id")
+  private String vcId;
+
+  @Override
+  public int compareTo(OrderedMacAddress o) {
+    return (int) Math.signum(this.position - o.getPosition());
+  }
 
   public String getMac() {
     return mac;
@@ -45,6 +52,15 @@ public class OrderedMacAddress implements Comparable<OrderedMacAddress> {
 
   public int getPosition() {
     return position;
+  }
+
+  public String getReferenceCp() {
+    return referenceCp;
+  }
+
+
+  public String getVcId() {
+    return vcId;
   }
 
   public void setMac(String mac) {
@@ -55,23 +71,17 @@ public class OrderedMacAddress implements Comparable<OrderedMacAddress> {
     this.position = position;
   }
 
+  public void setReferenceCp(String referenceCp) {
+    this.referenceCp = referenceCp;
+  }
 
-  @Override
-  public int compareTo(OrderedMacAddress o) {
-    return (int) Math.signum(this.position - o.getPosition());
+  public void setVcId(String vcId) {
+    this.vcId = vcId;
   }
 
   @Override
   public String toString() {
     return "{port:" + mac + ",order:" + position + ", cp: " + referenceCp + "}";
-  }
-
-  public String getReferenceCp() {
-    return referenceCp;
-  }
-
-  public void setReferenceCp(String referenceCp) {
-    this.referenceCp = referenceCp;
   }
 
 }

@@ -32,54 +32,54 @@ import java.util.ArrayList;
 
 public class DeploymentFlavor {
 
-  @JsonProperty("vdu_reference")
-  private ArrayList<String> vduReference;
-  private String constraint;
-  @JsonProperty("vlink_reference")
-  private ArrayList<String> vlinkReference;
-  private String id;
   @JsonProperty("assurance_parameters")
   private ArrayList<AssuranceParameter> assuranceParameters;
+  private String constraint;
+  private String id;
+  @JsonProperty("vdu_reference")
+  private ArrayList<String> vduReference;
+  @JsonProperty("vlink_reference")
+  private ArrayList<String> vlinkReference;
 
 
-  public void setVduReference(ArrayList<String> vduReference) {
-    this.vduReference = vduReference;
-  }
-
-  public void setConstraint(String constraint) {
-    this.constraint = constraint;
-  }
-
-  public void setVlinkReference(ArrayList<String> vlinkReference) {
-    this.vlinkReference = vlinkReference;
-  }
-
-  public void setId(String id) {
-    this.id = id;
-  }
-
-  public void setAssuranceParameters(ArrayList<AssuranceParameter> assuranceParameters) {
-    this.assuranceParameters = assuranceParameters;
-  }
-
-  public ArrayList<String> getVduReference() {
-    return vduReference;
+  public ArrayList<AssuranceParameter> getAssuranceParameters() {
+    return assuranceParameters;
   }
 
   public String getConstraint() {
     return constraint;
   }
 
-  public ArrayList<String> getVlinkReference() {
-    return vlinkReference;
-  }
-
   public String getId() {
     return id;
   }
 
-  public ArrayList<AssuranceParameter> getAssuranceParameters() {
-    return assuranceParameters;
+  public ArrayList<String> getVduReference() {
+    return vduReference;
+  }
+
+  public ArrayList<String> getVlinkReference() {
+    return vlinkReference;
+  }
+
+  public void setAssuranceParameters(ArrayList<AssuranceParameter> assuranceParameters) {
+    this.assuranceParameters = assuranceParameters;
+  }
+
+  public void setConstraint(String constraint) {
+    this.constraint = constraint;
+  }
+
+  public void setId(String id) {
+    this.id = id;
+  }
+
+  public void setVduReference(ArrayList<String> vduReference) {
+    this.vduReference = vduReference;
+  }
+
+  public void setVlinkReference(ArrayList<String> vlinkReference) {
+    this.vlinkReference = vlinkReference;
   }
 
 }

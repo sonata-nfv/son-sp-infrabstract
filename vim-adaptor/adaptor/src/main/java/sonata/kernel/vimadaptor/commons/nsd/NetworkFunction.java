@@ -30,56 +30,56 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class NetworkFunction {
 
+  private String description;
   @JsonProperty("vnf_id")
   private String vnfId;
-  @JsonProperty("vnf_vendor")
-  private String vnfVendor;
   @JsonProperty("vnf_name")
   private String vnfName;
+  @JsonProperty("vnf_vendor")
+  private String vnfVendor;
   @JsonProperty("vnf_version")
   private String vnfVersion;
-  private String description;
 
 
 
-  public void setVnfId(String vnfId) {
-    this.vnfId = vnfId;
-  }
-
-  public void setVnfVendor(String vnfVendor) {
-    this.vnfVendor = vnfVendor;
-  }
-
-  public void setVnfName(String vnfName) {
-    this.vnfName = vnfName;
-  }
-
-  public void setVnfVersion(String vnfVersion) {
-    this.vnfVersion = vnfVersion;
-  }
-
-  public void setDescription(String description) {
-    this.description = description;
+  public String getDescription() {
+    return description;
   }
 
   public String getVnfId() {
     return vnfId;
   }
 
-  public String getVnfVendor() {
-    return vnfVendor;
-  }
-
   public String getVnfName() {
     return vnfName;
+  }
+
+  public String getVnfVendor() {
+    return vnfVendor;
   }
 
   public String getVnfVersion() {
     return vnfVersion;
   }
 
-  public String getDescription() {
-    return description;
+  public void setDescription(String description) {
+    this.description = description;
+  }
+
+  public void setVnfId(String vnfId) {
+    this.vnfId = vnfId;
+  }
+
+  public void setVnfName(String vnfName) {
+    this.vnfName = vnfName;
+  }
+
+  public void setVnfVendor(String vnfVendor) {
+    this.vnfVendor = vnfVendor;
+  }
+
+  public void setVnfVersion(String vnfVersion) {
+    this.vnfVersion = vnfVersion;
   }
 
 }

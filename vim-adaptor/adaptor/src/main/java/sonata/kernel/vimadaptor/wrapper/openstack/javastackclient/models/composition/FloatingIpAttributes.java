@@ -39,12 +39,12 @@ public class FloatingIpAttributes {
     return floating_ip_address;
   }
 
-  public void setFloating_ip_address(String floating_ip_address) {
-    this.floating_ip_address = floating_ip_address;
-  }
-
   public String getPort_id() {
     return port_id;
+  }
+
+  public void setFloating_ip_address(String floating_ip_address) {
+    this.floating_ip_address = floating_ip_address;
   }
 
   public void setPort_id(String port_id) {

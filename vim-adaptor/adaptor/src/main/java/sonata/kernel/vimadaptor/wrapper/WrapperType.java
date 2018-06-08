@@ -29,6 +29,16 @@ package sonata.kernel.vimadaptor.wrapper;
 public enum WrapperType {
   COMPUTE("compute"), NETWORK("network"), STORAGE("storage");
 
+  public static WrapperType getByName(String name) {
+    for (WrapperType vendor : values()) {
+      if (vendor.getName().toUpperCase().equals(name.toUpperCase())) {
+        return vendor;
+      }
+    }
+
+    throw new IllegalArgumentException(name + " is not a valid WrapperType");
+  }
+
   private final String name;
 
   WrapperType(String name) {
@@ -42,15 +52,5 @@ public enum WrapperType {
 
   private String getName() {
     return this.toString();
-  }
-
-  public static WrapperType getByName(String name) {
-    for (WrapperType vendor : values()) {
-      if (vendor.getName().toUpperCase().equals(name.toUpperCase())) {
-        return vendor;
-      }
-    }
-
-    throw new IllegalArgumentException(name + " is not a valid WrapperType");
   }
 }
