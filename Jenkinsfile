@@ -85,7 +85,6 @@ pipeline {
         branch 'master'
       }      
       steps {
-        sh './pipeline/publish/retag.sh'
         sh 'rm -rf tng-devops || true'
         sh 'git clone https://github.com/sonata-nfv/tng-devops.git'
         dir(path: 'tng-devops') {
