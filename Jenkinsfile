@@ -33,7 +33,7 @@ pipeline {
     }
     stage('Publish to :latest') {
       parallel {
-        stage('WIM Adaptor') {
+        stage('VIM Adaptor') {
           steps {
             echo 'Publishing VIM Adaptor container'
             sh './pipeline/publish/vimadaptor.sh latest'
