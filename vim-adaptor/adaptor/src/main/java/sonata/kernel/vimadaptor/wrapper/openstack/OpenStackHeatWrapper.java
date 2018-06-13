@@ -1411,9 +1411,10 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
     HeatModel model = new HeatModel();
     ArrayList<String> publicPortNames = new ArrayList<String>();
 
-    addSpAddressCloudConfigObject(vnfd, instanceUuid, model);
+    ArrayList<HashMap<String,Object>> configList = new ArrayList<HashMap<String, Object>>();
 
     boolean hasPubKey = (publicKey != null);
+
     if (hasPubKey) {
       HeatResource keypair = new HeatResource();
       keypair.setType("OS::Nova::KeyPair");
@@ -1450,24 +1451,18 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       HashMap<String,Object> partMap1 = new HashMap<String, Object>();
       partMap1.put("config", keyInitMap);
 
-      
-      HashMap<String, Object> spAddressInitMap = new HashMap<String, Object>();
-      spAddressInitMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
-
-      HashMap<String,Object> partMap2 = new HashMap<String, Object>();
-      partMap2.put("config", spAddressInitMap);
-
-      ArrayList<HashMap<String,Object>> configList = new ArrayList<HashMap<String, Object>>();
-      
-      configList.add(partMap1);
-      configList.add(partMap2);      
-      
-      HeatResource serverInitObject = new HeatResource();
-      serverInitObject.setType("OS::Heat::MultipartMime");
-      serverInitObject.setName(vnfd.getName() + "_" + instanceUuid + "_serverInit");
-      serverInitObject.putProperty("parts", configList);
-      model.addResource(serverInitObject);
+      configList.add(partMap1);            
     }    
+
+    // addSpAddressCloudConfigObject(vnfd, instanceUuid, model);
+
+    // HashMap<String, Object> spAddressInitMap = new HashMap<String, Object>();
+    // spAddressInitMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
+
+    // HashMap<String,Object> partMap2 = new HashMap<String, Object>();
+    // partMap2.put("config", spAddressInitMap);
+    
+    // configList.add(partMap2);
     
     for (VirtualDeploymentUnit vdu : vnfd.getVirtualDeploymentUnits()) {
       Logger.debug("Each VDU goes into a resource group with a number of Heat Server...");
@@ -1480,7 +1475,7 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       if (vdu.getVmImageMd5() != null) {
         imageName = getImageNameByImageChecksum(vdu.getVmImageMd5());
       }
-      
+
       Logger.debug("image selected:" + imageName);
       HeatResource server = new HeatResource();
       server.setType("OS::Nova::Server");
@@ -1488,23 +1483,51 @@ public class OpenStackHeatWrapper extends ComputeWrapper {
       server.putProperty("name",
           vnfd.getName() + "." + vdu.getId() + "." + instanceUuid + ".instance%index%");
       server.putProperty("image", imageName);
+      
+      String userData = vdu.getUserData();
+      Logger.debug("User data for this vdu:" + userData);
 
-      if (hasPubKey) {
-        // Put the MultiPartMime
-        HashMap<String, Object> keyMap = new HashMap<String, Object>();
-        keyMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_keypair");
-        server.putProperty("key_name", keyMap);
-        
+      boolean vduHasUserData = (vdu.getUserData() != null);
+      ArrayList<HashMap<String,Object>> newConfigList = new ArrayList<HashMap<String, Object>>(configList);
+
+      if (vduHasUserData) {
+        Logger.debug("Adding cloud-init resource");
+        server.putProperty("config_drive", true);
+        if (configList.isEmpty()){
+          server.putProperty("user_data", userData);
+          server.putProperty("user_data_format", "RAW");
+
+        } else {
+          HeatResource userDataObject = new HeatResource();
+          userDataObject.setType("OS::Heat::SoftwareConfig");
+          userDataObject.setName(vdu.getId() + "_" + instanceUuid + "_cloudInitConfig");
+          userDataObject.putProperty("group", "ungrouped");
+          userDataObject.putProperty("config", vdu.getUserData());
+          model.addResource(userDataObject);
+
+          HashMap<String, Object> cloudInitMap = new HashMap<String, Object>();
+          cloudInitMap.put("get_resource", vdu.getId() + "_" + instanceUuid + "_cloudInitConfig");
+
+          HashMap<String,Object> partMap3 = new HashMap<String, Object>();
+          partMap3.put("config", cloudInitMap);
+          newConfigList.add(partMap3);
+        }
+      }
+
+      for (HashMap config : configList){
+        Logger.debug(config.toString());
+      }
+      if (!newConfigList.isEmpty()){
+        HeatResource serverInitObject = new HeatResource();
+        serverInitObject.setType("OS::Heat::MultipartMime");
+        serverInitObject.setName(vdu.getId() + "_" + instanceUuid + "_serverInit");
+        serverInitObject.putProperty("parts", newConfigList);
+        model.addResource(serverInitObject);
+
         HashMap<String, Object> userDataMap = new HashMap<String, Object>();
-        userDataMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_serverInit");
+        userDataMap.put("get_resource", vdu.getId() + "_" + instanceUuid + "_serverInit");
         server.putProperty("user_data", userDataMap);
-        server.putProperty("user_data_format", "RAW");
-      } else{
-        // Put just the spAddressCloudConfig
-        HashMap<String, Object> userDataMap = new HashMap<String, Object>();
-        userDataMap.put("get_resource", vnfd.getName() + "_" + instanceUuid + "_spAddressCloudConfig");
-        server.putProperty("user_data", userDataMap);
-        server.putProperty("user_data_format", "RAW");
+        server.putProperty("user_data_format", "SOFTWARE_CONFIG");
       }
 
       int vcpu = vdu.getResourceRequirements().getCpu().getVcpus();
