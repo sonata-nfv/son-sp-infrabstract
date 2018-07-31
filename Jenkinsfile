@@ -47,48 +47,28 @@ pipeline {
         }
       }
     }
-    stage('Deploying in pre-integration ') {
-      when{
-        not{
-          branch 'master'
-        }        
-      }      
-      steps {
-        sh 'rm -rf tng-devops || true'
-        sh 'git clone https://github.com/sonata-nfv/tng-devops.git'
-        dir(path: 'tng-devops') {
-          sh 'ansible-playbook roles/sp.yml -i environments -e "target=pre-int-sp component=infrastructure-abstraction"'
-        }
-      }
-    }
-    stage('Publishing to :int') {
-      when{
-        branch 'master'
-      }      
+    stage('Publishing to :v4.0') {
       parallel {
         stage('VIM Adaptor') {
           steps {
             echo 'Publishing VIM Adaptor container'
-            sh './pipeline/publish/vimadaptor.sh int'
+            sh './pipeline/publish/vimadaptor.sh v4.0'
           }
         }
         stage('WIM Adaptor') {
           steps {
             echo 'Publishing WIM adaptor container'
-            sh './pipeline/publish/wimadaptor.sh int'
+            sh './pipeline/publish/wimadaptor.sh v4.0'
           }
         }
       }
     }
-    stage('Deploying in integration') {
-      when{
-        branch 'master'
-      }      
+    stage('Deploying in staging') {
       steps {
         sh 'rm -rf tng-devops || true'
         sh 'git clone https://github.com/sonata-nfv/tng-devops.git'
         dir(path: 'tng-devops') {
-          sh 'ansible-playbook roles/sp.yml -i environments -e "target=int-sp component=infrastructure-abstraction"'
+          sh 'ansible-playbook roles/sp.yml -i environments -e "target=sta-sp-v4.0 component=infrastructure-abstraction"'
         }
       }
     }
