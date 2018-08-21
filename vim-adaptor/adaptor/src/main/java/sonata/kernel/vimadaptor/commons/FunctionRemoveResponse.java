@@ -20,54 +20,36 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.), UCL
- * 
  * @author Thomas Soenen, imec
- *
- * @author Guy Paz, Nokia
  * 
  */
 
-package sonata.kernel.vimadaptor.wrapper.openstack.heat;
+package sonata.kernel.vimadaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.ArrayList;
 
-import java.util.HashMap;
 
-@JsonPropertyOrder({"templateVersion", "resources"})
-public class HeatTemplate {
+public class FunctionRemoveResponse {
 
-  private HashMap<String, Object> resources;
+  private String message;
+  @JsonProperty("request_status")
+  private String requestStatus;
 
-  @JsonProperty("heat_template_version")
-  private String templateVersion = "2015-04-30";
-
-  public HeatTemplate() {
-    resources = new HashMap<String, Object>();
+  public String getMessage() {
+    return message;
   }
 
-  public HashMap<String, Object> getResources() {
-    return resources;
+  public String getRequestStatus() {
+    return requestStatus;
   }
 
-  public String getTemplateVersion() {
-    return templateVersion;
+  public void setMessage(String message) {
+    this.message = message;
   }
 
-  public void putResource(String key, Object value) {
-    this.resources.put(key, value);
+  public void setRequestStatus(String requestStatus) {
+    this.requestStatus = requestStatus;
   }
 
-  public void removeResource(String key) {
-    this.resources.remove(key);
-  }
-
-  public void setResources(HashMap<String, Object> resources) {
-    this.resources = resources;
-  }
-
-  public void setTemplateVersion(String templateVersion) {
-    this.templateVersion = templateVersion;
-  }
 }
