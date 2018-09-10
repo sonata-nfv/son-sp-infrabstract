@@ -28,6 +28,8 @@ package sonata.kernel.vimadaptor.wrapper.sp;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
+import sonata.kernel.vimadaptor.commons.FunctionRemovePayload;
+import sonata.kernel.vimadaptor.commons.FunctionRemoveResponse;
 import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.ServiceRecord;
@@ -71,6 +73,54 @@ public class ComputeSPWrapper extends ComputeWrapper {
     super(config);
   }
 
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeFunction(sonata.kernel.vimadaptor.commons
+   * .FunctionRemovePayload, java.lang.String)
+   */
+  @Override
+  public void removeFunction(FunctionRemovePayload data, String sid) {
+    //todo
+
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+
+    FunctionRemoveResponse response = new FunctionRemoveResponse();
+    response.setRequestStatus("ERROR");
+    response.setMessage("VNF removal not supported on SP wrapper");
+
+    String body = null;
+    try {
+      body = mapper.writeValueAsString(response);
+    } catch (JsonProcessingException e) {
+      Logger.error(e.getMessage(), e);
+      WrapperStatusUpdate update =
+          new WrapperStatusUpdate(sid, "ERROR", "Exception during VNF Deployment");
+      this.markAsChanged();
+      this.notifyObservers(update);
+      return;
+    }
+    Logger.info("Response created");
+    Logger.info("body");
+
+    // WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(data.getServiceInstanceId(),
+    //     instantiationRequest.getServiceInstanceUuid(), "", this.getConfig().getUuid());
+
+    // WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnfd.getInstanceUuid(),
+    //     data.getServiceInstanceId(), this.getConfig().getUuid());
+    WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "ERROR", body);
+    this.markAsChanged();
+    this.notifyObservers(update);
+    // long stop = System.currentTimeMillis();
+
+    // Logger.info("[SonataSPWrapper]FunctionDeploy-time: " + (stop - start) + " ms");
+
+  }
   /*
    * (non-Javadoc)
    * 

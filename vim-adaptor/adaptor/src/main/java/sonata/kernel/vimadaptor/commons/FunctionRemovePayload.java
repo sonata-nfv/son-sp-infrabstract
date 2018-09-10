@@ -20,54 +20,58 @@
  * would like to acknowledge the contributions of their colleagues of the SONATA partner consortium
  * (www.sonata-nfv.eu).
  *
- * @author Dario Valocchi (Ph.D.), UCL
- * 
  * @author Thomas Soenen, imec
- *
- * @author Guy Paz, Nokia
  * 
  */
 
-package sonata.kernel.vimadaptor.wrapper.openstack.heat;
+package sonata.kernel.vimadaptor.commons;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
-import java.util.HashMap;
+import sonata.kernel.vimadaptor.commons.vnfd.VnfDescriptor;
 
-@JsonPropertyOrder({"templateVersion", "resources"})
-public class HeatTemplate {
+public class FunctionRemovePayload {
 
-  private HashMap<String, Object> resources;
+  @JsonProperty("service_instance_id")
+  private String serviceInstanceId;
+  @JsonProperty("vim_uuid")
+  private String vimUuid;
+  @JsonProperty("vnf_uuid")
+  private String vnfUuid;
+  // @JsonProperty("vnfd")
+  // private VnfDescriptor vnfd;
 
-  @JsonProperty("heat_template_version")
-  private String templateVersion = "2015-04-30";
-
-  public HeatTemplate() {
-    resources = new HashMap<String, Object>();
+  public String getServiceInstanceId() {
+    return serviceInstanceId;
   }
 
-  public HashMap<String, Object> getResources() {
-    return resources;
+  public String getVimUuid() {
+    return vimUuid;
   }
 
-  public String getTemplateVersion() {
-    return templateVersion;
+  public String getVnfUuid() {
+    return vnfUuid;
+  }
+  // public VnfDescriptor getVnfd() {
+  //   return vnfd;
+  // }
+
+  public void setServiceInstanceId(String serviceInstanceId) {
+    this.serviceInstanceId = serviceInstanceId;
   }
 
-  public void putResource(String key, Object value) {
-    this.resources.put(key, value);
+  public void setVimUuid(String vimUuid) {
+    this.vimUuid = vimUuid;
   }
 
-  public void removeResource(String key) {
-    this.resources.remove(key);
+  public void setVnfUuid(String vnfUuid) {
+    this.vnfUuid = vnfUuid;
   }
 
-  public void setResources(HashMap<String, Object> resources) {
-    this.resources = resources;
-  }
+  // public void setVnfd(VnfDescriptor vnfd) {
+  //   this.vnfd = vnfd;
+  // }
 
-  public void setTemplateVersion(String templateVersion) {
-    this.templateVersion = templateVersion;
-  }
+
+
 }

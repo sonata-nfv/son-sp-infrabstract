@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 
 import sonata.kernel.vimadaptor.commons.FunctionDeployPayload;
 import sonata.kernel.vimadaptor.commons.FunctionDeployResponse;
+import sonata.kernel.vimadaptor.commons.FunctionRemovePayload;
+import sonata.kernel.vimadaptor.commons.FunctionRemoveResponse;
 import sonata.kernel.vimadaptor.commons.FunctionScalePayload;
 import sonata.kernel.vimadaptor.commons.ServiceDeployPayload;
 import sonata.kernel.vimadaptor.commons.Status;
@@ -77,13 +79,54 @@ public class ComputeMockWrapper extends ComputeWrapper {
    * (non-Javadoc)
    * 
    * @see
+   * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#removeFunction(sonata.kernel.vimadaptor.commons
+   * .FunctionRemovePayload, java.lang.String)
+   */
+  @Override
+  public void removeFunction(FunctionRemovePayload data, String sid) {
+    double avgTime = 5198.21;
+    double stdTime = 1497.12;
+    Logger.debug("[MockWrapper] removing function...");
+    waitGaussianTime(avgTime, stdTime);
+    Logger.debug("[MockWrapper] function removed. Generating response...");
+
+    FunctionRemoveResponse response = new FunctionRemoveResponse();
+    response.setRequestStatus("COMPLETED");
+    response.setMessage("");
+    Logger.info("Response created. Serializing...");
+
+    ObjectMapper mapper = new ObjectMapper(new YAMLFactory());
+    mapper.disable(SerializationFeature.WRITE_EMPTY_JSON_ARRAYS);
+    mapper.enable(SerializationFeature.WRITE_ENUMS_USING_TO_STRING);
+    mapper.disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+    mapper.setSerializationInclusion(Include.NON_NULL);
+    String body;
+    try {
+      body = mapper.writeValueAsString(response);
+      this.setChanged();
+      Logger.info("Serialized. notifying call processor");
+      WrapperStatusUpdate update = new WrapperStatusUpdate(sid, "SUCCESS", body);
+      this.notifyObservers(update);
+    } catch (JsonProcessingException e) {
+      Logger.error(e.getMessage(), e);
+    }
+    Logger.debug("[MockWrapper] Response generated. Writing record in the Infr. Repos...");
+    // WrapperBay.getInstance().getVimRepo().writeFunctionInstanceEntry(vnf.getInstanceUuid(),
+    //     data.getServiceInstanceId(), this.getConfig().getUuid());
+    Logger.debug("[MockWrapper] All done!");
+  }
+
+  /*
+   * (non-Javadoc)
+   * 
+   * @see
    * sonata.kernel.vimadaptor.wrapper.ComputeWrapper#deployFunction(sonata.kernel.vimadaptor.commons
    * .FunctionDeployPayload, java.lang.String)
    */
   @Override
   public void deployFunction(FunctionDeployPayload data, String sid) {
-    double avgTime = 51987.21;
-    double stdTime = 14907.12;
+    double avgTime = 5198.21;
+    double stdTime = 1497.12;
     Logger.debug("[MockWrapper] deploying function...");
     waitGaussianTime(avgTime, stdTime);
     Logger.debug("[MockWrapper] function deployed. Generating response...");
@@ -188,8 +231,8 @@ public class ComputeMockWrapper extends ComputeWrapper {
    */
   @Override
   public boolean prepareService(String instanceId) {
-    double avgTime = 10576.52;
-    double stdTime = 1683.12;
+    double avgTime = 1356.52;
+    double stdTime = 663.12;
     waitGaussianTime(avgTime, stdTime);
     WrapperBay.getInstance().getVimRepo().writeServiceInstanceEntry(instanceId, instanceId,
         instanceId, this.getConfig().getUuid());
@@ -218,8 +261,9 @@ public class ComputeMockWrapper extends ComputeWrapper {
     waitGaussianTime(avgTime, stdTime);
 
     this.setChanged();
-    String body = "{\"status\":\"SUCCESS\"}";
-    WrapperStatusUpdate update = new WrapperStatusUpdate(this.sid, "SUCCESS", body);
+    String body =
+        "{\"status\":\"COMPLETED\",\"wrapper_uuid\":\"" + this.getConfig().getUuid() + "\"}";
+    WrapperStatusUpdate update = new WrapperStatusUpdate(callSid, "SUCCESS", body);
     this.notifyObservers(update);
 
     return out;
@@ -245,7 +289,7 @@ public class ComputeMockWrapper extends ComputeWrapper {
   @Override
   public void uploadImage(VnfImage image) throws IOException {
 
-    double avgTime = 7538.75;
+    double avgTime = 2538.75;
     double stdTime = 1342.06;
     waitGaussianTime(avgTime, stdTime);
 

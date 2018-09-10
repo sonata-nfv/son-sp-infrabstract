@@ -39,6 +39,7 @@ import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatPort;
 import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatRouter;
 import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatServer;
 import sonata.kernel.vimadaptor.wrapper.openstack.heat.HeatTemplate;
+import sonata.kernel.vimadaptor.wrapper.openstack.heat.ServerPortsComposition;
 import sonata.kernel.vimadaptor.wrapper.openstack.heat.StackComposition;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackCore;
 import sonata.kernel.vimadaptor.wrapper.openstack.javastackclient.JavaStackUtils;
@@ -170,6 +171,167 @@ public class OpenStackHeatClient {
     return isDeleted;
   }
 
+
+  /**
+   * Get server composition.
+   *
+   * @param stackName - used for logging, usually service tenant
+   * @param uuid - OpenStack UUID of the stack
+   * @param serverIdentifier - identifier for this specific server in the stack
+   * @return a HeatServer object representing the stack resources
+   */
+public HeatServer getServerComposition(String stackName, String uuid, String serverIdentifier) {
+
+    HeatServer server = new HeatServer();
+
+    try {
+      // List Stack Resources
+      String listResources = JavaStackUtils
+          .convertHttpResponseToString(javaStack.listStackResources(stackName, uuid, null));
+      Logger.debug(listResources);
+
+      ArrayList<Resource> resources =
+          mapper.readValue(listResources, Resources.class).getResources();
+
+      for (Resource resource : resources) {
+        Logger.debug("##############");
+        Logger.debug(serverIdentifier);
+        Logger.debug(resource.getResource_type());
+        Logger.debug(resource.getResource_name());
+        if (resource.getResource_name().contains(serverIdentifier)) {
+          Logger.debug("name is matching");
+        }
+        if (resource.getResource_type().equals("OS::Heat::ResourceGroup")) {
+          Logger.debug("Resource group found");
+        }
+        if (resource.getResource_type().equals("OS::Nova::Server")  && resource.getResource_name().contains(serverIdentifier)) {
+          
+          String showResourceData = JavaStackUtils.convertHttpResponseToString(
+              javaStack.showResourceData(stackName, uuid, resource.getResource_name()));
+          Logger.debug(showResourceData);
+          ResourceData<ServerAttributes> serverResourceData = mapper.readValue(showResourceData,
+              new TypeReference<ResourceData<ServerAttributes>>() {});
+
+          // Set Server
+          server.setServerId(serverResourceData.getResource().getPhysical_resource_id());
+          server.setServerName(serverResourceData.getResource().getAttributes().getName());
+        } else if (resource.getResource_type().equals("OS::Heat::ResourceGroup")  && resource.getResource_name().contains(serverIdentifier)) {
+
+          String showResourceData = JavaStackUtils.convertHttpResponseToString(
+              javaStack.showResourceData(stackName, uuid, resource.getResource_name()));
+          String groupStackUuid = resource.getPhysical_resource_id();
+          String groupStackName = this.getNestedStackName(resource);
+          Logger.debug("Get resource info for nested stack name: " + groupStackName + " -  ID: "
+              + groupStackUuid);
+          String groupListResources = JavaStackUtils.convertHttpResponseToString(
+              javaStack.listStackResources(groupStackName, groupStackUuid, null));
+
+          ArrayList<Resource> groupResources =
+              mapper.readValue(groupListResources, Resources.class).getResources();
+          Logger.debug("Getting resources for resource group.");
+          String serverInGroupResource = null;
+          for (Resource groupResource : groupResources) {
+            serverInGroupResource =
+                JavaStackUtils.convertHttpResponseToString(javaStack.showResourceData(
+                    groupStackName, groupStackUuid, groupResource.getResource_name()));
+
+            Logger.debug("group resource info: " + serverInGroupResource);
+            ResourceData<ServerAttributes> serverResourceData = mapper.readValue(
+                serverInGroupResource, new TypeReference<ResourceData<ServerAttributes>>() {});
+            // Set Server
+            server.setServerId(serverResourceData.getResource().getPhysical_resource_id());
+            server.setServerName(serverResourceData.getResource().getParent_resource() + "."
+                + serverResourceData.getResource().getResource_name());
+            Logger.debug("Server Object created: " + mapper.writeValueAsString(server));
+          }
+        }
+      }
+
+    } catch (Exception e) {
+      Logger.error("Runtime error getting server composition for stack : " + stackName + " error message: "
+          + e.getMessage());
+      e.printStackTrace();
+    }
+
+  return server;
+}
+
+  /**
+   * Get server ports composition.
+   *
+   * @param stackName - used for logging, usually service tenant
+   * @param uuid - OpenStack UUID of the stack
+   * @param serverIdentifier - identifier for this specific server in the stack
+   * @return a ServerPortsComposition object representing the stack resources
+   */
+public ServerPortsComposition getServerPortsComposition(String stackName, String uuid, String serverIdentifier) {
+
+    ServerPortsComposition serverPorts = new ServerPortsComposition();
+    ArrayList<HeatPort> ports = new ArrayList<>();
+    ArrayList<PortAttributes> portsAtts = new ArrayList<>();
+    ArrayList<FloatingIpAttributes> floatingIps = new ArrayList<>();
+
+    try {
+      // List Stack Resources
+      String listResources = JavaStackUtils
+          .convertHttpResponseToString(javaStack.listStackResources(stackName, uuid, null));
+      Logger.debug(listResources);
+
+      ArrayList<Resource> resources =
+          mapper.readValue(listResources, Resources.class).getResources();
+
+      for (Resource resource : resources) {
+        if (resource.getResource_type().equals("OS::Neutron::Port")  && resource.getResource_name().contains(serverIdentifier)) {
+
+          HeatPort heatPort = new HeatPort();
+
+          String showResourceData = JavaStackUtils.convertHttpResponseToString(
+              javaStack.showResourceData(stackName, uuid, resource.getResource_name()));
+          Logger.debug(showResourceData);
+          ResourceData<PortAttributes> portResourceData = mapper.readValue(showResourceData,
+              new TypeReference<ResourceData<PortAttributes>>() {});
+
+          portsAtts.add(portResourceData.getResource().getAttributes());
+
+          // Set Port
+          heatPort.setIpAddress(portResourceData.getResource().getAttributes().getFixed_ips()
+              .get(0).get("ip_address"));
+          heatPort.setMacAddress(portResourceData.getResource().getAttributes().getMac_address());
+          heatPort.setPortName(portResourceData.getResource().getAttributes().getName());
+          ports.add(heatPort);
+        } else if (resource.getResource_type().equals("OS::Neutron::FloatingIP")  && resource.getResource_name().contains(serverIdentifier)) {
+
+          String showResourceData = JavaStackUtils.convertHttpResponseToString(
+              javaStack.showResourceData(stackName, uuid, resource.getResource_name()));
+          Logger.debug(showResourceData);
+          ResourceData<FloatingIpAttributes> floatingIPResourceData = mapper.readValue(
+              showResourceData, new TypeReference<ResourceData<FloatingIpAttributes>>() {});
+          floatingIps.add(floatingIPResourceData.getResource().getAttributes());
+          String floatingIP =
+              floatingIPResourceData.getResource().getAttributes().getFloating_ip_address();
+          Logger.info("FloatingIP Resource Address: " + floatingIP);
+        }
+      }
+
+      for (int i = 0; i < ports.size(); i++) {
+        for (FloatingIpAttributes floatingIP : floatingIps) {
+          if (portsAtts.get(i).getId().equals(floatingIP.getPort_id())) {
+            ports.get(i).setFloatinIp(floatingIP.getFloating_ip_address());
+          }
+        }
+      }
+
+      serverPorts.setPorts(ports);
+
+    } catch (Exception e) {
+      Logger.error("Runtime error getting server composition for stack : " + stackName + " error message: "
+          + e.getMessage());
+      e.printStackTrace();
+    }
+
+  return serverPorts;
+}
+
   /**
    * Get stack composition.
    *
@@ -186,7 +348,7 @@ public class OpenStackHeatClient {
       // List Stack Resources
       String listResources = JavaStackUtils
           .convertHttpResponseToString(javaStack.listStackResources(stackName, uuid, null));
-      // Logger.debug(listResources);
+      Logger.debug(listResources);
 
       ArrayList<Resource> resources =
           mapper.readValue(listResources, Resources.class).getResources();
