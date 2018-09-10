@@ -22,6 +22,8 @@
  *
  * @author Dario Valocchi (Ph.D.), UCL
  * 
+ * @author Thomas Soenen, imec
+ * 
  * @author Michael Bredel (Ph.D.), NEC
  */
 
@@ -103,6 +105,8 @@ public class AdaptorDispatcher implements Runnable {
       myThreadPool.execute(new DeployFunctionCallProcessor(message, message.getSid(), mux));
     } else if (message.getTopic().endsWith("scale")) {
       myThreadPool.execute(new ScaleFunctionCallProcessor(message, message.getSid(), mux));
+    } else if (message.getTopic().endsWith("remove")) {
+      myThreadPool.execute(new RemoveFunctionCallProcessor(message, message.getSid(), mux));
     }
   }
 
